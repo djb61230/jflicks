@@ -1,0 +1,22 @@
+custom=true
+
+Bundle-Version: 1.0.0
+
+Include-Resource:\
+ ../lib/TimingFramework-1.0.jar
+
+Bundle-ClassPath:\
+ .,\
+ TimingFramework-1.0.jar
+
+Export-Package:\
+ org.jdesktop.animation.timing;version="1.0.0",\
+ org.jdesktop.animation.timing.interpolation;version="1.0.0",\
+ org.jdesktop.animation.timing.triggers;version="1.0.0"
+
+Import-Package:\
+ org.jdesktop.animation.timing;version="1.0.0",\
+ org.jdesktop.animation.timing.interpolation;version="1.0.0",\
+ org.jdesktop.animation.timing.triggers;version="1.0.0"
+
+DynamicImport-Package: *

@@ -1,0 +1,13 @@
+<processing>
+    <job name="Post Install">
+        <os family="unix"/>
+        <executefile name="$INSTALL_PATH/postinstall.sh">
+            <arg>-installpath</arg>
+            <arg>$INSTALL_PATH</arg>
+            <arg>-mplayerconfig</arg>
+            <arg>$mplayerconfig</arg>
+            <arg>-autostart</arg>
+            <arg>$autostart</arg>
+        </executefile>
+    </job>
+</processing>

@@ -1,0 +1,18 @@
+custom=true
+
+Bundle-Version: 1.0.0
+
+Include-Resource:\
+ ../lib/rsslib4j-0.2.jar
+
+Bundle-ClassPath:\
+ .,\
+ rsslib4j-0.2.jar
+
+Export-Package:\
+ org.gnu.stealthp.rsslib;version="1.0.0"
+
+Import-Package:\
+ org.gnu.stealthp.rsslib;version="1.0.0"
+
+DynamicImport-Package: *

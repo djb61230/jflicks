@@ -1,0 +1,15 @@
+<processing>
+    <job name="Post Install">
+        <os family="unix"/>
+        <executefile name="$INSTALL_PATH/postinstall.sh">
+            <arg>-installpath</arg>
+            <arg>$INSTALL_PATH</arg>
+            <arg>-sdusername</arg>
+            <arg>$sdusername</arg>
+            <arg>-sdpassword</arg>
+            <arg>$sdpassword</arg>
+            <arg>-autostart</arg>
+            <arg>$autostart</arg>
+        </executefile>
+    </job>
+</processing>

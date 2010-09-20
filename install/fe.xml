@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+<installation version="1.0">
+    <info>
+        <appname>JFlicks FE</appname>
+        <appversion>1.0</appversion>
+        <appsubpath>jflicks-fe</appsubpath>
+        <authors>
+            <author email="djb@sevenpets.com" name="Douglas Barnum"/>
+        </authors>
+        <url>http://www.sevenpets.com</url>
+        <uninstaller name="Uninstaller.jar" write="yes"/>
+        <javaversion>1.6</javaversion>
+        <requiresjdk>no</requiresjdk>
+        <writeinstallationinformation>no</writeinstallationinformation>
+        <pack200/>
+        <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
+    </info>
+    <guiprefs height="480" resizable="no" width="640">
+        <modifier key="useFlags" value="yes"/>
+        <modifier key="langDisplayType" value="default"/>
+    </guiprefs>
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+
+    <variables>
+    </variables>
+
+    <resources>
+        <res id="LicencePanel.licence" parse="yes" src="fe/COPYING.txt"/>
+        <res id="Installer.image" src="resources/side.png"/>
+        <res id="userInputSpec.xml" src="fe_userInputSpec.xml"/>
+        <res id="ProcessPanel.Spec.xml" src="fe_processPanel.Spec.xml"/>
+    </resources>
+    <panels>
+        <panel classname="CheckedHelloPanel"/>
+        <panel classname="LicencePanel"/>
+        <panel classname="PacksPanel"/>
+        <panel classname="TargetPanel"/>
+        <panel classname="InstallPanel"/>
+        <panel classname="UserInputPanel"/>
+        <panel classname="ProcessPanel"/>
+        <panel classname="SimpleFinishPanel"/>
+    </panels>
+    <packs>
+        <pack name="Base" preselected="yes" required="yes">
+            <description>These are the base files needed.</description>
+            <file override="update"
+                src="fe/COPYING.txt" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="fe/db" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="fe/theme" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="fe/bundle/db4o-7.12.126.14142-osgi.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/LogbackBundle-1.0.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-base.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-imagecache-system.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-nms-remote.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-rc-lirc.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-swingx.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-timingframework.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-ui.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/org.apache.felix.bundlerepository-1.4.2.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/org.apache.felix.configadmin-1.2.4.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/org.apache.felix.eventadmin-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/org.apache.felix.log-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/org.apache.felix.shell-1.4.1.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/org.apache.felix.shell.tui-1.4.1.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/remote-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-preference.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/startup.sh" targetdir="$INSTALL_PATH/"/>
+            <file override="askfalse"
+                src="fe/jflicks.properties" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="fe/bin/felix.jar" targetdir="$INSTALL_PATH/bin"/>
+            <file override="update"
+                src="fe/conf/config.properties" targetdir="$INSTALL_PATH/conf"/>
+            <file override="update"
+                src="fe/conf/LircJob.lircrc" targetdir="$INSTALL_PATH/conf"/>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-script.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/JFlicks_FE.desktop" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="fe/postinstall.sh" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="fe/bin/jflicks-install.jar" targetdir="$INSTALL_PATH/bin"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/startup.sh">
+                <os family="Unix"/>
+            </executable>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/postinstall.sh">
+            </executable>
+
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/startup.sh" type="shell"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/JFlicks_FE.desktop" type="shell"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/postinstall.sh" type="shell"/>
+        </pack>
+        <pack name="TV Recording" preselected="yes" required="no">
+            <description>Be able to Schedule and Watch Recordings.</description>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-recording.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-schedule.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
+        </pack>
+        <pack name="Video" preselected="yes" required="no">
+            <description>Play video files on your system.</description>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-video.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
+        </pack>
+        <pack name="Live TV" preselected="yes" required="no">
+            <description>Watch Live TV.</description>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-livetv.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
+        </pack>
+        <pack name="Web Video" preselected="no" required="no">
+            <description>Watch Web Video via a browser.</description>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-webvideo.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-player-chrome.jar" targetdir="$INSTALL_PATH/bundle"/>
+        </pack>
+        <pack name="Photos" preselected="no" required="no">
+            <description>Slideshow of your Photos.</description>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-photo.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-player-photoshow.jar" targetdir="$INSTALL_PATH/bundle"/>
+        </pack>
+        <pack name="Previews" preselected="no" required="no">
+            <description>Watch the latest Movie previews.</description>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-preview.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
+        </pack>
+        <pack name="Ambiance" preselected="no" required="no">
+            <description>Control the lighting.</description>
+            <file override="update"
+                src="fe/bin/x10-movie-start.sh" targetdir="$INSTALL_PATH/bin"/>
+            <file override="update"
+                src="fe/bin/x10-movie-stop.sh" targetdir="$INSTALL_PATH/bin"/>
+            <file override="update"
+                src="fe/bin/x10-theater-close.sh" targetdir="$INSTALL_PATH/bin"/>
+            <file override="update"
+                src="fe/bin/x10-theater-open.sh" targetdir="$INSTALL_PATH/bin"/>
+            <file override="update"
+                src="fe/conf/scriptscreen.properties" targetdir="$INSTALL_PATH/conf"/>
+            <file override="update"
+                src="fe/audio/close.wav" targetdir="$INSTALL_PATH/audio"/>
+            <file override="update"
+                src="fe/audio/concession.wav" targetdir="$INSTALL_PATH/audio"/>
+            <file override="update"
+                src="fe/audio/start.wav" targetdir="$INSTALL_PATH/audio"/>
+            <file override="update"
+                src="fe/audio/welcome.wav" targetdir="$INSTALL_PATH/audio"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/bin/x10-movie-start.sh"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/bin/x10-movie-stop.sh"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/bin/x10-theater-close.sh"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/bin/x10-theater-open.sh"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/bin/x10-movie-start.sh" type="shell"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/bin/x10-movie-stop.sh" type="shell"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/bin/x10-theater-close.sh" type="shell"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/bin/x10-theater-open.sh" type="shell"/>
+        </pack>
+        <pack name="DVD" preselected="no" required="no">
+            <description>Needed if you plan on watching DVDs from a DVD drive.</description>
+            <file override="update"
+                src="fe/bundle/jflicks-player-totem.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-dvd.jar" targetdir="$INSTALL_PATH/bundle"/>
+        </pack>
+        <pack name="On Demand" preselected="no" required="no">
+            <description>Needed if you plan on watching an On Demand source.</description>
+            <file override="update"
+                src="fe/bundle/jflicks-player-cvlc.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/bundle/jflicks-ui-view-fe-screen-ondemand.jar" targetdir="$INSTALL_PATH/bundle"/>
+        </pack>
+    </packs>
+    <native name="ShellLink.dll" type="izpack"/>
+    <native name="ShellLink_x64.dll" type="izpack"/>
+</installation>

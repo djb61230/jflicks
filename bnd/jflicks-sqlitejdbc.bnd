@@ -1,0 +1,18 @@
+custom=true
+
+Bundle-Version: 1.0.0
+
+Include-Resource:\
+ ../lib/sqlitejdbc-v056.jar
+
+Bundle-ClassPath:\
+ .,\
+ sqlitejdbc-v056.jar
+
+Export-Package:\
+ org.sqlite;version="1.0.0"
+
+Import-Package:\
+ org.sqlite;version="1.0.0"
+
+DynamicImport-Package: *

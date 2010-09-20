@@ -1,0 +1,20 @@
+custom=true
+
+Bundle-Version: 1.0.0
+
+Include-Resource:\
+ ../lib/jdom.jar
+
+Bundle-ClassPath:\
+ .,\
+ jdom.jar
+
+Export-Package:\
+ org.jdom;version="1.0.0",\
+ org.jdom.input;version="1.0.0"
+
+Import-Package:\
+ org.jdom;version="1.0.0",\
+ org.jdom.input;version="1.0.0"
+
+DynamicImport-Package: *

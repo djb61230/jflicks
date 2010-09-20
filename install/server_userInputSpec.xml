@@ -1,0 +1,20 @@
+<userInput>
+    <panel order="0">
+        <field size="2" txt="Schedule's Direct" type="title"/>
+        <field type="text" variable="sdusername">
+            <spec size="15" txt="User (email)"/>
+        </field>
+        <field align="left" type="password" variable="sdpassword">
+            <spec>
+                <pwd set="" size="25" txt="Password"/>
+                <pwd set="" size="25" txt="Verify"/>
+            </spec>
+            <validator
+                class="com.izforge.izpack.util.PasswordEqualityValidator" txt="Both passwords must match."/>
+        </field>
+        <field type="check" variable="autostart">
+            <description align="left" txt="Setup to autostart on login."/>
+            <spec false="false" set="false" true="true" txt="Auto Start on Login"/>
+        </field>
+    </panel>
+</userInput>

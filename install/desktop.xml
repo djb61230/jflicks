@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+<installation version="1.0">
+    <info>
+        <appname>JFlicks Desktop</appname>
+        <appversion>1.0</appversion>
+        <appsubpath>jflicks-desktop</appsubpath>
+        <authors>
+            <author email="djb@sevenpets.com" name="Douglas Barnum"/>
+        </authors>
+        <url>http://www.sevenpets.com</url>
+        <uninstaller name="Uninstaller.jar" write="yes"/>
+        <javaversion>1.6</javaversion>
+        <requiresjdk>no</requiresjdk>
+        <writeinstallationinformation>no</writeinstallationinformation>
+        <pack200/>
+        <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
+    </info>
+    <guiprefs height="480" resizable="no" width="640">
+        <modifier key="useFlags" value="yes"/>
+        <modifier key="langDisplayType" value="default"/>
+    </guiprefs>
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+    <resources>
+        <res id="LicencePanel.licence" parse="yes" src="client/COPYING.txt"/>
+        <res id="shortcutSpec.xml" src="desktop_shortcutSpec.xml"/>
+        <res id="Unix_shortcutSpec.xml" src="desktop_Unix_shortcutSpec.xml"/>
+        <res id="Installer.image" src="resources/side.png"/>
+    </resources>
+    <panels>
+        <panel classname="CheckedHelloPanel"/>
+        <panel classname="LicencePanel"/>
+        <panel classname="PacksPanel"/>
+        <panel classname="TargetPanel"/>
+        <panel classname="InstallPanel"/>
+        <panel classname="ShortcutPanel"/>
+        <panel classname="SimpleFinishPanel"/>
+    </panels>
+    <variables>
+        <variable name="DesktopShortcutCheckboxEnabled" value="true"/>
+    </variables>
+    <packs>
+        <pack name="Server Configuration" preselected="yes" required="yes">
+            <description>This application can configure all your JFlicks servers and can run anywhere on your network.</description>
+            <file override="update"
+                src="client" targetdir="$INSTALL_PATH/"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/client/startup.sh"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/client/startup.sh" type="shell"/>
+        </pack>
+        <pack name="Scheduler" preselected="yes" required="no">
+            <description>This application allows you to schedule recordings for any JFlicks server on your network.  You can also examine upcoming recordings and see what currently is recorded.</description>
+            <file override="update"
+                src="scheduler" targetdir="$INSTALL_PATH/"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/scheduler/startup.sh"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/scheduler/startup.sh" type="shell"/>
+        </pack>
+        <pack name="Video Manager" preselected="yes" required="no">
+            <description>If you maintain some video files on your network you can add descriptions and artwork that is associated with you files using this application.</description>
+            <file override="update"
+                src="metadata" targetdir="$INSTALL_PATH/"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/metadata/startup.sh"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/metadata/startup.sh" type="shell"/>
+        </pack>
+    </packs>
+    <native name="ShellLink.dll" type="izpack"/>
+    <native name="ShellLink_x64.dll" type="izpack"/>
+</installation>

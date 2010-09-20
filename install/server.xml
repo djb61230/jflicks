@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+<installation version="1.0">
+    <info>
+        <appname>JFlicks Server</appname>
+        <appversion>1.0</appversion>
+        <appsubpath>jflicks-server</appsubpath>
+        <authors>
+            <author email="djb@sevenpets.com" name="Douglas Barnum"/>
+        </authors>
+        <url>http://www.sevenpets.com</url>
+        <uninstaller name="Uninstaller.jar" write="yes"/>
+        <javaversion>1.6</javaversion>
+        <requiresjdk>no</requiresjdk>
+        <writeinstallationinformation>no</writeinstallationinformation>
+        <pack200/>
+        <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
+    </info>
+    <guiprefs height="480" resizable="no" width="640">
+        <modifier key="useFlags" value="yes"/>
+        <modifier key="langDisplayType" value="default"/>
+    </guiprefs>
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+    <resources>
+        <res id="LicencePanel.licence" parse="yes" src="server/COPYING.txt"/>
+        <res id="Installer.image" src="resources/side.png"/>
+        <res id="userInputSpec.xml" src="server_userInputSpec.xml"/>
+        <res id="ProcessPanel.Spec.xml" src="server_processPanelSpec.xml"/>
+    </resources>
+    <panels>
+        <panel classname="CheckedHelloPanel"/>
+        <panel classname="LicencePanel"/>
+        <panel classname="PacksPanel"/>
+        <panel classname="TargetPanel"/>
+        <panel classname="InstallPanel"/>
+        <panel classname="UserInputPanel"/>
+        <panel classname="ProcessPanel"/>
+        <panel classname="SimpleFinishPanel"/>
+    </panels>
+    <packs>
+        <pack name="Base" preselected="yes" required="yes">
+            <description>The base packages one needs to run an JFlicks Server.</description>
+            <file override="update"
+                src="server/COPYING.txt" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="server/db" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="server/www" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="server/bundle/db4o-7.12.126.14142-osgi.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/LogbackBundle-1.0.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-base.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-jdom.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-nms-system.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-swingx.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-tv-postproc-system.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-tv-postproc-worker-ffmpegscreenshot.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-tv-postproc-worker-mediainfo.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-tv-programdata-sd.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-tv-scheduler-system.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-videomanager-system.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/org.apache.felix.bundlerepository-1.4.2.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/org.apache.felix.configadmin-1.2.4.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/org.apache.felix.eventadmin-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/org.apache.felix.log-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/org.apache.felix.shell-1.4.1.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/org.apache.felix.shell.tui-1.4.1.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/remote-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bin/felix.jar" targetdir="$INSTALL_PATH/bin"/>
+            <file override="update"
+                src="server/bundle/jflicks-tv-live-system.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-stream-http.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/conf/config.properties" targetdir="$INSTALL_PATH/conf"/>
+            <file override="update"
+                src="server/bundle/org.apache.felix.http.api-2.0.4.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/org.apache.felix.http.jetty-2.0.4.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bin/jflicks-install.jar" targetdir="$INSTALL_PATH/bin"/>
+            <file override="update"
+                src="server/startup.sh" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="server/JFlicks_Server.desktop" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="server/postinstall.sh" targetdir="$INSTALL_PATH/"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/startup.sh"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/postinstall.sh"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/startup.sh" type="shell"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/JFlicks_Server.desktop" type="shell"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/postinstall.sh" type="shell"/>
+        </pack>
+        <pack name="Web Video" preselected="yes" required="no">
+            <description>Get video from the Web.</description>
+            <file override="update"
+                src="server/bundle/jflicks-web-rss.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-rsslib4j.jar" targetdir="$INSTALL_PATH/bundle"/>
+        </pack>
+        <pack name="Roku On Demand" preselected="no" required="no">
+            <description>Use a Roku for On Demand viewing.</description>
+            <file override="update"
+                src="server/bundle/jflicks-tv-ondemand-roku.jar" targetdir="$INSTALL_PATH/bundle"/>
+        </pack>
+        <pack name="Apple Trailers" preselected="yes" required="no">
+            <description>Preview trailers downloaded from Apple.</description>
+            <file override="update"
+                src="server/bundle/jflicks-trailer-apple.jar" targetdir="$INSTALL_PATH/bundle"/>
+        </pack>
+        <pack name="HDHomerun Recorder" preselected="no" required="no">
+            <description/>
+            <file override="update"
+                src="server/bundle/jflicks-tv-recorder-hdhr.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bin/hdhomerun_config" targetdir="$INSTALL_PATH/bin"/>
+            <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/bin/hdhomerun_config"/>
+        </pack>
+        <pack name="V4l2 Recorder" preselected="no" required="no">
+            <description>A recorder for V4l2 including the HD-PVR 1212.  Might work with all V4l2 devices but none others tested.</description>
+            <file override="update"
+                src="server/bundle/jflicks-tv-recorder-v4l2.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bin/directv-ttyS0.pl" targetdir="$INSTALL_PATH/bin"/>
+            <file override="update"
+                src="server/bin/directv-ttyS1.pl" targetdir="$INSTALL_PATH/bin"/>
+            <executable failure="abort" keep="false" stage="never" targetfile="$INSTALL_PATH/bin/directv-ttyS0.pl"/>
+            <executable failure="abort" keep="false" stage="never" targetfile="$INSTALL_PATH/bin/directv-ttyS1.pl"/>
+        </pack>
+        <pack name="Comskip" preselected="no" required="no">
+            <description>Commercial skipping using wine/comskip.</description>
+            <file override="update"
+                src="server/bundle/jflicks-tv-postproc-worker-comskip.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bin/comcodec.dll" targetdir="$INSTALL_PATH/bin"/>
+            <file override="update"
+                src="server/bin/comskip.exe" targetdir="$INSTALL_PATH/bin"/>
+            <file override="update"
+                src="server/conf/comskip.ini" targetdir="$INSTALL_PATH/conf"/>
+        </pack>
+        <pack name="Photo Manager Digikam" preselected="no" required="no">
+            <description>Add if you organize your photos with Digikam.</description>
+            <file override="update"
+                src="server/bundle/jflicks-photomanager-digikam.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-sqlitejdbc.jar" targetdir="$INSTALL_PATH/bundle"/>
+        </pack>
+    </packs>
+</installation>

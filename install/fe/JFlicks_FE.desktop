@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Icon[en_US]=start
+Name[en_US]=LTMS_FE
+Exec=%INSTALL_PATH/startup.sh
+Comment[en_US]=This will autostart the LTMS FE when the user logs in.
+Name=LTMS FE
+Comment=This will autostart the LTMS FE when the user logs in.
+Icon=start

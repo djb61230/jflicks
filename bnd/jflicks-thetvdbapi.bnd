@@ -1,0 +1,22 @@
+custom=true
+
+Bundle-Version: 1.0.0
+
+Include-Resource:\
+ ../lib/moviejukebox.jar,\
+ ../lib/thetvdbapi.jar
+
+Bundle-ClassPath:\
+ .,\
+ moviejukebox.jar,\
+ thetvdbapi.jar
+
+Export-Package:\
+ com.moviejukebox.thetvdb;version="1.0.0",\
+ com.moviejukebox.thetvdb.model;version="1.0.0"
+
+Import-Package:\
+ com.moviejukebox.thetvdb;version="1.0.0",\
+ com.moviejukebox.thetvdb.model;version="1.0.0",\
+
+DynamicImport-Package: *

@@ -1,0 +1,885 @@
+<project name="jflicks" default="build" basedir=".">
+
+    <!--
+        Setup all properties that are needed.
+    -->
+    <property environment="env"/>
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+    <property name="dist" location="dist"/>
+    <property name="lib" location="lib"/>
+    <property name="tools" location="tools"/>
+    <property name="bundle" location="bundle"/>
+    <property name="bnd" location="bnd"/>
+    <property name="docs" location="docs"/>
+    <property file="local.properties"/>
+
+    <taskdef resource="aQute/bnd/ant/taskdef.properties"
+        classpath="${tools}/bnd-0.0.384.jar"/>
+
+    <!--
+        Make a build classpath for our code.
+    -->
+    <path id="build.classpath">
+
+        <fileset dir="${dist}" includes="*.jar" />
+        <fileset dir="${lib}" includes="*.jar" />
+
+    </path>
+
+    <path id="runtime.classpath">
+
+        <fileset dir="${dist}" includes="jflicks-test.jar" />
+        <fileset dir="${lib}" includes="*.jar" />
+        <fileset dir="${bundle}" includes="*.jar" />
+
+    </path>
+
+    <!--
+        Initialize some work directories for generation of source code
+        and for building to class files and jars.
+    -->
+    <target name="init">
+
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dist}"/>
+        <mkdir dir="${bundle}"/>
+        <mkdir dir="${docs}"/>
+
+    </target>
+
+    <!--
+        The main build target.  It calls the generated code builds, then
+        does an init and build iota proper and places compiled classes
+        into one jar file.
+    -->
+    <target name="build" depends="init" description="Build everything and jar">
+
+        <javac srcdir="${src}" destdir="${build}" classpathref="build.classpath"
+            debug="on" includes="**/*.java" excludes="**/package-info.java">
+
+            <compilerarg value="-Xlint:unchecked"/>
+
+        </javac>
+
+        <jar destfile="${dist}/jflicks.jar" basedir="${build}"
+            excludes="org.jflicks/**/test/*.class">
+        </jar>
+
+        <jar destfile="${dist}/jflicks-test.jar" basedir="${build}">
+        </jar>
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-base.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-stream-http.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-programdata-sd.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-recorder-hdhr.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-recorder-v4l2.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-scheduler-system.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-live-system.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-videomanager-system.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-photomanager-digikam.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-postproc-system.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-postproc-worker-comskip.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-postproc-worker-mediainfo.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-postproc-worker-ffmpegscreenshot.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-metadata-themoviedb.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-metadata-thetvdb.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-nms-system.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-nms-remote.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-player-mplayer.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-player-cvlc.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-player-totem.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-player-chrome.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-player-photoshow.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-client.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-scheduler.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-metadata.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-dvd.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-livetv.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-ondemand.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-photo.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-preference.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-preview.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-recording.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-schedule.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-script.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-video.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-webvideo.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-rc-lirc.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-imagecache-system.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-web-rss.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-trailer-apple.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-ondemand-roku.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${lib}/jdom.jar"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-jdom.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${lib}/rsslib4j-0.2.jar"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-rsslib4j.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${lib}/swingx-1.6.jar"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-swingx.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${lib}/TimingFramework-1.0.jar"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-timingframework.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${lib}/thetvdbapi.jar"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-thetvdbapi.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${lib}/sqlitejdbc-v056.jar"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-sqlitejdbc.bnd"
+            output="${bundle}"
+        />
+
+    </target>
+
+    <target name="check-felix-server" unless="felix.server.home">
+
+        <echo message="Felix server home is not defined!"/>
+
+    </target>
+
+    <target name="check-felix-client" unless="felix.client.home">
+
+        <echo message="Felix client home is not defined!"/>
+
+    </target>
+
+    <target name="check-felix-scheduler" unless="felix.scheduler.home">
+
+        <echo message="Felix scheduler home is not defined!"/>
+
+    </target>
+
+    <target name="check-felix-fe" unless="felix.fe.home">
+
+        <echo message="Felix front end home is not defined!"/>
+
+    </target>
+
+    <target name="check-felix-metadata" unless="felix.metadata.home">
+
+        <echo message="Felix metadata home is not defined!"/>
+
+    </target>
+
+    <target name="deploy" depends="build,check-felix-server,check-felix-client,check-felix-scheduler,check-felix-fe,check-felix-metadata"
+        description="Gotta do more than just compile!">
+
+        <!-- First do server side. -->
+        <copy file="${bundle}/jflicks-base.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-stream-http.jar"
+            todir="${felix.server.home}/bundle"/>
+        <!-- -->
+        <copy file="${bundle}/jflicks-photomanager-digikam.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-videomanager-system.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-tv-programdata-sd.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-tv-recorder-hdhr.jar"
+            todir="${felix.server.home}/bundle"/>
+        <!-- -->
+        <copy file="${bundle}/jflicks-tv-recorder-v4l2.jar"
+            todir="${felix.server.home}/bundle"/>
+        <!-- -->
+        <copy file="${bundle}/jflicks-tv-scheduler-system.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-tv-live-system.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-system.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-comskip.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-mediainfo.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-ffmpegscreenshot.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-web-rss.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-trailer-apple.jar"
+            todir="${felix.server.home}/bundle"/>
+        <!-- -->
+        <copy file="${bundle}/jflicks-tv-ondemand-roku.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-nms-system.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-swingx.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-jdom.jar"
+            todir="${felix.server.home}/bundle"/>
+
+        <!-- -->
+        <copy file="${bundle}/jflicks-rsslib4j.jar"
+            todir="${felix.server.home}/bundle"/>
+        <copy file="${bundle}/jflicks-sqlitejdbc.jar"
+            todir="${felix.server.home}/bundle"/>
+        <!-- -->
+
+        <!-- Now do client side. -->
+        <copy file="${bundle}/jflicks-base.jar"
+            todir="${felix.client.home}/bundle"/>
+        <copy file="${bundle}/jflicks-swingx.jar"
+            todir="${felix.client.home}/bundle"/>
+        <copy file="${bundle}/jflicks-nms-remote.jar"
+            todir="${felix.client.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui.jar"
+            todir="${felix.client.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view.jar"
+            todir="${felix.client.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-client.jar"
+            todir="${felix.client.home}/bundle"/>
+
+        <!-- Now do scheduler side. -->
+        <copy file="${bundle}/jflicks-base.jar"
+            todir="${felix.scheduler.home}/bundle"/>
+        <copy file="${bundle}/jflicks-swingx.jar"
+            todir="${felix.scheduler.home}/bundle"/>
+        <copy file="${bundle}/jflicks-nms-remote.jar"
+            todir="${felix.scheduler.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui.jar"
+            todir="${felix.scheduler.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view.jar"
+            todir="${felix.scheduler.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-scheduler.jar"
+            todir="${felix.scheduler.home}/bundle"/>
+
+        <!-- Now do fe side. -->
+        <copy file="${bundle}/jflicks-base.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-player-mplayer.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-player-cvlc.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-player-totem.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-player-chrome.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-player-photoshow.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-swingx.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-timingframework.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-nms-remote.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-dvd.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-livetv.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-ondemand.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-photo.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-preference.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-preview.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-recording.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-schedule.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-script.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-video.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-webvideo.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-rc-lirc.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-imagecache-system.jar"
+            todir="${felix.fe.home}/bundle"/>
+
+        <!-- Now do metadata side. -->
+        <copy file="${bundle}/jflicks-base.jar"
+            todir="${felix.metadata.home}/bundle"/>
+        <copy file="${bundle}/jflicks-swingx.jar"
+            todir="${felix.metadata.home}/bundle"/>
+        <copy file="${bundle}/jflicks-nms-remote.jar"
+            todir="${felix.metadata.home}/bundle"/>
+        <copy file="${bundle}/jflicks-metadata-themoviedb.jar"
+            todir="${felix.metadata.home}/bundle"/>
+        <copy file="${bundle}/jflicks-metadata-thetvdb.jar"
+            todir="${felix.metadata.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui.jar"
+            todir="${felix.metadata.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view.jar"
+            todir="${felix.metadata.home}/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-metadata.jar"
+            todir="${felix.metadata.home}/bundle"/>
+        <copy file="${bundle}/jflicks-jdom.jar"
+            todir="${felix.metadata.home}/bundle"/>
+        <copy file="${bundle}/jflicks-thetvdbapi.jar"
+            todir="${felix.metadata.home}/bundle"/>
+
+    </target>
+
+    <!--
+        Freshen up.
+    -->
+    <target name="clean" description="There's hope when there's soap!">
+
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+        <delete dir="${bundle}"/>
+
+    </target>
+
+    <!--
+        Clean up everything.
+    -->
+    <target name="clean-all" depends="clean" description="Scrub away!">
+
+        <delete dir="${docs}"/>
+
+    </target>
+
+    <target name="check-checkstyle" unless="checkstyle.home">
+
+        <echo message="Checkstyle home is not defined!"/>
+
+    </target>
+
+    <target name="checkstyle" depends="build,check-checkstyle"
+        if="checkstyle.home" description="Style matters!">
+
+        <taskdef resource="checkstyletask.properties"
+            classpath="${checkstyle.home}/checkstyle-all-5.0.jar"/>
+
+        <echo message="${checkstyle.home}"/>
+
+        <checkstyle config="${checks}" classpathref="build.classpath">
+
+            <fileset dir="src" includes="**/*.java" excludes="**/test/*.java" />
+
+        </checkstyle>
+
+    </target>
+
+    <target name="check-findbugs" unless="findbugs.home">
+
+        <echo message="findbugs is not defined!"/>
+
+    </target>
+
+    <target name="findbugs" depends="build,check-findbugs"
+        if="findbugs.home" description="Zap bugs!">
+
+        <taskdef name="findbugs"
+            classpath="${findbugs.home}/lib/findbugs-ant.jar" 
+            classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+
+        <findbugs home="${findbugs.home}"
+            output="${findbugs.output}"
+            stylesheet="${findbugs.stylesheet}.xsl"
+            outputFile="${findbugs.file}"
+            reportLevel="medium"
+            jvmargs="-Xmx1500m">
+
+            <auxClasspath>
+                <fileset dir="${lib}" includes="**/*.jar"/>
+            </auxClasspath>
+
+            <sourcePath path="${src}"/>
+            <class location="${dist}/jflicks.jar"/>
+
+        </findbugs>
+
+    </target>
+
+    <target name="serialver" depends="build">
+
+        <input message="classname: " addproperty="arg1"
+            defaultvalue="org.jflicks."/>
+        <exec executable="serialver">
+            <arg value="-classpath"/>
+            <arg value="${build}"/>
+            <arg value="${arg1}"/>
+        </exec>
+
+    </target>
+
+    <target name="roku" depends="build">
+
+        <java classname="org.jflicks.tv.ondemand.roku.RokuUtil"
+            fork="true">
+
+            <arg value="press home:3"/>
+            <arg value="press home:2"/>
+            <arg value="press back:2"/>
+            <arg value="press right:2"/>
+            <arg value="press right:2"/>
+            <arg value="press select:5"/>
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-spew" depends="build">
+
+        <java classname="org.jflicks.util.Spew" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-netflix" depends="build">
+
+        <java classname="org.jflicks.tv.ondemand.roku.RokuOnDemand"
+            fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-sd" depends="build">
+
+        <java classname="org.jflicks.tv.programdata.sd.SchedulesDirect"
+            fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="javadoc" depends="build"
+        description="Only thing better is the source!">
+
+        <javadoc packagenames="org.*"
+            sourcepath="${src}"
+            destdir="${docs}"
+            author="true"
+            version="true"
+            use="true"
+            classpathref="runtime.classpath"
+            verbose="false"
+            windowtitle="JFLICKS">
+            <doctitle><![CDATA[<h1>JFLICKS</h1>]]></doctitle>
+            <bottom><![CDATA[<i>JFLICKS</i>]]></bottom>
+        </javadoc>
+
+    </target>
+
+</project>
+

@@ -1,0 +1,18 @@
+module=org.jflicks.tv.live.system
+custom=true
+
+Bundle-Version: 1.0.0
+
+Bundle-Activator: ${module}.Activator
+
+Include-Resource:\
+ org/jflicks/tv/live/system/default.properties=../conf/live.default.properties
+
+Import-Package:\
+ org.jflicks.tv;version="1.0.0",\
+ org.jflicks.tv.live;version="1.0.0",\
+ org.jflicks.util;version="1.0.0",\
+ org.osgi.framework;version="[1.3,2.0)"
+
+Export-Package:\
+ ${module}
