@@ -17,18 +17,11 @@
 package org.jflicks.videomanager.system;
 
 import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jflicks.db.DbWorker;
-import org.jflicks.configure.BaseConfiguration;
-import org.jflicks.configure.Configuration;
-import org.jflicks.configure.NameValue;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.Video;
 import org.jflicks.util.FileFind;

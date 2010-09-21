@@ -23,20 +23,13 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.HashMap;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
-import javax.swing.Timer;
 
 import org.jflicks.job.JobContainer;
-import org.jflicks.job.JobEvent;
-import org.jflicks.job.JobListener;
-import org.jflicks.job.JobManager;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSUtil;
 import org.jflicks.rc.RC;
@@ -455,6 +448,11 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
         }
     }
 
+    /**
+     * We actually don't do anything here at this point.
+     *
+     * @param event A given ActionEvent.
+     */
     public void actionPerformed(ActionEvent event) {
     }
 

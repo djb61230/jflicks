@@ -16,10 +16,6 @@
 */
 package org.jflicks.player.cvlc;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;

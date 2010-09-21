@@ -16,7 +16,6 @@
 */
 package org.jflicks.nms.system;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +28,6 @@ import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
 import org.jflicks.nms.BaseNMS;
 import org.jflicks.nms.NMSConstants;
-import org.jflicks.nms.Video;
 import org.jflicks.tv.Listing;
 import org.jflicks.tv.live.Live;
 import org.jflicks.tv.ondemand.OnDemand;
@@ -37,8 +35,6 @@ import org.jflicks.tv.postproc.PostProc;
 import org.jflicks.tv.programdata.ProgramData;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.Scheduler;
-import org.jflicks.util.FileFind;
-import org.jflicks.util.Util;
 import org.jflicks.web.Web;
 
 import com.db4o.ObjectContainer;

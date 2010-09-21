@@ -16,13 +16,11 @@
 */
 package org.jflicks.tv.recorder.v4l2;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobEvent;
 
 /**

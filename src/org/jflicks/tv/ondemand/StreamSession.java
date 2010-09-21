@@ -17,7 +17,6 @@
 package org.jflicks.tv.ondemand;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 /**
  * This class contains all the properties representing a on demand session for
@@ -34,7 +33,7 @@ public class StreamSession implements Serializable {
     /**
      * Constructor with two required arguments.
      *
-     * @param name The name of the ViewQueue.
+     * @param name The name of this session.
      * @param hostPort A way for a client to find the NMS.
      */
     public StreamSession(String name, String hostPort) {
@@ -43,6 +42,11 @@ public class StreamSession implements Serializable {
         setHostPort(hostPort);
     }
 
+    /**
+     * A name for this session.
+     *
+     * @return A String instance.
+     */
     public String getName() {
         return (name);
     }
@@ -51,6 +55,12 @@ public class StreamSession implements Serializable {
         name = s;
     }
 
+    /**
+     * String in the format of host:port that can be parsed to see what
+     * NMS instance this session is associated.
+     *
+     * @return A String instance.
+     */
     public String getHostPort() {
         return (hostPort);
     }

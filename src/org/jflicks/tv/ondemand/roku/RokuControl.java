@@ -21,6 +21,8 @@ import java.io.PrintStream;
 import org.apache.commons.net.telnet.TelnetClient;
 
 /**
+ * Simple class that can communicate with a Roku box and send it
+ * commands.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -33,6 +35,12 @@ public class RokuControl {
     private PrintStream printStream;
     private TelnetClient telnetClient;
 
+    /**
+     * Constructor with two required arguments.
+     *
+     * @param host The host or IP as a String.
+     * @param port The port that the Roku is listening upon.
+     */
     public RokuControl(String host, int port) {
 
         setHost(host);
@@ -93,7 +101,7 @@ public class RokuControl {
             out.flush();
             System.out.println(value);
 
-        } catch(Exception ex) {
+        } catch (Exception ex) {
 
             System.out.println(ex.getMessage());
         }
@@ -135,6 +143,11 @@ public class RokuControl {
         return (telnetClient);
     }
 
+    /**
+     * Send the String based command.
+     *
+     * @param cmd The command String.
+     */
     public void command(String cmd) {
 
         TelnetClient c = getTelnetClient();
@@ -144,6 +157,9 @@ public class RokuControl {
         }
     }
 
+    /**
+     * Clean up any resources with have used.
+     */
     public void close() {
 
         if (telnetClient != null) {

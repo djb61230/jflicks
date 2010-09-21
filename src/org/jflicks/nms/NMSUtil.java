@@ -16,8 +16,6 @@
 */
 package org.jflicks.nms;
 
-import java.util.ArrayList;
-
 /**
  * A utility class with helpful methods when dealing with NMS implementations.
  *
@@ -29,6 +27,14 @@ public final class NMSUtil {
     private NMSUtil() {
     }
 
+    /**
+     * Convenience method to find the NMS defined by the host:port in the
+     * array.
+     *
+     * @param array An array of NMS instances.
+     * @param hostPort A host:port String instance.
+     * @return An NMS instance if it exists in the given array.
+     */
     public static NMS select(NMS[] array, String hostPort) {
 
         NMS result = null;

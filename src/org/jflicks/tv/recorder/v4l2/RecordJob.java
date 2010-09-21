@@ -17,12 +17,10 @@
 package org.jflicks.tv.recorder.v4l2;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
-import org.jflicks.job.SystemJob;
 
 /**
  * After finding, setting a channel, it's time to record from a v4l2

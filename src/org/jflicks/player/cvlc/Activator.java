@@ -18,9 +18,6 @@ package org.jflicks.player.cvlc;
 
 import java.util.Hashtable;
 
-import org.jflicks.job.JobContainer;
-import org.jflicks.job.JobManager;
-import org.jflicks.job.SystemJob;
 import org.jflicks.player.Player;
 import org.jflicks.util.BaseActivator;
 

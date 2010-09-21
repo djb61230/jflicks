@@ -99,6 +99,11 @@ public class VideoListPanel extends BaseListPanel {
         }
     }
 
+    /**
+     * Convenience method to return the selected object as a Video instance.
+     *
+     * @return A Video instance.
+     */
     public Video getSelectedVideo() {
         return ((Video) getSelectedObject());
     }

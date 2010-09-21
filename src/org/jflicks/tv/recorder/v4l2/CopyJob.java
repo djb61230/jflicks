@@ -34,7 +34,10 @@ public class CopyJob extends AbstractJob {
     private String dest;
 
     /**
-     * Simple no argument constructor.
+     * Constructor with our two required arguments.
+     *
+     * @param source The source path.
+     * @param dest The destination path.
      */
     public CopyJob(String source, String dest) {
 

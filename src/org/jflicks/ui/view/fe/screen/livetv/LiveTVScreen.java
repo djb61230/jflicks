@@ -188,7 +188,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
             int width = (int) d.getWidth();
             int height = (int) d.getHeight();
 
-            RecordingInfoWindow w = new RecordingInfoWindow( width, height, 8,
+            RecordingInfoWindow w = new RecordingInfoWindow(width, height, 8,
                 getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont());
             w.setImageCache(getImageCache());

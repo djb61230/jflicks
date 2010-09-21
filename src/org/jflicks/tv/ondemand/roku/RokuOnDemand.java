@@ -16,15 +16,8 @@
 */
 package org.jflicks.tv.ondemand.roku;
 
-import java.io.File;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jflicks.nms.Video;
 import org.jflicks.tv.ondemand.BaseOnDemand;
 import org.jflicks.tv.ondemand.StreamSession;
-import org.jflicks.util.Util;
 
 /**
  * Roku is a set-top box that can access Netflix and other online video
@@ -63,6 +56,9 @@ public class RokuOnDemand extends BaseOnDemand {
         port = i;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void command(StreamSession ss, int type) {
 
         RokuControl rc = getRokuControl();
@@ -124,6 +120,9 @@ public class RokuOnDemand extends BaseOnDemand {
         return (rokuControl);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void closeSession(StreamSession ss) {
 
         super.closeSession(ss);

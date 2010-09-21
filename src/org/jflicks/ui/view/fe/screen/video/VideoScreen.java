@@ -666,17 +666,17 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                 if (s.equals(NMSConstants.ASPECT_RATIO_16X9)) {
 
                     result = n.getFeatureIntro169();
-                    System.out.println("result 169: <" + result +">");
+                    System.out.println("result 169: <" + result + ">");
 
                 } else if (s.equals(NMSConstants.ASPECT_RATIO_235X1)) {
 
                     result = n.getFeatureIntro235();
-                    System.out.println("result 235: <" + result +">");
+                    System.out.println("result 235: <" + result + ">");
 
                 } else if (s.equals(NMSConstants.ASPECT_RATIO_4X3)) {
 
                     result = n.getFeatureIntro43();
-                    System.out.println("result 43: <" + result +">");
+                    System.out.println("result 43: <" + result + ">");
                 }
             }
         }

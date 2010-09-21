@@ -155,8 +155,6 @@
             <file override="update"
                 src="server/bundle/jflicks-tv-postproc-worker-comskip.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="server/bin/comcodec.dll" targetdir="$INSTALL_PATH/bin"/>
-            <file override="update"
                 src="server/bin/comskip.exe" targetdir="$INSTALL_PATH/bin"/>
             <file override="update"
                 src="server/conf/comskip.ini" targetdir="$INSTALL_PATH/conf"/>

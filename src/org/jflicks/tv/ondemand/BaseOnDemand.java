@@ -16,15 +16,11 @@
 */
 package org.jflicks.tv.ondemand;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import org.jflicks.configure.BaseConfig;
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
-import org.jflicks.nms.Video;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.util.Util;
 
