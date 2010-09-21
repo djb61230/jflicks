@@ -133,37 +133,40 @@ public class NMSTracker extends BaseTracker {
             // An NMS went away, lets make a new list of only the ones that
             // seem alive...
             NMS[] array = m.getNMS();
-            if ((array != null) && (array.length == 1)) {
+            if (array != null) {
 
-                // We only had one so just make an empty list.
-                m.setNMS(null);
+                if (array.length == 1) {
 
-            } else {
-
-                ArrayList<NMS> nlist = new ArrayList<NMS>();
-                for (int i = 0; i < array.length; i++) {
-
-                    try {
-
-                        String tmp = array[i].getTitle();
-                        nlist.add(array[i]);
-
-                    } catch (Exception ex) {
-
-                        // This one must be dead so we don't add it.  The
-                        // exception would have happened on the getTitle().
-                    }
-                }
-
-                if (nlist.size() > 0) {
-
-                    // Set our list to what appear to be alive...
-                    m.setNMS(nlist.toArray(new NMS[nlist.size()]));
+                    // We only had one so just make an empty list.
+                    m.setNMS(null);
 
                 } else {
 
-                    // Well apparently all are dead now...
-                    m.setNMS(null);
+                    ArrayList<NMS> nlist = new ArrayList<NMS>();
+                    for (int i = 0; i < array.length; i++) {
+
+                        try {
+
+                            String tmp = array[i].getTitle();
+                            nlist.add(array[i]);
+
+                        } catch (Exception ex) {
+
+                            // This one must be dead so we don't add it.  The
+                            // exception would have happened on the getTitle().
+                        }
+                    }
+
+                    if (nlist.size() > 0) {
+
+                        // Set our list to what appear to be alive...
+                        m.setNMS(nlist.toArray(new NMS[nlist.size()]));
+
+                    } else {
+
+                        // Well apparently all are dead now...
+                        m.setNMS(null);
+                    }
                 }
             }
         }

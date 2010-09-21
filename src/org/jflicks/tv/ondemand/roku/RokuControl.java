@@ -17,7 +17,9 @@
 package org.jflicks.tv.ondemand.roku;
 
 import java.io.InputStream;
+import java.io.IOException;
 import java.io.PrintStream;
+
 import org.apache.commons.net.telnet.TelnetClient;
 
 /**
@@ -31,7 +33,6 @@ public class RokuControl {
 
     private String host;
     private int port;
-    private InputStream inputStream;
     private PrintStream printStream;
     private TelnetClient telnetClient;
 
@@ -133,7 +134,7 @@ public class RokuControl {
 
                 printStream = new PrintStream(telnetClient.getOutputStream());
 
-            } catch (Exception ex) {
+            } catch (IOException ex) {
 
                 telnetClient = null;
                 printStream = null;

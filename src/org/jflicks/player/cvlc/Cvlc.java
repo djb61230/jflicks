@@ -33,7 +33,6 @@ public class Cvlc extends BasePlayer {
 
     private CvlcJob cvlcJob;
     private JobContainer jobContainer;
-    private JobContainer statusJobContainer;
 
     /**
      * Simple constructor.

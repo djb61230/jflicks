@@ -113,8 +113,6 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
     private void setNMS(NMS[] array) {
         nms = array;
-
-        System.out.println("setNMS got something " + array);
     }
 
     private Cursor getNoCursor() {

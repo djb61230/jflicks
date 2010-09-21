@@ -110,9 +110,6 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
         JLayeredPane pane = getLayeredPane();
         if ((d != null) && (pane != null)) {
 
-            int width = (int) d.getWidth();
-            int height = (int) d.getHeight();
-
             JXPanel panel = new JXPanel(new BorderLayout());
             JXLabel l = new JXLabel("Getting stream, please wait...");
             l.setHorizontalTextPosition(SwingConstants.CENTER);
