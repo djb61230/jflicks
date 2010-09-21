@@ -271,10 +271,12 @@
         <delete dir="${build}"/>
         <delete dir="${dist}"/>
         <delete>
+            <fileset dir="server" includes="bin/jflicks-*.jar"/>
             <fileset dir="server" includes="bundle/jflicks-*.jar"/>
         </delete>
 
         <delete>
+            <fileset dir="fe" includes="bin/jflicks-*.jar"/>
             <fileset dir="fe" includes="bundle/jflicks-*.jar"/>
         </delete>
 
