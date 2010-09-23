@@ -1,0 +1,143 @@
+<project name="jlirc" default="build" basedir=".">
+
+    <!--
+        Setup all properties that are needed.
+    -->
+    <property environment="env"/>
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+    <property name="dist" location="dist"/>
+    <property name="docs" location="docs"/>
+    <property name="jflicks.lib" location="../lib"/>
+    <property name="jflicks.sharedlib" location="../sharedlib"/>
+
+    <!--
+        Make a build classpath for our code.
+    -->
+    <path id="build.classpath">
+
+        <fileset dir="${dist}" includes="*.jar" />
+
+    </path>
+
+    <path id="runtime.classpath">
+
+        <fileset dir="${dist}" includes="*.jar" />
+
+    </path>
+
+    <!--
+        Initialize some work directories for generation of source code
+        and for building to class files and jars.
+    -->
+    <target name="init">
+
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dist}"/>
+        <mkdir dir="${docs}"/>
+
+    </target>
+
+    <!--
+        The main build target.  It calls the generated code builds, then
+        does an init and build iota proper and places compiled classes
+        into one jar file.
+    -->
+    <target name="build" depends="init" description="Build everything and jar">
+
+        <javac srcdir="${src}" destdir="${build}" classpathref="build.classpath"
+            debug="on" includes="**/*.java" excludes="**/package-info.java">
+
+            <compilerarg value="-Xlint:unchecked"/>
+
+        </javac>
+
+        <jar destfile="${dist}/jlirc.jar" basedir="${build}"
+            excludes="org/jlirc/**/test/*.class,*.h">
+        </jar>
+
+        <javah outputFile="${build}/junixsocket.h" classpath="${build}">
+
+            <class name="org.lirc.socket.UnixSocketImpl"/>
+            <class name="org.lirc.socket.UnixSocketInputStream"/>
+            <class name="org.lirc.socket.UnixSocketOutputStream"/>
+
+        </javah>
+
+        <echo message="${env.JAVA_HOME}/include"/>
+        <echo message="${env.JAVA_HOME}/include/linux"/>
+
+        <exec executable="gcc">
+
+            <arg value="-march=i386"/>
+            <arg value="-shared"/>
+            <arg value="-fpic"/>
+            <arg value="-I"/>
+            <arg value="${env.JAVA_HOME}/include"/>
+            <arg value="-I"/>
+            <arg value="${env.JAVA_HOME}/include/linux"/>
+            <arg value="-I"/>
+            <arg value="${build}"/>
+            <arg value="-o"/>
+            <arg value="${dist}/libjunixsocket.so"/>
+            <arg value="${src}/org/lirc/socket/junixsocket.c"/>
+
+        </exec>
+
+    </target>
+
+    <target name="deploy" depends="build"
+        description="Gotta do more than just compile!">
+
+        <copy file="${dist}/jlirc.jar" todir="${jflicks.lib}"/>
+        <exec executable="cp">
+
+            <arg value="-p"/>
+            <arg value="${dist}/libjunixsocket.so"/>
+            <arg value="${jflicks.sharedlib}"/>
+
+        </exec>
+
+    </target>
+
+    <!--
+        Freshen up.
+    -->
+    <target name="clean" description="There's hope when there's soap!">
+
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+        <delete file="${jflicks.lib}/jlirc.jar"/>
+        <delete file="${jflicks.sharedlib}/libjunixsocket.so"/>
+
+    </target>
+
+    <!--
+        Clean up everything.
+    -->
+    <target name="clean-all" depends="clean" description="Scrub away!">
+
+        <delete dir="${docs}"/>
+
+    </target>
+
+    <target name="javadoc" depends="build"
+        description="Only thing better is the source!">
+
+        <javadoc packagenames="org.*"
+            sourcepath="${src}"
+            destdir="${docs}"
+            author="true"
+            version="true"
+            use="true"
+            classpathref="runtime.classpath"
+            verbose="false"
+            windowtitle="JLIRC">
+            <doctitle><![CDATA[<h1>JLIRC</h1>]]></doctitle>
+            <bottom><![CDATA[<i>JLIRC</i>]]></bottom>
+        </javadoc>
+
+    </target>
+
+</project>
+
