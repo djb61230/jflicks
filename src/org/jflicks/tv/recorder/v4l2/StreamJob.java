@@ -16,12 +16,21 @@
 */
 package org.jflicks.tv.recorder.v4l2;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousCloseException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.InterruptibleChannel;
+import javax.swing.Timer;
 
 import org.jflicks.job.JobEvent;
+import org.jflicks.job.JobManager;
 
 /**
  * A job that saves images to an NMS.
@@ -29,10 +38,14 @@ import org.jflicks.job.JobEvent;
  * @author Doug Barnum
  * @version 1.0
  */
-public class StreamJob extends BaseV4l2Job {
+public class StreamJob extends BaseV4l2Job implements ActionListener {
 
     private String host;
     private int port;
+    private FileInputStream fileInputStream;
+    private FileChannel fileChannel;
+    private long currentRead;
+    private long lastRead;
 
     /**
      * Simple no argument constructor.
@@ -76,6 +89,43 @@ public class StreamJob extends BaseV4l2Job {
         port = i;
     }
 
+    public void actionPerformed(ActionEvent event) {
+
+        if (currentRead != 0L) {
+
+            if (lastRead == 0L) {
+
+                // First time through...
+                lastRead = currentRead;
+
+            } else if (currentRead == lastRead) {
+
+                // We have arrived here with the same read time as last.
+                // We are probably blocked...
+                System.out.println("We are probably blocking...");
+                System.out.println("fileChannel: " + fileChannel);
+                if (fileChannel != null) {
+
+                    try {
+
+                        fileChannel.close();
+                        fileChannel = null;
+                        System.out.println("after close");
+
+                    } catch (IOException ex) {
+
+                        System.out.println("exception on interupt close");
+                    }
+                }
+
+            } else {
+
+                // All good reset our last read...
+                lastRead = currentRead;
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -88,7 +138,10 @@ public class StreamJob extends BaseV4l2Job {
      */
     public void run() {
 
-        byte[] buffer = new byte[1024];
+        //byte[] buffer = new byte[1024];
+        ByteBuffer bb = ByteBuffer.allocate(1024);
+        byte[] buffer = bb.array();
+        System.out.println("ByteBuffer: " + bb + " " + buffer);
 
         String h = getHost();
         String d = getDevice();
@@ -98,24 +151,56 @@ public class StreamJob extends BaseV4l2Job {
 
             try {
 
+                int count = 0;
                 int p = getPort();
                 DatagramSocket socket = new DatagramSocket();
                 InetAddress addr = InetAddress.getByName(h);
-                FileInputStream fis = new FileInputStream(d);
+                fileInputStream = new FileInputStream(d);
+                fileChannel = fileInputStream.getChannel();
+                System.out.println("fileChannel: " + fileChannel);
+                System.out.println(fileChannel instanceof InterruptibleChannel);
+                currentRead = 0L;
+                lastRead = 0L;
+                Timer timer = new Timer(2000, this);
+                timer.start();
 
                 while (!isTerminate()) {
 
-                    int count = fis.read(buffer);
-                    DatagramPacket packet =
-                        new DatagramPacket(buffer, count, addr, p);
-                    socket.send(packet);
+                    try {
+
+                        currentRead = System.currentTimeMillis();
+                        //count = fileInputStream.read(buffer);
+                        bb.rewind();
+                        count = fileChannel.read(bb);
+                        //System.out.println("count: " + count);
+
+                    } catch (AsynchronousCloseException ex) {
+
+                        timer.stop();
+                        count = 0;
+                        currentRead = 0L;
+                        lastRead = 0L;
+                        fileInputStream.close();
+                        fileInputStream = new FileInputStream(d);
+                        fileChannel = fileInputStream.getChannel();
+                        timer = new Timer(2000, this);
+                        timer.start();
+                    }
+
+                    if (count > 0) {
+
+                        DatagramPacket packet =
+                            new DatagramPacket(buffer, count, addr, p);
+                        socket.send(packet);
+                    }
                 }
 
-                fis.close();
+                fileInputStream.close();
+                timer.stop();
 
             } catch (Exception ex) {
 
-                System.out.println(ex.getMessage());
+                System.out.println("Exception dude: " + ex.getMessage());
             }
         }
 

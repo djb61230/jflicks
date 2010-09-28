@@ -386,7 +386,7 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
         }
     }
 
-    protected int getVisibleCount() {
+    public int getVisibleCount() {
         return (visibleCount);
     }
 

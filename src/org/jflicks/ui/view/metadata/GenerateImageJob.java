@@ -136,6 +136,13 @@ public class GenerateImageJob extends AbstractJob implements JobListener {
                         // cut off the bottom.
                         //bi = bi.getSubimage(0, 0, 1280, height);
                         bi = Util.scale(bi, 1280);
+
+                    } else if ((bi.getWidth() == 1440)
+                        && (bi.getHeight() == 1080)) {
+
+                        // We have a 1440x1080 image that needs to be
+                        // stretched to 1920x1080.
+                        bi = Util.resize(bi, 1280, 720);
                     }
 
                     int height = bi.getHeight();

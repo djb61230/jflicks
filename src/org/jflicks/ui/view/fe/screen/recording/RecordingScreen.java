@@ -171,9 +171,9 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             recordings = null;
         }
 
-        RecordingListPanel p = getGroupRecordingListPanel();
-        RecordingListPanel rllp = getRecordingListPanel();
-        if ((p != null) && (rllp != null)) {
+        RecordingListPanel group = getGroupRecordingListPanel();
+        RecordingListPanel rlp = getRecordingListPanel();
+        if ((group != null) && (rlp != null)) {
 
             // If we are currently "working" then the user probably just
             // did a delete.  We want to save the current state so we
@@ -184,6 +184,9 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             ArrayList<Recording> list = new ArrayList<Recording>();
             if (recordings != null) {
 
+                // Here we only add one of each "title" of recording.  What
+                // I mean is if we have 7 "Leave it to Beaver" then we will
+                // only put one (the first one found) in this list.
                 for (int i = 0; i < recordings.length; i++) {
 
                     Recording tmp = recordings[i];
@@ -199,28 +202,39 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 all.setTitle("All");
                 list.add(0, all);
             }
+
+            // If we had any Recordings in the array this will hold at least
+            // the "All" fake Recording.
             if (list.size() > 0) {
 
                 Recording[] newarray = list.toArray(new Recording[list.size()]);
-                p.setRecordings(newarray);
+                group.setRecordings(newarray);
 
             } else {
 
-                p.setRecordings(null);
+                group.setRecordings(null);
             }
 
             if (isRestoreState()) {
 
-                setRestoreState(false);
-                p.setSelectedIndex(getCurrentGroupIndex());
-                p.setStartIndex(getCurrentGroupStartIndex());
-                rllp.setSelectedIndex(getCurrentRecordingIndex());
-                rllp.setStartIndex(getCurrentRecordingStartIndex());
+                //setRestoreState(false);
+                // Even though the chances that the group selection changed,
+                // we need to force a property update because the best way
+                // to update is via the property change.
+                group.setSelectedRecording(null);
+                group.setSelectedIndex(getCurrentGroupIndex());
+                group.setStartIndex(getCurrentGroupStartIndex());
+                //rlp.setSelectedIndex(getCurrentRecordingIndex());
+                //rlp.setStartIndex(getCurrentRecordingStartIndex());
 
             } else {
 
-                p.setSelectedIndex(0);
-                rllp.setSelectedIndex(0);
+                // This is easy, the user probably just went to this screen.
+                // So we just set it to the "beginning".
+                group.setSelectedIndex(0);
+                group.setStartIndex(0);
+                rlp.setSelectedIndex(0);
+                rlp.setStartIndex(0);
             }
         }
     }
@@ -458,14 +472,14 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     private void preserveState() {
 
         System.out.println("preserveState");
-        RecordingListPanel gllp = getGroupRecordingListPanel();
-        RecordingListPanel rllp = getRecordingListPanel();
-        if ((gllp != null) && (rllp != null)) {
+        RecordingListPanel group = getGroupRecordingListPanel();
+        RecordingListPanel rlp = getRecordingListPanel();
+        if ((group != null) && (rlp != null)) {
 
-            setCurrentGroupIndex(gllp.getSelectedIndex());
-            setCurrentGroupStartIndex(gllp.getStartIndex());
-            setCurrentRecordingIndex(rllp.getSelectedIndex());
-            setCurrentRecordingStartIndex(rllp.getStartIndex());
+            setCurrentGroupIndex(group.getSelectedIndex());
+            setCurrentGroupStartIndex(group.getStartIndex());
+            setCurrentRecordingIndex(rlp.getSelectedIndex());
+            setCurrentRecordingStartIndex(rlp.getStartIndex());
             setRestoreState(true);
             System.out.println("preserveState group: "
                 + getCurrentGroupIndex());
@@ -632,6 +646,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             Recording r = (Recording) event.getNewValue();
             if (r != null) {
 
+                int rcount = 0;
                 String title = r.getTitle();
                 RecordingListPanel rlp = getRecordingListPanel();
                 if ((title != null) && (rlp != null)) {
@@ -639,7 +654,11 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     if (title.equals("All")) {
 
                         rlp.setCompleteDescription(true);
-                        rlp.setRecordings(getRecordings());
+                        Recording[] myrec = getRecordings();
+                        if (myrec != null) {
+                            rcount = myrec.length;
+                        }
+                        rlp.setRecordings(myrec);
 
                     } else {
 
@@ -657,6 +676,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                             }
 
                             rlp.setCompleteDescription(false);
+                            rcount = rlist.size();
                             if (rlist.size() > 0) {
 
                                 rlp.setRecordings(rlist.toArray(
@@ -669,7 +689,39 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         }
                     }
 
-                    rlp.setSelectedIndex(0);
+                    if (isRestoreState()) {
+
+                        // The user deleted a recording so we need to return
+                        // to a state that is most reasonable.  First we are
+                        // done after this few lines of code so reset our
+                        // restore boolean.
+                        setRestoreState(false);
+
+                        // We "remembered" the start index before we deleted.
+                        // Now we want to restore to that index but only if
+                        // we have a full list.  The delete may make us one
+                        // short and we want to scroll down if we can.
+                        int old = getCurrentRecordingStartIndex();
+                        if (old > 0) {
+
+                            System.out.println("rcount: " + rcount);
+                            if (old + rlp.getVisibleCount() > rcount) {
+
+                                old--;
+                            }
+                        }
+                        rlp.setStartIndex(old);
+
+                        // We saved the old index.  If we were at the bottom,
+                        // the RecordingListPanel will fix an out of range
+                        // value so we don't need to be careful here.
+                        rlp.setSelectedIndex(getCurrentRecordingIndex());
+
+                    } else {
+
+                        rlp.setSelectedIndex(0);
+                        rlp.setStartIndex(0);
+                    }
                 }
             }
 

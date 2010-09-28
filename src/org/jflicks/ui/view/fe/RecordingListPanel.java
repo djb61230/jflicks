@@ -108,6 +108,10 @@ public class RecordingListPanel extends BaseListPanel {
         return ((Recording) getSelectedObject());
     }
 
+    public void setSelectedRecording(Recording r) {
+        setSelectedObject(r);
+    }
+
     private ArrayList<Recording> getRecordingList() {
         return (recordingList);
     }
@@ -124,6 +128,12 @@ public class RecordingListPanel extends BaseListPanel {
     public Recording[] getRecordings() {
 
         Recording[] result = null;
+
+        ArrayList<Recording> l = getRecordingList();
+        if ((l != null) && (l.size() > 0)) {
+
+            result = l.toArray(new Recording[l.size()]);
+        }
 
         return (result);
     }
@@ -146,8 +156,8 @@ public class RecordingListPanel extends BaseListPanel {
                     l.add(array[i]);
                 }
 
-                setSelectedObject(null);
-                setStartIndex(0);
+                //setSelectedObject(null);
+                //setStartIndex(0);
             }
         }
     }
@@ -255,6 +265,9 @@ public class RecordingListPanel extends BaseListPanel {
 
             applyColor();
             int sindex = getSelectedIndex() + getStartIndex();
+            if (sindex < 0) {
+                sindex = 0;
+            }
             if (l.size() > sindex) {
                 setSelectedObject(l.get(sindex));
             }

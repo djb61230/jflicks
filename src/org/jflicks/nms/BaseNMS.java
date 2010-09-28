@@ -592,7 +592,11 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             for (int i = 0; i < l.size(); i++) {
 
                 Web web = l.get(i);
-                Collections.addAll(wvl, web.getWebVideos());
+                WebVideo[] webvids = web.getWebVideos();
+                if ((webvids != null) && (webvids.length > 0)) {
+
+                    Collections.addAll(wvl, webvids);
+                }
             }
 
             if (wvl.size() > 0) {
