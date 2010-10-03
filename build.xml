@@ -825,7 +825,7 @@
 
     </target>
 
-    <target name="test-spew" depends="build">
+    <target name="test-stream" depends="build">
 
         <java classname="org.jflicks.util.Spew" fork="true">
 

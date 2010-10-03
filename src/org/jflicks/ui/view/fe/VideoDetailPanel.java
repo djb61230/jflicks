@@ -105,22 +105,22 @@ public class VideoDetailPanel extends BaseCustomizePanel {
             double height = d.getHeight();
 
             double halfWidth = width / 2.0;
-            double twoThirdWidth = width * 0.67;
-            double oneThirdWidth = width - twoThirdWidth;
+            double threeQuarterWidth = width * 0.75;
+            double oneQuarterWidth = width - threeQuarterWidth;
 
             double titleHeight = height * 0.2;
             double releasedHeight = height * 0.2;
             double descriptionHeight = height * 0.6;
 
-            title.setBounds(0, 0, (int) halfWidth, (int) titleHeight);
+            title.setBounds(0, 0, (int) threeQuarterWidth, (int) titleHeight);
             released.setBounds(0, (int) titleHeight, (int) halfWidth,
                 (int) releasedHeight);
             description.setBounds(0, (int) (titleHeight + releasedHeight),
-                (int) twoThirdWidth, (int) descriptionHeight);
-            time.setBounds((int) twoThirdWidth, 0, (int) oneThirdWidth,
+                (int) threeQuarterWidth, (int) descriptionHeight);
+            time.setBounds((int) threeQuarterWidth, 0, (int) oneQuarterWidth,
                 (int) titleHeight);
-            aspect.setBounds((int) twoThirdWidth, (int) titleHeight,
-                (int) oneThirdWidth, (int) titleHeight);
+            aspect.setBounds((int) threeQuarterWidth, (int) titleHeight,
+                (int) oneQuarterWidth, (int) titleHeight);
 
             pane.add(title, Integer.valueOf(100));
             pane.add(released, Integer.valueOf(100));
@@ -201,12 +201,12 @@ public class VideoDetailPanel extends BaseCustomizePanel {
                             long secs = (duration - (mins * 60));
                             if (secs > 0) {
 
-                                l.setText("Time " + mins + " minutes " + secs
-                                    + " seconds");
+                                l.setText("Time " + mins + " min " + secs
+                                    + " sec");
 
                             } else {
 
-                                l.setText("Time " + mins + " minutes");
+                                l.setText("Time " + mins + " min");
                             }
                         }
 

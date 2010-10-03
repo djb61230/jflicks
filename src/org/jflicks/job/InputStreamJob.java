@@ -29,6 +29,7 @@ import java.io.InputStream;
 public class InputStreamJob extends AbstractJob {
 
     private static final int BUFFER_SIZE = 20480;
+    private static final int MAX_SIZE = 1024 * 100;
 
     private InputStream inputStream;
     private StringBuffer stringBuffer;
@@ -95,6 +96,10 @@ public class InputStreamJob extends AbstractJob {
                             String tmp = new String(data, 0, count);
                             tmp = tmp.trim();
                             fireJobEvent(JobEvent.UPDATE, tmp);
+                            if (stringBuffer.length() > MAX_SIZE) {
+
+                                stringBuffer.setLength(0);
+                            }
                             stringBuffer.append(tmp);
                             stringBuffer.append("\n");
 

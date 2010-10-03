@@ -41,15 +41,15 @@ public final class Spew {
      */
     public static void main(String[] args) {
 
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[32*1024];
 
         try {
 
             int number = 0;
             DatagramSocket socket = new DatagramSocket();
             InetAddress addr = InetAddress.getByName("192.168.2.2");
-            FileInputStream fis = new FileInputStream("/dev/video0");
-            while (number < 100000) {
+            FileInputStream fis = new FileInputStream("test.mpg");
+            while (fis.available() > 0) {
 
                 int count = fis.read(buffer);
                 DatagramPacket packet =
