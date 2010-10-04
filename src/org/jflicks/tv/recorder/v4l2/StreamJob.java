@@ -16,36 +16,23 @@
 */
 package org.jflicks.tv.recorder.v4l2;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousCloseException;
-import java.nio.channels.FileChannel;
-import java.nio.channels.InterruptibleChannel;
-import javax.swing.Timer;
-
-import org.jflicks.job.JobEvent;
-import org.jflicks.job.JobManager;
 
 /**
- * A job that saves images to an NMS.
+ * Read from a device and send the data via UDP packet.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class StreamJob extends BaseV4l2Job implements ActionListener {
+public class StreamJob extends RecoverJob {
 
     private String host;
     private int port;
-    private FileInputStream fileInputStream;
-    private FileChannel fileChannel;
-    private long currentRead;
-    private long lastRead;
+    private DatagramSocket datagramSocket;
+    private InetAddress inetAddress;
 
     /**
      * Simple no argument constructor.
@@ -89,140 +76,70 @@ public class StreamJob extends BaseV4l2Job implements ActionListener {
         port = i;
     }
 
-    public void actionPerformed(ActionEvent event) {
+    private DatagramSocket getDatagramSocket() {
 
-        if (currentRead != 0L) {
-
-            if (lastRead == 0L) {
-
-                // First time through...
-                lastRead = currentRead;
-
-            } else if (currentRead == lastRead) {
-
-                // We have arrived here with the same read time as last.
-                // We are probably blocked...
-                System.out.println("We are probably blocking...");
-                System.out.println("fileChannel: " + fileChannel);
-                if (fileChannel != null) {
-
-                    try {
-
-                        fileChannel.close();
-                        fileChannel = null;
-                        System.out.println("after close");
-
-                    } catch (IOException ex) {
-
-                        System.out.println("exception on interupt close");
-                    }
-                }
-
-            } else {
-
-                // All good reset our last read...
-                lastRead = currentRead;
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void start() {
-        setTerminate(false);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void run() {
-
-        //byte[] buffer = new byte[1024];
-        ByteBuffer bb = ByteBuffer.allocate(1024);
-        byte[] buffer = bb.array();
-        System.out.println("ByteBuffer: " + bb + " " + buffer);
-
-        String h = getHost();
-        String d = getDevice();
-        System.out.println("host: " + h);
-        System.out.println("device: " + d);
-        if ((h != null) && (d != null)) {
+        if (datagramSocket == null) {
 
             try {
 
-                int count = 0;
-                int p = getPort();
-                DatagramSocket socket = new DatagramSocket();
-                InetAddress addr = InetAddress.getByName(h);
-                fileInputStream = new FileInputStream(d);
-                fileChannel = fileInputStream.getChannel();
-                System.out.println("fileChannel: " + fileChannel);
-                System.out.println(fileChannel instanceof InterruptibleChannel);
-                currentRead = 0L;
-                lastRead = 0L;
-                Timer timer = new Timer(2000, this);
-                timer.start();
+                datagramSocket = new DatagramSocket();
 
-                while (!isTerminate()) {
+            } catch (IOException ex) {
 
-                    try {
-
-                        currentRead = System.currentTimeMillis();
-                        //count = fileInputStream.read(buffer);
-                        bb.rewind();
-                        count = fileChannel.read(bb);
-                        //System.out.println("count: " + count);
-
-                    } catch (AsynchronousCloseException ex) {
-
-                        timer.stop();
-                        count = 0;
-                        currentRead = 0L;
-                        lastRead = 0L;
-                        fileInputStream.close();
-                        fileInputStream = new FileInputStream(d);
-                        fileChannel = fileInputStream.getChannel();
-                        timer = new Timer(2000, this);
-                        timer.start();
-                    }
-
-                    if (count > 0) {
-
-                        DatagramPacket packet =
-                            new DatagramPacket(buffer, count, addr, p);
-                        socket.send(packet);
-                    }
-                }
-
-                fileInputStream.close();
-                timer.stop();
-
-            } catch (Exception ex) {
-
-                System.out.println("Exception dude: " + ex.getMessage());
+                datagramSocket = null;
             }
         }
 
-        fireJobEvent(JobEvent.COMPLETE);
+        return (datagramSocket);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void stop() {
-        setTerminate(true);
-    }
+    private InetAddress getInetAddress() {
 
-    /**
-     * {@inheritDoc}
-     */
-    public void jobUpdate(JobEvent event) {
+        if (inetAddress == null) {
 
-        if (event.getType() == JobEvent.COMPLETE) {
+            try {
 
-            stop();
+                inetAddress = InetAddress.getByName(getHost());
+
+            } catch (IOException ex) {
+
+                inetAddress = null;
+            }
         }
+
+        return (inetAddress);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process(byte[] buffer, int length) {
+
+        DatagramSocket socket = getDatagramSocket();
+        InetAddress addr = getInetAddress();
+        if ((socket != null) && (addr != null)) {
+
+            int p = getPort();
+            try {
+
+                DatagramPacket packet =
+                    new DatagramPacket(buffer, length, addr, p);
+                socket.send(packet);
+
+            } catch (IOException ex) {
+
+                System.out.println(ex.getMessage());
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void close() {
+
+        datagramSocket = null;
+        inetAddress = null;
     }
 
 }

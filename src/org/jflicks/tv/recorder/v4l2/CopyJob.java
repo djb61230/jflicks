@@ -16,11 +16,9 @@
 */
 package org.jflicks.tv.recorder.v4l2;
 
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-
-import org.jflicks.job.AbstractJob;
-import org.jflicks.job.JobEvent;
+import java.io.IOException;
 
 /**
  * A job that saves images to an NMS.
@@ -28,10 +26,10 @@ import org.jflicks.job.JobEvent;
  * @author Doug Barnum
  * @version 1.0
  */
-public class CopyJob extends AbstractJob {
+public class CopyJob extends RecoverJob {
 
-    private String source;
     private String dest;
+    private FileOutputStream fileOutputStream;
 
     /**
      * Constructor with our two required arguments.
@@ -41,16 +39,8 @@ public class CopyJob extends AbstractJob {
      */
     public CopyJob(String source, String dest) {
 
-        setSource(source);
+        setDevice(source);
         setDest(dest);
-    }
-
-    private String getSource() {
-        return (source);
-    }
-
-    private void setSource(String s) {
-        source = s;
     }
 
     private String getDest() {
@@ -61,52 +51,59 @@ public class CopyJob extends AbstractJob {
         dest = s;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void start() {
-        setTerminate(false);
+    private FileOutputStream getFileOutputStream() {
+
+        if (fileOutputStream == null) {
+
+            try {
+
+                fileOutputStream = new FileOutputStream(getDest());
+
+            } catch (FileNotFoundException ex) {
+
+                fileOutputStream = null;
+            }
+        }
+
+        return (fileOutputStream);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void run() {
+    public void process(byte[] buffer, int length) {
 
-        byte[] buffer = new byte[1024];
-
-        String s = getSource();
-        String d = getDest();
-        if ((s != null) && (d != null)) {
+        FileOutputStream fos = getFileOutputStream();
+        if (fos != null) {
 
             try {
 
-                FileInputStream fis = new FileInputStream(s);
-                FileOutputStream fos = new FileOutputStream(d);
+                fos.write(buffer, 0, length);
 
-                while (!isTerminate()) {
-
-                    int count = fis.read(buffer);
-                    fos.write(buffer, 0, count);
-                }
-
-                fis.close();
-                fos.close();
-
-            } catch (Exception ex) {
+            } catch (IOException ex) {
 
                 System.out.println(ex.getMessage());
             }
         }
-
-        fireJobEvent(JobEvent.COMPLETE);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void stop() {
-        setTerminate(true);
+    public void close() {
+
+        if (fileOutputStream != null) {
+
+            try {
+
+                fileOutputStream.close();
+                fileOutputStream = null;
+
+            } catch (IOException ex) {
+
+                fileOutputStream = null;
+            }
+        }
     }
 
 }

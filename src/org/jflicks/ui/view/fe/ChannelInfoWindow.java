@@ -34,6 +34,7 @@ import org.jflicks.tv.ShowAiring;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * This is our "banner" window showing the state of the currently running
@@ -103,12 +104,19 @@ public class ChannelInfoWindow extends JWindow implements ActionListener {
         double vgap = height * VGAP;
 
         JXPanel p = new JXPanel(new BorderLayout());
-        p.setOpaque(false);
-        p.setAlpha(alpha);
         setPanel(p);
 
+        JXPanel top = new JXPanel(new BorderLayout());
+        top.setOpaque(false);
+        top.setAlpha(alpha);
+        Color copy = new Color(backlight.getRed(), backlight.getGreen(),
+            backlight.getBlue(), (int) (alpha * 255));
+        MattePainter mpainter = new MattePainter(copy);
+        top.setBackgroundPainter(mpainter);
+        p.add(top, BorderLayout.CENTER);
+
         JLayeredPane pane = new JLayeredPane();
-        p.add(pane, BorderLayout.CENTER);
+        top.add(pane, BorderLayout.CENTER);
 
         JXLabel title = new JXLabel();
         title.setFont(large);
