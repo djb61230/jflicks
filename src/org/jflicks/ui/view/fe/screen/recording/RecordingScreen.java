@@ -268,8 +268,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         JXPanel ssp = getScreenShotPanel();
                         if ((ic != null) && (ssp != null)) {
 
-                            BufferedImage bi =
-                                ic.getImage("file://" + r.getPath() + ".png");
+                            BufferedImage bi = ic.getImage("file://"
+                                + r.getPath() + ".png", false);
                             if (bi != null) {
 
                                 ImagePainter painter =
@@ -734,7 +734,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 ImageCache ic = getImageCache();
                 if ((ic != null) && (r != null)) {
 
-                    BufferedImage bi = ic.getImage(r.getFanartURL());
+                    BufferedImage bi = ic.getImage(r.getFanartURL(), false);
                     if (bi != null) {
 
                         Dimension d = getSize();
@@ -760,7 +760,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     JXPanel ssp = getScreenShotPanel();
                     if (ssp != null) {
 
-                        bi = ic.getImage("file://" + r.getPath() + ".png");
+                        bi = ic.getImage("file://" + r.getPath() + ".png",
+                            false);
                         if (bi != null) {
 
                             ImagePainter painter =
