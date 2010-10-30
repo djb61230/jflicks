@@ -65,6 +65,10 @@ public class MimeHttpContext implements HttpContext {
 
                 result = "audio/x-mpegurl";
 
+            } else if (fileName.endsWith(".mp4")) {
+
+                result = "video/mp4";
+
             } else if (fileName.endsWith(".jpg")) {
 
                 result = "image/jpeg";

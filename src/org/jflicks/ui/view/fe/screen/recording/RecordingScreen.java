@@ -37,12 +37,14 @@ import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 import org.jflicks.imagecache.ImageCache;
+import org.jflicks.mvc.View;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 import org.jflicks.ui.view.fe.Dialog;
+import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.RecordingListPanel;
 import org.jflicks.ui.view.fe.RecordingDetailPanel;
 import org.jflicks.ui.view.fe.RecordingInfoWindow;
@@ -1012,6 +1014,13 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             if ((p != null) && (!p.isPlaying()) && (r != null)) {
 
                 if (event.getSource() == getBeginningButton()) {
+
+                    View v = getView();
+                    if (v instanceof FrontEndView) {
+
+                        FrontEndView fev = (FrontEndView) v;
+                        p.setRectangle(fev.getPosition());
+                    }
 
                     p.addPropertyChangeListener("Completed", this);
                     RecordingInfoWindow w = getRecordingInfoWindow();

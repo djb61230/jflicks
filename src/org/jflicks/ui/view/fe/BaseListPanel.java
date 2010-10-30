@@ -242,6 +242,10 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
                 if ((selected + 1) < array.length) {
 
                     setSelectedIndex(selected + 1);
+
+                } else {
+
+                    setSelectedIndex(0);
                 }
 
             } else {
@@ -263,6 +267,13 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
 
                         int start = getStartIndex();
                         setStartIndex(start + 1);
+
+                    } else {
+
+                        // No where to go down.  We want to reset to the
+                        // top of the list.
+                        setStartIndex(0);
+                        setSelectedIndex(0);
                     }
                 }
             }
@@ -283,6 +294,10 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
                 if ((selected - 1) >= 0) {
 
                     setSelectedIndex(selected - 1);
+
+                } else {
+
+                    setSelectedIndex(array.length - 1);
                 }
 
             } else {
@@ -304,6 +319,13 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
 
                         int start = getStartIndex();
                         setStartIndex(start - 1);
+
+                    } else {
+
+                        // No where to go down.  We want to reset to the
+                        // top of the list.
+                        setStartIndex(array.length - getVisibleCount());
+                        setSelectedIndex(getVisibleCount() - 1);
                     }
                 }
             }

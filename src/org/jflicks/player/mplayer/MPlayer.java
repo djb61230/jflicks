@@ -18,9 +18,11 @@ package org.jflicks.player.mplayer;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
+import org.jflicks.job.SystemJob;
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.PlayState;
+import org.jflicks.util.Util;
 
 /**
  * This Player (with other classes in this package) is capable of

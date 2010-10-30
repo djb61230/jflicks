@@ -231,8 +231,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
                 + " nodefault-bindings:conf="
                 + cpath + "/mplayer.conf:" + "file=mplayer.fifo"
                 //+ " nodefault-bindings:conf=/dev/null:file=mplayer.fifo"
-                + " -fs -zoom -slave -framedrop " + edltext
-                //+ " -fs -zoom -slave -cache 65536 -framedrop " + edltext
+                + " -fs -zoom -slave -cache 8182 -framedrop " + edltext
                 + " " + startParameter + " " + getPath());
 
         System.out.println("started: " + job.getCommand());

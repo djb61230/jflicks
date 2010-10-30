@@ -68,6 +68,9 @@ public interface Player {
      */
     String PLAYER_SLIDESHOW = "Slideshow";
 
+    String MESSAGE_QUIT = "quit";
+    String MESSAGE_INFO = "info";
+
     /**
      * The player supplies a unique name.
      *
@@ -189,6 +192,20 @@ public interface Player {
      * if a player does not support any sort of navigation.
      */
     void enter();
+
+    /**
+     * We keep a property of the some sort of keyboard message to be sent to
+     * listeners to our property changes.  Since a Player usually displays
+     * some sort of window and grabs the focus, this is a way to communicate
+     * the users request to the calling program.  Each player can listen for
+     * whatever keys they want but they need to send one of our predefined
+     * messages which include MESSAGE_UP, MESSAGE_DOWN, MESSAGE_LEFT,
+     * MESSAGE_RIGHT, MESSAGE_ENTER, MESSAGE_PAGEUP, MESSAGE_PAGEDOWN,
+     * MESSAGE_Q, and MESSAGE_I.
+     *
+     * @return The last message.
+     */
+    String getMessage();
 
     /**
      * Change the current audiosync value by an offset value.  The player

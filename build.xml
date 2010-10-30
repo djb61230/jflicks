@@ -56,7 +56,8 @@
     <target name="build" depends="init" description="Build everything and jar">
 
         <javac srcdir="${src}" destdir="${build}" classpathref="build.classpath"
-            debug="on" includes="**/*.java" excludes="**/package-info.java">
+            debug="on" includes="**/*.java" excludes="**/package-info.java"
+            includeantruntime="false">
 
             <compilerarg value="-Xlint:unchecked"/>
 
@@ -645,7 +646,7 @@
         <!-- Now do fe side. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-player-mplayer.jar"
+        <copy file="${bundle}/jflicks-player-vplayer.jar"
             todir="${felix.fe.home}/bundle"/>
         <copy file="${bundle}/jflicks-player-cvlc.jar"
             todir="${felix.fe.home}/bundle"/>
@@ -825,22 +826,9 @@
 
     </target>
 
-    <target name="test-stream" depends="build">
+    <target name="stream-send" depends="build">
 
-        <java classname="org.jflicks.util.Spew" fork="true">
-
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
-
-        </java>
-
-    </target>
-
-    <target name="test-netflix" depends="build">
-
-        <java classname="org.jflicks.tv.ondemand.roku.RokuOnDemand"
-            fork="true">
+        <java classname="org.jflicks.nms.StreamFileJob" fork="true">
 
             <classpath>
                 <path refid="runtime.classpath"/>
@@ -867,7 +855,6 @@
         description="Only thing better is the source!">
 
         <javadoc packagenames="org.*"
-            sourcepath="${src}"
             destdir="${docs}"
             author="true"
             version="true"
@@ -875,8 +862,14 @@
             classpathref="runtime.classpath"
             verbose="false"
             windowtitle="JFLICKS">
+
+            <fileset dir="${src}">
+                <exclude name="**/Activator.java"/>
+            </fileset>
+
             <doctitle><![CDATA[<h1>JFLICKS</h1>]]></doctitle>
             <bottom><![CDATA[<i>JFLICKS</i>]]></bottom>
+
         </javadoc>
 
     </target>

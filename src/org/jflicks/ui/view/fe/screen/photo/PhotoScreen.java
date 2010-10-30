@@ -332,15 +332,29 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
         if ((event.getSource() == getPlayer()) && (!isDone())) {
 
-            // If we get this property update, then it means the slideshow
-            // finished playing on it's own.
-            Boolean bobj = (Boolean) event.getNewValue();
-            if (bobj.booleanValue()) {
+            String pname = event.getPropertyName();
 
-                getPlayer().removePropertyChangeListener(this);
+            if (pname.equals("Completed")) {
+
+                // If we get this property update, then it means the slideshow
+                // finished playing on it's own.
+                Boolean bobj = (Boolean) event.getNewValue();
+                if (bobj.booleanValue()) {
+
+                    getPlayer().removePropertyChangeListener(this);
+                    requestFocus();
+                }
+
+            } else if (pname.equals("Message")) {
+
+                String mess = (String) event.getNewValue();
+                if ((mess != null) && (mess.equals(Player.MESSAGE_QUIT))) {
+
+                    getPlayer().stop();
+                    getPlayer().removePropertyChangeListener(this);
+                    requestFocus();
+                }
             }
-
-            requestFocus();
         }
     }
 
@@ -534,6 +548,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                 if (any != null) {
 
                     writePlaylist(any);
+                    p.addPropertyChangeListener("Message", this);
                     p.addPropertyChangeListener("Completed", this);
                     p.play("list.txt");
                 }
@@ -544,6 +559,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                 if (all != null) {
 
                     writePlaylist(all);
+                    p.addPropertyChangeListener("Message", this);
                     p.addPropertyChangeListener("Completed", this);
                     p.play("list.txt");
                 }

@@ -41,7 +41,7 @@ public final class Spew {
      */
     public static void main(String[] args) {
 
-        byte[] buffer = new byte[32*1024];
+        byte[] buffer = new byte[2048];
 
         try {
 
@@ -56,6 +56,7 @@ public final class Spew {
                     new DatagramPacket(buffer, count, addr, 1234);
                 socket.send(packet);
                 number++;
+                Thread.sleep(1);
             }
 
             fis.close();

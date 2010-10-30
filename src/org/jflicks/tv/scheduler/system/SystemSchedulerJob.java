@@ -55,7 +55,7 @@ public class SystemSchedulerJob extends AbstractJob
 
         setSystemScheduler(s);
         setRecordingHashMap(new HashMap<Recorder, Recording>());
-        setSleepTime(10000);
+        setSleepTime(15000);
     }
 
     private SystemScheduler getSystemScheduler() {

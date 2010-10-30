@@ -269,6 +269,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             int height = (int) position.getHeight();
 
             frame = new JXFrame();
+            frame.setTitle("Herm Schmiget");
             frame.setUndecorated(true);
             frame.setBounds(x, y, width, height);
 

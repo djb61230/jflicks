@@ -1119,6 +1119,29 @@ public class TextImagePanel extends BaseCustomizePanel
                 } else {
                     setSelectedIndex(getSelectedIndex() - 1);
                 }
+
+            } else {
+
+                if (isPopup()) {
+
+                    JXPanel popup = getPopupPanel();
+                    if (popup != null) {
+
+                        JXLabel[] array = getLabels(popup);
+                        if (array != null) {
+
+                            setPopupSelectedIndex(array.length - 1);
+                        }
+                    }
+
+                } else {
+
+                    JXLabel[] array = getLabels();
+                    if (array != null) {
+
+                        setSelectedIndex(array.length - 1);
+                    }
+                }
             }
         }
     }
@@ -1136,6 +1159,14 @@ public class TextImagePanel extends BaseCustomizePanel
                     setPopupSelectedIndex(getPopupSelectedIndex() + 1);
                 } else {
                     setSelectedIndex(getSelectedIndex() + 1);
+                }
+
+            } else {
+
+                if (isPopup()) {
+                    setPopupSelectedIndex(0);
+                } else {
+                    setSelectedIndex(0);
                 }
             }
         }

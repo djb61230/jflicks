@@ -152,10 +152,25 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
         if (time < getMinimumTime()) {
 
-            double dtmp = time - (double) getStartSeconds();
-            if (dtmp < 0.0) {
-                dtmp = time;
+            System.out.println("setTime argument: " + time);
+            System.out.println("setTime start seconds: " + getStartSeconds());
+
+            double dtmp = (double) getStartSeconds();
+            if (Math.abs(time - dtmp) < 12) {
+
+                dtmp = 0;
+
+            } else {
+
+                dtmp = time - dtmp;
+                System.out.println("setTime dtmp: " + dtmp);
+                if (dtmp < 0.0) {
+
+                    dtmp = time;
+                }
             }
+
+            System.out.println("setTime setMinimumTime: " + dtmp);
             setMinimumTime(dtmp);
         }
     }
@@ -326,9 +341,10 @@ public class PlayStateJob extends AbstractJob implements JobListener,
                     int sindex = message.indexOf("V:") + 2;
                     int eindex = message.indexOf("A-V:") - 1;
                     String tmp = message.substring(sindex, eindex);
-                    double dtmp = Util.str2double(tmp, 0.0);
+                    double dtmp = Util.str2double(tmp, Double.MAX_VALUE);
                     if (dtmp > 0.0) {
-                        setTime(Util.str2double(tmp, 0.0));
+
+                        setTime(dtmp);
 
                         if (isUsedSeconds()) {
 

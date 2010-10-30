@@ -18,8 +18,10 @@ package org.jflicks.player;
 
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import javax.swing.AbstractAction;
 
 /**
  * This class is a base implementation of the Player interface.
@@ -39,6 +41,7 @@ public abstract class BasePlayer implements Player {
     private boolean completed;
     private double audioOffset;
     private Rectangle rectangle;
+    private String message;
 
    /**
      * Simple empty constructor.
@@ -287,6 +290,25 @@ public abstract class BasePlayer implements Player {
     /**
      * {@inheritDoc}
      */
+    public String getMessage() {
+        return (message);
+    }
+
+    /**
+     * Convenience method to set this property.
+     *
+     * @param s The given type value.
+     */
+    public void setMessage(String s) {
+
+        String old = message;
+        message = s;
+        firePropertyChange("Message", old, message);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Rectangle getRectangle() {
         return (rectangle);
     }
@@ -367,6 +389,28 @@ public abstract class BasePlayer implements Player {
      * {@inheritDoc}
      */
     public void enter() {
+    }
+
+    protected class QuitAction extends AbstractAction {
+
+        public QuitAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            setMessage(MESSAGE_QUIT);
+        }
+    }
+
+    protected class InfoAction extends AbstractAction {
+
+        public InfoAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            setMessage(MESSAGE_INFO);
+        }
     }
 
 }
