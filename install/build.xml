@@ -43,7 +43,7 @@
     <target name="build" depends="init" description="Build everything and jar">
 
         <javac srcdir="${src}" destdir="${build}" classpathref="build.classpath"
-            debug="on" includes="**/*.java">
+            debug="on" includes="**/*.java" includeantruntime="false">
 
             <compilerarg value="-Xlint:unchecked"/>
 
@@ -93,8 +93,6 @@
         <copy file="${bundle}/jflicks-tv-postproc-worker-ffmpegscreenshot.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-ondemand-roku.jar"
-            todir="server/bundle"/>
-        <copy file="${bundle}/jflicks-web-rss.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-trailer-apple.jar"
             todir="server/bundle"/>
@@ -171,6 +169,8 @@
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-dvd.jar"
             todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-googletv.jar"
+            todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-livetv.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-ondemand.jar"
@@ -188,8 +188,6 @@
         <copy file="${bundle}/jflicks-ui-view-fe-screen-script.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-video.jar"
-            todir="fe/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-webvideo.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-rc-lirc.jar"
             todir="fe/bundle"/>

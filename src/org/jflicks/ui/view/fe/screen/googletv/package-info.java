@@ -14,25 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.web.rss;
-
-import org.jflicks.web.BaseWeb;
-
 /**
- * A web that supplies RSS video.
- *
- * @author Doug Barnum
- * @version 1.0 - 06 Sep 09
+ * A Screen that implements playing Video like GoogleTV.
  */
-public class RSS extends BaseWeb {
-
-    /**
-     * Simple default constructor.
-     */
-    public RSS() {
-
-        setTitle("RSS");
-    }
-
-}
-
+package org.jflicks.ui.view.fe.screen.googletv;

@@ -117,6 +117,18 @@ public class Install {
                         line = "nolirc=yes";
                         bw.write(line, 0, line.length());
                         bw.newLine();
+                        line = "fs=1";
+                        bw.write(line, 0, line.length());
+                        bw.newLine();
+                        line = "zoom=1";
+                        bw.write(line, 0, line.length());
+                        bw.newLine();
+                        line = "framedrop=1";
+                        bw.write(line, 0, line.length());
+                        bw.newLine();
+                        line = "cache=2048";
+                        bw.write(line, 0, line.length());
+                        bw.newLine();
 
                     } catch (IOException ex) {
 

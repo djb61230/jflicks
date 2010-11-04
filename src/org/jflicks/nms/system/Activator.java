@@ -51,7 +51,6 @@ public class Activator extends BaseActivator {
     private ProgramDataTracker programDataTracker;
     private TrailerTracker trailerTracker;
     private OnDemandTracker onDemandTracker;
-    private WebTracker webTracker;
     private RemoteTracker remoteTracker;
     private SystemNMS systemNMS;
 
@@ -101,10 +100,6 @@ public class Activator extends BaseActivator {
         setOnDemandTracker(odtracker);
         odtracker.open();
 
-        WebTracker wtracker = new WebTracker(bc, s);
-        setWebTracker(wtracker);
-        wtracker.open();
-
         Db4oServiceTracker dtracker = new Db4oServiceTracker(bc, s);
         setDb4oServiceTracker(dtracker);
         dtracker.open();
@@ -122,6 +117,7 @@ public class Activator extends BaseActivator {
             System.out.println("Service details: " + sd.toString());
             s.setTitle("NMS - " + sd.getAddressAsString() + ":" + sd.getPort());
             s.setHost(sd.getAddressAsString());
+            s.setPort(9278);
             s.setHttpPort(Util.str2int(
                 bc.getProperty("org.osgi.service.http.port"), 8080));
 
@@ -194,11 +190,6 @@ public class Activator extends BaseActivator {
         OnDemandTracker odtracker = getOnDemandTracker();
         if (odtracker != null) {
             odtracker.close();
-        }
-
-        WebTracker wtracker = getWebTracker();
-        if (wtracker != null) {
-            wtracker.close();
         }
 
         RemoteTracker rtracker = getRemoteTracker();
@@ -287,14 +278,6 @@ public class Activator extends BaseActivator {
 
     private void setOnDemandTracker(OnDemandTracker t) {
         onDemandTracker = t;
-    }
-
-    private WebTracker getWebTracker() {
-        return (webTracker);
-    }
-
-    private void setWebTracker(WebTracker t) {
-        webTracker = t;
     }
 
     private RemoteTracker getRemoteTracker() {

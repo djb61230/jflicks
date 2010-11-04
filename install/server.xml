@@ -114,13 +114,6 @@
             <parsable encoding="iso-8859-1"
                 targetfile="$INSTALL_PATH/postinstall.sh" type="shell"/>
         </pack>
-        <pack name="Web Video" preselected="yes" required="no">
-            <description>Get video from the Web.</description>
-            <file override="update"
-                src="server/bundle/jflicks-web-rss.jar" targetdir="$INSTALL_PATH/bundle"/>
-            <file override="update"
-                src="server/bundle/jflicks-rsslib4j.jar" targetdir="$INSTALL_PATH/bundle"/>
-        </pack>
         <pack name="Roku On Demand" preselected="no" required="no">
             <description>Use a Roku for On Demand viewing.</description>
             <file override="update"

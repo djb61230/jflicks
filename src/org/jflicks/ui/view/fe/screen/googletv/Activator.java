@@ -14,13 +14,12 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.ui.view.fe.screen.webvideo;
+package org.jflicks.ui.view.fe.screen.googletv;
 
 import java.util.Hashtable;
 
 import org.jflicks.player.Player;
 import org.jflicks.rc.RCTracker;
-import org.jflicks.imagecache.ImageCacheTracker;
 import org.jflicks.ui.view.fe.screen.Screen;
 import org.jflicks.util.BaseActivator;
 
@@ -32,6 +31,7 @@ import org.osgi.service.event.EventHandler;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
+ * Activator for the google tv screen.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -40,7 +40,6 @@ public class Activator extends BaseActivator {
 
     private ServiceTracker serviceTracker;
     private RCTracker rcTracker;
-    private ImageCacheTracker imageCacheTracker;
 
     /**
      * {@inheritDoc}
@@ -49,7 +48,7 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
-        WebVideoScreen s = new WebVideoScreen();
+        GoogleTVScreen s = new GoogleTVScreen();
 
         // Now we listen for command events.
         String[] topics = new String[] {
@@ -64,9 +63,6 @@ public class Activator extends BaseActivator {
         setRCTracker(rct);
         rct.open();
 
-        ImageCacheTracker ict = new ImageCacheTracker(bc, s);
-        setImageCacheTracker(ict);
-        ict.open();
         try {
 
             Filter filter = bc.createFilter("(Player-Handle="
@@ -99,11 +95,6 @@ public class Activator extends BaseActivator {
         if (rct != null) {
             rct.close();
         }
-
-        ImageCacheTracker ict = getImageCacheTracker();
-        if (ict != null) {
-            ict.close();
-        }
     }
 
     private ServiceTracker getServiceTracker() {
@@ -120,14 +111,6 @@ public class Activator extends BaseActivator {
 
     private void setRCTracker(RCTracker t) {
         rcTracker = t;
-    }
-
-    private ImageCacheTracker getImageCacheTracker() {
-        return (imageCacheTracker);
-    }
-
-    private void setImageCacheTracker(ImageCacheTracker t) {
-        imageCacheTracker = t;
     }
 
 }

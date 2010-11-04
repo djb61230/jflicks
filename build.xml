@@ -426,7 +426,7 @@
             eclipse="false"
             failok="false"
             exceptions="true"
-            files="${bnd}/jflicks-ui-view-fe-screen-webvideo.bnd"
+            files="${bnd}/jflicks-ui-view-fe-screen-googletv.bnd"
             output="${bundle}"
         />
 
@@ -445,15 +445,6 @@
             failok="false"
             exceptions="true"
             files="${bnd}/jflicks-imagecache-system.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-web-rss.bnd"
             output="${bundle}"
         />
 
@@ -481,15 +472,6 @@
             failok="false"
             exceptions="true"
             files="${bnd}/jflicks-jdom.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${lib}/rsslib4j-0.2.jar"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-rsslib4j.bnd"
             output="${bundle}"
         />
 
@@ -594,8 +576,6 @@
             todir="${felix.server.home}/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-worker-ffmpegscreenshot.jar"
             todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-web-rss.jar"
-            todir="${felix.server.home}/bundle"/>
         <copy file="${bundle}/jflicks-trailer-apple.jar"
             todir="${felix.server.home}/bundle"/>
         <!-- -->
@@ -609,8 +589,6 @@
             todir="${felix.server.home}/bundle"/>
 
         <!-- -->
-        <copy file="${bundle}/jflicks-rsslib4j.jar"
-            todir="${felix.server.home}/bundle"/>
         <copy file="${bundle}/jflicks-sqlitejdbc.jar"
             todir="${felix.server.home}/bundle"/>
         <!-- -->
@@ -690,7 +668,7 @@
             todir="${felix.fe.home}/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-video.jar"
             todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-webvideo.jar"
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-googletv.jar"
             todir="${felix.fe.home}/bundle"/>
         <copy file="${bundle}/jflicks-rc-lirc.jar"
             todir="${felix.fe.home}/bundle"/>

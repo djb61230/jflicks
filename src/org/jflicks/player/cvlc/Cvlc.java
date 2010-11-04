@@ -17,6 +17,8 @@
 package org.jflicks.player.cvlc;
 
 import org.jflicks.job.JobContainer;
+import org.jflicks.job.JobEvent;
+import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
@@ -29,7 +31,7 @@ import org.jflicks.player.PlayState;
  * @author Doug Barnum
  * @version 1.0
  */
-public class Cvlc extends BasePlayer {
+public class Cvlc extends BasePlayer implements JobListener {
 
     private CvlcJob cvlcJob;
     private JobContainer jobContainer;
@@ -101,6 +103,7 @@ public class Cvlc extends BasePlayer {
             setCompleted(false);
 
             CvlcJob job = new CvlcJob(url);
+            job.addJobListener(this);
             setCvlcJob(job);
 
             JobContainer jc = JobManager.getJobContainer(job);
@@ -116,6 +119,8 @@ public class Cvlc extends BasePlayer {
 
         setPaused(false);
         setPlaying(false);
+        setCompleted(true);
+        System.out.println("we stopped dude!!");
 
         JobContainer jc = getJobContainer();
         if (jc != null) {
@@ -165,6 +170,18 @@ public class Cvlc extends BasePlayer {
         PlayState result = null;
 
         return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void jobUpdate(JobEvent event) {
+
+        System.out.println("we got to cvlc jobUpdate");
+        if (event.getType() == JobEvent.COMPLETE) {
+
+            stop();
+        }
     }
 
 }

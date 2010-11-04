@@ -1,4 +1,4 @@
-module=org.jflicks.ui.view.fe.screen.webvideo
+module=org.jflicks.ui.view.fe.screen.googletv
 custom=true
 
 Bundle-Version: 1.0.0
@@ -6,15 +6,13 @@ Bundle-Version: 1.0.0
 Bundle-Activator: ${module}.Activator
 
 Include-Resource:\
- org/jflicks/ui/view/fe/screen/webvideo/Web_Video.png=../resources/webvideo_screen.png
+ org/jflicks/ui/view/fe/screen/googletv/GoogleTV.png=../resources/googletv_screen.png
 
 Export-Package:\
- org.jflicks.ui.view.fe.screen.webvideo;version="1.0.0"
+ org.jflicks.ui.view.fe.screen.googletv;version="1.0.0"
 
 Import-Package:\
  org.jflicks.job;version="1.0.0",\
- org.jflicks.imagecache;version="1.0.0",\
- org.jflicks.nms;version="1.0.0",\
  org.jflicks.player;version="1.0.0",\
  org.jflicks.rc;version="1.0.0",\
  org.jflicks.ui.view.fe;version="1.0.0",\

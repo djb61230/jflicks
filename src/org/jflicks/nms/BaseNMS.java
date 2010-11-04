@@ -60,7 +60,6 @@ import org.jflicks.tv.scheduler.Scheduler;
 import org.jflicks.util.EventSender;
 import org.jflicks.util.StartsWithFilter;
 import org.jflicks.videomanager.VideoManager;
-import org.jflicks.web.Web;
 
 /**
  * This class is a base implementation of the NMS interface.
@@ -83,7 +82,6 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     private ArrayList<Recorder> recorderList;
     private ArrayList<ProgramData> programDataList;
     private ArrayList<OnDemand> onDemandList;
-    private ArrayList<Web> webList;
     private ArrayList<Trailer> trailerList;
     private EventSender eventSender;
 
@@ -95,7 +93,6 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         setRecorderList(new ArrayList<Recorder>());
         setProgramDataList(new ArrayList<ProgramData>());
         setOnDemandList(new ArrayList<OnDemand>());
-        setWebList(new ArrayList<Web>());
         setTrailerList(new ArrayList<Trailer>());
     }
 
@@ -279,14 +276,6 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         onDemandList = l;
     }
 
-    private ArrayList<Web> getWebList() {
-        return (webList);
-    }
-
-    private void setWebList(ArrayList<Web> l) {
-        webList = l;
-    }
-
     /**
      * Convenience method for extensions to add a recorder instance.
      *
@@ -357,53 +346,6 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if ((l != null) && (pd != null)) {
             l.remove(pd);
         }
-    }
-
-    /**
-     * Convenience method for extensions to add a Web instance.
-     *
-     * @param w A Web to add.
-     */
-    public void addWeb(Web w) {
-
-        ArrayList<Web> l = getWebList();
-        if ((l != null) && (w != null)) {
-
-            l.add(w);
-
-            Configuration def = w.getDefaultConfiguration();
-            save(def, false);
-            w.setConfiguration(getConfigurationBySource(def.getSource()));
-        }
-    }
-
-    /**
-     * Convenience method for extensions to remove a Web instance.
-     *
-     * @param w A Web to remove.
-     */
-    public void removeWeb(Web w) {
-
-        ArrayList<Web> l = getWebList();
-        if ((l != null) && (w != null)) {
-            l.remove(w);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Web[] getWebs() {
-
-        Web[] result = null;
-
-        ArrayList<Web> l = getWebList();
-        if ((l != null) && (l.size() > 0)) {
-
-            result = l.toArray(new Web[l.size()]);
-        }
-
-        return (result);
     }
 
     /**
@@ -573,36 +515,6 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if ((l != null) && (l.size() > 0)) {
 
             result = l.toArray(new ProgramData[l.size()]);
-        }
-
-        return (result);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public WebVideo[] getWebVideos() {
-
-        WebVideo[] result = null;
-
-        ArrayList<Web> l = getWebList();
-        if ((l != null) && (l.size() > 0)) {
-
-            ArrayList<WebVideo> wvl = new ArrayList<WebVideo>();
-            for (int i = 0; i < l.size(); i++) {
-
-                Web web = l.get(i);
-                WebVideo[] webvids = web.getWebVideos();
-                if ((webvids != null) && (webvids.length > 0)) {
-
-                    Collections.addAll(wvl, webvids);
-                }
-            }
-
-            if (wvl.size() > 0) {
-
-                result = wvl.toArray(new WebVideo[wvl.size()]);
-            }
         }
 
         return (result);

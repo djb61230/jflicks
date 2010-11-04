@@ -25,7 +25,6 @@ Import-Package:\
  org.jflicks.tv.scheduler;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\
  org.jflicks.videomanager;version="1.0.0",\
- org.jflicks.web;version="1.0.0",\
  org.osgi.framework;version="[1.3,2.0)",\
  ch.ethz.iks.r_osgi,\
  com.db4o,\

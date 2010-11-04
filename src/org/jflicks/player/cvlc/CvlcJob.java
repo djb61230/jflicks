@@ -85,7 +85,7 @@ public class CvlcJob extends AbstractJob implements JobListener {
      */
     public void start() {
 
-        SystemJob job = SystemJob.getInstance("cvlc --fullscreen " + getURL());
+        SystemJob job = SystemJob.getInstance("vlc -I dummy --key-quit q --fullscreen " + getURL());
 
         System.out.println("started: " + job.getCommand());
         job.addJobListener(this);
@@ -105,6 +105,8 @@ public class CvlcJob extends AbstractJob implements JobListener {
 
             JobManager.sleep(getSleepTime());
         }
+
+        fireJobEvent(JobEvent.COMPLETE);
     }
 
     /**
@@ -125,6 +127,11 @@ public class CvlcJob extends AbstractJob implements JobListener {
      * {@inheritDoc}
      */
     public void jobUpdate(JobEvent event) {
+
+        if (event.getType() == JobEvent.COMPLETE) {
+
+            stop();
+        }
 
         fireJobEvent(event);
     }

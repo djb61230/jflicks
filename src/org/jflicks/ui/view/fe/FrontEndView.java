@@ -44,7 +44,6 @@ import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.NMSUtil;
 import org.jflicks.nms.Video;
-import org.jflicks.nms.WebVideo;
 import org.jflicks.photomanager.Photo;
 import org.jflicks.photomanager.Tag;
 import org.jflicks.rc.RC;
@@ -527,11 +526,6 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                         applyVideos((VideoProperty) array[i]);
                     }
 
-                    if (array[i] instanceof WebVideoProperty) {
-
-                        applyWebVideos((WebVideoProperty) array[i]);
-                    }
-
                     if (array[i] instanceof UpcomingProperty) {
 
                         applyUpcomings((UpcomingProperty) array[i]);
@@ -704,36 +698,6 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                     }
 
                     vp.setVideos(list.toArray(new Video[list.size()]));
-                }
-            }
-        }
-    }
-
-    private void applyWebVideos(WebVideoProperty wvp) {
-
-        if (wvp != null) {
-
-            NMS[] array = getNMS();
-            if ((array != null) && (array.length > 0)) {
-
-                if (array.length == 1) {
-
-                    wvp.setWebVideos(array[0].getWebVideos());
-
-                } else {
-
-                    // We have to merge from multiple NMS.
-                    ArrayList<WebVideo> list = new ArrayList<WebVideo>();
-                    for (int i = 0; i < array.length; i++) {
-
-                        WebVideo[] wvids = array[i].getWebVideos();
-                        if (wvids != null) {
-
-                            Collections.addAll(list, wvids);
-                        }
-                    }
-
-                    wvp.setWebVideos(list.toArray(new WebVideo[list.size()]));
                 }
             }
         }

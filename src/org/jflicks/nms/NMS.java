@@ -38,7 +38,6 @@ import org.jflicks.tv.postproc.PostProc;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.Scheduler;
 import org.jflicks.videomanager.VideoManager;
-import org.jflicks.web.Web;
 
 /**
  * This interface defines the methods that allow a client to configure
@@ -153,13 +152,6 @@ public interface NMS extends Config {
     Trailer[] getTrailers();
 
     /**
-     * An NMS has one or more Web sources associated with it.
-     *
-     * @return The Web sources available to this NMS.
-     */
-    Web[] getWebs();
-
-    /**
      * An NMS has one or more OnDemand sources associated with it.
      *
      * @return The OnDemand sources available to this NMS.
@@ -242,15 +234,6 @@ public interface NMS extends Config {
      * @param v A given Video to remove.
      */
     void removeVideo(Video v);
-
-    /**
-     * Retrieve all the current WebVideo instances currently defined.  These
-     * WebVideo instances are found by Web implementations and basically are
-     * a URL web page containing some video playable by a browser.
-     *
-     * @return An array of WebVideo objects.
-     */
-    WebVideo[] getWebVideos();
 
     /**
      * Acquire the specific Configuration by the source name.

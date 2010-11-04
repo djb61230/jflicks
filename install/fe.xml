@@ -151,10 +151,10 @@
             <file override="update"
                 src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
         </pack>
-        <pack name="Web Video" preselected="no" required="no">
-            <description>Watch Web Video via a browser.</description>
+        <pack name="Google TV" preselected="no" required="no">
+            <description>Watch Google TV web sites.</description>
             <file override="update"
-                src="fe/bundle/jflicks-ui-view-fe-screen-webvideo.jar" targetdir="$INSTALL_PATH/bundle"/>
+                src="fe/bundle/jflicks-ui-view-fe-screen-googletv.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/bundle/jflicks-player-chrome.jar" targetdir="$INSTALL_PATH/bundle"/>
         </pack>

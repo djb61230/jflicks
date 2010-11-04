@@ -35,7 +35,6 @@ import org.jflicks.tv.postproc.PostProc;
 import org.jflicks.tv.programdata.ProgramData;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.Scheduler;
-import org.jflicks.web.Web;
 
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
@@ -190,15 +189,6 @@ public class SystemNMS extends BaseNMS implements DbWorker {
             for (int i = 0; i < pds.length; i++) {
 
                 save(pds[i].getDefaultConfiguration(), false);
-            }
-        }
-
-        Web[] webs = getWebs();
-        if (webs != null) {
-
-            for (int i = 0; i < webs.length; i++) {
-
-                save(webs[i].getDefaultConfiguration(), false);
             }
         }
     }
@@ -358,30 +348,6 @@ public class SystemNMS extends BaseNMS implements DbWorker {
 
                             if (pd != null) {
                                 pd.setConfiguration(c);
-                            }
-                        }
-                    }
-
-                } else if (name.equals(NMSConstants.WEB_NAME)) {
-
-                    String source = c.getSource();
-                    if (source != null) {
-
-                        Web[] array = getWebs();
-                        if (array != null) {
-
-                            Web web = null;
-                            for (int i = 0; i < array.length; i++) {
-
-                                if (source.equals(array[i].getTitle())) {
-
-                                    web = array[i];
-                                    break;
-                                }
-                            }
-
-                            if (web != null) {
-                                web.setConfiguration(c);
                             }
                         }
                     }

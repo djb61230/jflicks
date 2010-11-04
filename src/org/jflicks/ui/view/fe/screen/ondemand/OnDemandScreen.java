@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -28,6 +29,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.nms.NMS;
@@ -164,7 +166,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                     System.out.println("Called openstream: " + ss);
                     if (ss != null) {
 
-                        System.out.println("ss: " + ss);
+                        System.out.println("ss: " + ss.getHostPort());
                         setStreamSession(ss);
 
                         Player p = getPlayer();
@@ -250,6 +252,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
         System.out.println("OnDemandScreen: close: " + ss);
         if (ss != null) {
 
+            System.out.println("OnDemandScreen: close: " + ss.getHostPort());
             NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
             if (n != null) {
 
@@ -420,12 +423,28 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                 // If we get this property update, then it means the video
                 // finished playing on it's own.
                 Boolean bobj = (Boolean) event.getNewValue();
-                if (!bobj.booleanValue()) {
+                if (bobj.booleanValue()) {
 
                     getPlayer().removePropertyChangeListener(this);
                     System.out.println("we are stopping player says so");
 
-                    close();
+                    // What we are doing here is closing our session in
+                    // another Thread because we are getting a remote
+                    // exception.  We appear to be having a call getting
+                    // interrupted when we close directly.  We throw it
+                    // in a timer to allow the original call to complete.
+                    // This is certainly a hack and I haven't determined
+                    // exactly why it's happening the way it is - but this
+                    // does seem to fix it.  Bleh.
+                    ActionListener closePerformer = new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            close();
+                        }
+                    };
+                    Timer closeTimer = new Timer(1000, closePerformer);
+                    closeTimer.setRepeats(false);
+                    closeTimer.start();
+
                     setDone(true);
                 }
 
