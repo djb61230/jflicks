@@ -246,6 +246,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-player-vlcj.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-player-totem.bnd"
             output="${bundle}"
         />
@@ -820,6 +829,18 @@
 
         <java classname="org.jflicks.tv.programdata.sd.SchedulesDirect"
             fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-vlcj" depends="build">
+
+        <java classname="org.jflicks.player.vlcj.Vlcj" fork="true">
 
             <classpath>
                 <path refid="runtime.classpath"/>

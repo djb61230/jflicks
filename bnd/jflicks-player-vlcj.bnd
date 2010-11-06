@@ -1,7 +1,16 @@
-module=org.jflicks.player.photoshow
+module=org.jflicks.player.vlcj
 custom=true
 
 Bundle-Version: 1.0.0
+
+Include-Resource:\
+ ../lib/jna.jar,\
+ ../lib/vlcj-1.1.3.jar
+
+Bundle-ClassPath:\
+ .,\
+ jna.jar,\
+ vlcj-1.1.3.jar
 
 Bundle-Activator: ${module}.Activator
 
@@ -10,12 +19,12 @@ Import-Package:\
  org.jflicks.player;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\
  org.osgi.framework;version="[1.3,2.0)",\
- org.jdesktop.swingx;version="[1.0,2.0)",\
- org.jdesktop.swingx.painter;version="[1.0,2.0)",\
- org.osgi.service.event;version="[1.0,2.0)",\
- org.osgi.util.tracker;version="[1.3,2.0)",\
+ javax.imageio,\
  javax.swing,\
- javax.imageio
+ javax.swing.event,\
+ javax.swing.filechooser
 
 Export-Package:\
  ${module}
+
+DynamicImport-Package: *

@@ -32,6 +32,7 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 import org.jflicks.job.JobContainer;
+import org.jflicks.mvc.View;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSUtil;
 import org.jflicks.rc.RC;
@@ -39,6 +40,7 @@ import org.jflicks.tv.ondemand.OnDemand;
 import org.jflicks.tv.ondemand.StreamSession;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
+import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 
@@ -172,6 +174,12 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                         Player p = getPlayer();
                         if (p != null) {
 
+                            View v = getView();
+                            if (v instanceof FrontEndView) {
+
+                                FrontEndView fev = (FrontEndView) v;
+                                p.setRectangle(fev.getPosition());
+                            }
                             p.addPropertyChangeListener("Paused", this);
                             p.addPropertyChangeListener("Completed", this);
                             p.play("udp://@" + hostaddr + ":1234");
@@ -456,9 +464,16 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                     NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
                     if (n != null) {
 
-                        System.out.println("command pause...");
                         n.command(ss, OnDemand.COMMAND_PAUSE);
                     }
+                }
+
+            } else if (event.getPropertyName().equals("Paused")) {
+
+                StreamSession ss = getStreamSession();
+                if (ss != null) {
+
+                    requestFocus();
                 }
             }
         }

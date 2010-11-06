@@ -576,6 +576,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             Recording r = rllp.getSelectedRecording();
             if ((r != null) && (ps != null)) {
 
+                updateLengthHint(r, p);
                 result = new Bookmark();
                 result.setTime((int) ps.getTime());
                 result.setPosition(ps.getPosition());
@@ -633,6 +634,21 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         }
 
         return (result);
+    }
+
+    private void updateLengthHint(Recording r, Player p) {
+
+        if ((r != null) && (p != null)) {
+
+            if (r.isCurrentlyRecording()) {
+
+                p.setLengthHint(System.currentTimeMillis() - r.getRealStart());
+
+            } else {
+
+                p.setLengthHint(r.getDuration());
+            }
+        }
     }
 
     /**
@@ -867,6 +883,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         Player p = getPlayer();
         if (p != null) {
 
+            updateLengthHint(getCurrentRecording(), p);
             p.seek(-8);
         }
     }
@@ -879,6 +896,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         Player p = getPlayer();
         if (p != null) {
 
+            updateLengthHint(getCurrentRecording(), p);
             p.seek(30);
         }
     }
@@ -901,6 +919,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     System.out.println("current seconds: " + current);
                     System.out.println("next spot: " + next);
                     System.out.println("diff: " + (next - current));
+                    updateLengthHint(getCurrentRecording(), p);
                     p.seek((next - current));
 
                     final Player tp = p;
@@ -947,6 +966,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 int back = Commercial.wherePrevious(getTimeline(), current);
                 if (back != current) {
 
+                    updateLengthHint(getCurrentRecording(), p);
                     p.seek((back - current) - 4);
 
                 } else {
@@ -977,6 +997,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         Player p = getPlayer();
         if (p != null) {
 
+            updateLengthHint(getCurrentRecording(), p);
             p.seek(-8);
         }
     }
@@ -989,6 +1010,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         Player p = getPlayer();
         if (p != null) {
 
+            updateLengthHint(getCurrentRecording(), p);
             p.seek(30);
         }
     }
@@ -1034,6 +1056,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     setTimeline(Commercial.timeline(
                         r.getCommercials()));
                     setCurrentRecording(r);
+                    updateLengthHint(r, p);
                     p.play(r.getPath());
 
                 } else if (event.getSource() == getBookmarkButton()) {
@@ -1050,6 +1073,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     setTimeline(Commercial.timeline(
                         r.getCommercials()));
                     setCurrentRecording(r);
+                    updateLengthHint(r, p);
                     p.play(r.getPath(), getBookmark(r.getId()));
 
                 } else if (event.getSource() == getDeleteButton()) {

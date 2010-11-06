@@ -1,0 +1,440 @@
+/*
+    This file is part of JFLICKS.
+
+    JFLICKS is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    JFLICKS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
+*/
+package org.jflicks.player.vlcj;
+
+import java.awt.BorderLayout;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Frame;
+import java.awt.Rectangle;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JFrame;
+
+import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+
+import org.jflicks.player.BasePlayer;
+import org.jflicks.player.Bookmark;
+import org.jflicks.player.PlayState;
+import org.jflicks.util.Util;
+
+public class Vlcj extends BasePlayer {
+
+    private JFrame frame;
+    private MediaPlayerFactory mediaPlayerFactory;
+    private EmbeddedMediaPlayer embeddedMediaPlayer;
+    private JPanel keyPanel;
+    private Canvas canvas;
+
+    public Vlcj() {
+
+        setType(PLAYER_VIDEO);
+        //setType(PLAYER_VIDEO_STREAM_UDP);
+        setTitle("Vlcj");
+
+        JPanel pan = new JPanel(new BorderLayout());
+        InputMap map = pan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+        QuitAction quitAction = new QuitAction();
+        map.put(KeyStroke.getKeyStroke("Q"), "q");
+        pan.getActionMap().put("q", quitAction);
+
+        InfoAction infoAction = new InfoAction();
+        map.put(KeyStroke.getKeyStroke("I"), "i");
+        pan.getActionMap().put("i", infoAction);
+
+        UpAction upAction = new UpAction();
+        map.put(KeyStroke.getKeyStroke("UP"), "up");
+        pan.getActionMap().put("up", upAction);
+
+        DownAction downAction = new DownAction();
+        map.put(KeyStroke.getKeyStroke("DOWN"), "down");
+        pan.getActionMap().put("down", downAction);
+
+        LeftAction leftAction = new LeftAction();
+        map.put(KeyStroke.getKeyStroke("LEFT"), "left");
+        pan.getActionMap().put("left", leftAction);
+
+        RightAction rightAction = new RightAction();
+        map.put(KeyStroke.getKeyStroke("RIGHT"), "right");
+        pan.getActionMap().put("right", rightAction);
+
+        EnterAction enterAction = new EnterAction();
+        map.put(KeyStroke.getKeyStroke("ENTER"), "enter");
+        pan.getActionMap().put("enter", enterAction);
+
+        GuideAction guideAction = new GuideAction();
+        map.put(KeyStroke.getKeyStroke("G"), "g");
+        pan.getActionMap().put("g", guideAction);
+
+        PauseAction pauseAction = new PauseAction();
+        map.put(KeyStroke.getKeyStroke("P"), "p");
+        pan.getActionMap().put("p", pauseAction);
+
+        PageUpAction pageupAction = new PageUpAction();
+        map.put(KeyStroke.getKeyStroke("PAGE_UP"), "pageup");
+        pan.getActionMap().put("pageup", pageupAction);
+
+        PageDownAction pagedownAction = new PageDownAction();
+        map.put(KeyStroke.getKeyStroke("PAGE_DOWN"), "pagedown");
+        pan.getActionMap().put("pagedown", pagedownAction);
+
+        RewindAction rewindAction = new RewindAction();
+        map.put(KeyStroke.getKeyStroke("R"), "r");
+        pan.getActionMap().put("r", rewindAction);
+
+        ForwardAction forwardAction = new ForwardAction();
+        map.put(KeyStroke.getKeyStroke("F"), "f");
+        pan.getActionMap().put("f", forwardAction);
+
+        SkipBackwardAction skipBackwardAction = new SkipBackwardAction();
+        map.put(KeyStroke.getKeyStroke("Z"), "z");
+        pan.getActionMap().put("z", skipBackwardAction);
+
+        SkipForwardAction skipForwardAction = new SkipForwardAction();
+        map.put(KeyStroke.getKeyStroke("X"), "x");
+        pan.getActionMap().put("x", skipForwardAction);
+
+        AudioSyncPlusAction audioSyncPlusAction = new AudioSyncPlusAction();
+        map.put(KeyStroke.getKeyStroke("N"), "n");
+        pan.getActionMap().put("n", audioSyncPlusAction);
+
+        AudioSyncMinusAction audioSyncMinusAction = new AudioSyncMinusAction();
+        map.put(KeyStroke.getKeyStroke("M"), "m");
+        pan.getActionMap().put("m", audioSyncMinusAction);
+
+        Canvas can = new Canvas();
+        can.setBackground(Color.BLACK);
+        pan.add(can, BorderLayout.CENTER);
+
+        setKeyPanel(pan);
+        setCanvas(can);
+    }
+
+    private JFrame getFrame() {
+        return (frame);
+    }
+
+    private void setFrame(JFrame f) {
+        frame = f;
+    }
+
+    private JPanel getKeyPanel() {
+        return (keyPanel);
+    }
+
+    private void setKeyPanel(JPanel p) {
+        keyPanel = p;
+    }
+
+    private Canvas getCanvas() {
+        return (canvas);
+    }
+
+    private void setCanvas(Canvas c) {
+        canvas = c;
+    }
+
+    private MediaPlayerFactory getMediaPlayerFactory() {
+        return (mediaPlayerFactory);
+    }
+
+    private void setMediaPlayerFactory(MediaPlayerFactory f) {
+        mediaPlayerFactory = f;
+    }
+
+    private EmbeddedMediaPlayer getEmbeddedMediaPlayer() {
+        return (embeddedMediaPlayer);
+    }
+
+    private void setEmbeddedMediaPlayer(EmbeddedMediaPlayer p) {
+        embeddedMediaPlayer = p;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supportsPause() {
+        return (true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supportsAutoSkip() {
+        return (false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supportsSeek() {
+        return (true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void play(String url) {
+
+        play(url, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized void play(String url, Bookmark b) {
+
+        if (!isPlaying()) {
+
+            setAudioOffset(0);
+            setPaused(false);
+            setPlaying(true);
+            setCompleted(false);
+
+            Rectangle r = null;
+            if (isFullscreen()) {
+
+                r = getFullscreenRectangle();
+
+            } else {
+
+                r = getRectangle();
+            }
+
+            int x = (int) r.getX();
+            int y = (int) r.getY();
+            int width = (int) r.getWidth();
+            int height = (int) r.getHeight();
+
+            Cursor cursor = Util.getNoCursor();
+            JFrame f = new JFrame();
+
+            f.setAlwaysOnTop(true);
+            f.setUndecorated(true);
+            f.setBounds(x, y, width, height);
+            f.requestFocus();
+            if (cursor != null) {
+                f.getContentPane().setCursor(cursor);
+            }
+
+            Canvas can = getCanvas();
+            JPanel pan = getKeyPanel();
+
+            f.add(pan, BorderLayout.CENTER);
+            f.setVisible(true);
+
+            setFrame(f);
+
+            pan.setFocusable(true);
+            pan.requestFocus();
+
+            String[] vlcArgs = {
+                "--no-video-title-show",
+                "--vout-filter=deinterlace",
+                "--deinterlace-mode=bob"
+            };
+            MediaPlayerFactory mpf = new MediaPlayerFactory(vlcArgs);
+            setMediaPlayerFactory(mpf);
+    
+            EmbeddedMediaPlayer mediaPlayer = mpf.newMediaPlayer(null);
+            mediaPlayer.setEnableKeyInputHandling(false);
+            mediaPlayer.setEnableMouseInputHandling(false);
+            mediaPlayer.setVideoSurface(can);
+            setEmbeddedMediaPlayer(mediaPlayer);
+    
+            mediaPlayer.playMedia(url);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void stop() {
+
+        System.out.println("stop called!");
+        setPaused(false);
+        setPlaying(false);
+        setCompleted(true);
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            p.stop();
+            p.release();
+            setEmbeddedMediaPlayer(null);
+        }
+
+        MediaPlayerFactory f = getMediaPlayerFactory();
+        if (f != null) {
+
+            f.release();
+            setMediaPlayerFactory(null);
+        }
+
+        JFrame w = getFrame();
+        if (w != null) {
+
+            w.setVisible(false);
+            w.dispose();
+            setFrame(null);
+        }
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void pause(boolean b) {
+
+        setPaused(b);
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            p.setPause(b);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void seek(int seconds) {
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            System.out.println("seek length: " + p.getLength());
+            if (p.getLength() > 0) {
+
+                p.skip((long) (seconds * 1000));
+
+            } else {
+
+                float denom = (float) getLengthHint();
+                if (denom > 0.0f) {
+
+                    float worth = (float) seconds / denom;
+                    System.out.println("figuring : " + worth);
+                    p.setPosition(p.getPosition() + worth);
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void next() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void previous() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void audiosync(double offset) {
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            p.setAudioDelay((long) offset);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PlayState getPlayState() {
+
+        PlayState result = new PlayState();
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            if (p.getLength() > 0) {
+
+                result.setPosition((long) (p.getPosition() * 1000.0f));
+                result.setTime((double) (p.getTime() / 1000));
+                result.setPaused(isPaused());
+                result.setPlaying(isPlaying());
+
+            } else {
+
+                // Here we only have position to help us...
+                long hint = getLengthHint();
+                if (hint > 0L) {
+
+                    float percent = p.getPosition();
+                    result.setPosition((long) (percent * 1000.0f));
+                    result.setTime((double) (percent * hint));
+                    result.setPaused(isPaused());
+                    result.setPlaying(isPlaying());
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        Frame f = new Frame("Test Player");
+        f.setSize(800, 600);
+
+        f.setLayout(new BorderLayout());
+        Canvas vs = new Canvas();
+        f.add(vs, BorderLayout.CENTER);
+        f.setVisible(true);
+    
+        MediaPlayerFactory factory = new MediaPlayerFactory(new String[] {});
+    
+        EmbeddedMediaPlayer mediaPlayer = factory.newMediaPlayer(null);
+        mediaPlayer.setVideoSurface(vs);
+    
+        mediaPlayer.playMedia("/mnt/LTMS/tv/EP007542310105_2010_04_08_21_00.mpg");
+        //mediaPlayer.playMedia("/mnt/multimedia/video/Movies/Horror/Halloween.mkv");
+        final EmbeddedMediaPlayer mp = mediaPlayer;
+
+        java.awt.event.ActionListener task = new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+                System.out.println(mp.isSeekable());
+                System.out.println(mp.getTime());
+                System.out.println(mp.getLength());
+                System.out.println(mp.getPosition());
+                //mp.setPosition(mp.getPosition() + 0.1f);
+                mp.skip(0.1f);
+            }
+        };
+        javax.swing.Timer timer = new javax.swing.Timer(5000, task);
+        timer.start();
+
+        Thread.currentThread().join();
+    }
+
+}
+
+

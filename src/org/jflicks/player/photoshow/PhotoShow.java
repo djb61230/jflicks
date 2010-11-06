@@ -203,8 +203,6 @@ public class PhotoShow extends BasePlayer implements ActionListener {
                 map.put(KeyStroke.getKeyStroke("Q"), "q");
                 p.getActionMap().put("q", quitAction);
 
-                setMessage(null);
-
                 Timer t = new Timer(5000, this);
                 t.setInitialDelay(500);
                 setTimer(t);

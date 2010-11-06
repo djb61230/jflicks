@@ -21,7 +21,14 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Hashtable;
 import javax.swing.AbstractAction;
+
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
+import org.osgi.util.tracker.ServiceTracker;
+
+import org.jflicks.rc.RC;
 
 /**
  * This class is a base implementation of the Player interface.
@@ -41,7 +48,8 @@ public abstract class BasePlayer implements Player {
     private boolean completed;
     private double audioOffset;
     private Rectangle rectangle;
-    private String message;
+    private long lengthHint;
+    private ServiceTracker eventServiceTracker;
 
    /**
      * Simple empty constructor.
@@ -50,6 +58,14 @@ public abstract class BasePlayer implements Player {
 
         setPropertyChangeSupport(new PropertyChangeSupport(this));
         setAudioOffset(0.0);
+    }
+
+    public ServiceTracker getEventServiceTracker() {
+        return (eventServiceTracker);
+    }
+
+    public void setEventServiceTracker(ServiceTracker est) {
+        eventServiceTracker = est;
     }
 
     private PropertyChangeSupport getPropertyChangeSupport() {
@@ -290,25 +306,6 @@ public abstract class BasePlayer implements Player {
     /**
      * {@inheritDoc}
      */
-    public String getMessage() {
-        return (message);
-    }
-
-    /**
-     * Convenience method to set this property.
-     *
-     * @param s The given type value.
-     */
-    public void setMessage(String s) {
-
-        String old = message;
-        message = s;
-        firePropertyChange("Message", old, message);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public Rectangle getRectangle() {
         return (rectangle);
     }
@@ -318,6 +315,20 @@ public abstract class BasePlayer implements Player {
      */
     public void setRectangle(Rectangle r) {
         rectangle = r;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getLengthHint() {
+        return (lengthHint);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLengthHint(long l) {
+        lengthHint = l;
     }
 
     /**
@@ -391,6 +402,23 @@ public abstract class BasePlayer implements Player {
     public void enter() {
     }
 
+    public void commandEvent(String s) {
+
+        ServiceTracker st = getEventServiceTracker();
+        if ((st != null) && (s != null)) {
+
+            EventAdmin ea = (EventAdmin) st.getService();
+            if (ea != null) {
+
+                Hashtable<String, String> props =
+                    new Hashtable<String, String>();
+                props.put("command", s);
+                Event evt = new Event("org/jflicks/rc/COMMAND", props);
+                ea.postEvent(evt);
+            }
+        }
+    }
+
     protected class QuitAction extends AbstractAction {
 
         public QuitAction() {
@@ -398,7 +426,7 @@ public abstract class BasePlayer implements Player {
 
         public void actionPerformed(ActionEvent e) {
 
-            setMessage(MESSAGE_QUIT);
+            commandEvent(RC.ESCAPE_COMMAND);
         }
     }
 
@@ -409,7 +437,172 @@ public abstract class BasePlayer implements Player {
 
         public void actionPerformed(ActionEvent e) {
 
-            setMessage(MESSAGE_INFO);
+            commandEvent(RC.INFO_COMMAND);
+        }
+    }
+
+    protected class UpAction extends AbstractAction {
+
+        public UpAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.UP_COMMAND);
+        }
+    }
+
+    protected class DownAction extends AbstractAction {
+
+        public DownAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.DOWN_COMMAND);
+        }
+    }
+
+    protected class LeftAction extends AbstractAction {
+
+        public LeftAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.LEFT_COMMAND);
+        }
+    }
+
+    protected class RightAction extends AbstractAction {
+
+        public RightAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.RIGHT_COMMAND);
+        }
+    }
+
+    protected class EnterAction extends AbstractAction {
+
+        public EnterAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.ENTER_COMMAND);
+        }
+    }
+
+    protected class GuideAction extends AbstractAction {
+
+        public GuideAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.GUIDE_COMMAND);
+        }
+    }
+
+    protected class PauseAction extends AbstractAction {
+
+        public PauseAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.PAUSE_COMMAND);
+        }
+    }
+
+    protected class PageUpAction extends AbstractAction {
+
+        public PageUpAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.PAGE_UP_COMMAND);
+        }
+    }
+
+    protected class PageDownAction extends AbstractAction {
+
+        public PageDownAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.PAGE_DOWN_COMMAND);
+        }
+    }
+
+    protected class RewindAction extends AbstractAction {
+
+        public RewindAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.REWIND_COMMAND);
+        }
+    }
+
+    protected class ForwardAction extends AbstractAction {
+
+        public ForwardAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.FORWARD_COMMAND);
+        }
+    }
+
+    protected class SkipBackwardAction extends AbstractAction {
+
+        public SkipBackwardAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.SKIPBACKWARD_COMMAND);
+        }
+    }
+
+    protected class SkipForwardAction extends AbstractAction {
+
+        public SkipForwardAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.SKIPFORWARD_COMMAND);
+        }
+    }
+
+    protected class AudioSyncPlusAction extends AbstractAction {
+
+        public AudioSyncPlusAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.AUDIOSYNC_PLUS_COMMAND);
+        }
+    }
+
+    protected class AudioSyncMinusAction extends AbstractAction {
+
+        public AudioSyncMinusAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.AUDIOSYNC_MINUS_COMMAND);
         }
     }
 

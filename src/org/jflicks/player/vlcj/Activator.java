@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.player.photoshow;
+package org.jflicks.player.vlcj;
 
 import java.util.Hashtable;
 
@@ -26,15 +26,15 @@ import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Simple activater that starts the feh job.  Also registers the Player
- * based upon feh.
+ * Simple activater that starts the vlcj service.  Also registers the Player
+ * based upon vlcj.
  *
  * @author Doug Barnum
  * @version 1.0
  */
 public class Activator extends BaseActivator {
 
-    private PhotoShow photoShow;
+    private Vlcj vlcj;
     private ServiceTracker serviceTracker;
 
     /**
@@ -44,17 +44,17 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
-        photoShow = new PhotoShow();
+        Vlcj vlcj = new Vlcj();
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
-        dict.put(Player.TITLE_PROPERTY, photoShow.getTitle());
-        dict.put(Player.HANDLE_PROPERTY, photoShow.getType());
+        dict.put(Player.TITLE_PROPERTY, vlcj.getTitle());
+        dict.put(Player.HANDLE_PROPERTY, vlcj.getType());
 
-        bc.registerService(Player.class.getName(), photoShow, dict);
+        bc.registerService(Player.class.getName(), vlcj, dict);
 
         serviceTracker =
             new ServiceTracker(bc, EventAdmin.class.getName(), null);
-        photoShow.setEventServiceTracker(serviceTracker);
+        vlcj.setEventServiceTracker(serviceTracker);
         serviceTracker.open();
     }
 

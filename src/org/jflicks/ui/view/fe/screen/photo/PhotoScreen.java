@@ -344,16 +344,6 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     getPlayer().removePropertyChangeListener(this);
                     requestFocus();
                 }
-
-            } else if (pname.equals("Message")) {
-
-                String mess = (String) event.getNewValue();
-                if ((mess != null) && (mess.equals(Player.MESSAGE_QUIT))) {
-
-                    getPlayer().stop();
-                    getPlayer().removePropertyChangeListener(this);
-                    requestFocus();
-                }
             }
         }
     }
@@ -374,6 +364,14 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
      * {@inheritDoc}
      */
     public void close() {
+
+        Player p = getPlayer();
+        if (p != null) {
+
+            p.stop();
+        }
+
+        setDone(true);
     }
 
     /**
@@ -548,7 +546,6 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                 if (any != null) {
 
                     writePlaylist(any);
-                    p.addPropertyChangeListener("Message", this);
                     p.addPropertyChangeListener("Completed", this);
                     p.play("list.txt");
                 }
@@ -559,7 +556,6 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                 if (all != null) {
 
                     writePlaylist(all);
-                    p.addPropertyChangeListener("Message", this);
                     p.addPropertyChangeListener("Completed", this);
                     p.play("list.txt");
                 }

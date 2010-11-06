@@ -37,6 +37,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.KeyStroke;
 
 import org.jflicks.imagecache.ImageCache;
+import org.jflicks.mvc.View;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.NMSUtil;
@@ -47,6 +48,7 @@ import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
 import org.jflicks.ui.view.JFlicksView;
 import org.jflicks.ui.view.fe.Dialog;
+import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.LabelPanel;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
@@ -845,6 +847,13 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                             w.setPlayer(p);
                         }
 
+                        View vw = getView();
+                        if (vw instanceof FrontEndView) {
+
+                            FrontEndView fev = (FrontEndView) vw;
+                            p.setRectangle(fev.getPosition());
+                        }
+
                         if ((v.isPlayIntro()) && (isWantIntro())) {
 
                             String intropath = getIntro(v);
@@ -887,6 +896,13 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                             w.setVideo(v);
                             w.setPlayer(p);
                         }
+                        View vw = getView();
+                        if (vw instanceof FrontEndView) {
+
+                            FrontEndView fev = (FrontEndView) vw;
+                            p.setRectangle(fev.getPosition());
+                        }
+
                         p.play(v.getPath(), getBookmark(v.getId()));
 
                     } else if (event.getSource() == getDeleteButton()) {
