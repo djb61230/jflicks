@@ -16,6 +16,7 @@
 */
 package org.jflicks.player;
 
+import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -40,6 +41,7 @@ public abstract class BasePlayer implements Player {
 
     private PropertyChangeSupport propertyChangeSupport;
 
+    private Frame frame;
     private String type;
     private String title;
     private boolean playing;
@@ -169,6 +171,14 @@ public abstract class BasePlayer implements Player {
         String old = type;
         type = s;
         firePropertyChange("Type", old, type);
+    }
+
+    public Frame getFrame() {
+        return (frame);
+    }
+
+    public void setFrame(Frame f) {
+        frame = f;
     }
 
     /**
@@ -404,6 +414,7 @@ public abstract class BasePlayer implements Player {
 
     public void commandEvent(String s) {
 
+        System.out.println("commandEvent <" + s + ">");
         ServiceTracker st = getEventServiceTracker();
         if ((st != null) && (s != null)) {
 

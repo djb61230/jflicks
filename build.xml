@@ -556,11 +556,12 @@
         description="Gotta do more than just compile!">
 
         <!-- First do server side. -->
+        <!--
         <copy file="${bundle}/jflicks-base.jar"
             todir="${felix.server.home}/bundle"/>
         <copy file="${bundle}/jflicks-stream-http.jar"
             todir="${felix.server.home}/bundle"/>
-        <!-- -->
+
         <copy file="${bundle}/jflicks-photomanager-digikam.jar"
             todir="${felix.server.home}/bundle"/>
         <copy file="${bundle}/jflicks-videomanager-system.jar"
@@ -569,10 +570,10 @@
             todir="${felix.server.home}/bundle"/>
         <copy file="${bundle}/jflicks-tv-recorder-hdhr.jar"
             todir="${felix.server.home}/bundle"/>
-        <!-- -->
+
         <copy file="${bundle}/jflicks-tv-recorder-v4l2.jar"
             todir="${felix.server.home}/bundle"/>
-        <!-- -->
+
         <copy file="${bundle}/jflicks-tv-scheduler-system.jar"
             todir="${felix.server.home}/bundle"/>
         <copy file="${bundle}/jflicks-tv-live-system.jar"
@@ -587,7 +588,7 @@
             todir="${felix.server.home}/bundle"/>
         <copy file="${bundle}/jflicks-trailer-apple.jar"
             todir="${felix.server.home}/bundle"/>
-        <!-- -->
+
         <copy file="${bundle}/jflicks-tv-ondemand-roku.jar"
             todir="${felix.server.home}/bundle"/>
         <copy file="${bundle}/jflicks-nms-system.jar"
@@ -597,10 +598,9 @@
         <copy file="${bundle}/jflicks-jdom.jar"
             todir="${felix.server.home}/bundle"/>
 
-        <!-- -->
         <copy file="${bundle}/jflicks-sqlitejdbc.jar"
             todir="${felix.server.home}/bundle"/>
-        <!-- -->
+        -->
 
         <!-- Now do client side. -->
         <copy file="${bundle}/jflicks-base.jar"
@@ -633,13 +633,13 @@
         <!-- Now do fe side. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-player-vplayer.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-player-cvlc.jar"
+        <copy file="${bundle}/jflicks-player-vlcj.jar"
             todir="${felix.fe.home}/bundle"/>
         <copy file="${bundle}/jflicks-player-totem.jar"
             todir="${felix.fe.home}/bundle"/>
         <copy file="${bundle}/jflicks-player-chrome.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-player-mplayer.jar"
             todir="${felix.fe.home}/bundle"/>
         <copy file="${bundle}/jflicks-player-photoshow.jar"
             todir="${felix.fe.home}/bundle"/>

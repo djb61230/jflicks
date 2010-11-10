@@ -315,6 +315,7 @@ public class PlayStateJob extends AbstractJob implements JobListener,
                 setPercent(0);
                 p.setPlaying(false);
                 p.setCompleted(!p.isUserStop());
+                p.dispose();
             }
 
             stop();
@@ -355,12 +356,12 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
                 } else {
 
-                    //System.out.println("Eaten: " + message);
+                    System.out.println("Eaten: " + message);
                 }
 
             } else {
 
-                //System.out.println("Eaten: " + message);
+                System.out.println("Eaten: " + message);
             }
         }
     }

@@ -30,11 +30,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import javax.swing.JLayeredPane;
 
+import org.jflicks.mvc.View;
 import org.jflicks.nms.NMS;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
+import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -189,7 +192,16 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
                         Player p = getPlayer();
                         if (p != null) {
 
+                            View v = getView();
+                            if (v instanceof FrontEndView) {
+
+                                FrontEndView fev = (FrontEndView) v;
+                                p.setRectangle(fev.getPosition());
+                            }
+
                             p.addPropertyChangeListener("Playing", this);
+                            controlKeyboard(false);
+                            p.setFrame(Util.findFrame(this));
                             p.play("-playlist preview.txt");
                         }
                     }
@@ -234,6 +246,8 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
      * {@inheritDoc}
      */
     public void close() {
+
+        controlKeyboard(true);
     }
 
     /**

@@ -60,10 +60,20 @@ public abstract class RecoverJob extends BaseV4l2Job implements ActionListener {
      */
     public abstract void close();
 
+    private int blockCount;
+
     /**
      * Simple no argument constructor.
      */
     public RecoverJob() {
+    }
+
+    public int getBlockCount() {
+        return (blockCount);
+    }
+
+    public void setBlockCount(int i) {
+        blockCount = i;
     }
 
     /**
@@ -85,17 +95,28 @@ public abstract class RecoverJob extends BaseV4l2Job implements ActionListener {
                 // We have arrived here with the same read time as last.
                 // We are probably blocked...
                 System.out.println("We are probably blocking...");
-                if (fileChannel != null) {
+                int bcount = getBlockCount();
+                bcount++;
+                if (bcount < 30) {
 
-                    try {
+                    setBlockCount(bcount);
+                    if (fileChannel != null) {
 
-                        fileChannel.close();
-                        fileChannel = null;
+                        try {
 
-                    } catch (IOException ex) {
+                            fileChannel.close();
+                            fileChannel = null;
 
-                        System.out.println("exception on interupt close");
+                        } catch (IOException ex) {
+
+                            System.out.println("exception on interupt close");
+                        }
                     }
+
+                } else {
+
+                    // Time to give up!!
+                    stop();
                 }
 
             } else {

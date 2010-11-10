@@ -31,7 +31,7 @@ import javax.swing.AbstractAction;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.Timer;
 
 import org.jflicks.player.BasePlayer;
@@ -44,14 +44,14 @@ import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- * This Player will display photos in a JFrame.
+ * This Player will display photos in a JDialog.
  *
  * @author Doug Barnum
  * @version 1.0
  */
 public class PhotoShow extends BasePlayer implements ActionListener {
 
-    private JFrame frame;
+    private JDialog dialog;
     private JXPanel panel;
     private Timer timer;
     private File[] photoFiles;
@@ -66,12 +66,12 @@ public class PhotoShow extends BasePlayer implements ActionListener {
         setTitle("PhotoShow");
     }
 
-    private JFrame getFrame() {
-        return (frame);
+    private JDialog getDialog() {
+        return (dialog);
     }
 
-    private void setFrame(JFrame f) {
-        frame = f;
+    private void setDialog(JDialog d) {
+        dialog = d;
     }
 
     private JXPanel getPanel() {
@@ -175,21 +175,21 @@ public class PhotoShow extends BasePlayer implements ActionListener {
 
                 JXPanel backp = new JXPanel(new BorderLayout());
                 backp.setOpaque(false);
+                backp.setBounds(x, y, width, height);
                 backp.setBackgroundPainter(new MattePainter(Color.BLACK));
                 backp.add(p, BorderLayout.CENTER);
 
                 Cursor cursor = Util.getNoCursor();
-                JFrame f = new JFrame();
+                JDialog w = new JDialog(getFrame());
+                w.setUndecorated(true);
 
-                f.setAlwaysOnTop(true);
-                f.setUndecorated(true);
-                f.setBounds(x, y, width, height);
-                f.add(backp);
-                f.requestFocus();
+                w.setBounds(x, y, width, height);
+                w.add(backp);
+                w.requestFocus();
                 if (cursor != null) {
-                    f.getContentPane().setCursor(cursor);
+                    w.getContentPane().setCursor(cursor);
                 }
-                setFrame(f);
+                setDialog(w);
 
                 p.setFocusable(true);
                 p.requestFocus();
@@ -202,6 +202,10 @@ public class PhotoShow extends BasePlayer implements ActionListener {
                 QuitAction quitAction = new QuitAction();
                 map.put(KeyStroke.getKeyStroke("Q"), "q");
                 p.getActionMap().put("q", quitAction);
+
+                PauseAction pauseAction = new PauseAction();
+                map.put(KeyStroke.getKeyStroke("P"), "p");
+                p.getActionMap().put("p", pauseAction);
 
                 Timer t = new Timer(5000, this);
                 t.setInitialDelay(500);
@@ -221,12 +225,12 @@ public class PhotoShow extends BasePlayer implements ActionListener {
         setPlaying(false);
         setCompleted(true);
 
-        JFrame w = getFrame();
+        JDialog w = getDialog();
         if (w != null) {
 
             w.setVisible(false);
             w.dispose();
-            setFrame(null);
+            setDialog(null);
         }
 
         Timer t = getTimer();
@@ -248,6 +252,18 @@ public class PhotoShow extends BasePlayer implements ActionListener {
      * {@inheritDoc}
      */
     public void seek(int seconds) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void seekPosition(int seconds) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void seekPosition(double percentage) {
     }
 
     /**
@@ -287,7 +303,7 @@ public class PhotoShow extends BasePlayer implements ActionListener {
 
         if ((isPlaying()) && (!isPaused())) {
 
-            JFrame w = getFrame();
+            JDialog w = getDialog();
             JXPanel p = getPanel();
             File file = getNextFile();
             if ((w != null) && (p != null) && (file != null)) {

@@ -326,6 +326,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
      */
     public void close() {
 
+        controlKeyboard(true);
         VideoInfoWindow w = getVideoInfoWindow();
         if (w != null) {
 
@@ -869,20 +870,28 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                                     fw.write(vpath, 0, vpath.length());
                                     fw.close();
 
+                                    controlKeyboard(false);
+                                    p.setFrame(Util.findFrame(this));
                                     p.play("-playlist intro.txt");
 
                                 } catch (IOException ex) {
 
+                                    controlKeyboard(false);
+                                    p.setFrame(Util.findFrame(this));
                                     p.play(v.getPath());
                                 }
 
                             } else {
 
+                                controlKeyboard(false);
+                                p.setFrame(Util.findFrame(this));
                                 p.play(v.getPath());
                             }
 
                         } else {
 
+                            controlKeyboard(false);
+                            p.setFrame(Util.findFrame(this));
                             p.play(v.getPath());
                         }
 
@@ -903,6 +912,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                             p.setRectangle(fev.getPosition());
                         }
 
+                        controlKeyboard(false);
+                        p.setFrame(Util.findFrame(this));
                         p.play(v.getPath(), getBookmark(v.getId()));
 
                     } else if (event.getSource() == getDeleteButton()) {

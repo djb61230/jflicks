@@ -41,6 +41,7 @@ import org.jflicks.mvc.View;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
+import org.jflicks.rc.RC;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 import org.jflicks.ui.view.fe.Dialog;
@@ -270,8 +271,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         JXPanel ssp = getScreenShotPanel();
                         if ((ic != null) && (ssp != null)) {
 
-                            BufferedImage bi = ic.getImage("file://"
-                                + r.getPath() + ".png", false);
+                            BufferedImage bi = findBufferedImage(ic, r);
                             if (bi != null) {
 
                                 ImagePainter painter =
@@ -651,6 +651,24 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         }
     }
 
+    private BufferedImage findBufferedImage(ImageCache ic, Recording r) {
+
+        BufferedImage result = null;
+
+        if ((ic != null) && (r != null)) {
+
+            String path = r.getPath();
+            result = ic.getImage("file://" + path + ".png", false);
+            if (result == null) {
+
+                path = path.substring(0, path.length() - 4);
+                result = ic.getImage("file://" + path + ".png", false);
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * We listen for property change events from the panels that deal
      * with selecting a recording.
@@ -778,8 +796,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     JXPanel ssp = getScreenShotPanel();
                     if (ssp != null) {
 
-                        bi = ic.getImage("file://" + r.getPath() + ".png",
-                            false);
+                        bi = findBufferedImage(ic, r);
                         if (bi != null) {
 
                             ImagePainter painter =
@@ -817,6 +834,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
 
                 }
+
                 dp.setRecording(r);
             }
 
@@ -838,9 +856,10 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         deleteBookmark(r.getId());
                     }
                 }
-            }
 
-            requestFocus();
+                System.out.println("about to request focus");
+                requestFocus();
+            }
         }
     }
 
@@ -867,6 +886,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
      */
     public void close() {
 
+        controlKeyboard(true);
         setCurrentRecording(null);
         RecordingInfoWindow w = getRecordingInfoWindow();
         if (w != null) {
@@ -910,8 +930,49 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         if (p != null) {
 
             PlayState ps = p.getPlayState();
-            if (ps != null) {
+            Recording cr = getCurrentRecording();
+            if ((ps != null) && (cr != null)) {
 
+                int current = (int) ps.getTime();
+                int next = Commercial.whereNext(getTimeline(), current);
+                if (next != current) {
+
+                    updateLengthHint(cr, p);
+                    int diff = next - current;
+                    p.seek(diff);
+                    //p.seekPosition(next);
+
+                    // Now at this point we will be at the key frame
+                    // BEFORE where we really want to be.  Let's try an
+                    // offset seek to see if we get closer.
+                    final Player tp = p;
+                    final int tnext = next;
+                    ActionListener taskPerformer = new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+
+                            PlayState tps = tp.getPlayState();
+                            if (tps != null) {
+
+                                int tcurrent = (int) tps.getTime();
+                                int diff = tnext - tcurrent;
+                                System.out.println("tcurrent: " + tcurrent);
+                                System.out.println("tnext: " + tnext);
+                                System.out.println("diff: " + diff);
+                                if (Math.abs(diff) > 4) {
+                                    tp.seek(diff);
+                                }
+                            }
+                        }
+                    };
+                    Timer skip = new Timer(1000, taskPerformer);
+                    skip.setRepeats(false);
+                    skip.start();
+
+                } else {
+
+                    System.out.println("commercials not set or end");
+                }
+                /*
                 int current = (int) ps.getTime();
                 int next = Commercial.whereNext(getTimeline(), current);
                 if (next != current) {
@@ -922,31 +983,66 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     updateLengthHint(getCurrentRecording(), p);
                     p.seek((next - current));
 
-                    final Player tp = p;
-                    final int tnext = next;
-                    ActionListener taskPerformer = new ActionListener() {
-                        public void actionPerformed(ActionEvent evt) {
-
-                            PlayState tps = tp.getPlayState();
-                            if (tps != null) {
-
-                                int tcurrent = (int) tps.getTime();
-                                System.out.println("tcurrent: " + tcurrent);
-                                System.out.println("tnext: " + tnext);
-                                System.out.println("diff: "
-                                    + (tnext - tcurrent));
-                                tp.seek(tnext - tcurrent);
-                            }
-                        }
-                    };
-                    Timer skip = new Timer(300, taskPerformer);
-                    skip.setRepeats(false);
-                    skip.start();
-
                 } else {
 
                     System.out.println("commercials not set or end");
                 }
+                */
+                /*
+                int current = (int) ps.getTime();
+                int[] nextTwo = Commercial.whereNextTwo(getTimeline(), current);
+                if ((nextTwo != null) && (nextTwo.length == 2)) {
+
+                    if (nextTwo[1] != current) {
+
+                        System.out.println("FIRST SEEKING NEXTNEXT!");
+                        System.out.println("current seconds: " + current);
+                        System.out.println("next spot: " + nextTwo[1]);
+                        System.out.println("diff: " + (nextTwo[1] - current));
+                        updateLengthHint(getCurrentRecording(), p);
+                        p.seek(nextTwo[1] - current);
+                        //p.seekPosition(nextTwo[1]);
+
+                        final Player tp = p;
+                        final int tnext = nextTwo[0];
+                        ActionListener taskPerformer = new ActionListener() {
+                            public void actionPerformed(ActionEvent evt) {
+
+                                PlayState tps = tp.getPlayState();
+                                if (tps != null) {
+
+                                    int tcurrent = (int) tps.getTime();
+                                    System.out.println("tcurrent: " + tcurrent);
+                                    System.out.println("tnext: " + tnext);
+                                    System.out.println("diff: "
+                                        + (tnext - tcurrent));
+                                    tp.seek(tnext - tcurrent);
+                                    //tp.seekPosition(tnext);
+                                }
+                            }
+                        };
+                        Timer skip = new Timer(500, taskPerformer);
+                        skip.setRepeats(false);
+                        skip.start();
+
+                    } else {
+
+                        if (nextTwo[0] != current) {
+
+                            System.out.println("JUST SEEKING NEXT!");
+                            System.out.println("current seconds: " + current);
+                            System.out.println("next spot: " + nextTwo[0]);
+                            System.out.println("diff: "
+                                + (nextTwo[0] - current));
+                            updateLengthHint(getCurrentRecording(), p);
+                            p.seek(nextTwo[0] - current);
+
+                        } else {
+                            System.out.println("commercials not set or end");
+                        }
+                    }
+                }
+                */
             }
         }
     }
@@ -967,6 +1063,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 if (back != current) {
 
                     updateLengthHint(getCurrentRecording(), p);
+                    //back = Commercial.wherePrevious(getTimeline(), back);
+                    //p.seekPosition(back);
                     p.seek((back - current) - 4);
 
                 } else {
@@ -1053,13 +1151,22 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         w.setPlayer(p);
                     }
 
-                    setTimeline(Commercial.timeline(
-                        r.getCommercials()));
+                    setTimeline(Commercial.timeline(r.getCommercials()));
                     setCurrentRecording(r);
                     updateLengthHint(r, p);
+                    controlKeyboard(false);
+
+                    p.setFrame(Util.findFrame(this));
                     p.play(r.getPath());
 
                 } else if (event.getSource() == getBookmarkButton()) {
+
+                    View v = getView();
+                    if (v instanceof FrontEndView) {
+
+                        FrontEndView fev = (FrontEndView) v;
+                        p.setRectangle(fev.getPosition());
+                    }
 
                     p.addPropertyChangeListener("Completed", this);
                     RecordingInfoWindow w = getRecordingInfoWindow();
@@ -1070,11 +1177,27 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         w.setPlayer(p);
                     }
 
-                    setTimeline(Commercial.timeline(
-                        r.getCommercials()));
+                    setTimeline(Commercial.timeline(r.getCommercials()));
                     setCurrentRecording(r);
                     updateLengthHint(r, p);
-                    p.play(r.getPath(), getBookmark(r.getId()));
+
+                    Bookmark bm = getBookmark(r.getId());
+                    String rpath = r.getPath();
+                    if ((rpath != null) && (bm != null)) {
+
+                        if (rpath.endsWith(".mkv")) {
+
+                            bm.setPreferTime(true);
+
+                        } else {
+
+                            bm.setPreferTime(false);
+                        }
+
+                        controlKeyboard(false);
+                        p.setFrame(Util.findFrame(this));
+                        p.play(rpath, bm);
+                    }
 
                 } else if (event.getSource() == getDeleteButton()) {
 

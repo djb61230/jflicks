@@ -1165,7 +1165,10 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                         String fname = file.getName();
                         if ((parent != null) && (fname != null)) {
 
-                            fname = fname.substring(0, fname.lastIndexOf("."));
+                            // This really should get everything as it
+                            // includes the show ID and time up to the
+                            // minute.
+                            fname = fname.substring(0, fname.lastIndexOf("_"));
                             File[] array =
                                 parent.listFiles(new StartsWithFilter(fname));
                             if (array != null) {

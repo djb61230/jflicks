@@ -16,6 +16,18 @@
 */
 package org.jflicks.player.mplayer;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Rectangle;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
@@ -23,6 +35,7 @@ import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.PlayState;
 import org.jflicks.util.Util;
+import org.jflicks.util.WindowId;
 
 /**
  * This Player (with other classes in this package) is capable of
@@ -33,6 +46,8 @@ import org.jflicks.util.Util;
  */
 public class MPlayer extends BasePlayer {
 
+    private JDialog dialog;
+    private JPanel keyPanel;
     private MPlayerJob mplayerJob;
     private PlayStateJob statusJob;
     private JobContainer jobContainer;
@@ -46,6 +61,96 @@ public class MPlayer extends BasePlayer {
 
         setType(PLAYER_VIDEO);
         setTitle("M");
+
+        JPanel pan = new JPanel(new BorderLayout());
+        pan.setFocusable(true);
+        InputMap map = pan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+        QuitAction quitAction = new QuitAction();
+        map.put(KeyStroke.getKeyStroke("Q"), "q");
+        pan.getActionMap().put("q", quitAction);
+
+        InfoAction infoAction = new InfoAction();
+        map.put(KeyStroke.getKeyStroke("I"), "i");
+        pan.getActionMap().put("i", infoAction);
+
+        UpAction upAction = new UpAction();
+        map.put(KeyStroke.getKeyStroke("UP"), "up");
+        pan.getActionMap().put("up", upAction);
+
+        DownAction downAction = new DownAction();
+        map.put(KeyStroke.getKeyStroke("DOWN"), "down");
+        pan.getActionMap().put("down", downAction);
+        LeftAction leftAction = new LeftAction();
+        map.put(KeyStroke.getKeyStroke("LEFT"), "left");
+        pan.getActionMap().put("left", leftAction);
+
+        RightAction rightAction = new RightAction();
+        map.put(KeyStroke.getKeyStroke("RIGHT"), "right");
+        pan.getActionMap().put("right", rightAction);
+
+        EnterAction enterAction = new EnterAction();
+        map.put(KeyStroke.getKeyStroke("ENTER"), "enter");
+        pan.getActionMap().put("enter", enterAction);
+
+        GuideAction guideAction = new GuideAction();
+        map.put(KeyStroke.getKeyStroke("G"), "g");
+        pan.getActionMap().put("g", guideAction);
+
+        PauseAction pauseAction = new PauseAction();
+        map.put(KeyStroke.getKeyStroke("P"), "p");
+        pan.getActionMap().put("p", pauseAction);
+
+        PageUpAction pageupAction = new PageUpAction();
+        map.put(KeyStroke.getKeyStroke("PAGE_UP"), "pageup");
+        pan.getActionMap().put("pageup", pageupAction);
+
+        PageDownAction pagedownAction = new PageDownAction();
+        map.put(KeyStroke.getKeyStroke("PAGE_DOWN"), "pagedown");
+        pan.getActionMap().put("pagedown", pagedownAction);
+
+        RewindAction rewindAction = new RewindAction();
+        map.put(KeyStroke.getKeyStroke("R"), "r");
+        pan.getActionMap().put("r", rewindAction);
+
+        ForwardAction forwardAction = new ForwardAction();
+        map.put(KeyStroke.getKeyStroke("F"), "f");
+        pan.getActionMap().put("f", forwardAction);
+
+        SkipBackwardAction skipBackwardAction = new SkipBackwardAction();
+        map.put(KeyStroke.getKeyStroke("Z"), "z");
+        pan.getActionMap().put("z", skipBackwardAction);
+
+        SkipForwardAction skipForwardAction = new SkipForwardAction();
+        map.put(KeyStroke.getKeyStroke("X"), "x");
+        pan.getActionMap().put("x", skipForwardAction);
+
+        AudioSyncPlusAction audioSyncPlusAction = new AudioSyncPlusAction();
+        map.put(KeyStroke.getKeyStroke("N"), "n");
+        pan.getActionMap().put("n", audioSyncPlusAction);
+
+        AudioSyncMinusAction audioSyncMinusAction = new AudioSyncMinusAction();
+        map.put(KeyStroke.getKeyStroke("M"), "m");
+        pan.getActionMap().put("m", audioSyncMinusAction);
+
+        pan.setBackground(Color.BLACK);
+        setKeyPanel(pan);
+    }
+
+    private JDialog getDialog() {
+        return (dialog);
+    }
+
+    private void setDialog(JDialog d) {
+        dialog = d;
+    }
+
+    private JPanel getKeyPanel() {
+        return (keyPanel);
+    }
+
+    private void setKeyPanel(JPanel p) {
+        keyPanel = p;
     }
 
     private MPlayerJob getMPlayerJob() {
@@ -81,7 +186,7 @@ public class MPlayer extends BasePlayer {
     }
 
     /**
-     * Flag to signify thay the user stopped the video, that it didn't come
+     * Flag to signify that the user stopped the video, that it didn't come
      * to it's natural end.
      *
      * @return True if the user quit.
@@ -155,7 +260,47 @@ public class MPlayer extends BasePlayer {
                 }
             }
 
-            MPlayerJob job = new MPlayerJob(position, time, url, isAutoSkip());
+            Rectangle r = null;
+            if (isFullscreen()) {
+
+                r = getFullscreenRectangle();
+
+            } else {
+
+                r = getRectangle();
+            }
+
+            int x = (int) r.getX();
+            int y = (int) r.getY();
+            int width = (int) r.getWidth();
+            int height = (int) r.getHeight();
+
+            Cursor cursor = Util.getNoCursor();
+            JDialog win = new JDialog(getFrame(), "jflicks-mplayer");
+            win.setUndecorated(true);
+            win.setBounds(x, y, width, height);
+            win.setBackground(Color.BLACK);
+            setDialog(win);
+
+            JPanel pan = getKeyPanel();
+            pan.setBounds(x, y, width, height);
+            win.add(pan, BorderLayout.CENTER);
+            if (cursor != null) {
+
+                win.getContentPane().setCursor(cursor);
+                win.setCursor(cursor);
+                pan.setCursor(cursor);
+            }
+            win.setVisible(true);
+
+            pan.setFocusable(true);
+            pan.requestFocus();
+
+            WindowId winid = WindowId.getInstance();
+            String wid = winid.getWindowId("jflicks-mplayer");
+
+            MPlayerJob job =
+                new MPlayerJob(wid, position, time, url, isAutoSkip());
             setMPlayerJob(job);
             PlayStateJob psj =
                 new PlayStateJob(this, job, playStateTime, bookmarkSeconds);
@@ -180,6 +325,7 @@ public class MPlayer extends BasePlayer {
         setPlaying(false);
         setUserStop(true);
         command("stop\n");
+        dispose();
     }
 
     /**
@@ -205,6 +351,34 @@ public class MPlayer extends BasePlayer {
             command("seek " + seconds + "\n");
         }
 
+        command("set_property fullscreen 1\n");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void seekPosition(int seconds) {
+
+        PlayStateJob job = getPlayStateJob();
+        if (job != null) {
+
+            double min = job.getMinimumTime();
+            if (min != Double.MAX_VALUE) {
+
+                int place = seconds + (int) min;
+                command("seek " + seconds + " 2\n");
+                command("set_property fullscreen 1\n");
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void seekPosition(double percentage) {
+
+        int per = (int) (percentage * 100.0);
+        command("seek " + per + " 1\n");
         command("set_property fullscreen 1\n");
     }
 
@@ -255,6 +429,17 @@ public class MPlayer extends BasePlayer {
         }
 
         return (result);
+    }
+
+    public void dispose() {
+
+        JDialog w = getDialog();
+        if (w != null) {
+
+            w.setVisible(false);
+            w.dispose();
+            setDialog(null);
+        }
     }
 
     private void command(String s) {

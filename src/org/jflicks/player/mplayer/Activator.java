@@ -25,6 +25,8 @@ import org.jflicks.player.Player;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.EventAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Simple activater that starts the mplayer job.  Also registers the Player
@@ -36,6 +38,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends BaseActivator {
 
     private MPlayer mplayer;
+    private ServiceTracker serviceTracker;
 
     /**
      * {@inheritDoc}
@@ -58,6 +61,11 @@ public class Activator extends BaseActivator {
         dict.put(Player.HANDLE_PROPERTY, mplayer.getType());
 
         bc.registerService(Player.class.getName(), mplayer, dict);
+
+        serviceTracker =
+            new ServiceTracker(bc, EventAdmin.class.getName(), null);
+        mplayer.setEventServiceTracker(serviceTracker);
+        serviceTracker.open();
     }
 
     /**
@@ -68,6 +76,12 @@ public class Activator extends BaseActivator {
         SystemJob job = SystemJob.getInstance("rm mplayer.fifo");
         JobContainer jc = JobManager.getJobContainer(job);
         jc.start();
+
+        if (serviceTracker != null) {
+
+            serviceTracker.close();
+            serviceTracker = null;
+        }
     }
 
 }

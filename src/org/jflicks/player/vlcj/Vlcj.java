@@ -20,13 +20,12 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Frame;
 import java.awt.Rectangle;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
@@ -38,7 +37,7 @@ import org.jflicks.util.Util;
 
 public class Vlcj extends BasePlayer {
 
-    private JFrame frame;
+    private JDialog dialog;
     private MediaPlayerFactory mediaPlayerFactory;
     private EmbeddedMediaPlayer embeddedMediaPlayer;
     private JPanel keyPanel;
@@ -46,11 +45,11 @@ public class Vlcj extends BasePlayer {
 
     public Vlcj() {
 
-        setType(PLAYER_VIDEO);
-        //setType(PLAYER_VIDEO_STREAM_UDP);
+        setType(PLAYER_VIDEO_STREAM_UDP);
         setTitle("Vlcj");
 
         JPanel pan = new JPanel(new BorderLayout());
+        pan.setFocusable(true);
         InputMap map = pan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         QuitAction quitAction = new QuitAction();
@@ -129,12 +128,12 @@ public class Vlcj extends BasePlayer {
         setCanvas(can);
     }
 
-    private JFrame getFrame() {
-        return (frame);
+    private JDialog getDialog() {
+        return (dialog);
     }
 
-    private void setFrame(JFrame f) {
-        frame = f;
+    private void setDialog(JDialog d) {
+        dialog = d;
     }
 
     private JPanel getKeyPanel() {
@@ -226,25 +225,17 @@ public class Vlcj extends BasePlayer {
             int height = (int) r.getHeight();
 
             Cursor cursor = Util.getNoCursor();
-            JFrame f = new JFrame();
+            JDialog win = new JDialog(getFrame());
+            win.setUndecorated(true);
+            win.setBounds(x, y, width, height);
 
-            f.setAlwaysOnTop(true);
-            f.setUndecorated(true);
-            f.setBounds(x, y, width, height);
-            f.requestFocus();
-            if (cursor != null) {
-                f.getContentPane().setCursor(cursor);
-            }
-
-            Canvas can = getCanvas();
             JPanel pan = getKeyPanel();
 
-            f.add(pan, BorderLayout.CENTER);
-            f.setVisible(true);
+            win.add(pan, BorderLayout.CENTER);
+            win.setVisible(true);
 
-            setFrame(f);
+            setDialog(win);
 
-            pan.setFocusable(true);
             pan.requestFocus();
 
             String[] vlcArgs = {
@@ -258,10 +249,15 @@ public class Vlcj extends BasePlayer {
             EmbeddedMediaPlayer mediaPlayer = mpf.newMediaPlayer(null);
             mediaPlayer.setEnableKeyInputHandling(false);
             mediaPlayer.setEnableMouseInputHandling(false);
-            mediaPlayer.setVideoSurface(can);
+            mediaPlayer.setVideoSurface(getCanvas());
             setEmbeddedMediaPlayer(mediaPlayer);
     
             mediaPlayer.playMedia(url);
+            if (b != null) {
+
+                float ftmp = (float) b.getPosition();
+                mediaPlayer.setPosition(ftmp / 1000.0f);
+            }
         }
     }
 
@@ -273,7 +269,6 @@ public class Vlcj extends BasePlayer {
         System.out.println("stop called!");
         setPaused(false);
         setPlaying(false);
-        setCompleted(true);
 
         EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
         if (p != null) {
@@ -290,12 +285,12 @@ public class Vlcj extends BasePlayer {
             setMediaPlayerFactory(null);
         }
 
-        JFrame w = getFrame();
+        JDialog w = getDialog();
         if (w != null) {
 
             w.setVisible(false);
             w.dispose();
-            setFrame(null);
+            setDialog(null);
         }
 
     }
@@ -306,10 +301,13 @@ public class Vlcj extends BasePlayer {
     public void pause(boolean b) {
 
         setPaused(b);
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
-        if (p != null) {
+        if (getType() != PLAYER_VIDEO_STREAM_UDP) {
 
-            p.setPause(b);
+            EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+            if (p != null) {
+
+                p.setPause(b);
+            }
         }
     }
 
@@ -337,6 +335,18 @@ public class Vlcj extends BasePlayer {
                 }
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void seekPosition(int seconds) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void seekPosition(double percentage) {
     }
 
     /**
@@ -396,43 +406,6 @@ public class Vlcj extends BasePlayer {
         }
 
         return (result);
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        Frame f = new Frame("Test Player");
-        f.setSize(800, 600);
-
-        f.setLayout(new BorderLayout());
-        Canvas vs = new Canvas();
-        f.add(vs, BorderLayout.CENTER);
-        f.setVisible(true);
-    
-        MediaPlayerFactory factory = new MediaPlayerFactory(new String[] {});
-    
-        EmbeddedMediaPlayer mediaPlayer = factory.newMediaPlayer(null);
-        mediaPlayer.setVideoSurface(vs);
-    
-        mediaPlayer.playMedia("/mnt/LTMS/tv/EP007542310105_2010_04_08_21_00.mpg");
-        //mediaPlayer.playMedia("/mnt/multimedia/video/Movies/Horror/Halloween.mkv");
-        final EmbeddedMediaPlayer mp = mediaPlayer;
-
-        java.awt.event.ActionListener task = new java.awt.event.ActionListener() {
-
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-
-                System.out.println(mp.isSeekable());
-                System.out.println(mp.getTime());
-                System.out.println(mp.getLength());
-                System.out.println(mp.getPosition());
-                //mp.setPosition(mp.getPosition() + 0.1f);
-                mp.skip(0.1f);
-            }
-        };
-        javax.swing.Timer timer = new javax.swing.Timer(5000, task);
-        timer.start();
-
-        Thread.currentThread().join();
     }
 
 }

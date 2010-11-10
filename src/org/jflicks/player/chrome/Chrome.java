@@ -148,6 +148,18 @@ public class Chrome extends BasePlayer {
     /**
      * {@inheritDoc}
      */
+    public void seekPosition(int seconds) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void seekPosition(double percentage) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void next() {
     }
 

@@ -336,6 +336,15 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
         cancelButton = b;
     }
 
+    public void controlKeyboard(boolean b) {
+
+        RC remote = getRC();
+        if (remote != null) {
+
+            remote.setKeyboardControl(b);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */

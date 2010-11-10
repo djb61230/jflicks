@@ -16,6 +16,7 @@
 */
 package org.jflicks.player;
 
+import java.awt.Frame;
 import java.awt.Rectangle;
 import java.beans.PropertyChangeListener;
 
@@ -139,6 +140,20 @@ public interface Player {
      * @param seconds The number of seconds to seek.
      */
     void seek(int seconds);
+
+    /**
+     * Seek to a position from the start of the media N seconds.
+     *
+     * @param seconds The number of seconds to position.
+     */
+    void seekPosition(int seconds);
+
+    /**
+     * Seek to a position that is a percentage of the length of media.
+     *
+     * @param percentage The percentage of the media to position.
+     */
+    void seekPosition(double percentage);
 
     /**
      * A player could control a set of files and this methods says to go
@@ -311,6 +326,9 @@ public interface Player {
      * @param l The video length hint value.
      */
     void setLengthHint(long l);
+
+    Frame getFrame();
+    void setFrame(Frame f);
 
     /**
      * Add a listener.

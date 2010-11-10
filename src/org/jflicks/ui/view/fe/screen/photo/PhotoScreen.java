@@ -547,6 +547,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
                     writePlaylist(any);
                     p.addPropertyChangeListener("Completed", this);
+                    p.setFrame(Util.findFrame(this));
                     p.play("list.txt");
                 }
 
@@ -557,6 +558,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
                     writePlaylist(all);
                     p.addPropertyChangeListener("Completed", this);
+                    p.setFrame(Util.findFrame(this));
                     p.play("list.txt");
                 }
             }

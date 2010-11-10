@@ -35,7 +35,6 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.mvc.View;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSUtil;
-import org.jflicks.rc.RC;
 import org.jflicks.tv.ondemand.OnDemand;
 import org.jflicks.tv.ondemand.StreamSession;
 import org.jflicks.player.Bookmark;
@@ -43,6 +42,7 @@ import org.jflicks.player.Player;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -182,13 +182,9 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                             }
                             p.addPropertyChangeListener("Paused", this);
                             p.addPropertyChangeListener("Completed", this);
+                            controlKeyboard(false);
+                            p.setFrame(Util.findFrame(this));
                             p.play("udp://@" + hostaddr + ":1234");
-                        }
-
-                        RC rc = getRC();
-                        if (rc != null) {
-
-                            rc.setKeyboardControl(false);
                         }
 
                     } else {
@@ -256,6 +252,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
      */
     public void close() {
 
+        controlKeyboard(true);
         StreamSession ss = getStreamSession();
         System.out.println("OnDemandScreen: close: " + ss);
         if (ss != null) {
@@ -272,12 +269,6 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                 if (p != null) {
 
                     p.stop();
-                }
-
-                RC rc = getRC();
-                if (rc != null) {
-
-                    rc.setKeyboardControl(true);
                 }
             }
         }

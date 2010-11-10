@@ -242,6 +242,41 @@ public class Commercial implements Serializable, Comparable<Commercial> {
      * @param current The current position in the timeline.
      * @return The seconds value of where to "jump".
      */
+    public static int[] whereNextTwo(Integer[] array, int current) {
+
+        int[] result = new int[2];
+
+        result[0] = result[1] = current;
+
+        if (array != null) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                int tmp = array[i].intValue();
+                if (current < tmp) {
+
+                    result[0] = tmp;
+                    if ((i + 1) < array.length) {
+
+                        result[1] = array[i + 1].intValue();
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * Given a timeline and the current position, figure where the next
+     * forward location should be.
+     *
+     * @param array A given array of Integer instances.
+     * @param current The current position in the timeline.
+     * @return The seconds value of where to "jump".
+     */
     public static int whereNext(Integer[] array, int current) {
 
         int result = current;

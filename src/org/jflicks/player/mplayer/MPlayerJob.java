@@ -38,6 +38,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
     private SystemJob systemJob;
     private JobContainer jobContainer;
+    private String windowId;
     private long position;
     private int seconds;
     private String path;
@@ -56,9 +57,10 @@ public class MPlayerJob extends AbstractJob implements JobListener {
      * @param path The path to the file to play.
      * @param autoSkip When true try to auto skip commercials.
      */
-    public MPlayerJob(long position, int seconds, String path,
+    public MPlayerJob(String wid, long position, int seconds, String path,
         boolean autoSkip) {
 
+        setWindowId(wid);
         setPosition(position);
         setSeconds(seconds);
         setPath(path);
@@ -79,6 +81,14 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
     private void setJobContainer(JobContainer j) {
         jobContainer = j;
+    }
+
+    public String getWindowId() {
+        return (windowId);
+    }
+
+    public void setWindowId(String s) {
+        windowId = s;
     }
 
     /**
@@ -224,15 +234,10 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
         String edltext = computeEDLArgument(getPath());
 
-        File conf = new File("conf");
-        String cpath = conf.getAbsolutePath();
         SystemJob job = SystemJob.getInstance(
-                "mplayer -input"
-                + " nodefault-bindings:conf="
-                + cpath + "/mplayer.conf:" + "file=mplayer.fifo"
-                //+ " nodefault-bindings:conf=/dev/null:file=mplayer.fifo"
-                //+ " -fs -zoom -slave -cache 8182 -framedrop " + edltext
-                + " -slave " + edltext
+                "mplayer -wid " + getWindowId()
+                + " -input nodefault-bindings:conf=/dev/null:"
+                + "file=mplayer.fifo" + " -slave " + edltext
                 + " " + startParameter + " " + getPath());
 
         System.out.println("started: " + job.getCommand());

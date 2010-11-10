@@ -87,7 +87,7 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
     public VideoInfoWindow(int maxWidth, int maxHeight, int seconds,
         Color normal, Color backlight, float alpha, Font small, Font large) {
 
-        setAlwaysOnTop(true);
+        //setAlwaysOnTop(true);
 
         setSeconds(seconds);
 
