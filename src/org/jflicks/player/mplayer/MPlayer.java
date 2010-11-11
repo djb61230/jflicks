@@ -17,6 +17,7 @@
 package org.jflicks.player.mplayer;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Rectangle;
@@ -27,6 +28,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+import com.sun.jna.Native;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
@@ -48,6 +51,7 @@ public class MPlayer extends BasePlayer {
 
     private JDialog dialog;
     private JPanel keyPanel;
+    private Canvas canvas;
     private MPlayerJob mplayerJob;
     private PlayStateJob statusJob;
     private JobContainer jobContainer;
@@ -133,8 +137,12 @@ public class MPlayer extends BasePlayer {
         map.put(KeyStroke.getKeyStroke("M"), "m");
         pan.getActionMap().put("m", audioSyncMinusAction);
 
-        pan.setBackground(Color.BLACK);
+        Canvas can = new Canvas();
+        can.setBackground(Color.BLACK);
+        pan.add(can, BorderLayout.CENTER);
+
         setKeyPanel(pan);
+        setCanvas(can);
     }
 
     private JDialog getDialog() {
@@ -151,6 +159,14 @@ public class MPlayer extends BasePlayer {
 
     private void setKeyPanel(JPanel p) {
         keyPanel = p;
+    }
+
+    private Canvas getCanvas() {
+        return (canvas);
+    }
+
+    private void setCanvas(Canvas c) {
+        canvas = c;
     }
 
     private MPlayerJob getMPlayerJob() {
@@ -275,29 +291,29 @@ public class MPlayer extends BasePlayer {
             int width = (int) r.getWidth();
             int height = (int) r.getHeight();
 
-            Cursor cursor = Util.getNoCursor();
             JDialog win = new JDialog(getFrame(), "jflicks-mplayer");
             win.setUndecorated(true);
             win.setBounds(x, y, width, height);
             win.setBackground(Color.BLACK);
             setDialog(win);
 
+            Canvas can = getCanvas();
             JPanel pan = getKeyPanel();
             pan.setBounds(x, y, width, height);
             win.add(pan, BorderLayout.CENTER);
+
+            Cursor cursor = Util.getNoCursor();
             if (cursor != null) {
 
-                win.getContentPane().setCursor(cursor);
-                win.setCursor(cursor);
                 pan.setCursor(cursor);
+                can.setCursor(cursor);
             }
-            win.setVisible(true);
 
-            pan.setFocusable(true);
+            win.setVisible(true);
             pan.requestFocus();
 
-            WindowId winid = WindowId.getInstance();
-            String wid = winid.getWindowId("jflicks-mplayer");
+            long canid = Native.getComponentID(can);
+            String wid = "" + canid;
 
             MPlayerJob job =
                 new MPlayerJob(wid, position, time, url, isAutoSkip());

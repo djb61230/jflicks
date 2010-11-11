@@ -1,0 +1,20 @@
+custom=true
+
+Bundle-Version: 1.0.0
+
+Include-Resource:\
+ ../lib/jna.jar
+
+Bundle-ClassPath:\
+ .,\
+ jna.jar
+
+Export-Package:\
+ com.sun.jna;version="1.0.0",\
+ com.sun.jna.ptr;version="1.0.0"
+
+Import-Package:\
+ com.sun.jna;version="1.0.0",\
+ com.sun.jna.ptr;version="1.0.0"
+
+DynamicImport-Package: *

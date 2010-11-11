@@ -485,6 +485,15 @@
         />
 
         <bnd
+            classpath="${lib}/jna.jar"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-jna.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
             classpath="${lib}/swingx-1.6.jar"
             eclipse="false"
             failok="false"
@@ -642,6 +651,8 @@
         <copy file="${bundle}/jflicks-player-mplayer.jar"
             todir="${felix.fe.home}/bundle"/>
         <copy file="${bundle}/jflicks-player-photoshow.jar"
+            todir="${felix.fe.home}/bundle"/>
+        <copy file="${bundle}/jflicks-jna.jar"
             todir="${felix.fe.home}/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
             todir="${felix.fe.home}/bundle"/>
