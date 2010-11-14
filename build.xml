@@ -237,15 +237,6 @@
             eclipse="false"
             failok="false"
             exceptions="true"
-            files="${bnd}/jflicks-player-cvlc.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
             files="${bnd}/jflicks-player-vlcj.bnd"
             output="${bundle}"
         />
@@ -644,8 +635,10 @@
             todir="${felix.fe.home}/bundle"/>
         <copy file="${bundle}/jflicks-player-vlcj.jar"
             todir="${felix.fe.home}/bundle"/>
+        <!--
         <copy file="${bundle}/jflicks-player-totem.jar"
             todir="${felix.fe.home}/bundle"/>
+        -->
         <copy file="${bundle}/jflicks-player-chrome.jar"
             todir="${felix.fe.home}/bundle"/>
         <copy file="${bundle}/jflicks-player-mplayer.jar"

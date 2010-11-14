@@ -52,9 +52,26 @@ public class Activator extends BaseActivator {
 
         bc.registerService(Player.class.getName(), v, dict);
 
+        // When it's ready we should use VLC for DVD playing.  The problem
+        // is that 1.2.x is required and in our testing it automatically
+        // went full screen and we had sound issues.  Not saying it was not
+        // my fault by building it properly but it's just now an improvement
+        // yet.  Perhaps on their next official release or I will retry in
+        // the future.
+        //
+        //Vlcj dvd = new Vlcj();
+        //dvd.setType(Player.PLAYER_VIDEO_DVD);
+
+        //dict = new Hashtable<String, String>();
+        //dict.put(Player.TITLE_PROPERTY, dvd.getTitle());
+        //dict.put(Player.HANDLE_PROPERTY, dvd.getType());
+
+        //bc.registerService(Player.class.getName(), dvd, dict);
+
         serviceTracker =
             new ServiceTracker(bc, EventAdmin.class.getName(), null);
         v.setEventServiceTracker(serviceTracker);
+        //dvd.setEventServiceTracker(serviceTracker);
         serviceTracker.open();
     }
 

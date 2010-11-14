@@ -252,7 +252,6 @@ public class Vlcj extends BasePlayer {
 
             String[] vlcArgs = {
                 "--no-video-title-show",
-                "--vout-filter=deinterlace",
                 "--deinterlace-mode=bob"
             };
             MediaPlayerFactory mpf = new MediaPlayerFactory(vlcArgs);
@@ -375,13 +374,100 @@ public class Vlcj extends BasePlayer {
     /**
      * {@inheritDoc}
      */
+    public void guide() {
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            p.menuActivate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void up() {
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            p.menuUp();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void down() {
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            p.menuDown();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void left() {
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            p.menuLeft();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void right() {
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            p.menuRight();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void enter() {
+
+        if (getType() == PLAYER_VIDEO_DVD) {
+
+            EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+            if (p != null) {
+
+                p.menuActivate();
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void next() {
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            p.nextChapter();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public void previous() {
+
+        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        if (p != null) {
+
+            p.previousChapter();
+        }
     }
 
     /**
