@@ -556,159 +556,29 @@
         description="Gotta do more than just compile!">
 
         <!-- First do server side. -->
-        <!--
-        <copy file="${bundle}/jflicks-base.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-stream-http.jar"
-            todir="${felix.server.home}/bundle"/>
-
-        <copy file="${bundle}/jflicks-photomanager-digikam.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-videomanager-system.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-tv-programdata-sd.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-tv-recorder-hdhr.jar"
-            todir="${felix.server.home}/bundle"/>
-
-        <copy file="${bundle}/jflicks-tv-recorder-v4l2.jar"
-            todir="${felix.server.home}/bundle"/>
-
-        <copy file="${bundle}/jflicks-tv-scheduler-system.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-tv-live-system.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-tv-postproc-system.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-tv-postproc-worker-comskip.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-tv-postproc-worker-mediainfo.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-tv-postproc-worker-ffmpegscreenshot.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-trailer-apple.jar"
-            todir="${felix.server.home}/bundle"/>
-
-        <copy file="${bundle}/jflicks-tv-ondemand-roku.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-nms-system.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-swingx.jar"
-            todir="${felix.server.home}/bundle"/>
-        <copy file="${bundle}/jflicks-jdom.jar"
-            todir="${felix.server.home}/bundle"/>
-
-        <copy file="${bundle}/jflicks-sqlitejdbc.jar"
-            todir="${felix.server.home}/bundle"/>
-        -->
+        <copy todir="${felix.server.home}/bundle">
+            <fileset dir="${bundle}" includes="${server.deploy}"/>
+        </copy>
 
         <!-- Now do client side. -->
-        <copy file="${bundle}/jflicks-base.jar"
-            todir="${felix.client.home}/bundle"/>
-        <copy file="${bundle}/jflicks-swingx.jar"
-            todir="${felix.client.home}/bundle"/>
-        <copy file="${bundle}/jflicks-nms-remote.jar"
-            todir="${felix.client.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui.jar"
-            todir="${felix.client.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view.jar"
-            todir="${felix.client.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-client.jar"
-            todir="${felix.client.home}/bundle"/>
+        <copy todir="${felix.client.home}/bundle">
+            <fileset dir="${bundle}" includes="${client.deploy}"/>
+        </copy>
 
         <!-- Now do scheduler side. -->
-        <copy file="${bundle}/jflicks-base.jar"
-            todir="${felix.scheduler.home}/bundle"/>
-        <copy file="${bundle}/jflicks-swingx.jar"
-            todir="${felix.scheduler.home}/bundle"/>
-        <copy file="${bundle}/jflicks-nms-remote.jar"
-            todir="${felix.scheduler.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui.jar"
-            todir="${felix.scheduler.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view.jar"
-            todir="${felix.scheduler.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-scheduler.jar"
-            todir="${felix.scheduler.home}/bundle"/>
+        <copy todir="${felix.scheduler.home}/bundle">
+            <fileset dir="${bundle}" includes="${scheduler.deploy}"/>
+        </copy>
 
         <!-- Now do fe side. -->
-        <copy file="${bundle}/jflicks-base.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-player-vlcj.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <!--
-        <copy file="${bundle}/jflicks-player-totem.jar"
-            todir="${felix.fe.home}/bundle"/>
-        -->
-        <copy file="${bundle}/jflicks-player-chrome.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-player-mplayer.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-player-photoshow.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-jna.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-swingx.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-timingframework.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-nms-remote.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-dvd.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-livetv.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-ondemand.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-photo.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-preference.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-preview.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-recording.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-schedule.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-script.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-video.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-googletv.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-rc-lirc.jar"
-            todir="${felix.fe.home}/bundle"/>
-        <copy file="${bundle}/jflicks-imagecache-system.jar"
-            todir="${felix.fe.home}/bundle"/>
+        <copy todir="${felix.fe.home}/bundle">
+            <fileset dir="${bundle}" includes="${fe.deploy}"/>
+        </copy>
 
         <!-- Now do metadata side. -->
-        <copy file="${bundle}/jflicks-base.jar"
-            todir="${felix.metadata.home}/bundle"/>
-        <copy file="${bundle}/jflicks-swingx.jar"
-            todir="${felix.metadata.home}/bundle"/>
-        <copy file="${bundle}/jflicks-nms-remote.jar"
-            todir="${felix.metadata.home}/bundle"/>
-        <copy file="${bundle}/jflicks-metadata-themoviedb.jar"
-            todir="${felix.metadata.home}/bundle"/>
-        <copy file="${bundle}/jflicks-metadata-thetvdb.jar"
-            todir="${felix.metadata.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui.jar"
-            todir="${felix.metadata.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view.jar"
-            todir="${felix.metadata.home}/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-metadata.jar"
-            todir="${felix.metadata.home}/bundle"/>
-        <copy file="${bundle}/jflicks-jdom.jar"
-            todir="${felix.metadata.home}/bundle"/>
-        <copy file="${bundle}/jflicks-thetvdbapi.jar"
-            todir="${felix.metadata.home}/bundle"/>
+        <copy todir="${felix.metadata.home}/bundle">
+            <fileset dir="${bundle}" includes="${metadata.deploy}"/>
+        </copy>
 
     </target>
 
