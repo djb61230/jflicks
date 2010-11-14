@@ -16,6 +16,7 @@
 */
 package org.jflicks.ui.view.fe.screen.video;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -42,7 +43,6 @@ import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.NMSUtil;
 import org.jflicks.nms.Video;
-import org.jflicks.mvc.View;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
@@ -58,6 +58,9 @@ import org.jflicks.ui.view.fe.VideoInfoWindow;
 import org.jflicks.ui.view.fe.VideoProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.util.Util;
+
+import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * This class supports Videos in a front end UI on a TV.
@@ -246,6 +249,13 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             setVideoInfoWindow(new VideoInfoWindow((int) width, (int) height,
                 8, getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont()));
+
+            // Create our blank panel.
+            JXPanel blank = new JXPanel();
+            MattePainter blankp = new MattePainter(Color.BLACK);
+            blank.setBackgroundPainter(blankp);
+            blank.setBounds(0, 0, (int) width, (int) height);
+            setBlankPanel(blank);
         }
     }
 
@@ -326,6 +336,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
      */
     public void close() {
 
+        removeBlankPanel();
         controlKeyboard(true);
         VideoInfoWindow w = getVideoInfoWindow();
         if (w != null) {
@@ -439,7 +450,13 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         return (result);
     }
 
-    private void setParameters(String[] array) {
+    /**
+     * This allows us to have code to set the parameters instead of
+     * hardwiring in the constructor.
+     *
+     * @param array The parameters to use.
+     */
+    public void setParameters(String[] array) {
 
         if (array != null) {
             parameters = Arrays.copyOf(array, array.length);
@@ -661,24 +678,25 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
             String s = v.getAspectRatio();
             NMS n = NMSUtil.select(getNMS(), v.getHostPort());
+            FrontEndView fev = (FrontEndView) getView();
             System.out.println("aspect: <" + s + ">");
             System.out.println("nms: <" + n + ">");
             System.out.println("hostport: <" + v.getHostPort() + ">");
-            if ((s != null) && (n != null)) {
+            if ((s != null) && (n != null) && (fev != null)) {
 
                 if (s.equals(NMSConstants.ASPECT_RATIO_16X9)) {
 
-                    result = n.getFeatureIntro169();
+                    result = fev.transformPath(n.getFeatureIntro169());
                     System.out.println("result 169: <" + result + ">");
 
                 } else if (s.equals(NMSConstants.ASPECT_RATIO_235X1)) {
 
-                    result = n.getFeatureIntro235();
+                    result = fev.transformPath(n.getFeatureIntro235());
                     System.out.println("result 235: <" + result + ">");
 
                 } else if (s.equals(NMSConstants.ASPECT_RATIO_4X3)) {
 
-                    result = n.getFeatureIntro43();
+                    result = fev.transformPath(n.getFeatureIntro43());
                     System.out.println("result 43: <" + result + ">");
                 }
             }
@@ -872,12 +890,14 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                                     controlKeyboard(false);
                                     p.setFrame(Util.findFrame(this));
+                                    addBlankPanel();
                                     p.play("-playlist intro.txt");
 
                                 } catch (IOException ex) {
 
                                     controlKeyboard(false);
                                     p.setFrame(Util.findFrame(this));
+                                    addBlankPanel();
                                     p.play(v.getPath());
                                 }
 
@@ -885,6 +905,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                                 controlKeyboard(false);
                                 p.setFrame(Util.findFrame(this));
+                                addBlankPanel();
                                 p.play(v.getPath());
                             }
 
@@ -892,6 +913,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                             controlKeyboard(false);
                             p.setFrame(Util.findFrame(this));
+                            addBlankPanel();
                             p.play(v.getPath());
                         }
 
@@ -914,6 +936,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                         controlKeyboard(false);
                         p.setFrame(Util.findFrame(this));
+                        addBlankPanel();
                         p.play(v.getPath(), getBookmark(v.getId()));
 
                     } else if (event.getSource() == getDeleteButton()) {

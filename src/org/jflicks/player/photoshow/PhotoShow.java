@@ -22,12 +22,10 @@ import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.JComponent;
@@ -192,7 +190,6 @@ public class PhotoShow extends BasePlayer implements ActionListener {
                 setDialog(w);
 
                 p.setFocusable(true);
-                p.requestFocus();
                 InputMap map = p.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 
                 InfoAction infoAction = new InfoAction();
@@ -211,6 +208,17 @@ public class PhotoShow extends BasePlayer implements ActionListener {
                 t.setInitialDelay(500);
                 setTimer(t);
                 t.start();
+
+                final JXPanel fpan = p;
+                ActionListener focusPerformer = new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+
+                        fpan.requestFocus();
+                    }
+                };
+                Timer focusTimer = new Timer(2000, focusPerformer);
+                focusTimer.setRepeats(false);
+                focusTimer.start();
             }
         }
     }

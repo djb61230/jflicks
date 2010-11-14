@@ -356,12 +356,12 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
                 } else {
 
-                    System.out.println("Eaten: " + message);
+                    //System.out.println("Eaten: " + message);
                 }
 
             } else {
 
-                System.out.println("Eaten: " + message);
+                //System.out.println("Eaten: " + message);
             }
         }
     }

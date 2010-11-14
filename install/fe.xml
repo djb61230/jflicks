@@ -58,6 +58,8 @@
             <file override="update"
                 src="fe/bundle/jflicks-base.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
+                src="fe/bundle/jflicks-jna.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
                 src="fe/bundle/jflicks-imagecache-system.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/bundle/jflicks-nms-remote.jar" targetdir="$INSTALL_PATH/bundle"/>
@@ -89,8 +91,6 @@
                 src="fe/bundle/org.apache.felix.shell.tui-1.4.1.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/bundle/remote-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
-            <file override="update"
-                src="fe/bundle/jflicks-ui-view-fe-screen-preference.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/startup.sh" targetdir="$INSTALL_PATH/"/>
             <file override="askfalse"
@@ -217,7 +217,7 @@
         <pack name="On Demand" preselected="no" required="no">
             <description>Needed if you plan on watching an On Demand source.</description>
             <file override="update"
-                src="fe/bundle/jflicks-player-cvlc.jar" targetdir="$INSTALL_PATH/bundle"/>
+                src="fe/bundle/jflicks-player-vlcj.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-ondemand.jar" targetdir="$INSTALL_PATH/bundle"/>
         </pack>

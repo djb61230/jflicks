@@ -21,11 +21,12 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -33,12 +34,10 @@ import com.sun.jna.Native;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
-import org.jflicks.job.SystemJob;
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.PlayState;
 import org.jflicks.util.Util;
-import org.jflicks.util.WindowId;
 
 /**
  * This Player (with other classes in this package) is capable of
@@ -57,6 +56,7 @@ public class MPlayer extends BasePlayer {
     private JobContainer jobContainer;
     private JobContainer statusJobContainer;
     private boolean userStop;
+    private boolean forceFullscreen;
 
     /**
      * Simple constructor.
@@ -216,6 +216,24 @@ public class MPlayer extends BasePlayer {
     }
 
     /**
+     * Force mplayer to go fullscreen.
+     *
+     * @return True when you want mplayer to go fullscreen.
+     */
+    public boolean isForceFullscreen() {
+        return (forceFullscreen);
+    }
+
+    /**
+     * Force mplayer to go fullscreen.
+     *
+     * @param b True when you want mplayer to go fullscreen.
+     */
+    public void setForceFullscreen(boolean b) {
+        forceFullscreen = b;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public boolean supportsPause() {
@@ -276,48 +294,67 @@ public class MPlayer extends BasePlayer {
                 }
             }
 
-            Rectangle r = null;
-            if (isFullscreen()) {
+            MPlayerJob job = null;
+            if (isForceFullscreen()) {
 
-                r = getFullscreenRectangle();
+                job = new MPlayerJob(null, position, time, url, isAutoSkip());
+                setMPlayerJob(job);
 
             } else {
 
-                r = getRectangle();
+                Rectangle r = null;
+                if (isFullscreen()) {
+
+                    r = getFullscreenRectangle();
+
+                } else {
+
+                    r = getRectangle();
+                }
+
+                int x = (int) r.getX();
+                int y = (int) r.getY();
+                int width = (int) r.getWidth();
+                int height = (int) r.getHeight();
+
+                JDialog win = new JDialog(getFrame());
+                win.setUndecorated(true);
+                win.setBounds(x, y, width, height);
+                win.setBackground(Color.BLACK);
+                setDialog(win);
+
+                Canvas can = getCanvas();
+                JPanel pan = getKeyPanel();
+                pan.setBounds(x, y, width, height);
+                win.add(pan, BorderLayout.CENTER);
+
+                Cursor cursor = Util.getNoCursor();
+                if (cursor != null) {
+
+                    pan.setCursor(cursor);
+                    can.setCursor(cursor);
+                }
+
+                win.setVisible(true);
+
+                long canid = Native.getComponentID(can);
+                String wid = "" + canid;
+
+                job = new MPlayerJob(wid, position, time, url, isAutoSkip());
+                setMPlayerJob(job);
+
+                final JPanel fpan = pan;
+                ActionListener focusPerformer = new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+
+                        fpan.requestFocus();
+                    }
+                };
+                Timer focusTimer = new Timer(5000, focusPerformer);
+                focusTimer.setRepeats(false);
+                focusTimer.start();
             }
 
-            int x = (int) r.getX();
-            int y = (int) r.getY();
-            int width = (int) r.getWidth();
-            int height = (int) r.getHeight();
-
-            JDialog win = new JDialog(getFrame(), "jflicks-mplayer");
-            win.setUndecorated(true);
-            win.setBounds(x, y, width, height);
-            win.setBackground(Color.BLACK);
-            setDialog(win);
-
-            Canvas can = getCanvas();
-            JPanel pan = getKeyPanel();
-            pan.setBounds(x, y, width, height);
-            win.add(pan, BorderLayout.CENTER);
-
-            Cursor cursor = Util.getNoCursor();
-            if (cursor != null) {
-
-                pan.setCursor(cursor);
-                can.setCursor(cursor);
-            }
-
-            win.setVisible(true);
-            pan.requestFocus();
-
-            long canid = Native.getComponentID(can);
-            String wid = "" + canid;
-
-            MPlayerJob job =
-                new MPlayerJob(wid, position, time, url, isAutoSkip());
-            setMPlayerJob(job);
             PlayStateJob psj =
                 new PlayStateJob(this, job, playStateTime, bookmarkSeconds);
             setPlayStateJob(psj);
@@ -447,6 +484,9 @@ public class MPlayer extends BasePlayer {
         return (result);
     }
 
+    /**
+     * Clean up window resources.
+     */
     public void dispose() {
 
         JDialog w = getDialog();

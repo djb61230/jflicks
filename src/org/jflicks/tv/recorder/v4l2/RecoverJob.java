@@ -68,11 +68,11 @@ public abstract class RecoverJob extends BaseV4l2Job implements ActionListener {
     public RecoverJob() {
     }
 
-    public int getBlockCount() {
+    private int getBlockCount() {
         return (blockCount);
     }
 
-    public void setBlockCount(int i) {
+    private void setBlockCount(int i) {
         blockCount = i;
     }
 
@@ -97,7 +97,8 @@ public abstract class RecoverJob extends BaseV4l2Job implements ActionListener {
                 System.out.println("We are probably blocking...");
                 int bcount = getBlockCount();
                 bcount++;
-                if (bcount < 30) {
+                System.out.println("Times we failed on a block: " + bcount);
+                if (bcount < 20) {
 
                     setBlockCount(bcount);
                     if (fileChannel != null) {
@@ -115,7 +116,7 @@ public abstract class RecoverJob extends BaseV4l2Job implements ActionListener {
 
                 } else {
 
-                    // Time to give up!!
+                    System.out.println("Time to give up!!");
                     stop();
                 }
 
@@ -195,6 +196,7 @@ public abstract class RecoverJob extends BaseV4l2Job implements ActionListener {
      * {@inheritDoc}
      */
     public void stop() {
+
         setTerminate(true);
     }
 

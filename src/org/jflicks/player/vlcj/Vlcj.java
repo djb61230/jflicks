@@ -21,11 +21,14 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JDialog;
+import javax.swing.Timer;
 
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
@@ -35,6 +38,14 @@ import org.jflicks.player.Bookmark;
 import org.jflicks.player.PlayState;
 import org.jflicks.util.Util;
 
+/**
+ * This player uses the vlcj library to embed vlc.  It current supports
+ * streaming UDP packets.  It can play files but does not do well with
+ * transport streams.
+ *
+ * @author Doug Barnum
+ * @version 1.0
+ */
 public class Vlcj extends BasePlayer {
 
     private JDialog dialog;
@@ -43,6 +54,9 @@ public class Vlcj extends BasePlayer {
     private JPanel keyPanel;
     private Canvas canvas;
 
+    /**
+     * Simple constructor.
+     */
     public Vlcj() {
 
         setType(PLAYER_VIDEO_STREAM_UDP);
@@ -236,8 +250,6 @@ public class Vlcj extends BasePlayer {
 
             setDialog(win);
 
-            pan.requestFocus();
-
             String[] vlcArgs = {
                 "--no-video-title-show",
                 "--vout-filter=deinterlace",
@@ -245,19 +257,30 @@ public class Vlcj extends BasePlayer {
             };
             MediaPlayerFactory mpf = new MediaPlayerFactory(vlcArgs);
             setMediaPlayerFactory(mpf);
-    
+
             EmbeddedMediaPlayer mediaPlayer = mpf.newMediaPlayer(null);
             mediaPlayer.setEnableKeyInputHandling(false);
             mediaPlayer.setEnableMouseInputHandling(false);
             mediaPlayer.setVideoSurface(getCanvas());
             setEmbeddedMediaPlayer(mediaPlayer);
-    
+
             mediaPlayer.playMedia(url);
             if (b != null) {
 
                 float ftmp = (float) b.getPosition();
                 mediaPlayer.setPosition(ftmp / 1000.0f);
             }
+
+            final JPanel fpan = pan;
+            ActionListener focusPerformer = new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+
+                    fpan.requestFocus();
+                }
+            };
+            Timer focusTimer = new Timer(5000, focusPerformer);
+            focusTimer.setRepeats(false);
+            focusTimer.start();
         }
     }
 

@@ -246,7 +246,8 @@ public class Commercial implements Serializable, Comparable<Commercial> {
 
         int[] result = new int[2];
 
-        result[0] = result[1] = current;
+        result[0] = current;
+        result[1] = current;
 
         if (array != null) {
 

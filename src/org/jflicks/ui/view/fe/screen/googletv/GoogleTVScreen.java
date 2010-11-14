@@ -26,25 +26,18 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
-import org.jflicks.rc.RC;
 import org.jflicks.ui.view.fe.ParameterProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
-import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -317,6 +310,12 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
     public void enter() {
     }
 
+    /**
+     * Screens that use Plaers usually need to listen for action events from
+     * a user selected button but we just launch chrome.
+     *
+     * @param event A given ActionEvent instance.
+     */
     public void actionPerformed(ActionEvent event) {
     }
 

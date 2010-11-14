@@ -327,7 +327,20 @@ public interface Player {
      */
     void setLengthHint(long l);
 
+    /**
+     * Players can use their parents Frame instance to aid in making their
+     * own Frame or Window.
+     *
+     * @return A Frame instance.
+     */
     Frame getFrame();
+
+    /**
+     * Players can use their parents Frame instance to aid in making their
+     * own Frame or Window.
+     *
+     * @param f A Frame instance.
+     */
     void setFrame(Frame f);
 
     /**

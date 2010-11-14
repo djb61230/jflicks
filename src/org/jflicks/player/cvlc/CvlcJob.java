@@ -85,7 +85,8 @@ public class CvlcJob extends AbstractJob implements JobListener {
      */
     public void start() {
 
-        SystemJob job = SystemJob.getInstance("vlc -I dummy --key-quit q --fullscreen " + getURL());
+        SystemJob job = SystemJob.getInstance("vlc -I dummy --key-quit q"
+            + "--fullscreen " + getURL());
 
         System.out.println("started: " + job.getCommand());
         job.addJobListener(this);

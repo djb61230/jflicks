@@ -26,6 +26,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.util.Util;
 
 /**
  * This job starts a system job that runs chrome.
@@ -91,8 +92,14 @@ public class ChromeJob extends AbstractJob implements JobListener {
      */
     public void start() {
 
-        SystemJob job = SystemJob.getInstance(
-            "google-chrome --start-maximized " + getURL());
+        String prgname = "google-chrome";
+        if (Util.isWindows()) {
+
+            prgname = "chrome";
+        }
+
+        SystemJob job = SystemJob.getInstance(prgname
+            + " --start-maximized " + getURL());
 
         System.out.println("started: " + job.getCommand());
         job.addJobListener(this);

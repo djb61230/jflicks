@@ -16,6 +16,7 @@
 */
 package org.jflicks.ui.view.fe.screen.photo;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -47,6 +48,9 @@ import org.jflicks.ui.view.fe.PhotoTagProperty;
 import org.jflicks.ui.view.fe.TagListPanel;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.util.Util;
+
+import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * This class supports Photos in a front end UI on a TV.
@@ -298,6 +302,13 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
             setDefaultBackgroundImage(
                 Util.resize(getDefaultBackgroundImage(), width, height));
+
+            // Create our blank panel.
+            JXPanel blank = new JXPanel();
+            MattePainter blankp = new MattePainter(Color.BLACK);
+            blank.setBackgroundPainter(blankp);
+            blank.setBounds(0, 0, width, height);
+            setBlankPanel(blank);
         }
 
     }
@@ -365,13 +376,12 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
      */
     public void close() {
 
+        removeBlankPanel();
         Player p = getPlayer();
         if (p != null) {
 
             p.stop();
         }
-
-        setDone(true);
     }
 
     /**
@@ -548,6 +558,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     writePlaylist(any);
                     p.addPropertyChangeListener("Completed", this);
                     p.setFrame(Util.findFrame(this));
+                    addBlankPanel();
                     p.play("list.txt");
                 }
 
@@ -559,6 +570,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     writePlaylist(all);
                     p.addPropertyChangeListener("Completed", this);
                     p.setFrame(Util.findFrame(this));
+                    addBlankPanel();
                     p.play("list.txt");
                 }
             }

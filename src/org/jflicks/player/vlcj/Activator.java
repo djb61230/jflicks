@@ -44,17 +44,17 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
-        Vlcj vlcj = new Vlcj();
+        Vlcj v = new Vlcj();
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
-        dict.put(Player.TITLE_PROPERTY, vlcj.getTitle());
-        dict.put(Player.HANDLE_PROPERTY, vlcj.getType());
+        dict.put(Player.TITLE_PROPERTY, v.getTitle());
+        dict.put(Player.HANDLE_PROPERTY, v.getType());
 
-        bc.registerService(Player.class.getName(), vlcj, dict);
+        bc.registerService(Player.class.getName(), v, dict);
 
         serviceTracker =
             new ServiceTracker(bc, EventAdmin.class.getName(), null);
-        vlcj.setEventServiceTracker(serviceTracker);
+        v.setEventServiceTracker(serviceTracker);
         serviceTracker.open();
     }
 

@@ -26,6 +26,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.util.Util;
 
 /**
  * This job starts a system job that runs mplayer.  It also is a conduit to
@@ -52,6 +53,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
      * to have only one of them non-zero if playing past the beginning is
      * desired.
      *
+     * @param wid A window ID.
      * @param position The number of bytes into the video to begin playing.
      * @param seconds The number of seconds into the video to begin playing.
      * @param path The path to the file to play.
@@ -83,10 +85,22 @@ public class MPlayerJob extends AbstractJob implements JobListener {
         jobContainer = j;
     }
 
+    /**
+     * When set mplayer can be told to use an existing window instead of
+     * making a new one.
+     *
+     * @return A window ID as a String.
+     */
     public String getWindowId() {
         return (windowId);
     }
 
+    /**
+     * When set mplayer can be told to use an existing window instead of
+     * making a new one.
+     *
+     * @param s A window ID as a String.
+     */
     public void setWindowId(String s) {
         windowId = s;
     }
@@ -188,18 +202,37 @@ public class MPlayerJob extends AbstractJob implements JobListener {
      */
     public void command(String s) {
 
-        FileWriter w = getFileWriter();
-        if ((s != null) && (w != null)) {
+        if (Util.isLinux()) {
 
-            try {
+            FileWriter w = getFileWriter();
+            if ((s != null) && (w != null)) {
 
-                System.out.println("Sending...<" + s + ">");
-                w.write(s, 0, s.length());
-                w.flush();
+                try {
 
-            } catch (IOException ex) {
+                    System.out.println("Sending...<" + s + ">");
+                    w.write(s, 0, s.length());
+                    w.flush();
 
-                throw new RuntimeException(ex);
+                } catch (IOException ex) {
+
+                    throw new RuntimeException(ex);
+                }
+            }
+
+        } else {
+
+            // We assume windows or at least non-fifo communication.
+            SystemJob job = getSystemJob();
+            if (job != null) {
+
+                try {
+
+                    job.write(s.getBytes(), 0, s.length());
+
+                } catch (IOException ex) {
+
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }
@@ -234,11 +267,28 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
         String edltext = computeEDLArgument(getPath());
 
-        SystemJob job = SystemJob.getInstance(
-                "mplayer -wid " + getWindowId()
+        SystemJob job = null;
+
+        String wid = getWindowId();
+        if (wid != null) {
+
+            job = SystemJob.getInstance(
+                "mplayer -wid " + wid
                 + " -input nodefault-bindings:conf=/dev/null:"
                 + "file=mplayer.fifo" + " -slave " + edltext
                 + " " + startParameter + " " + getPath());
+
+        } else {
+
+            File conf = new File("conf");
+            File full = new File(conf, "mplayer.conf");
+            job = SystemJob.getInstance(
+                "mplayer -fs -zoom"
+                + " -input nodefault-bindings:conf="
+                + full.getAbsolutePath() + ":"
+                + "file=mplayer.fifo" + " -slave " + edltext
+                + " " + startParameter + " " + getPath());
+        }
 
         System.out.println("started: " + job.getCommand());
         job.addJobListener(this);

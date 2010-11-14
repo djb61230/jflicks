@@ -79,6 +79,9 @@ public class FrontEndView extends JFlicksView implements ActionListener,
     private RC rc;
     private Cursor noCursor;
     private boolean hideMouse;
+    private int pathCount;
+    private ArrayList<String> fromPathList;
+    private ArrayList<String> toPathList;
 
     /**
      * Default constructor.
@@ -86,6 +89,9 @@ public class FrontEndView extends JFlicksView implements ActionListener,
     public FrontEndView() {
 
         setScreenList(new ArrayList<Screen>());
+        setPathCount(-1);
+        setFromPathList(new ArrayList<String>());
+        setToPathList(new ArrayList<String>());
     }
 
     /**
@@ -191,6 +197,173 @@ public class FrontEndView extends JFlicksView implements ActionListener,
         return (result);
     }
 
+    private ArrayList<String> getFromPathList() {
+        return (fromPathList);
+    }
+
+    private void setFromPathList(ArrayList<String> l) {
+        fromPathList = l;
+    }
+
+    private ArrayList<String> getToPathList() {
+        return (toPathList);
+    }
+
+    private void setToPathList(ArrayList<String> l) {
+        toPathList = l;
+    }
+
+    private int getPathCount() {
+
+        if (pathCount == -1) {
+
+            // First time here.  Lets check the Properties just once if
+            // path transforms even exist.  This will save parsing Strings
+            // a tremendous amount og times.  First thing set it to zero.
+            pathCount = 0;
+            Properties p = getProperties();
+            if (p != null) {
+
+                pathCount = Util.str2int(p.getProperty("pathCount"), 0);
+
+                if (pathCount > 0) {
+
+                    // It's easier to process the paths if we put them in
+                    // associative lists.  So lets do that now.
+                    ArrayList<String> fl = getFromPathList();
+                    ArrayList<String> tl = getToPathList();
+                    if ((fl != null) && (tl != null)) {
+
+                        fl.clear();
+                        tl.clear();
+                        for (int i = 0; i < pathCount; i++) {
+
+                            String from = p.getProperty("pathFrom" + i);
+                            String to = p.getProperty("pathTo" + i);
+                            if ((from != null) && (to != null)) {
+
+                                fl.add(from);
+                                tl.add(to);
+                            }
+                        }
+
+                        // Reset the pathCount to the actual pairs we found.
+                        pathCount = fl.size();
+                    }
+                }
+            }
+        }
+
+        return (pathCount);
+    }
+
+    private void setPathCount(int i) {
+        pathCount = i;
+    }
+
+    /**
+     * Convenience method available to Screens to transform any path
+     * to something else that is available to this client.  Path
+     * transformations are defined in jflicks.properties in the install
+     * directory.
+     *
+     * @param path Transform the given path to something else.
+     * @return A proper path for this client.
+     */
+    public String transformPath(String path) {
+
+        String result = path;
+
+        if (path != null) {
+
+            int pcount = getPathCount();
+            if (pcount > 0) {
+
+                ArrayList<String> fl = getFromPathList();
+                ArrayList<String> tl = getToPathList();
+                if ((fl != null) && (tl != null)) {
+
+                    for (int i = 0; i < fl.size(); i++) {
+
+                        String from = fl.get(i);
+                        if (path.startsWith(from)) {
+
+                            // We are done.  Set out result.
+                            int length = from.length();
+                            result = tl.get(i) + path.substring(length);
+                            if (Util.isWindows()) {
+
+                                result = result.replace("/", "\\");
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private void transformRecording(Recording r) {
+
+        if (r != null) {
+
+            if (getPathCount() > 0) {
+
+                r.setPath(transformPath(r.getPath()));
+            }
+        }
+    }
+
+    private void transformRecordings(Recording[] array) {
+
+        if ((array != null) && (array.length > 0)) {
+
+            if (getPathCount() > 0) {
+
+                // We have paths to check.  We can't be sure actually
+                // anything will change but we have to check.
+                for (int i = 0; i < array.length; i++) {
+
+                    array[i].setPath(transformPath(array[i].getPath()));
+                }
+            }
+        }
+    }
+
+    private void transformPhotos(Photo[] array) {
+
+        if ((array != null) && (array.length > 0)) {
+
+            if (getPathCount() > 0) {
+
+                // We have paths to check.  We can't be sure actually
+                // anything will change but we have to check.
+                for (int i = 0; i < array.length; i++) {
+
+                    array[i].setPath(transformPath(array[i].getPath()));
+                }
+            }
+        }
+    }
+
+    private void transformVideos(Video[] array) {
+
+        if ((array != null) && (array.length > 0)) {
+
+            if (getPathCount() > 0) {
+
+                // We have paths to check.  We can't be sure actually
+                // anything will change but we have to check.
+                for (int i = 0; i < array.length; i++) {
+
+                    array[i].setPath(transformPath(array[i].getPath()));
+                }
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -273,7 +446,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             try {
 
                 Robot robot = new Robot();
-                robot.mouseMove(width, height);
+                robot.mouseMove(x + width, (y + height) / 2);
 
             } catch (AWTException event) {
 
@@ -461,6 +634,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
                                     RecordingProperty rp =
                                         (RecordingProperty) sarray[j];
+                                    transformRecording(r);
                                     rp.updateRecording(r);
                                 }
                             }
@@ -604,6 +778,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                     Photo[] parray = array[0].getPhotos();
                     if (parray != null) {
 
+                        transformPhotos(parray);
                         ptp.setPhotos(parray);
 
                     } else {
@@ -642,7 +817,9 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                         }
                     }
 
-                    ptp.setPhotos(plist.toArray(new Photo[plist.size()]));
+                    Photo[] parray = plist.toArray(new Photo[plist.size()]);
+                    transformPhotos(parray);
+                    ptp.setPhotos(parray);
                 }
             }
         }
@@ -657,7 +834,9 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
                 if (array.length == 1) {
 
-                    rp.setRecordings(array[0].getRecordings());
+                    Recording[] recs = array[0].getRecordings();
+                    transformRecordings(recs);
+                    rp.setRecordings(recs);
 
                 } else {
 
@@ -672,7 +851,9 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                         }
                     }
 
-                    rp.setRecordings(list.toArray(new Recording[list.size()]));
+                    Recording[] recs = list.toArray(new Recording[list.size()]);
+                    transformRecordings(recs);
+                    rp.setRecordings(recs);
                 }
             }
         }
@@ -695,7 +876,9 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
                 if (array.length == 1) {
 
-                    vp.setVideos(array[0].getVideos());
+                    Video[] vids = array[0].getVideos();
+                    transformVideos(vids);
+                    vp.setVideos(vids);
 
                 } else {
 
@@ -710,7 +893,9 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                         }
                     }
 
-                    vp.setVideos(list.toArray(new Video[list.size()]));
+                    Video[] vids = list.toArray(new Video[list.size()]);
+                    transformVideos(vids);
+                    vp.setVideos(vids);
                 }
             }
         }

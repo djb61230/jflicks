@@ -26,9 +26,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.jflicks.job.AbstractJob;
-import org.jflicks.job.JobContainer;
-import org.jflicks.job.JobEvent;
-import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
@@ -44,7 +41,7 @@ import org.jflicks.tv.scheduler.RecordedShow;
  * @version 1.0
  */
 public class SystemSchedulerJob extends AbstractJob
-    implements PropertyChangeListener, JobListener {
+    implements PropertyChangeListener {
 
     private SystemScheduler systemScheduler;
     private HashMap<Recorder, Recording> recordingHashMap;
@@ -299,27 +296,6 @@ public class SystemSchedulerJob extends AbstractJob
 
                         System.out.println("checkImports: " + ex.getMessage());
                     }
-                }
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void jobUpdate(JobEvent event) {
-
-        if (event.getType() == JobEvent.COMPLETE) {
-
-            TomkvJob job = (TomkvJob) event.getSource();
-            Recording r = job.getRecording();
-            SystemScheduler ss = getSystemScheduler();
-            if ((r != null) && (ss != null)) {
-
-                String path = r.getPath();
-                if ((path != null) && (path.endsWith("mkv"))) {
-
-                    ss.updateRecording(r);
                 }
             }
         }

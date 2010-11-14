@@ -16,13 +16,17 @@
 */
 package org.jflicks.ui.view.fe.screen.video;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import org.jflicks.player.Player;
 import org.jflicks.rc.RCTracker;
 import org.jflicks.imagecache.ImageCacheTracker;
 import org.jflicks.ui.view.fe.screen.Screen;
 import org.jflicks.util.BaseActivator;
+import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -50,6 +54,39 @@ public class Activator extends BaseActivator {
         setBundleContext(bc);
 
         VideoScreen s = new VideoScreen();
+
+        // Check for a properties file for video categories...
+        File conf = new File("conf");
+        if ((conf.exists()) && (conf.isDirectory())) {
+
+            File props = new File(conf, "videoscreen.properties");
+            if ((props.exists()) && (props.isFile())) {
+
+                Properties p = Util.findProperties(props);
+                if (p != null) {
+
+                    int count = Util.str2int(p.getProperty("categoryCount"), 0);
+                    if (count > 0) {
+
+                        ArrayList<String> l = new ArrayList<String>();
+                        for (int i = 0; i < count; i++) {
+
+                            String tmp = p.getProperty("category" + i);
+                            if (tmp != null) {
+
+                                l.add(tmp);
+                            }
+                        }
+
+                        if (l.size() > 0) {
+
+                            String[] array = l.toArray(new String[l.size()]);
+                            s.setParameters(array);
+                        }
+                    }
+                }
+            }
+        }
 
         // Now we listen for command events.
         String[] topics = new String[] {

@@ -20,6 +20,7 @@ import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -190,14 +191,14 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             new HashSet<AWTKeyStroke>(rrp.getFocusTraversalKeys(
                 KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
         set.clear();
-        set.add(KeyStroke.getKeyStroke("RIGHT"));
+        set.add(KeyStroke.getKeyStroke("DOWN"));
         rrp.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,
             set);
 
         set = new HashSet<AWTKeyStroke>(rrp.getFocusTraversalKeys(
                 KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));
         set.clear();
-        set.add(KeyStroke.getKeyStroke("LEFT"));
+        set.add(KeyStroke.getKeyStroke("UP"));
         rrp.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,
             set);
         setRecordingRulePanel(rrp);
@@ -763,8 +764,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             setUpcomingDetailPanel(dp);
 
             JXLabel label = getUpcomingLabel();
-            label.setFont(ulp.getSmallFont());
-            label.setForeground(ulp.getUnselectedColor());
+            label.setFont(ulp.getLargeFont());
+            label.setForeground(ulp.getSelectedColor());
             label.setHorizontalTextPosition(SwingConstants.CENTER);
             label.setHorizontalAlignment(SwingConstants.RIGHT);
             Dimension ldim = label.getPreferredSize();
@@ -1030,6 +1031,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                 }
 
                 updateLayout(false);
+                requestFocus();
             }
         }
     }
@@ -1101,6 +1103,10 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                 sdp.setRecordingStatus(null);
             }
         }
+    }
+
+    private Frame getFrame() {
+        return (Util.findFrame(this));
     }
 
     /**
@@ -1591,7 +1597,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                 p.setNMS(n);
                 p.setRecordingRule(rr);
 
-                Dialog.showPanel(null, p, p.getOkButton(), p.getCancelButton());
+                Dialog.showPanel(getFrame(), p, p.getOkButton(),
+                    p.getCancelButton());
                 if (p.isAccept()) {
 
                     AddRuleJob arj = new AddRuleJob(n, rr);

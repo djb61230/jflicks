@@ -20,6 +20,7 @@ import java.awt.AWTKeyStroke;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
@@ -27,11 +28,12 @@ import java.awt.event.ActionListener;
 import java.util.HashSet;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
@@ -65,8 +67,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
     private JXLabel nameLabel;
     private JXLabel channelLabel;
     private JXLabel durationLabel;
-    private JComboBox typeComboBox;
-    private JComboBox priorityComboBox;
+    private JRadioButton[] typeRadioButtons;
+    private JRadioButton[] priorityRadioButtons;
     private JSpinner beginSpinner;
     private JSpinner endSpinner;
     private JButton advancedButton;
@@ -114,22 +116,18 @@ public class RecordingRulePanel extends BaseCustomizePanel
         typeprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         typeprompt.setFont(getSmallFont());
 
-        JComboBox tcb = new JComboBox(RecordingRule.getTypeNames());
-        tcb.setSelectedIndex(RecordingRule.SERIES_TYPE);
-        tcb.addActionListener(this);
-        tcb.setFont(getSmallFont());
-        setTypeComboBox(tcb);
+        JRadioButton[] typeRadio = createRadioButtons(getSmallFont(),
+            RecordingRule.getTypeNames(), new ButtonGroup());
+        setTypeRadioButtons(typeRadio);
 
         JXLabel priorityprompt = new JXLabel("Priority");
         priorityprompt.setHorizontalTextPosition(SwingConstants.RIGHT);
         priorityprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         priorityprompt.setFont(getSmallFont());
 
-        JComboBox pcb = new JComboBox(RecordingRule.getPriorityNames());
-        pcb.setSelectedIndex(RecordingRule.NORMAL_PRIORITY);
-        pcb.addActionListener(this);
-        pcb.setFont(getSmallFont());
-        setPriorityComboBox(pcb);
+        JRadioButton[] priorityRadio = createRadioButtons(getSmallFont(),
+            RecordingRule.getPriorityNames(), new ButtonGroup());
+        setPriorityRadioButtons(priorityRadio);
 
         JXLabel beginprompt = new JXLabel("Begin Padding (min)");
         beginprompt.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -181,11 +179,13 @@ public class RecordingRulePanel extends BaseCustomizePanel
 
         setLayout(new GridBagLayout());
 
+        int yindex = 0;
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -196,18 +196,20 @@ public class RecordingRulePanel extends BaseCustomizePanel
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
 
         add(namelab, gbc);
 
+        yindex++;
+
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -218,18 +220,20 @@ public class RecordingRulePanel extends BaseCustomizePanel
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
 
         add(channellab, gbc);
 
+        yindex++;
+
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -240,62 +244,70 @@ public class RecordingRulePanel extends BaseCustomizePanel
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
 
         add(durationlab, gbc);
 
+        yindex++;
+
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
 
         add(typeprompt, gbc);
 
-        gbc = new GridBagConstraints();
-        gbc.weightx = 0.5;
-        gbc.weighty = 0.0;
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(4, 4, 4, 4);
+        for (int i = 0; i < typeRadio.length; i++) {
 
-        add(tcb, gbc);
+            gbc = new GridBagConstraints();
+            gbc.weightx = 0.5;
+            gbc.weighty = 0.0;
+            gbc.gridx = 1;
+            gbc.gridy = yindex++;
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(4, 4, 4, 4);
+
+            add(typeRadio[i], gbc);
+        }
 
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
 
         add(priorityprompt, gbc);
 
-        gbc = new GridBagConstraints();
-        gbc.weightx = 0.5;
-        gbc.weighty = 0.0;
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(4, 4, 4, 4);
+        for (int i = 0; i < priorityRadio.length; i++) {
 
-        add(pcb, gbc);
+            gbc = new GridBagConstraints();
+            gbc.weightx = 0.5;
+            gbc.weighty = 0.0;
+            gbc.gridx = 1;
+            gbc.gridy = yindex++;
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(4, 4, 4, 4);
+
+            add(priorityRadio[i], gbc);
+        }
 
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -306,18 +318,20 @@ public class RecordingRulePanel extends BaseCustomizePanel
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 1;
-        gbc.gridy = 5;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
 
         add(bspinner, gbc);
 
+        yindex++;
+
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -328,18 +342,20 @@ public class RecordingRulePanel extends BaseCustomizePanel
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 1;
-        gbc.gridy = 6;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
 
         add(espinner, gbc);
 
+        yindex++;
+
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = yindex;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
@@ -347,11 +363,13 @@ public class RecordingRulePanel extends BaseCustomizePanel
 
         add(advanced, gbc);
 
+        yindex++;
+
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 0;
-        gbc.gridy = 8;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -362,7 +380,7 @@ public class RecordingRulePanel extends BaseCustomizePanel
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 1;
-        gbc.gridy = 8;
+        gbc.gridy = yindex;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -414,8 +432,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
             }
 
             apply(getDurationLabel(), durationToString(rr.getDuration()));
-            apply(getTypeComboBox(), rr.getType());
-            apply(getPriorityComboBox(), rr.getPriority());
+            apply(getTypeRadioButtons(), rr.getType());
+            apply(getPriorityRadioButtons(), rr.getPriority());
             apply(getBeginSpinner(), rr.getBeginPadding() / 60);
             apply(getEndSpinner(), rr.getEndPadding() / 60);
             getAdvancedButton().setEnabled(rr.getTasks() != null);
@@ -425,8 +443,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
             apply(getNameLabel(), null);
             apply(getChannelLabel(), null);
             apply(getDurationLabel(), null);
-            apply(getTypeComboBox(), RecordingRule.SERIES_TYPE);
-            apply(getPriorityComboBox(), RecordingRule.NORMAL_PRIORITY);
+            apply(getTypeRadioButtons(), RecordingRule.SERIES_TYPE);
+            apply(getPriorityRadioButtons(), RecordingRule.NORMAL_PRIORITY);
             apply(getBeginSpinner(), 0);
             apply(getEndSpinner(), 0);
             getAdvancedButton().setEnabled(false);
@@ -509,20 +527,20 @@ public class RecordingRulePanel extends BaseCustomizePanel
         durationLabel = l;
     }
 
-    private JComboBox getTypeComboBox() {
-        return (typeComboBox);
+    private JRadioButton[] getTypeRadioButtons() {
+        return (typeRadioButtons);
     }
 
-    private void setTypeComboBox(JComboBox cb) {
-        typeComboBox = cb;
+    private void setTypeRadioButtons(JRadioButton[] array) {
+        typeRadioButtons = array;
     }
 
-    private JComboBox getPriorityComboBox() {
-        return (priorityComboBox);
+    private JRadioButton[] getPriorityRadioButtons() {
+        return (priorityRadioButtons);
     }
 
-    private void setPriorityComboBox(JComboBox cb) {
-        priorityComboBox = cb;
+    private void setPriorityRadioButtons(JRadioButton[] array) {
+        priorityRadioButtons = array;
     }
 
     private JSpinner getBeginSpinner() {
@@ -606,11 +624,11 @@ public class RecordingRulePanel extends BaseCustomizePanel
         }
     }
 
-    private void apply(JComboBox cb, int i) {
+    private void apply(JRadioButton[] array, int index) {
 
-        if (cb != null) {
+        if ((array != null) && (array.length > index)) {
 
-            cb.setSelectedIndex(i);
+            array[index].setSelected(true);
         }
     }
 
@@ -638,6 +656,33 @@ public class RecordingRulePanel extends BaseCustomizePanel
         return (result);
     }
 
+    private JRadioButton[] createRadioButtons(Font f, String[] array,
+        ButtonGroup bg) {
+
+        JRadioButton[] result = null;
+
+        if ((array != null) && (array.length > 0)) {
+
+            result = new JRadioButton[array.length];
+            for (int i = 0; i < result.length; i++) {
+
+                result[i] = new JRadioButton(array[i]);
+                result[i].setFont(f);
+                result[i].getInputMap().put(KeyStroke.getKeyStroke("ENTER"),
+                    "toggle");
+                result[i].getActionMap().put("toggle", new RadioAction());
+                result[i].addActionListener(this);
+
+                if (bg != null) {
+
+                    bg.add(result[i]);
+                }
+            }
+        }
+
+        return (result);
+    }
+
     private void advancedAction() {
 
         RecordingRule rr = getRecordingRule();
@@ -646,7 +691,6 @@ public class RecordingRulePanel extends BaseCustomizePanel
             Task[] tasks = rr.getTasks();
             if (tasks != null) {
 
-                System.out.println("tasks.length: " + tasks.length);
                 JComponent[] cbuts = new JComponent[tasks.length + 2];
                 for (int i = 0; i < tasks.length; i++) {
 
@@ -672,14 +716,14 @@ public class RecordingRulePanel extends BaseCustomizePanel
                     new HashSet<AWTKeyStroke>(cp.getFocusTraversalKeys(
                         KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
                 set.clear();
-                set.add(KeyStroke.getKeyStroke("RIGHT"));
+                set.add(KeyStroke.getKeyStroke("DOWN"));
                 cp.setFocusTraversalKeys(
                     KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, set);
 
                 set = new HashSet<AWTKeyStroke>(cp.getFocusTraversalKeys(
                         KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));
                 set.clear();
-                set.add(KeyStroke.getKeyStroke("LEFT"));
+                set.add(KeyStroke.getKeyStroke("UP"));
                 cp.setFocusTraversalKeys(
                     KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, set);
 
@@ -705,6 +749,25 @@ public class RecordingRulePanel extends BaseCustomizePanel
         }
     }
 
+    private int member(JRadioButton[] array, JRadioButton b) {
+
+        int result = -1;
+
+        if ((array != null) && (b != null)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                if (b == array[i]) {
+
+                    result = i;
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * We need to listen to action events to update from user actions
      * with the UI.
@@ -716,11 +779,7 @@ public class RecordingRulePanel extends BaseCustomizePanel
         RecordingRule rr = getRecordingRule();
         if (rr != null) {
 
-            if (event.getSource() == getTypeComboBox()) {
-                rr.setType(getTypeComboBox().getSelectedIndex());
-            } else if (event.getSource() == getPriorityComboBox()) {
-                rr.setPriority(getPriorityComboBox().getSelectedIndex());
-            } else if (event.getSource() == getAdvancedButton()) {
+            if (event.getSource() == getAdvancedButton()) {
                 advancedAction();
             } else if (event.getSource() == getOkButton()) {
                 setAccept(true);
@@ -767,6 +826,35 @@ public class RecordingRulePanel extends BaseCustomizePanel
         }
     }
 
+    class RadioAction extends AbstractAction {
+
+        public RadioAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            JRadioButton rb = (JRadioButton) e.getSource();
+            rb.setSelected(true);
+            RecordingRule rr = getRecordingRule();
+            if (rr != null) {
+
+                int index = member(getTypeRadioButtons(), rb);
+                if (index != -1) {
+
+                    rr.setType(index);
+
+                } else {
+
+                    index = member(getPriorityRadioButtons(), rb);
+                    if (index != -1) {
+
+                        rr.setPriority(index);
+                    }
+                }
+            }
+        }
+    }
+
     static class CancelAction extends AbstractAction {
 
         private JButton button;
@@ -777,7 +865,6 @@ public class RecordingRulePanel extends BaseCustomizePanel
 
         public void actionPerformed(ActionEvent e) {
 
-            System.out.println("got to");
             if (button != null) {
 
                 button.doClick();

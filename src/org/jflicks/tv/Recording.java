@@ -39,6 +39,7 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
     private String description;
     private String path;
     private Date date;
+    private Date originalAirDate;
     private long duration;
     private long realStart;
     private Commercial[] commercials;
@@ -79,6 +80,7 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
                 setDescription(show.getDescription());
                 setSeriesId(show.getSeriesId());
                 setShowId(show.getId());
+                setOriginalAirDate(show.getOriginalAirDate());
             }
 
             Airing airing = sa.getAiring();
@@ -105,6 +107,7 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
         setDescription(r.getDescription());
         setPath(r.getPath());
         setDate(r.getDate());
+        setOriginalAirDate(r.getOriginalAirDate());
         setDuration(r.getDuration());
         setRealStart(r.getRealStart());
         setCommercials(r.getCommercials());
@@ -281,6 +284,37 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
             date = new Date(d.getTime());
         } else {
             date = null;
+        }
+    }
+
+    /**
+     * When a version of recording first aired.
+     *
+     * @return A Date instance.
+     */
+    public Date getOriginalAirDate() {
+
+        Date result = null;
+
+        if (originalAirDate != null) {
+
+            result = new Date(originalAirDate.getTime());
+        }
+
+        return (result);
+    }
+
+    /**
+     * When a version of recording first aired.
+     *
+     * @param d A Date instance.
+     */
+    public void setOriginalAirDate(Date d) {
+
+        if (d != null) {
+            originalAirDate = new Date(d.getTime());
+        } else {
+            originalAirDate = null;
         }
     }
 

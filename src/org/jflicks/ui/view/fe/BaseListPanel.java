@@ -408,6 +408,12 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
         }
     }
 
+    /**
+     * Extensions and users of lists need to know the visible count of
+     * items.
+     *
+     * @return The visible count of items in our list.
+     */
     public int getVisibleCount() {
         return (visibleCount);
     }

@@ -104,8 +104,6 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-jdom.jar"
             todir="server/bundle"/>
-        <copy file="${bundle}/jflicks-rsslib4j.jar"
-            todir="server/bundle"/>
         <copy file="${bundle}/jflicks-sqlitejdbc.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-sqlitejdbc.jar"
@@ -143,6 +141,8 @@
         <!-- Now do fe side. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-jna.jar"
+            todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-mplayer.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-totem.jar"
@@ -151,7 +151,7 @@
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-photoshow.jar"
             todir="fe/bundle"/>
-        <copy file="${bundle}/jflicks-player-cvlc.jar"
+        <copy file="${bundle}/jflicks-player-vlcj.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
             todir="fe/bundle"/>
@@ -176,8 +176,6 @@
         <copy file="${bundle}/jflicks-ui-view-fe-screen-ondemand.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-photo.jar"
-            todir="fe/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-preference.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-preview.jar"
             todir="fe/bundle"/>

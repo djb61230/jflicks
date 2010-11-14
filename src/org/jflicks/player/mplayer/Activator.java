@@ -16,13 +16,16 @@
 */
 package org.jflicks.player.mplayer;
 
+import java.io.File;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.player.Player;
 import org.jflicks.util.BaseActivator;
+import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
@@ -55,6 +58,22 @@ public class Activator extends BaseActivator {
         jc.start();
 
         mplayer = new MPlayer();
+
+        // Check for a properties file for mplayer....
+        File conf = new File("conf");
+        if ((conf.exists()) && (conf.isDirectory())) {
+
+            File props = new File(conf, "mplayer.properties");
+            if ((props.exists()) && (props.isFile())) {
+
+                Properties p = Util.findProperties(props);
+                if (p != null) {
+
+                    mplayer.setForceFullscreen(Util.str2boolean(
+                        p.getProperty("forceFullscreen"), false));
+                }
+            }
+        }
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
         dict.put(Player.TITLE_PROPERTY, mplayer.getTitle());

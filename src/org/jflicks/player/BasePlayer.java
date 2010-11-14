@@ -62,10 +62,20 @@ public abstract class BasePlayer implements Player {
         setAudioOffset(0.0);
     }
 
+    /**
+     * We keep a service tracker to keep track of the OSGi Event Admin.
+     *
+     * @return A ServiceTracker instance.
+     */
     public ServiceTracker getEventServiceTracker() {
         return (eventServiceTracker);
     }
 
+    /**
+     * We keep a service tracker to keep track of the OSGi Event Admin.
+     *
+     * @param est A ServiceTracker instance.
+     */
     public void setEventServiceTracker(ServiceTracker est) {
         eventServiceTracker = est;
     }
@@ -173,10 +183,16 @@ public abstract class BasePlayer implements Player {
         firePropertyChange("Type", old, type);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Frame getFrame() {
         return (frame);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setFrame(Frame f) {
         frame = f;
     }
@@ -412,6 +428,12 @@ public abstract class BasePlayer implements Player {
     public void enter() {
     }
 
+    /**
+     * This can be used by extensions to turn any action into an RC
+     * event message.
+     *
+     * @param s The command string.
+     */
     public void commandEvent(String s) {
 
         System.out.println("commandEvent <" + s + ">");

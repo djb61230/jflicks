@@ -17,6 +17,8 @@
 package org.jflicks.ui.view.fe;
 
 import java.awt.Dimension;
+import java.text.FieldPosition;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.JLayeredPane;
@@ -51,6 +53,8 @@ public class RecordingDetailPanel extends BaseCustomizePanel {
     private ImageIcon video720ImageIcon;
     private ImageIcon videoFlaggedImageIcon;
     private ImageIcon videoRecordingImageIcon;
+    private SimpleDateFormat dateFormat;
+    private SimpleDateFormat originalDateFormat;
 
     /**
      * Simple empty constructor.
@@ -106,6 +110,9 @@ public class RecordingDetailPanel extends BaseCustomizePanel {
 
         MattePainter mpainter = new MattePainter(getPanelColor());
         setBackgroundPainter(mpainter);
+
+        setDateFormat(new SimpleDateFormat("EEE MMM d h:mm aaa"));
+        setOriginalDateFormat(new SimpleDateFormat("MMM d yyyy"));
     }
 
     /**
@@ -183,7 +190,27 @@ public class RecordingDetailPanel extends BaseCustomizePanel {
             Date d = r.getDate();
             if ((l != null) && (d != null)) {
 
-                l.setText(d.toString());
+                Date orig = r.getOriginalAirDate();
+                if (orig == null) {
+
+                    // Just show the current date.
+                    l.setText(formatDate(getDateFormat(), d));
+
+                } else {
+
+                    // See if our two dates are equal...
+                    if (d.equals(orig)) {
+
+                        l.setText(formatDate(getDateFormat(), d)
+                            + " (Premiere)");
+
+                    } else {
+
+                        l.setText(formatDate(getDateFormat(), d)
+                            + " (" + formatDate(getOriginalDateFormat(), orig)
+                            + ")");
+                    }
+                }
             }
 
             l = getDescriptionLabel();
@@ -345,6 +372,46 @@ public class RecordingDetailPanel extends BaseCustomizePanel {
 
     private void setVideoRecordingImageIcon(ImageIcon ii) {
         videoRecordingImageIcon = ii;
+    }
+
+    private SimpleDateFormat getDateFormat() {
+        return (dateFormat);
+    }
+
+    private void setDateFormat(SimpleDateFormat df) {
+        dateFormat = df;
+    }
+
+    private SimpleDateFormat getOriginalDateFormat() {
+        return (originalDateFormat);
+    }
+
+    private void setOriginalDateFormat(SimpleDateFormat df) {
+        originalDateFormat = df;
+    }
+
+    private String formatDate(SimpleDateFormat df, Date d) {
+
+        String result = null;
+
+        if (df != null) {
+
+            if (d != null) {
+
+                StringBuffer sb = new StringBuffer();
+                df.format(d, sb, new FieldPosition(0));
+                result = sb.toString();
+            }
+
+        } else {
+
+            if (d != null) {
+
+                result = d.toString();
+            }
+        }
+
+        return (result);
     }
 
     /**

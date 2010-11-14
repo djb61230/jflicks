@@ -108,6 +108,11 @@ public class RecordingListPanel extends BaseListPanel {
         return ((Recording) getSelectedObject());
     }
 
+    /**
+     * Retrieve the currently selected Recording.
+     *
+     * @param r A Recording instance.
+     */
     public void setSelectedRecording(Recording r) {
         setSelectedObject(r);
     }

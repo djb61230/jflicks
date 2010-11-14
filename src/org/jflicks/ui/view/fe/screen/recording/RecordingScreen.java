@@ -16,9 +16,10 @@
 */
 package org.jflicks.ui.view.fe.screen.recording;
 
-import java.awt.event.ActionListener;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
@@ -41,7 +42,6 @@ import org.jflicks.mvc.View;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
-import org.jflicks.rc.RC;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 import org.jflicks.ui.view.fe.Dialog;
@@ -58,6 +58,7 @@ import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.interpolation.PropertySetter;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.painter.ImagePainter;
+import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * This class supports Recordings in a front end UI on a TV.
@@ -557,6 +558,13 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
             setDefaultBackgroundImage(
                 Util.resize(getDefaultBackgroundImage(), width, height));
+
+            // Create our blank panel.
+            JXPanel blank = new JXPanel();
+            MattePainter blankp = new MattePainter(Color.BLACK);
+            blank.setBackgroundPainter(blankp);
+            blank.setBounds(0, 0, width, height);
+            setBlankPanel(blank);
         }
 
     }
@@ -658,6 +666,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         if ((ic != null) && (r != null)) {
 
             String path = r.getPath();
+            if (Util.isWindows()) {
+
+                path = path.replace(":", "|");
+                path = "/" + path;
+            }
+
             result = ic.getImage("file://" + path + ".png", false);
             if (result == null) {
 
@@ -886,6 +900,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
      */
     public void close() {
 
+        removeBlankPanel();
         controlKeyboard(true);
         setCurrentRecording(null);
         RecordingInfoWindow w = getRecordingInfoWindow();
@@ -972,77 +987,6 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                     System.out.println("commercials not set or end");
                 }
-                /*
-                int current = (int) ps.getTime();
-                int next = Commercial.whereNext(getTimeline(), current);
-                if (next != current) {
-
-                    System.out.println("current seconds: " + current);
-                    System.out.println("next spot: " + next);
-                    System.out.println("diff: " + (next - current));
-                    updateLengthHint(getCurrentRecording(), p);
-                    p.seek((next - current));
-
-                } else {
-
-                    System.out.println("commercials not set or end");
-                }
-                */
-                /*
-                int current = (int) ps.getTime();
-                int[] nextTwo = Commercial.whereNextTwo(getTimeline(), current);
-                if ((nextTwo != null) && (nextTwo.length == 2)) {
-
-                    if (nextTwo[1] != current) {
-
-                        System.out.println("FIRST SEEKING NEXTNEXT!");
-                        System.out.println("current seconds: " + current);
-                        System.out.println("next spot: " + nextTwo[1]);
-                        System.out.println("diff: " + (nextTwo[1] - current));
-                        updateLengthHint(getCurrentRecording(), p);
-                        p.seek(nextTwo[1] - current);
-                        //p.seekPosition(nextTwo[1]);
-
-                        final Player tp = p;
-                        final int tnext = nextTwo[0];
-                        ActionListener taskPerformer = new ActionListener() {
-                            public void actionPerformed(ActionEvent evt) {
-
-                                PlayState tps = tp.getPlayState();
-                                if (tps != null) {
-
-                                    int tcurrent = (int) tps.getTime();
-                                    System.out.println("tcurrent: " + tcurrent);
-                                    System.out.println("tnext: " + tnext);
-                                    System.out.println("diff: "
-                                        + (tnext - tcurrent));
-                                    tp.seek(tnext - tcurrent);
-                                    //tp.seekPosition(tnext);
-                                }
-                            }
-                        };
-                        Timer skip = new Timer(500, taskPerformer);
-                        skip.setRepeats(false);
-                        skip.start();
-
-                    } else {
-
-                        if (nextTwo[0] != current) {
-
-                            System.out.println("JUST SEEKING NEXT!");
-                            System.out.println("current seconds: " + current);
-                            System.out.println("next spot: " + nextTwo[0]);
-                            System.out.println("diff: "
-                                + (nextTwo[0] - current));
-                            updateLengthHint(getCurrentRecording(), p);
-                            p.seek(nextTwo[0] - current);
-
-                        } else {
-                            System.out.println("commercials not set or end");
-                        }
-                    }
-                }
-                */
             }
         }
     }
@@ -1157,6 +1101,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     controlKeyboard(false);
 
                     p.setFrame(Util.findFrame(this));
+                    addBlankPanel();
                     p.play(r.getPath());
 
                 } else if (event.getSource() == getBookmarkButton()) {
@@ -1196,6 +1141,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                         controlKeyboard(false);
                         p.setFrame(Util.findFrame(this));
+                        addBlankPanel();
                         p.play(rpath, bm);
                     }
 

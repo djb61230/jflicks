@@ -113,6 +113,11 @@ public class CopyJob extends RecoverJob {
         }
     }
 
+    /**
+     * Simple test main.
+     *
+     * @param args The arguments.
+     */
     public static void main(String[] args) {
 
         String src = "/dev/video0";

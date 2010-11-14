@@ -25,6 +25,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import javax.swing.JButton;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
@@ -49,6 +51,7 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
     private JButton deleteButton;
     private JButton deleteAllowButton;
     private JButton cancelButton;
+    private JPanel blankPanel;
 
     /**
      * Extensions need to display some info banner over the video.
@@ -224,6 +227,56 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
         return (getBookmark(id) != null);
     }
 
+    /**
+     * A panel that will be drawn over the current UI to "blank" it out.
+     *
+     * @return A JPanel instance.
+     */
+    public JPanel getBlankPanel() {
+        return (blankPanel);
+    }
+
+    /**
+     * A panel that will be drawn over the current UI to "blank" it out.
+     *
+     * @param p A JPanel instance.
+     */
+    public void setBlankPanel(JPanel p) {
+        blankPanel = p;
+    }
+
+    /**
+     * When launching a Player it is handy to "blank out" the UI in case the
+     * player does not fully cover the screen.  This will use the BlankPanel
+     * property if it exists.
+     */
+    public void addBlankPanel() {
+
+        JPanel p = getBlankPanel();
+        JLayeredPane pane = getLayeredPane();
+        if ((p != null) && (pane != null)) {
+
+            pane.add(p, Integer.valueOf(190));
+            pane.repaint();
+        }
+    }
+
+    /**
+     * When launching a Player it is handy to "blank out" the UI in case the
+     * player does not fully cover the screen.  This will use the BlankPanel
+     * property if it exists.
+     */
+    public void removeBlankPanel() {
+
+        JPanel p = getBlankPanel();
+        JLayeredPane pane = getLayeredPane();
+        if ((p != null) && (pane != null)) {
+
+            pane.remove(p);
+            pane.repaint();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     protected void load() {
 
@@ -336,6 +389,12 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
         cancelButton = b;
     }
 
+    /**
+     * Screens that use a Player sometimes need to turn keyboard control
+     * on or off - this is simulated keystrokes via our RC instance.
+     *
+     * @param b True if keyboard control is needed.
+     */
     public void controlKeyboard(boolean b) {
 
         RC remote = getRC();
