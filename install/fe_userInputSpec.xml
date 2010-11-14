@@ -1,10 +1,6 @@
 <userInput>
     <panel order="0">
-        <field size="2" txt="Control" type="title"/>
-        <field type="check" variable="mplayerconfig">
-            <description align="left" txt="Generate a suggested mplayer config."/>
-            <spec false="false" set="false" true="true" txt="Generate Suggested mplayer config"/>
-        </field>
+        <field size="1" txt="Control" type="title"/>
         <field type="check" variable="autostart">
             <description align="left" txt="Setup to autostart on login."/>
             <spec false="false" set="false" true="true" txt="Auto Start on Login"/>

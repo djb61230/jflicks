@@ -5,9 +5,9 @@
         <appversion>1.0</appversion>
         <appsubpath>jflicks-server</appsubpath>
         <authors>
-            <author email="djb@sevenpets.com" name="Douglas Barnum"/>
+            <author email="djb@jflicks.org" name="Douglas Barnum"/>
         </authors>
-        <url>http://www.sevenpets.com</url>
+        <url>http://www.jflicks.org</url>
         <uninstaller name="Uninstaller.jar" write="yes"/>
         <javaversion>1.6</javaversion>
         <requiresjdk>no</requiresjdk>

@@ -5,9 +5,9 @@
         <appversion>1.0</appversion>
         <appsubpath>jflicks-fe</appsubpath>
         <authors>
-            <author email="djb@sevenpets.com" name="Douglas Barnum"/>
+            <author email="djb@jflicks.org" name="Douglas Barnum"/>
         </authors>
-        <url>http://www.sevenpets.com</url>
+        <url>http://www.jflicks.org</url>
         <uninstaller name="Uninstaller.jar" write="yes"/>
         <javaversion>1.6</javaversion>
         <requiresjdk>no</requiresjdk>
@@ -93,6 +93,8 @@
                 src="fe/bundle/remote-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/startup.sh" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
+                src="fe/startup.bat" targetdir="$INSTALL_PATH/"/>
             <file override="askfalse"
                 src="fe/jflicks.properties" targetdir="$INSTALL_PATH/"/>
             <file override="update"
@@ -118,11 +120,13 @@
             <parsable encoding="iso-8859-1"
                 targetfile="$INSTALL_PATH/startup.sh" type="shell"/>
             <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/startup.bat" type="shell"/>
+            <parsable encoding="iso-8859-1"
                 targetfile="$INSTALL_PATH/JFlicks_FE.desktop" type="shell"/>
             <parsable encoding="iso-8859-1"
                 targetfile="$INSTALL_PATH/postinstall.sh" type="shell"/>
         </pack>
-        <pack name="TV Recording" preselected="yes" required="no">
+        <pack name="Watch TV Recordings" preselected="yes" required="no">
             <description>Be able to Schedule and Watch Recordings.</description>
             <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-recording.jar" targetdir="$INSTALL_PATH/bundle"/>
@@ -132,6 +136,8 @@
                 src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
+            <file override="update"
+                src="fe/conf/mplayer.properties" targetdir="$INSTALL_PATH/conf"/>
         </pack>
         <pack name="Video" preselected="yes" required="no">
             <description>Play video files on your system.</description>
@@ -141,6 +147,10 @@
                 src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
+            <file override="update"
+                src="fe/conf/mplayer.properties" targetdir="$INSTALL_PATH/conf"/>
+            <file override="update"
+                src="fe/conf/videoscreen.properties" targetdir="$INSTALL_PATH/conf"/>
         </pack>
         <pack name="Live TV" preselected="yes" required="no">
             <description>Watch Live TV.</description>
@@ -150,6 +160,8 @@
                 src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
+            <file override="update"
+                src="fe/conf/mplayer.properties" targetdir="$INSTALL_PATH/conf"/>
         </pack>
         <pack name="Google TV" preselected="no" required="no">
             <description>Watch Google TV web sites.</description>
@@ -157,6 +169,8 @@
                 src="fe/bundle/jflicks-ui-view-fe-screen-googletv.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/bundle/jflicks-player-chrome.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/conf/googletv.properties" targetdir="$INSTALL_PATH/conf"/>
         </pack>
         <pack name="Photos" preselected="no" required="no">
             <description>Slideshow of your Photos.</description>
@@ -173,7 +187,10 @@
                 src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
+            <file override="update"
+                src="fe/conf/mplayer.properties" targetdir="$INSTALL_PATH/conf"/>
         </pack>
+        <!--
         <pack name="Ambiance" preselected="no" required="no">
             <description>Control the lighting.</description>
             <file override="update"
@@ -207,6 +224,7 @@
             <parsable encoding="iso-8859-1"
                 targetfile="$INSTALL_PATH/bin/x10-theater-open.sh" type="shell"/>
         </pack>
+        -->
         <pack name="DVD" preselected="no" required="no">
             <description>Needed if you plan on watching DVDs from a DVD drive.</description>
             <file override="update"

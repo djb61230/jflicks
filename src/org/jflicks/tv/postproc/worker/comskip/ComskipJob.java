@@ -26,6 +26,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
+import org.jflicks.util.Util;
 
 /**
  * This job starts a system job that runs comskip.
@@ -91,8 +92,18 @@ public class ComskipJob extends AbstractJob implements JobListener {
         Recording r = getRecording();
         if (r != null) {
 
-            SystemJob job = SystemJob.getInstance("wine bin/comskip "
-                + "--ini=conf/comskip.ini " + r.getPath());
+            SystemJob job = null;
+
+            if (Util.isLinux()) {
+
+                job = SystemJob.getInstance("wine bin/comskip "
+                    + "--ini=conf/comskip.ini " + r.getPath());
+
+            } else {
+
+                job = SystemJob.getInstance("bin\\comskip "
+                    + "--ini=conf/comskip.ini " + r.getPath());
+            }
 
             job.addJobListener(this);
             setSystemJob(job);
