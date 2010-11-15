@@ -66,6 +66,7 @@ import org.jflicks.ui.view.fe.Dialog;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
 import org.jflicks.ui.view.fe.RecordingRuleListPanel;
+import org.jflicks.ui.view.fe.RecordingRuleProperty;
 import org.jflicks.ui.view.fe.ShowAiringListPanel;
 import org.jflicks.ui.view.fe.ShowDetailPanel;
 import org.jflicks.ui.view.fe.TagListPanel;
@@ -89,7 +90,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  */
 public class ScheduleScreen extends Screen implements ParameterProperty,
     NMSProperty, UpcomingProperty, PropertyChangeListener, JobListener,
-    ActionListener {
+    ActionListener, RecordingRuleProperty {
 
     private static final String BY_TITLE = "By Title";
     private static final String BY_GUIDE = "Using Guide";
@@ -108,6 +109,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
     private String selectedParameter;
     private boolean updatedParameter;
     private Upcoming[] upcomings;
+    private RecordingRule[] recordingRules;
     private HashMap<Channel, ShowAiring[]> guideMap;
     private JobContainer allGuideJobContainer;
     private long lastGuide;
@@ -389,6 +391,62 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             }
 
             ulp.setSelectedIndex(0);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RecordingRule[] getRecordingRules() {
+
+        RecordingRule[] result = null;
+
+        if (recordingRules != null) {
+
+            result = Arrays.copyOf(recordingRules, recordingRules.length);
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRecordingRules(RecordingRule[] array) {
+
+        if (array != null) {
+            recordingRules = Arrays.copyOf(array, array.length);
+        } else {
+            recordingRules = null;
+        }
+
+        applyRecordingRule();
+    }
+
+    private void applyRecordingRule() {
+
+        RecordingRule[] array = getRecordingRules();
+        RecordingRuleListPanel lp = getRecordingRuleListPanel();
+        if ((array != null) && (lp != null)) {
+
+            int start = lp.getStartIndex();
+            int vis = lp.getVisibleCount();
+            Arrays.sort(array, new RecordingRuleSortByName());
+            lp.setRecordingRules(array);
+            if ((start + vis) <= array.length) {
+
+                // Safe to reset the start index.
+                lp.setStartIndex(start);
+
+            } else {
+
+                start--;
+                if ((start > 0) && ((start + vis) <= array.length)) {
+
+                    // Safe again to reset to start index minus one.
+                    lp.setStartIndex(start);
+                }
+            }
         }
     }
 
@@ -1601,10 +1659,15 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     p.getCancelButton());
                 if (p.isAccept()) {
 
+                    rr = p.getRecordingRule();
                     AddRuleJob arj = new AddRuleJob(n, rr);
                     ProgressBar pbar = new ProgressBar(getLayeredPane(), arj);
                     pbar.addJobListener(this);
                     pbar.execute();
+
+                } else {
+
+                    requestFocus();
                 }
             }
         }

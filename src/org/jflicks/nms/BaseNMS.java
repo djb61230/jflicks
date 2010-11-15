@@ -1353,8 +1353,8 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 s.removeRecordingRule(rr);
             }
 
-            sendMessage(NMSConstants.MESSAGE_RULE_UPDATE);
             s.requestRescheduling();
+            sendMessage(NMSConstants.MESSAGE_RULE_UPDATE);
         }
     }
 

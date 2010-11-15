@@ -25,6 +25,10 @@ import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -34,7 +38,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JRadioButton;
-import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
@@ -58,7 +61,7 @@ import org.jdesktop.swingx.JXLabel;
  * @version 1.0
  */
 public class RecordingRulePanel extends BaseCustomizePanel
-    implements ActionListener, ChangeListener {
+    implements ActionListener, PropertyChangeListener {
 
     private static final String ADVANCED_TEXT = "Advanced Settings";
 
@@ -69,8 +72,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
     private JXLabel durationLabel;
     private JRadioButton[] typeRadioButtons;
     private JRadioButton[] priorityRadioButtons;
-    private JSpinner beginSpinner;
-    private JSpinner endSpinner;
+    private Spinner beginSpinner;
+    private Spinner endSpinner;
     private JButton advancedButton;
     private JButton okButton;
     private JButton cancelButton;
@@ -134,10 +137,16 @@ public class RecordingRulePanel extends BaseCustomizePanel
         beginprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         beginprompt.setFont(getSmallFont());
 
+        /*
         SpinnerNumberModel bmodel = new SpinnerNumberModel(0, -120, 120, 1);
         JSpinner bspinner = new JSpinner(bmodel);
         bspinner.addChangeListener(this);
         bspinner.setFont(getSmallFont());
+        setBeginSpinner(bspinner);
+        */
+
+        Spinner bspinner = new Spinner(getSmallFont());
+        bspinner.addPropertyChangeListener("Amount", this);
         setBeginSpinner(bspinner);
 
         JXLabel endprompt = new JXLabel("End Padding (min)");
@@ -145,10 +154,16 @@ public class RecordingRulePanel extends BaseCustomizePanel
         endprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         endprompt.setFont(getSmallFont());
 
+        /*
         SpinnerNumberModel emodel = new SpinnerNumberModel(0, -120, 120, 1);
         JSpinner espinner = new JSpinner(emodel);
         espinner.addChangeListener(this);
         espinner.setFont(getSmallFont());
+        setEndSpinner(espinner);
+        */
+
+        Spinner espinner = new Spinner(getSmallFont());
+        espinner.addPropertyChangeListener("Amount", this);
         setEndSpinner(espinner);
 
         JButton advanced = new JButton(ADVANCED_TEXT);
@@ -412,10 +427,10 @@ public class RecordingRulePanel extends BaseCustomizePanel
      * @param rr A RecordingRule object.
      */
     public void setRecordingRule(RecordingRule rr) {
-        recordingRule = rr;
 
         if (rr != null) {
 
+            rr = new RecordingRule(rr);
             apply(getNameLabel(), rr.getName());
             NMS n = getNMS();
             if (n != null) {
@@ -449,6 +464,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
             apply(getEndSpinner(), 0);
             getAdvancedButton().setEnabled(false);
         }
+
+        recordingRule = rr;
     }
 
     /**
@@ -543,19 +560,19 @@ public class RecordingRulePanel extends BaseCustomizePanel
         priorityRadioButtons = array;
     }
 
-    private JSpinner getBeginSpinner() {
+    private Spinner getBeginSpinner() {
         return (beginSpinner);
     }
 
-    private void setBeginSpinner(JSpinner s) {
+    private void setBeginSpinner(Spinner s) {
         beginSpinner = s;
     }
 
-    private JSpinner getEndSpinner() {
+    private Spinner getEndSpinner() {
         return (endSpinner);
     }
 
-    private void setEndSpinner(JSpinner s) {
+    private void setEndSpinner(Spinner s) {
         endSpinner = s;
     }
 
@@ -632,28 +649,12 @@ public class RecordingRulePanel extends BaseCustomizePanel
         }
     }
 
-    private void apply(JSpinner s, int value) {
+    private void apply(Spinner s, int value) {
 
         if (s != null) {
 
-            s.setValue(value);
+            s.setAmount(value);
         }
-    }
-
-    private int spinnerToInt(JSpinner s) {
-
-        int result = 0;
-
-        if (s != null) {
-
-            Integer iobj = (Integer) s.getValue();
-            if (iobj != null) {
-
-                result = iobj.intValue() * 60;
-            }
-        }
-
-        return (result);
     }
 
     private JRadioButton[] createRadioButtons(Font f, String[] array,
@@ -798,18 +799,18 @@ public class RecordingRulePanel extends BaseCustomizePanel
      *
      * @param event A ChangeEvent instance.
      */
-    public void stateChanged(ChangeEvent event) {
+    public void propertyChange(PropertyChangeEvent event) {
 
         RecordingRule rr = getRecordingRule();
         if (rr != null) {
 
             if (event.getSource() == getBeginSpinner()) {
 
-                rr.setBeginPadding(spinnerToInt(getBeginSpinner()));
+                rr.setBeginPadding(getBeginSpinner().getAmount() * 60);
 
             } else if (event.getSource() == getEndSpinner()) {
 
-                rr.setEndPadding(spinnerToInt(getEndSpinner()));
+                rr.setEndPadding(getEndSpinner().getAmount() * 60);
             }
         }
     }

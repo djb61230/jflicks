@@ -51,6 +51,7 @@ import org.jflicks.photomanager.Tag;
 import org.jflicks.rc.RC;
 import org.jflicks.rc.RCProperty;
 import org.jflicks.tv.Recording;
+import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.Upcoming;
 import org.jflicks.ui.view.JFlicksView;
 import org.jflicks.ui.view.fe.screen.ExecuteScreen;
@@ -661,6 +662,17 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                             applyUpcomings((UpcomingProperty) sarray[i]);
                         }
                     }
+
+                } else if (s.startsWith(NMSConstants.MESSAGE_RULE_UPDATE)) {
+
+                    for (int i = 0; i < sarray.length; i++) {
+
+                        if (sarray[i] instanceof RecordingRuleProperty) {
+
+                            applyRecordingRules(
+                                (RecordingRuleProperty) sarray[i]);
+                        }
+                    }
                 }
             }
         }
@@ -716,6 +728,11 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                     if (array[i] instanceof UpcomingProperty) {
 
                         applyUpcomings((UpcomingProperty) array[i]);
+                    }
+
+                    if (array[i] instanceof RecordingRuleProperty) {
+
+                        applyRecordingRules((RecordingRuleProperty) array[i]);
                     }
 
                     // See if it's a screen that just executes a script.
@@ -926,6 +943,38 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                     }
 
                     up.setUpcomings(list.toArray(new Upcoming[list.size()]));
+                }
+            }
+        }
+    }
+
+    private void applyRecordingRules(RecordingRuleProperty rrp) {
+
+        if (rrp != null) {
+
+            NMS[] array = getNMS();
+            if ((array != null) && (array.length > 0)) {
+
+                if (array.length == 1) {
+
+                    rrp.setRecordingRules(array[0].getRecordingRules());
+
+                } else {
+
+                    // We have to merge from multiple NMS.
+                    ArrayList<RecordingRule> list =
+                        new ArrayList<RecordingRule>();
+                    for (int i = 0; i < array.length; i++) {
+
+                        RecordingRule[] rrs = array[i].getRecordingRules();
+                        if (rrs != null) {
+
+                            Collections.addAll(list, rrs);
+                        }
+                    }
+
+                    rrp.setRecordingRules(list.toArray(
+                        new RecordingRule[list.size()]));
                 }
             }
         }
