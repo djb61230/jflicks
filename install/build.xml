@@ -9,7 +9,7 @@
     <property name="dist" location="dist"/>
     <property name="lib" location="lib"/>
     <property name="bundle" location="../bundle"/>
-    <property name="install.lib" location="../../ltms/IzPack/lib"/>
+    <property name="install.lib" location="${user.home}/IzPack/lib"/>
 
     <taskdef name="izpack" classpath="${install.lib}/standalone-compiler.jar"
         classname="com.izforge.izpack.ant.IzPackTask"/>

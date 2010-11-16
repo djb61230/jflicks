@@ -52,6 +52,8 @@
             <file override="update"
                 src="fe/theme" targetdir="$INSTALL_PATH/"/>
             <file override="update"
+                src="fe/remotes" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
                 src="fe/bundle/db4o-7.12.126.14142-osgi.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/bundle/LogbackBundle-1.0.jar" targetdir="$INSTALL_PATH/bundle"/>

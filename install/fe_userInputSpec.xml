@@ -5,5 +5,16 @@
             <description align="left" txt="Setup to autostart on login."/>
             <spec false="false" set="false" true="true" txt="Auto Start on Login"/>
         </field>
+
+        <field type="combo" variable="lircrc">
+            <description align="left" id="Select Your Remote"/>
+            <spec>
+                <choice id="No Remote" value="No_Remote"/>
+                <choice id="TiVo" value="TIVO_Series_2.LircJob.lircrc"/>  
+                <choice id="Hauppauge_350"
+                    value="Hauppauge_350.LircJob.lircrc"/>  
+            </spec>
+        </field>
+
     </panel>
 </userInput>

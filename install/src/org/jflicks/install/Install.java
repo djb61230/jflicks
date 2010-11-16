@@ -302,11 +302,21 @@ public class Install {
         }
     }
 
+    private void copyRemote() {
+
+        Properties p = getProperties();
+        if (p != null) {
+
+            System.out.println("lircrc: <" + p.getProperty("remote") + ">");
+        }
+    }
+
     public void work() {
 
         System.out.println("work....");
         generateMplayerConfig();
         generateSchedulesDirect();
+        copyRemote();
         autostart();
     }
 
