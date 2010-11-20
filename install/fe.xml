@@ -15,7 +15,7 @@
         <pack200/>
         <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
     </info>
-    <guiprefs height="480" resizable="no" width="640">
+    <guiprefs height="480" resizable="yes" width="640">
         <modifier key="useFlags" value="yes"/>
         <modifier key="langDisplayType" value="default"/>
     </guiprefs>
@@ -104,8 +104,6 @@
             <file override="update"
                 src="fe/conf/config.properties" targetdir="$INSTALL_PATH/conf"/>
             <file override="update"
-                src="fe/conf/LircJob.lircrc" targetdir="$INSTALL_PATH/conf"/>
-            <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-script.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/JFlicks_FE.desktop" targetdir="$INSTALL_PATH/"/>
@@ -142,7 +140,7 @@
                 src="fe/conf/mplayer.properties" targetdir="$INSTALL_PATH/conf"/>
         </pack>
         <pack name="Video" preselected="yes" required="no">
-            <description>Play video files on your system.</description>
+            <description>Play video files on your system from your network.</description>
             <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-video.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"

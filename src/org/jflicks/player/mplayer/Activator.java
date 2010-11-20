@@ -17,6 +17,7 @@
 package org.jflicks.player.mplayer;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Properties;
 
@@ -71,6 +72,22 @@ public class Activator extends BaseActivator {
 
                     mplayer.setForceFullscreen(Util.str2boolean(
                         p.getProperty("forceFullscreen"), false));
+
+                    ArrayList<String> l = new ArrayList<String>();
+                    int count = Util.str2int(p.getProperty("argCount"), 0);
+                    for (int i = 0; i < count; i++) {
+
+                        String tmp = p.getProperty("arg" + i);
+                        if (tmp != null) {
+
+                            l.add(tmp.trim());
+                        }
+                    }
+
+                    if (l.size() > 0) {
+
+                        mplayer.setArgs(l.toArray(new String[l.size()]));
+                    }
                 }
             }
         }

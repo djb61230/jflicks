@@ -53,6 +53,7 @@ public class Vlcj extends BasePlayer {
     private EmbeddedMediaPlayer embeddedMediaPlayer;
     private JPanel keyPanel;
     private Canvas canvas;
+    private String[] args;
 
     /**
      * Simple constructor.
@@ -140,6 +141,21 @@ public class Vlcj extends BasePlayer {
 
         setKeyPanel(pan);
         setCanvas(can);
+
+        String[] vlcArgs = {
+            "--no-video-title-show",
+            "--deinterlace-mode=bob",
+        };
+
+        setArgs(vlcArgs);
+    }
+
+    public String[] getArgs() {
+        return (args);
+    }
+
+    public void setArgs(String[] array) {
+        args = array;
     }
 
     private JDialog getDialog() {
@@ -250,10 +266,7 @@ public class Vlcj extends BasePlayer {
 
             setDialog(win);
 
-            String[] vlcArgs = {
-                "--no-video-title-show",
-                "--deinterlace-mode=bob"
-            };
+            String[] vlcArgs = getArgs();
             MediaPlayerFactory mpf = new MediaPlayerFactory(vlcArgs);
             setMediaPlayerFactory(mpf);
 

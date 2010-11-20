@@ -16,12 +16,16 @@
 */
 package org.jflicks.player.chrome;
 
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.PlayState;
+import org.jflicks.util.Util;
 
 /**
  * This Player (with other classes in this package) is capable of
@@ -119,15 +123,36 @@ public class Chrome extends BasePlayer {
         setPlaying(false);
         setCompleted(true);
 
+        try {
+
+            Robot r = new Robot();
+
+            if (Util.isLinux()) {
+
+                r.keyPress(KeyEvent.VK_SHIFT);
+                r.keyPress(KeyEvent.VK_CONTROL);
+                r.keyPress(KeyEvent.VK_Q);
+                r.keyRelease(KeyEvent.VK_Q);
+                r.keyRelease(KeyEvent.VK_CONTROL);
+                r.keyRelease(KeyEvent.VK_SHIFT);
+
+            } else if (Util.isWindows()) {
+
+                r.keyPress(KeyEvent.VK_ALT);
+                r.keyPress(KeyEvent.VK_F4);
+                r.keyRelease(KeyEvent.VK_F4);
+                r.keyRelease(KeyEvent.VK_ALT);
+            }
+
+        } catch (Exception ex) {
+
+            System.out.println("Robot error exiting chrome");
+        }
+
         JobContainer jc = getJobContainer();
         if (jc != null) {
 
             jc.stop();
-
-            // As an added bonus - let's killall - of course only Linux.
-            SystemJob job = SystemJob.getInstance("killall chrome");
-            jc = JobManager.getJobContainer(job);
-            jc.start();
         }
     }
 

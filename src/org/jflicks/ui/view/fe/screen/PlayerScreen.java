@@ -268,6 +268,7 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
      */
     public void removeBlankPanel() {
 
+        System.out.println("removeBlankPanel now");
         JPanel p = getBlankPanel();
         JLayeredPane pane = getLayeredPane();
         if ((p != null) && (pane != null)) {

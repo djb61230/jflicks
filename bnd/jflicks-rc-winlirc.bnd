@@ -1,0 +1,25 @@
+module=org.jflicks.rc.lirc
+custom=true
+
+Bundle-Version: 1.0.0
+
+Bundle-Activator: ${module}.Activator
+
+Include-Resource:\
+ ../lib/jlirc.jar,\
+ org/jflicks/input/lirc/LircJob.lircrc=../conf/LircJob.lircrc
+
+Bundle-ClassPath: ., jlirc.jar
+
+Private-Package:\
+ ${module}
+
+Import-Package:\
+ org.jflicks.rc;version="1.0.0",\
+ org.jflicks.job;version="1.0.0",\
+ org.jflicks.util;version="1.0.0",\
+ org.osgi.framework;version="[1.3,2.0)",\
+ org.osgi.service.event;version="[1.0,2.0)",\
+ org.osgi.util.tracker;version="[1.3,2.0)",\
+ javax.swing
+

@@ -6,6 +6,8 @@
             <arg>$INSTALL_PATH</arg>
             <arg>-autostart</arg>
             <arg>$autostart</arg>
+            <arg>-remote</arg>
+            <arg>$lircrc</arg>
         </executefile>
     </job>
 </processing>

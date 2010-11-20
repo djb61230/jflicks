@@ -242,7 +242,7 @@ public final class SystemJob extends AbstractJob implements JobListener {
             try {
 
                 p.destroy();
-                p.waitFor();
+                setExitValue(p.waitFor());
                 setProcess(null);
 
                 if (inputJobContainer != null) {

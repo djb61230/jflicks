@@ -57,6 +57,7 @@ public class MPlayer extends BasePlayer {
     private JobContainer statusJobContainer;
     private boolean userStop;
     private boolean forceFullscreen;
+    private String[] args;
 
     /**
      * Simple constructor.
@@ -143,6 +144,14 @@ public class MPlayer extends BasePlayer {
 
         setKeyPanel(pan);
         setCanvas(can);
+    }
+
+    public String[] getArgs() {
+        return (args);
+    }
+
+    public void setArgs(String[] array) {
+        args = array;
     }
 
     private JDialog getDialog() {
@@ -297,7 +306,8 @@ public class MPlayer extends BasePlayer {
             MPlayerJob job = null;
             if (isForceFullscreen()) {
 
-                job = new MPlayerJob(null, position, time, url, isAutoSkip());
+                job = new MPlayerJob(null, getArgs(), position, time, url,
+                    isAutoSkip());
                 setMPlayerJob(job);
 
             } else {
@@ -340,19 +350,23 @@ public class MPlayer extends BasePlayer {
                 long canid = Native.getComponentID(can);
                 String wid = "" + canid;
 
-                job = new MPlayerJob(wid, position, time, url, isAutoSkip());
+                job = new MPlayerJob(wid, getArgs(), position, time, url,
+                    isAutoSkip());
                 setMPlayerJob(job);
 
-                final JPanel fpan = pan;
-                ActionListener focusPerformer = new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
+                if (Util.isLinux()) {
 
-                        fpan.requestFocus();
-                    }
-                };
-                Timer focusTimer = new Timer(5000, focusPerformer);
-                focusTimer.setRepeats(false);
-                focusTimer.start();
+                    final JPanel fpan = pan;
+                    ActionListener focusPerformer = new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+
+                            fpan.requestFocus();
+                        }
+                    };
+                    Timer focusTimer = new Timer(5000, focusPerformer);
+                    focusTimer.setRepeats(false);
+                    focusTimer.start();
+                }
             }
 
             PlayStateJob psj =

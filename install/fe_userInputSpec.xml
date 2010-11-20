@@ -6,13 +6,30 @@
             <spec false="false" set="false" true="true" txt="Auto Start on Login"/>
         </field>
 
+        <field type="divider" />
+
         <field type="combo" variable="lircrc">
             <description align="left" id="Select Your Remote"/>
             <spec>
                 <choice id="No Remote" value="No_Remote"/>
-                <choice id="TiVo" value="TIVO_Series_2.LircJob.lircrc"/>  
+                <choice id="ATI_Remote_Wonder_II"
+                    value="ATI_Remote_Wonder_II.LircJob.lircrc"/>  
                 <choice id="Hauppauge_350"
                     value="Hauppauge_350.LircJob.lircrc"/>  
+                <choice id="Hauppauge_HVR-1100"
+                    value="Hauppauge_HVR-1100.LircJob.lircrc"/>  
+                <choice id="Hauppauge_PVR-150_MCE"
+                    value="Hauppauge_PVR-150_MCE.LircJob.lircrc"/>  
+                <choice id="Hauppauge_WinTV_Nexus-S"
+                    value="Hauppauge_WinTV_Nexus-S.LircJob.lircrc"/>  
+                <choice id="nVidia_UR88A"
+                    value="nVidia_UR88A.LircJob.lircrc"/>  
+                <choice id="Medion_20016096"
+                    value="Medion_20016096.LircJob.lircrc"/>  
+                <choice id="Medion_MD8800"
+                    value="Medion_MD8800.LircJob.lircrc"/>  
+                <choice id="TiVo" value="TIVO_Series_2.LircJob.lircrc"/>  
+                <choice id="X10_OR22V" value="X10_OR22V.LircJob.lircrc"/>  
             </spec>
         </field>
 

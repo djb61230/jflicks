@@ -307,7 +307,24 @@ public class Install {
         Properties p = getProperties();
         if (p != null) {
 
-            System.out.println("lircrc: <" + p.getProperty("remote") + ">");
+            String remote = p.getProperty("remote");
+            if (remote != null) {
+
+                File f = new File("remotes");
+                if ((f.exists()) && (f.isDirectory())) {
+
+                    File fr = new File(f, remote);
+                    if ((fr.exists()) && (fr.isFile())) {
+
+                        File conf = new File("conf");
+                        if ((conf.exists()) && (conf.isDirectory())) {
+
+                            File confr = new File(conf, "LircJob.lircrc");
+                            fr.renameTo(confr);
+                        }
+                    }
+                }
+            }
         }
     }
 

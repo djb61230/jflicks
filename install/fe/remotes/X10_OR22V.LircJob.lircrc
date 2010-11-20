@@ -1,0 +1,102 @@
+begin
+	button = KEY_UP
+	config = moveUp
+	repeat = 3
+end
+
+begin
+   	button = KEY_DOWN
+	config = moveDown
+	repeat = 3
+end
+
+begin
+   	button = KEY_LEFT
+	config = moveLeft
+	repeat = 3
+end
+
+begin
+	button = KEY_RIGHT
+	config = moveRight
+	repeat = 3
+end
+
+begin
+	button = KEY_CHANNELUP
+	config = pageUp
+	repeat = 3
+end
+
+begin
+	button = KEY_CHANNELDOWN
+	config = pageDown
+	repeat = 3
+end
+
+begin
+   	button = KEY_OK
+	config = enter
+	repeat = 3
+end
+
+begin
+   	button = KEY_BACK
+	config = escape
+	repeat = 3
+end
+
+begin
+   	button = KEY_PAUSE
+	config = pause
+	repeat = 5
+end
+
+begin
+   	button = KEY_EPG
+	config = guide
+	repeat = 3
+end
+
+begin
+   	button = KEY_INFO
+	config = info
+	repeat = 3
+end
+
+begin
+   	button = KEY_REWIND
+	config = rewind
+	repeat = 3
+end
+
+begin
+   	button = KEY_FASTFORWARD
+	config = forward
+	repeat = 3
+end
+
+begin
+   	button = KEY_PREVIOUS
+	config = skipbackward
+	repeat = 3
+end
+
+begin
+   	button = KEY_NEXT
+	config = skipforward
+	repeat = 3
+end
+
+begin
+   	button = KEY_RED
+	config = audiosyncplus
+	repeat = 3
+end
+
+begin
+   	button = KEY_YELLOW
+	config = audiosyncminus
+	repeat = 3
+end
+

@@ -45,6 +45,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
     private String path;
     private boolean autoSkip;
     private FileWriter fileWriter;
+    private String[] args;
 
     /**
      * Constructor with three required arguments.  There are two ways to
@@ -54,19 +55,29 @@ public class MPlayerJob extends AbstractJob implements JobListener {
      * desired.
      *
      * @param wid A window ID.
+     * @param args An array of arguments to give to mplayer.
      * @param position The number of bytes into the video to begin playing.
      * @param seconds The number of seconds into the video to begin playing.
      * @param path The path to the file to play.
      * @param autoSkip When true try to auto skip commercials.
      */
-    public MPlayerJob(String wid, long position, int seconds, String path,
-        boolean autoSkip) {
+    public MPlayerJob(String wid, String[] args, long position, int seconds,
+        String path, boolean autoSkip) {
 
         setWindowId(wid);
+        setArgs(args);
         setPosition(position);
         setSeconds(seconds);
         setPath(path);
         setAutoSkip(autoSkip);
+    }
+
+    private String[] getArgs() {
+        return (args);
+    }
+
+    private void setArgs(String[] array) {
+        args = array;
     }
 
     private SystemJob getSystemJob() {
@@ -267,13 +278,27 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
         String edltext = computeEDLArgument(getPath());
 
+        String userArg = "";
+        String[] userArgs = getArgs();
+        if ((userArgs != null) && (userArgs.length > 0)) {
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < userArgs.length; i++) {
+
+                sb.append(userArgs[i]);
+                sb.append(" ");
+            }
+
+            userArg = sb.toString().trim();
+        }
+
         SystemJob job = null;
 
         String wid = getWindowId();
         if (wid != null) {
 
             job = SystemJob.getInstance(
-                "mplayer -wid " + wid
+                "mplayer -wid " + wid + " " + userArg
                 + " -input nodefault-bindings:conf=/dev/null:"
                 + "file=mplayer.fifo" + " -slave " + edltext
                 + " " + startParameter + " " + getPath());
@@ -283,7 +308,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
             File conf = new File("conf");
             File full = new File(conf, "mplayer.conf");
             job = SystemJob.getInstance(
-                "mplayer -fs -zoom"
+                "mplayer -fs -zoom" + " " + userArg
                 + " -input nodefault-bindings:conf="
                 + full.getAbsolutePath() + ":"
                 + "file=mplayer.fifo" + " -slave " + edltext

@@ -16,10 +16,14 @@
 */
 package org.jflicks.player.vlcj;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import org.jflicks.player.Player;
 import org.jflicks.util.BaseActivator;
+import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
@@ -45,6 +49,36 @@ public class Activator extends BaseActivator {
         setBundleContext(bc);
 
         Vlcj v = new Vlcj();
+
+        // Check for a properties file for vlc...
+        File conf = new File("conf");
+        if ((conf.exists()) && (conf.isDirectory())) {
+
+            File props = new File(conf, "vlc.properties");
+            System.out.println(props);
+            if ((props.exists()) && (props.isFile())) {
+
+                Properties p = Util.findProperties(props);
+                if (p != null) {
+
+                    ArrayList<String> l = new ArrayList<String>();
+                    int count = Util.str2int(p.getProperty("argCount"), 0);
+                    for (int i = 0; i < count; i++) {
+
+                        String tmp = p.getProperty("arg" + i);
+                        if (tmp != null) {
+
+                            l.add(tmp.trim());
+                        }
+                    }
+
+                    if (l.size() > 0) {
+
+                        v.setArgs(l.toArray(new String[l.size()]));
+                    }
+                }
+            }
+        }
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
         dict.put(Player.TITLE_PROPERTY, v.getTitle());

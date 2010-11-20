@@ -99,6 +99,16 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
                 String ppath = nms[i].getTrailerIntro();
                 if ((thome != null) && (ppath != null)) {
 
+                    FrontEndView fev = (FrontEndView) getView();
+                    if (fev != null) {
+
+                        thome = fev.transformPath(thome);
+                        ppath = fev.transformPath(ppath);
+
+                        System.out.println("thome: " + thome);
+                        System.out.println("ppath: " + ppath);
+                    }
+
                     File fthome = new File(thome);
                     File fppath = new File(ppath);
                     if ((fthome.exists()) && (fppath.exists())) {
