@@ -189,6 +189,8 @@
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-rc-lirc.jar"
             todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-rc-winlirc.jar"
+            todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-imagecache-system.jar"
             todir="fe/bundle"/>
         <copy file="${dist}/jflicks-install.jar" todir="fe/bin"/>

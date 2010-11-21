@@ -1,6 +1,6 @@
 <userInput>
     <panel order="0">
-        <field size="1" txt="Control" type="title"/>
+        <field size="2" txt="Customizing" type="title"/>
         <field type="check" variable="autostart">
             <description align="left" txt="Setup to autostart on login."/>
             <spec false="false" set="false" true="true" txt="Auto Start on Login"/>

@@ -16,10 +16,13 @@
 */
 package org.jflicks.install;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class Install {
@@ -40,6 +43,104 @@ public class Install {
 
     private void setProperties(Properties p) {
         properties = p;
+    }
+
+    private static String[] readTextFile(File file) {
+
+        String[] result = null;
+
+        ArrayList<String> work = new ArrayList<String>();
+        if (file != null) {
+
+            BufferedReader in = null;
+
+            try {
+
+                in = new BufferedReader(new FileReader(file));
+                String line = null;
+                while ((line = in.readLine()) != null) {
+                    work.add(line);
+                }
+                result = (String[]) work.toArray(new String[work.size()]);
+                in.close();
+                in = null;
+
+            } catch (IOException e) {
+
+                result = null;
+
+            } finally {
+
+                if (in != null) {
+
+                    try {
+
+                        in.close();
+
+                    } catch (IOException ex) {
+
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private static void writeTextFile(File f, String[] lines) {
+
+        if ((f != null) && (lines != null)) {
+
+            FileWriter fw = null;
+            try {
+
+                fw = new FileWriter(f);
+                for (int i = 0; i < lines.length; i++) {
+
+                    fw.write(lines[i]);
+                    fw.write("\n");
+                }
+
+            } catch (IOException e) {
+
+                System.out.println(e.getMessage());
+
+            } finally {
+
+                if (fw != null) {
+
+                    try {
+
+                        fw.close();
+
+                    } catch (IOException ex) {
+
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void copyTextFile(String from, String to) {
+
+        if ((from != null) && (to != null)) {
+
+            copyTextFile(new File(from), new File(to));
+        }
+    }
+
+    private static void copyTextFile(File from, File to) {
+
+        if ((from != null) && (to != null)) {
+
+            String[] lines = readTextFile(from);
+            if (lines != null) {
+
+                writeTextFile(to, lines);
+            }
+        }
     }
 
     private boolean str2boolean(String s, boolean defaultValue) {
@@ -320,7 +421,7 @@ public class Install {
                         if ((conf.exists()) && (conf.isDirectory())) {
 
                             File confr = new File(conf, "LircJob.lircrc");
-                            fr.renameTo(confr);
+                            copyTextFile(fr, confr);
                         }
                     }
                 }

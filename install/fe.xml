@@ -66,8 +66,6 @@
             <file override="update"
                 src="fe/bundle/jflicks-nms-remote.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="fe/bundle/jflicks-rc-lirc.jar" targetdir="$INSTALL_PATH/bundle"/>
-            <file override="update"
                 src="fe/bundle/jflicks-swingx.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/bundle/jflicks-timingframework.jar" targetdir="$INSTALL_PATH/bundle"/>
@@ -126,6 +124,16 @@
             <parsable encoding="iso-8859-1"
                 targetfile="$INSTALL_PATH/postinstall.sh" type="shell"/>
         </pack>
+        <pack name="lirc" hidden="true" required="yes" os="linux">
+            <description>Lirc for linux.</description>
+            <file override="update"
+                src="fe/bundle/jflicks-rc-lirc.jar" targetdir="$INSTALL_PATH/bundle"/>
+        </pack>
+        <pack name="winlirc" hidden="true" required="yes" os="windows">
+            <description>Lirc for windows.</description>
+            <file override="update"
+                src="fe/bundle/jflicks-rc-winlirc.jar" targetdir="$INSTALL_PATH/bundle"/>
+        </pack>
         <pack name="Watch TV Recordings" preselected="yes" required="no">
             <description>Be able to Schedule and Watch Recordings.</description>
             <file override="update"
@@ -139,7 +147,7 @@
             <file override="update"
                 src="fe/conf/mplayer.properties" targetdir="$INSTALL_PATH/conf"/>
         </pack>
-        <pack name="Video" preselected="yes" required="no">
+        <pack name="Video Library" preselected="yes" required="no">
             <description>Play video files on your system from your network.</description>
             <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-video.jar" targetdir="$INSTALL_PATH/bundle"/>
@@ -236,6 +244,8 @@
             <description>Needed if you plan on watching an On Demand source.</description>
             <file override="update"
                 src="fe/bundle/jflicks-player-vlcj.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="fe/conf/vlc.properties" targetdir="$INSTALL_PATH/conf"/>
             <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-ondemand.jar" targetdir="$INSTALL_PATH/bundle"/>
         </pack>
