@@ -145,13 +145,13 @@
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-mplayer.jar"
             todir="fe/bundle"/>
-        <copy file="${bundle}/jflicks-player-totem.jar"
-            todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-chrome.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-photoshow.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-vlcj.jar"
+            todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-player-vlcdvd.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
             todir="fe/bundle"/>

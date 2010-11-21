@@ -250,17 +250,6 @@
             output="${bundle}"
         />
 
-        <!--
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-player-totem.bnd"
-            output="${bundle}"
-        />
-        -->
-
         <bnd
             classpath="${build}"
             eclipse="false"

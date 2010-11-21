@@ -236,7 +236,7 @@
         <pack name="DVD" preselected="no" required="no">
             <description>Needed if you plan on watching DVDs from a DVD drive.</description>
             <file override="update"
-                src="fe/bundle/jflicks-player-totem.jar" targetdir="$INSTALL_PATH/bundle"/>
+                src="fe/bundle/jflicks-player-vlcdvd.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-dvd.jar" targetdir="$INSTALL_PATH/bundle"/>
         </pack>
