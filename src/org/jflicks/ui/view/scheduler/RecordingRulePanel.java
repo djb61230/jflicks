@@ -319,8 +319,8 @@ public class RecordingRulePanel extends JPanel implements ActionListener,
                 JCheckBox[] cbuts = new JCheckBox[tasks.length];
                 for (int i = 0; i < cbuts.length; i++) {
 
-                    cbuts[i] = new JCheckBox(tasks[i].getTitle());
-                    cbuts[i].setToolTipText(tasks[i].getDescription());
+                    cbuts[i] = new JCheckBox(tasks[i].getDescription());
+                    cbuts[i].setToolTipText(tasks[i].getTitle());
                     cbuts[i].setSelected(tasks[i].isRun());
                 }
 
