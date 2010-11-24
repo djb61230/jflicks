@@ -56,7 +56,7 @@
     <target name="build" depends="init" description="Build everything and jar">
 
         <javac srcdir="${src}" destdir="${build}" classpathref="build.classpath"
-            debug="on" includes="**/*.java" excludes="**/package-info.java"
+            debug="on" includes="**/*.java" excludes="**/package-info.java*"
             includeantruntime="false">
 
             <compilerarg value="-Xlint:unchecked"/>
@@ -68,6 +68,29 @@
         </jar>
 
         <jar destfile="${dist}/jflicks-test.jar" basedir="${build}">
+        </jar>
+
+        <jar destfile="${dist}/directvweb.jar" basedir="${build}"
+            excludes="**/test/*.class"
+            includes="**/stb/*.class,**/stb/directvweb/*.class,**/util/*.class">
+
+            <manifest>
+                <attribute name="Main-Class"
+                    value="org.jflicks.stb.directvweb.DirectvWeb"/>
+            </manifest>
+
+        </jar>
+
+        <jar destfile="${dist}/directvserial.jar" basedir="${build}"
+            excludes="**/test/*.class"
+            includes="**/stb/*.class,**/stb/directvserial/*.class">
+
+            <zipfileset includes="**/*.class" src="lib/RXTXcomm.jar"/>
+            <manifest>
+                <attribute name="Main-Class"
+                    value="org.jflicks.stb.directvserial.DirectvSerial"/>
+            </manifest>
+
         </jar>
 
         <bnd
@@ -725,6 +748,47 @@
 
         <java classname="org.jflicks.player.vlcj.Vlcj" fork="true">
 
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-directvweb" depends="build">
+
+        <input message="host/ip: " addproperty="arg1"
+            defaultvalue="192.168.2.140"/>
+        <input message="port: " addproperty="arg2" defaultvalue="8080"/>
+        <input message="channel: " addproperty="arg3" defaultvalue="202"/>
+        <java classname="org.jflicks.stb.directvweb.DirectvWeb" fork="true">
+
+            <arg value="-host"/>
+            <arg value="${arg1}"/>
+            <arg value="-port"/>
+            <arg value="${arg2}"/>
+            <arg value="-channel"/>
+            <arg value="${arg3}"/>
+            <jvmarg value="-Djava.library.path=lib"/>
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-directvserial" depends="build">
+
+        <input message="port: " addproperty="arg1" defaultvalue="/dev/ttyS0"/>
+        <input message="channel: " addproperty="arg2" defaultvalue="202"/>
+        <java classname="org.jflicks.stb.directvserial.DirectvSerial" fork="true">
+
+            <arg value="-port"/>
+            <arg value="${arg1}"/>
+            <arg value="-channel"/>
+            <arg value="${arg2}"/>
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>

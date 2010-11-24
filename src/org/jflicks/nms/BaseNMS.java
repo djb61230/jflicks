@@ -21,10 +21,12 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.swing.Timer;
@@ -287,6 +289,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if ((l != null) && (r != null)) {
 
             l.add(r);
+            Collections.sort(l, new RecorderSortByTitleDevice());
 
             Configuration def = r.getDefaultConfiguration();
             /*
@@ -1676,6 +1679,17 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
      */
     public String toString() {
         return (getTitle());
+    }
+
+    static class RecorderSortByTitleDevice implements Comparator<Recorder>,
+        Serializable {
+
+        public int compare(Recorder r0, Recorder r1) {
+
+            String r0str = r0.getTitle() + " " + r0.getDevice();
+            String r1str = r1.getTitle() + " " + r1.getDevice();
+            return (r0str.compareTo(r1str));
+        }
     }
 
 }
