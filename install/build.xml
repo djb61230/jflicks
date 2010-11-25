@@ -9,6 +9,7 @@
     <property name="dist" location="dist"/>
     <property name="lib" location="lib"/>
     <property name="bundle" location="../bundle"/>
+    <property name="topdist" location="../dist"/>
     <property name="install.lib" location="${user.home}/IzPack/lib"/>
 
     <taskdef name="izpack" classpath="${install.lib}/standalone-compiler.jar"
@@ -109,6 +110,7 @@
         <copy file="${bundle}/jflicks-sqlitejdbc.jar"
             todir="server/bundle"/>
         <copy file="${dist}/jflicks-install.jar" todir="server/bin"/>
+        <copy file="${topdist}/directvweb.jar" todir="server/bin"/>
 
         <!-- Now do client side. -->
         <copy file="${bundle}/jflicks-base.jar"

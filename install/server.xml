@@ -137,11 +137,12 @@
             <file override="update"
                 src="server/bundle/jflicks-tv-recorder-v4l2.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="server/bin/directv-ttyS0.pl" targetdir="$INSTALL_PATH/bin"/>
+                src="server/bin/directvweb.jar" targetdir="$INSTALL_PATH/bin"/>
             <file override="update"
-                src="server/bin/directv-ttyS1.pl" targetdir="$INSTALL_PATH/bin"/>
-            <executable failure="abort" keep="false" stage="never" targetfile="$INSTALL_PATH/bin/directv-ttyS0.pl"/>
-            <executable failure="abort" keep="false" stage="never" targetfile="$INSTALL_PATH/bin/directv-ttyS1.pl"/>
+                src="server/bin/directvweb.sh" targetdir="$INSTALL_PATH/bin"/>
+            <executable failure="abort" keep="false" stage="never" targetfile="$INSTALL_PATH/bin/directvweb.sh"/>
+            <parsable encoding="iso-8859-1"
+                targetfile="$INSTALL_PATH/bin/directvweb.sh" type="shell"/>
         </pack>
         <pack name="Comskip" preselected="no" required="no">
             <description>Commercial skipping using wine/comskip.</description>
