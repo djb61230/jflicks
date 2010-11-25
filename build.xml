@@ -81,18 +81,6 @@
 
         </jar>
 
-        <jar destfile="${dist}/directvserial.jar" basedir="${build}"
-            excludes="**/test/*.class"
-            includes="**/stb/*.class,**/stb/directvserial/*.class">
-
-            <zipfileset includes="**/*.class" src="lib/RXTXcomm.jar"/>
-            <manifest>
-                <attribute name="Main-Class"
-                    value="org.jflicks.stb.directvserial.DirectvSerial"/>
-            </manifest>
-
-        </jar>
-
         <bnd
             classpath="${build}"
             eclipse="false"
@@ -771,24 +759,6 @@
             <arg value="-channel"/>
             <arg value="${arg3}"/>
             <jvmarg value="-Djava.library.path=lib"/>
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
-
-        </java>
-
-    </target>
-
-    <target name="test-directvserial" depends="build">
-
-        <input message="port: " addproperty="arg1" defaultvalue="/dev/ttyS0"/>
-        <input message="channel: " addproperty="arg2" defaultvalue="202"/>
-        <java classname="org.jflicks.stb.directvserial.DirectvSerial" fork="true">
-
-            <arg value="-port"/>
-            <arg value="${arg1}"/>
-            <arg value="-channel"/>
-            <arg value="${arg2}"/>
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>
