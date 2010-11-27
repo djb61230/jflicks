@@ -1028,11 +1028,26 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                     for (int i = 0; i < rules.length; i++) {
 
-                        if ((cid == rules[i].getChannelId())
-                            && (seriesId.equals(rules[i].getSeriesId()))) {
+                        ShowAiring rrsa = rules[i].getShowAiring();
+                        if (rrsa != null) {
 
-                            result = rules[i];
-                            break;
+                            // We have a rule that is a ONCE recording.  It
+                            // is only our rule to edit if the two ShowAiring
+                            // instances are the same.
+                            if (rrsa.equals(sa)) {
+
+                                result = rules[i];
+                                break;
+                            }
+
+                        } else {
+
+                            if ((cid == rules[i].getChannelId())
+                                && (seriesId.equals(rules[i].getSeriesId()))) {
+
+                                result = rules[i];
+                                break;
+                            }
                         }
                     }
                 }

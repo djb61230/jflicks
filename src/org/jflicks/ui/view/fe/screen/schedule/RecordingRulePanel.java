@@ -672,6 +672,9 @@ public class RecordingRulePanel extends BaseCustomizePanel
                 result[i].getInputMap().put(KeyStroke.getKeyStroke("ENTER"),
                     "toggle");
                 result[i].getActionMap().put("toggle", new RadioAction());
+                result[i].getInputMap().put(KeyStroke.getKeyStroke("SPACE"),
+                    "toggle");
+                result[i].getActionMap().put("toggle", new RadioAction());
                 result[i].addActionListener(this);
 
                 if (bg != null) {

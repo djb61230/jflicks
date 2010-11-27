@@ -98,7 +98,6 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
     private int channelId;
     private String showId;
     private String seriesId;
-    private long when;
     private long duration;
     private int priority;
     private int sortBy;
@@ -150,6 +149,7 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
         setTasks(rr.getTasks());
         setBeginPadding(rr.getBeginPadding());
         setEndPadding(rr.getEndPadding());
+        setHostPort(rr.getHostPort());
     }
 
     /**

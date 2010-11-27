@@ -280,9 +280,15 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
 
             if (rules != null) {
 
-                // We will delete them all but we should have only found 1.
+                System.out.println("Found " + rules.size() + " rules");
                 for (int i = 0; i < rules.size(); i++) {
-                    oc.delete(rules.get(i));
+
+                    RecordingRule trule = rules.get(i);
+                    if (trule.getId().equals(rr.getId())) {
+
+                        System.out.println("Removing " + trule.getId());
+                        oc.delete(trule);
+                    }
                 }
             }
         }

@@ -388,6 +388,25 @@ public class PendingRecord implements Comparable<PendingRecord> {
     }
 
     /**
+     * Convenience method to check to see if this is a ONCE recording using
+     * the RecordingRule property.
+     *
+     * @return True if this PendingRecord is a product of a once recording.
+     */
+    public boolean isOnceType() {
+
+        boolean result = false;
+
+        RecordingRule rr = getRecordingRule();
+        if (rr != null) {
+
+            result = rr.isOnceType();
+        }
+
+        return (result);
+    }
+
+    /**
      * Override the hashcode.
      *
      * @return An int value.

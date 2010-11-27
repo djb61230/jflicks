@@ -817,12 +817,12 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
         if ((list != null) && (pr != null)) {
 
             String showId = pr.getShowId();
-            if (showId != null) {
+            if ((showId != null) && (!pr.isOnceType())) {
 
                 for (int i = 0; i < list.size(); i++) {
 
                     PendingRecord tmp = list.get(i);
-                    if (tmp != pr) {
+                    if ((tmp != pr) && (!tmp.isOnceType())) {
 
                         if (showId.equals(tmp.getShowId())) {
 
@@ -855,15 +855,18 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                         if (i != j) {
 
                             PendingRecord pr1 = list.get(j);
-                            if (pr1.isUndeterminedStatus()) {
+                            if (!pr1.isOnceType()) {
 
-                                if (showId.equals(pr1.getShowId())) {
+                                if (pr1.isUndeterminedStatus()) {
 
-                                    if (!duplist.contains(pr0)) {
-                                        duplist.add(pr0);
-                                    }
-                                    if (!duplist.contains(pr1)) {
-                                        duplist.add(pr1);
+                                    if (showId.equals(pr1.getShowId())) {
+
+                                        if (!duplist.contains(pr0)) {
+                                            duplist.add(pr0);
+                                        }
+                                        if (!duplist.contains(pr1)) {
+                                            duplist.add(pr1);
+                                        }
                                     }
                                 }
                             }
