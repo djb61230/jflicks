@@ -23,7 +23,6 @@ import org.jflicks.ui.view.fe.screen.Screen;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
-import org.slf4j.impl.OSGILogFactory;
 
 /**
  *
@@ -40,8 +39,6 @@ public class Activator extends BaseActivator {
     public void start(BundleContext bc) {
 
         setBundleContext(bc);
-
-        OSGILogFactory.initOSGI(bc);
 
         PreferenceScreen s = new PreferenceScreen();
 

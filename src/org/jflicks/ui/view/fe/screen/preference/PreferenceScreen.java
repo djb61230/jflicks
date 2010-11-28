@@ -46,9 +46,6 @@ import org.jflicks.ui.view.fe.screen.Screen;
 import org.jflicks.util.ExtensionsFilter;
 import org.jflicks.util.Util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This class supports setting user preferences in a front end UI on a TV.
  *
@@ -57,8 +54,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PreferenceScreen extends Screen implements ParameterProperty,
     PropertyChangeListener {
-
-    private Logger logger = LoggerFactory.getLogger(PreferenceScreen.class);
 
     private static final double HGAP = 0.02;
     private static final double VGAP = 0.05;
@@ -225,7 +220,6 @@ public class PreferenceScreen extends Screen implements ParameterProperty,
         super.setVisible(b);
         if (b) {
 
-            logger.info("crap my pants");
             if (isParameterTheme()) {
 
                 ThemeListPanel tlp = getThemeListPanel();
