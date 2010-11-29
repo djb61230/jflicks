@@ -50,8 +50,6 @@
             <file override="update"
                 src="server/bundle/db4o-7.12.126.14142-osgi.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="server/bundle/LogbackBundle-1.0.jar" targetdir="$INSTALL_PATH/bundle"/>
-            <file override="update"
                 src="server/bundle/jflicks-base.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="server/bundle/jflicks-jdom.jar" targetdir="$INSTALL_PATH/bundle"/>
@@ -78,7 +76,7 @@
             <file override="update"
                 src="server/bundle/org.apache.felix.eventadmin-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="server/bundle/org.apache.felix.log-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
+                src="server/bundle/log_all-3.0.5.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="server/bundle/org.apache.felix.shell-1.4.1.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"

@@ -23,11 +23,11 @@ import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
+import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Simple activater that starts the feh job.  Also registers the Player
- * based upon feh.
+ * Simple activater that starts the PhotoShow job.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -35,7 +35,8 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends BaseActivator {
 
     private PhotoShow photoShow;
-    private ServiceTracker serviceTracker;
+    private ServiceTracker eventServiceTracker;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -52,10 +53,15 @@ public class Activator extends BaseActivator {
 
         bc.registerService(Player.class.getName(), photoShow, dict);
 
-        serviceTracker =
+        eventServiceTracker =
             new ServiceTracker(bc, EventAdmin.class.getName(), null);
-        photoShow.setEventServiceTracker(serviceTracker);
-        serviceTracker.open();
+        photoShow.setEventServiceTracker(eventServiceTracker);
+        eventServiceTracker.open();
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        photoShow.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -63,10 +69,16 @@ public class Activator extends BaseActivator {
      */
     public void stop(BundleContext context) {
 
-        if (serviceTracker != null) {
+        if (eventServiceTracker != null) {
 
-            serviceTracker.close();
-            serviceTracker = null;
+            eventServiceTracker.close();
+            eventServiceTracker = null;
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

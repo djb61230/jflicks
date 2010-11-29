@@ -36,6 +36,7 @@ import org.jflicks.util.Util;
  */
 public class ChromeJob extends AbstractJob implements JobListener {
 
+    private Chrome chrome;
     private SystemJob systemJob;
     private JobContainer jobContainer;
     private String url;
@@ -43,12 +44,22 @@ public class ChromeJob extends AbstractJob implements JobListener {
     /**
      * Constructor with one required argument.
      *
+     * @param chrome The Chrome player instance.
      * @param url The url to the page to load.
      */
-    public ChromeJob(String url) {
+    public ChromeJob(Chrome chrome, String url) {
 
+        setChrome(chrome);
         setURL(url);
         setSleepTime(2500);
+    }
+
+    private Chrome getChrome() {
+        return (chrome);
+    }
+
+    private void setChrome(Chrome c) {
+        chrome = c;
     }
 
     private SystemJob getSystemJob() {
@@ -65,6 +76,15 @@ public class ChromeJob extends AbstractJob implements JobListener {
 
     private void setJobContainer(JobContainer j) {
         jobContainer = j;
+    }
+
+    private void log(int level, String message) {
+
+        Chrome c = getChrome();
+        if ((c != null) && (message != null)) {
+
+            c.log(level, message);
+        }
     }
 
     /**
@@ -101,7 +121,7 @@ public class ChromeJob extends AbstractJob implements JobListener {
         SystemJob job = SystemJob.getInstance(prgname
             + " --start-maximized " + getURL());
 
-        System.out.println("started: " + job.getCommand());
+        log(Chrome.DEBUG, "started: " + job.getCommand());
         job.addJobListener(this);
         setSystemJob(job);
         JobContainer jc = JobManager.getJobContainer(job);
@@ -131,7 +151,7 @@ public class ChromeJob extends AbstractJob implements JobListener {
 
                 } catch (AWTException ex) {
 
-                    System.out.println("failed on sending F11 key");
+                    log(Chrome.ERROR, "failed on sending F11 key");
                 }
 
                 sentF11 = true;
@@ -147,7 +167,6 @@ public class ChromeJob extends AbstractJob implements JobListener {
         JobContainer jc = getJobContainer();
         if (jc != null) {
 
-            System.out.println("calling stop on system job");
             jc.stop();
         }
 

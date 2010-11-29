@@ -164,7 +164,12 @@ public class BaseConfig implements Config {
                 nv.setName(p.getProperty(prefix + "_name"));
                 nv.setDescription(p.getProperty(prefix + "_description"));
                 nv.setDefaultValue(p.getProperty(prefix + "_defaultValue"));
-                nv.setValue(nv.getDefaultValue());
+                String valprop = p.getProperty(prefix + "_value");
+                if (valprop == null) {
+                    nv.setValue(nv.getDefaultValue());
+                } else {
+                    nv.setValue(valprop);
+                }
                 nv.setType(nv.toType(p.getProperty(prefix + "_type")));
                 if (nv.isFromChoiceType()) {
 

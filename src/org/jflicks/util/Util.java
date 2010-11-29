@@ -40,6 +40,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
@@ -1152,6 +1153,32 @@ public final class Util {
         }
 
         return (result);
+    }
+
+    /**
+     * Write a text file from a String object.
+     *
+     * @param file File object representing a text file.
+     * @param data The data to write.
+     */
+    public static void writeTextFile(File f, String data) throws IOException {
+
+        if ((f != null) && (data != null)) {
+
+            FileOutputStream fos = null;
+            try {
+
+                fos = new FileOutputStream(f);
+                fos.write(data.getBytes());
+
+            } finally {
+
+                if (fos != null) {
+
+                    fos.close();
+                }
+            }
+        }
     }
 
     /**

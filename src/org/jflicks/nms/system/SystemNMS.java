@@ -16,18 +16,24 @@
 */
 package org.jflicks.nms.system;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
-import org.jflicks.db.DbWorker;
 import org.jflicks.configure.BaseConfiguration;
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
 import org.jflicks.nms.BaseNMS;
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.photomanager.PhotoManager;
+import org.jflicks.trailer.Trailer;
 import org.jflicks.tv.Listing;
 import org.jflicks.tv.live.Live;
 import org.jflicks.tv.ondemand.OnDemand;
@@ -35,11 +41,9 @@ import org.jflicks.tv.postproc.PostProc;
 import org.jflicks.tv.programdata.ProgramData;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.Scheduler;
-
-import com.db4o.ObjectContainer;
-import com.db4o.ObjectSet;
-import com.db4o.osgi.Db4oService;
-import com.db4o.query.Predicate;
+import org.jflicks.util.ExtensionsFilter;
+import org.jflicks.util.Util;
+import org.jflicks.videomanager.VideoManager;
 
 /**
  * This is our implementation of an NMS.
@@ -47,10 +51,7 @@ import com.db4o.query.Predicate;
  * @author Doug Barnum
  * @version 1.0
  */
-public class SystemNMS extends BaseNMS implements DbWorker {
-
-    private ObjectContainer objectContainer;
-    private Db4oService db4oService;
+public class SystemNMS extends BaseNMS {
 
     /**
      * Default empty constructor.
@@ -58,50 +59,28 @@ public class SystemNMS extends BaseNMS implements DbWorker {
     public SystemNMS() {
 
         setTitle("SystemNMS");
+        saveDefaultConfigurations();
     }
 
-    /**
-     * We use the Db4oService to persist the configuration data.
-     *
-     * @return A Db4oService instance.
-     */
-    public Db4oService getDb4oService() {
-        return (db4oService);
-    }
+    private File createConfigurationFile(Configuration c) {
 
-    /**
-     * We use the Db4oService to persist the configuration data.
-     *
-     * @param s A Db4oService instance.
-     */
-    public void setDb4oService(Db4oService s) {
-        db4oService = s;
+        File result = null;
 
-        if (s != null) {
+        if (c != null) {
 
-            // Now that we have a data base service we should make sure
-            // services we use have saved their default configurations.
-            saveDefaultConfigurations();
-        }
-    }
+            File db = new File("db");
+            if ((db.exists()) && (db.isDirectory())) {
 
-    private synchronized ObjectContainer getObjectContainer() {
+                String s = c.getName() + "-" + c.getSource() + ".properties";
 
-        if (objectContainer == null) {
-
-            Db4oService s = getDb4oService();
-            if (s != null) {
-
-                com.db4o.config.Configuration config = s.newConfiguration();
-                objectContainer = s.openFile(config, "db/config.dat");
-
-            } else {
-
-                System.out.println("SystemNMS: Db4oService null!");
+                // We have to do something with path / chars.  Crap.  We
+                // will just have to turn into something odd...
+                s = s.replaceAll("/", "SLASH");
+                result = new File(db, s);
             }
         }
 
-        return (objectContainer);
+        return (result);
     }
 
     /**
@@ -111,21 +90,71 @@ public class SystemNMS extends BaseNMS implements DbWorker {
 
         Configuration[] result = null;
 
-        ObjectContainer oc = getObjectContainer();
-        if (oc != null) {
+        File db = new File("db");
+        if ((db.exists()) && (db.isDirectory())) {
 
-            ObjectSet<Configuration> os =
-                oc.queryByExample(Configuration.class);
-            if (os != null) {
+            String[] props = {
+                "properties"
+            };
 
-                result = os.toArray(new Configuration[os.size()]);
-                examineOnDemand(result);
-                examineScheduler(result);
-                Arrays.sort(result, new ConfigurationSortByName());
+            ExtensionsFilter exts = new ExtensionsFilter(props);
+            File[] fprops = db.listFiles(exts);
+            if ((fprops != null) && (fprops.length > 0)) {
+
+                ArrayList<Configuration> l = new ArrayList<Configuration>();
+                for (int i = 0; i < fprops.length; i++) {
+
+                    Configuration c =
+                        fromProperties(Util.findProperties(fprops[i]));
+                    if (c != null) {
+
+                        l.add(c);
+                    }
+                }
+
+                if (l.size() > 0) {
+
+                    result = l.toArray(new Configuration[l.size()]);
+                    examineOnDemand(result);
+                    examineScheduler(result);
+                    Arrays.sort(result, new ConfigurationSortByName());
+                }
             }
+
         }
 
         return (result);
+    }
+
+    private void writeProperties(File f, Properties p) {
+
+        if ((f != null) && (p != null)) {
+
+            Set<String> set = p.stringPropertyNames();
+            String[] array = set.toArray(new String[set.size()]);
+            Arrays.sort(array);
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < array.length; i++) {
+
+                String value = p.getProperty(array[i]);
+                if (value == null) {
+
+                    value = "";
+                }
+
+                sb.append(array[i] + "=" + value + "\n");
+            }
+
+            try {
+
+                Util.writeTextFile(f, sb.toString());
+
+            } catch (IOException ex) {
+
+                System.out.println(ex.getMessage());
+            }
+        }
     }
 
     private Configuration findConfigurationBySource(String s,
@@ -191,6 +220,15 @@ public class SystemNMS extends BaseNMS implements DbWorker {
                 save(pds[i].getDefaultConfiguration(), false);
             }
         }
+
+        OnDemand[] ons = getOnDemands();
+        if (ons != null) {
+
+            for (int i = 0; i < ons.length; i++) {
+
+                save(ons[i].getDefaultConfiguration(), false);
+            }
+        }
     }
 
     /**
@@ -198,24 +236,13 @@ public class SystemNMS extends BaseNMS implements DbWorker {
      */
     public void removeConfiguration(Configuration c) {
 
-        ObjectContainer oc = getObjectContainer();
-        if ((c != null) && (oc != null)) {
+        File f = createConfigurationFile(c);
+        if ((f != null) && (f.exists()) && (f.isFile())) {
 
-            final String source = c.getSource();
-            List<Configuration> confs =
-                oc.query(new Predicate<Configuration>() {
+            boolean result = f.delete();
+            if (!result) {
 
-                public boolean match(Configuration c) {
-                    return (source.equals(c.getSource()));
-                }
-            });
-
-            if (confs != null) {
-
-                // We will delete them all but we should have only found 1.
-                for (int i = 0; i < confs.size(); i++) {
-                    oc.delete(confs.get(i));
-                }
+                System.out.println("Failed to delete " + f.getPath());
             }
         }
     }
@@ -225,43 +252,26 @@ public class SystemNMS extends BaseNMS implements DbWorker {
      */
     public void save(Configuration c, boolean force) {
 
-        ObjectContainer oc = getObjectContainer();
-        System.out.println("save: force: " + force + " " + c + " " + oc);
-        if ((c != null) && (oc != null)) {
+        System.out.println("save: c: " + c + " force: " + force);
+        if (c != null) {
 
-            BaseConfiguration newc =
-                new BaseConfiguration((BaseConfiguration) c);
-            final String source = newc.getSource();
-            if (source != null) {
+            File f = createConfigurationFile(c);
+            System.out.println("save: f: " + f);
+            if ((f != null) && (f.exists()) && (f.isFile())) {
 
-                List<Configuration> configs =
-                    oc.query(new Predicate<Configuration>() {
+                // The Configuration does exist.  We over write only if
+                // force is true.
+                if (force) {
 
-                    public boolean match(Configuration c) {
-                        return (source.equals(c.getSource()));
-                    }
-                });
-
-                if (configs != null) {
-
-                    boolean foundOldOne = (configs.size() > 0);
-                    if ((foundOldOne) && (force)) {
-
-                        // We will delete them all but we should have
-                        // only found 1.
-                        for (int i = 0; i < configs.size(); i++) {
-                            oc.delete(configs.get(i));
-                        }
-                    }
-
-                    if ((!foundOldOne) || (force)) {
-
-                        System.out.println("we should save it...");
-                        oc.store(newc);
-                        oc.commit();
-                        updateConfiguration(newc);
-                    }
+                    writeProperties(f, toProperties(c));
+                    updateConfiguration(c);
                 }
+
+            } else if (f != null) {
+
+                // Ok we have a good path.  We will save it anyway.
+                writeProperties(f, toProperties(c));
+                updateConfiguration(c);
             }
         }
     }
@@ -284,6 +294,22 @@ public class SystemNMS extends BaseNMS implements DbWorker {
                     if (s != null) {
 
                         s.setConfiguration(c);
+                    }
+
+                } else if (name.equals(NMSConstants.PHOTO_MANAGER_NAME)) {
+
+                    PhotoManager pm = getPhotoManager();
+                    if (pm != null) {
+
+                        pm.setConfiguration(c);
+                    }
+
+                } else if (name.equals(NMSConstants.VIDEO_MANAGER_NAME)) {
+
+                    VideoManager vm = getVideoManager();
+                    if (vm != null) {
+
+                        vm.setConfiguration(c);
                     }
 
                 } else if (name.equals(NMSConstants.LIVE_NAME)) {
@@ -351,18 +377,60 @@ public class SystemNMS extends BaseNMS implements DbWorker {
                             }
                         }
                     }
+
+                } else if (name.equals(NMSConstants.ON_DEMAND_NAME)) {
+
+                    String source = c.getSource();
+                    if (source != null) {
+
+                        OnDemand[] array = getOnDemands();
+                        if (array != null) {
+
+                            OnDemand od = null;
+                            for (int i = 0; i < array.length; i++) {
+
+                                if (source.equals(array[i].getTitle())) {
+
+                                    od = array[i];
+                                    break;
+                                }
+                            }
+
+                            if (od != null) {
+                                od.setConfiguration(c);
+                            }
+                        }
+                    }
+
+                } else if (name.equals(NMSConstants.TRAILER_NAME)) {
+
+                    String source = c.getSource();
+                    if (source != null) {
+
+                        Trailer[] array = getTrailers();
+                        if (array != null) {
+
+                            Trailer t = null;
+                            for (int i = 0; i < array.length; i++) {
+
+                                if (source.equals(array[i].getTitle())) {
+
+                                    t = array[i];
+                                    break;
+                                }
+                            }
+
+                            if (t != null) {
+                                t.setConfiguration(c);
+                            }
+                        }
+                    }
+
+                } else {
+
+                    System.out.println("Not handling update of "
+                        + c.getName() + "-" + c.getSource());
                 }
-            }
-        }
-    }
-
-    private void purge(ObjectContainer db, Class c) {
-
-        if ((db != null) && (c != null)) {
-
-            ObjectSet result = db.queryByExample(c);
-            while (result.hasNext()) {
-                db.delete(result.next());
             }
         }
     }
@@ -371,18 +439,6 @@ public class SystemNMS extends BaseNMS implements DbWorker {
      * Close up all resources.
      */
     public void close() {
-
-        if (objectContainer != null) {
-
-            boolean result = objectContainer.close();
-            System.out.println("SystemNMS: closed " + result);
-            objectContainer = null;
-
-        } else {
-
-            System.out.println("SystemNMS: Tried to close "
-                + "but objectContainer null.");
-        }
     }
 
     private String[] getListingNames() {

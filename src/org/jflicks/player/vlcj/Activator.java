@@ -27,6 +27,7 @@ import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
+import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -39,7 +40,8 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends BaseActivator {
 
     private Vlcj vlcj;
-    private ServiceTracker serviceTracker;
+    private ServiceTracker eventServiceTracker;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -86,27 +88,15 @@ public class Activator extends BaseActivator {
 
         bc.registerService(Player.class.getName(), v, dict);
 
-        // When it's ready we should use VLC for DVD playing.  The problem
-        // is that 1.2.x is required and in our testing it automatically
-        // went full screen and we had sound issues.  Not saying it was not
-        // my fault by building it properly but it's just now an improvement
-        // yet.  Perhaps on their next official release or I will retry in
-        // the future.
-        //
-        //Vlcj dvd = new Vlcj();
-        //dvd.setType(Player.PLAYER_VIDEO_DVD);
-
-        //dict = new Hashtable<String, String>();
-        //dict.put(Player.TITLE_PROPERTY, dvd.getTitle());
-        //dict.put(Player.HANDLE_PROPERTY, dvd.getType());
-
-        //bc.registerService(Player.class.getName(), dvd, dict);
-
-        serviceTracker =
+        eventServiceTracker =
             new ServiceTracker(bc, EventAdmin.class.getName(), null);
-        v.setEventServiceTracker(serviceTracker);
-        //dvd.setEventServiceTracker(serviceTracker);
-        serviceTracker.open();
+        v.setEventServiceTracker(eventServiceTracker);
+        eventServiceTracker.open();
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        v.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -114,10 +104,16 @@ public class Activator extends BaseActivator {
      */
     public void stop(BundleContext context) {
 
-        if (serviceTracker != null) {
+        if (eventServiceTracker != null) {
 
-            serviceTracker.close();
-            serviceTracker = null;
+            eventServiceTracker.close();
+            eventServiceTracker = null;
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

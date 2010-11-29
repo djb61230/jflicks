@@ -34,6 +34,7 @@ import org.jflicks.job.SystemJob;
  */
 public class VlcDvdJob extends AbstractJob implements JobListener {
 
+    private VlcDvd vlcDvd;
     private SystemJob systemJob;
     private JobContainer jobContainer;
     private String url;
@@ -43,9 +44,18 @@ public class VlcDvdJob extends AbstractJob implements JobListener {
      *
      * @param url The url to listen upon.
      */
-    public VlcDvdJob(String url) {
+    public VlcDvdJob(VlcDvd vlcDvd, String url) {
 
+        setVlcDvd(vlcDvd);
         setURL(url);
+    }
+
+    private VlcDvd getVlcDvd() {
+        return (vlcDvd);
+    }
+
+    private void setVlcDvd(VlcDvd p) {
+        vlcDvd = p;
     }
 
     private SystemJob getSystemJob() {
@@ -62,6 +72,15 @@ public class VlcDvdJob extends AbstractJob implements JobListener {
 
     private void setJobContainer(JobContainer j) {
         jobContainer = j;
+    }
+
+    private void log(int level, String message) {
+
+        VlcDvd p = getVlcDvd();
+        if ((p != null) && (message != null)) {
+
+            p.log(level, message);
+        }
     }
 
     /**
@@ -90,7 +109,7 @@ public class VlcDvdJob extends AbstractJob implements JobListener {
         SystemJob job = SystemJob.getInstance("vlc -I dummy --key-quit q"
             + " --fullscreen " + getURL());
 
-        System.out.println("started: " + job.getCommand());
+        log(VlcDvd.DEBUG, "started: " + job.getCommand());
         job.addJobListener(this);
         setSystemJob(job);
         JobContainer jc = JobManager.getJobContainer(job);

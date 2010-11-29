@@ -152,8 +152,8 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
         if (time < getMinimumTime()) {
 
-            System.out.println("setTime argument: " + time);
-            System.out.println("setTime start seconds: " + getStartSeconds());
+            log(MPlayer.DEBUG, "setTime argument: " + time);
+            log(MPlayer.DEBUG, "setTime start seconds: " + getStartSeconds());
 
             double dtmp = (double) getStartSeconds();
             if (Math.abs(time - dtmp) < 12) {
@@ -163,14 +163,14 @@ public class PlayStateJob extends AbstractJob implements JobListener,
             } else {
 
                 dtmp = time - dtmp;
-                System.out.println("setTime dtmp: " + dtmp);
+                log(MPlayer.DEBUG, "setTime dtmp: " + dtmp);
                 if (dtmp < 0.0) {
 
                     dtmp = time;
                 }
             }
 
-            System.out.println("setTime setMinimumTime: " + dtmp);
+            log(MPlayer.DEBUG, "setTime setMinimumTime: " + dtmp);
             setMinimumTime(dtmp);
         }
     }
@@ -234,6 +234,15 @@ public class PlayStateJob extends AbstractJob implements JobListener,
         }
 
         return (result);
+    }
+
+    private void log(int level, String message) {
+
+        MPlayer m = getMPlayer();
+        if ((m != null) && (message != null)) {
+
+            m.log(level, message);
+        }
     }
 
     private void command(String s) {
@@ -356,12 +365,12 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
                 } else {
 
-                    //System.out.println("Eaten: " + message);
+                    log(MPlayer.DEBUG, "From mplayer: " + message);
                 }
 
             } else {
 
-                //System.out.println("Eaten: " + message);
+                log(MPlayer.DEBUG, "From mplayer: " + message);
             }
         }
     }

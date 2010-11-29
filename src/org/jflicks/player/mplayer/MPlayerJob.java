@@ -37,6 +37,7 @@ import org.jflicks.util.Util;
  */
 public class MPlayerJob extends AbstractJob implements JobListener {
 
+    private MPlayer mplayer;
     private SystemJob systemJob;
     private JobContainer jobContainer;
     private String windowId;
@@ -54,6 +55,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
      * to have only one of them non-zero if playing past the beginning is
      * desired.
      *
+     * @param mplayer The player instance creating the job.
      * @param wid A window ID.
      * @param args An array of arguments to give to mplayer.
      * @param position The number of bytes into the video to begin playing.
@@ -61,15 +63,24 @@ public class MPlayerJob extends AbstractJob implements JobListener {
      * @param path The path to the file to play.
      * @param autoSkip When true try to auto skip commercials.
      */
-    public MPlayerJob(String wid, String[] args, long position, int seconds,
-        String path, boolean autoSkip) {
+    public MPlayerJob(MPlayer mplayer, String wid, String[] args,
+        long position, int seconds, String path, boolean autoSkip) {
 
+        setMPlayer(mplayer);
         setWindowId(wid);
         setArgs(args);
         setPosition(position);
         setSeconds(seconds);
         setPath(path);
         setAutoSkip(autoSkip);
+    }
+
+    private MPlayer getMPlayer() {
+        return (mplayer);
+    }
+
+    private void setMPlayer(MPlayer p) {
+        mplayer = p;
     }
 
     private String[] getArgs() {
@@ -94,6 +105,15 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
     private void setJobContainer(JobContainer j) {
         jobContainer = j;
+    }
+
+    private void log(int level, String message) {
+
+        MPlayer m = getMPlayer();
+        if ((m != null) && (message != null)) {
+
+            m.log(level, message);
+        }
     }
 
     /**
@@ -220,7 +240,6 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
                 try {
 
-                    System.out.println("Sending...<" + s + ">");
                     w.write(s, 0, s.length());
                     w.flush();
 
@@ -315,7 +334,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
                 + " " + startParameter + " " + getPath());
         }
 
-        System.out.println("started: " + job.getCommand());
+        log(MPlayer.DEBUG, "started: " + job.getCommand());
         job.addJobListener(this);
         setSystemJob(job);
         JobContainer jc = JobManager.getJobContainer(job);
@@ -328,7 +347,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
         } catch (IOException ex) {
 
-            System.out.println("WARNING: FIFO not opened");
+            log(MPlayer.WARNING, "WARNING: FIFO not opened");
         }
         setTerminate(false);
     }
@@ -364,7 +383,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
             } catch (IOException ex) {
 
-                System.out.println("WARNING: could not close FIFO");
+                log(MPlayer.WARNING, "WARNING: could not close FIFO");
             }
         }
         setTerminate(true);

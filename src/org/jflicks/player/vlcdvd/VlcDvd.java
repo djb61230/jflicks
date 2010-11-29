@@ -55,7 +55,7 @@ public class VlcDvd extends BasePlayer implements JobListener {
 
         } catch (AWTException ex) {
 
-            throw new RuntimeException(ex);
+            log(ERROR, ex.getMessage());
         }
     }
 
@@ -124,7 +124,7 @@ public class VlcDvd extends BasePlayer implements JobListener {
             setPlaying(true);
             setCompleted(false);
 
-            VlcDvdJob job = new VlcDvdJob(url);
+            VlcDvdJob job = new VlcDvdJob(this, url);
             job.addJobListener(this);
             setVlcDvdJob(job);
 
@@ -142,7 +142,6 @@ public class VlcDvd extends BasePlayer implements JobListener {
         setPaused(false);
         setPlaying(false);
         setCompleted(true);
-        System.out.println("we stopped dude!!");
 
         Robot r = getRobot();
         if (r != null) {
@@ -357,7 +356,6 @@ public class VlcDvd extends BasePlayer implements JobListener {
      */
     public void jobUpdate(JobEvent event) {
 
-        System.out.println("we got to vlcdvd jobUpdate");
         if (event.getType() == JobEvent.COMPLETE) {
 
             stop();

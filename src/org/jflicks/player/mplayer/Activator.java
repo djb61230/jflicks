@@ -30,6 +30,7 @@ import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
+import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -42,7 +43,8 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends BaseActivator {
 
     private MPlayer mplayer;
-    private ServiceTracker serviceTracker;
+    private ServiceTracker eventServiceTracker;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -98,10 +100,15 @@ public class Activator extends BaseActivator {
 
         bc.registerService(Player.class.getName(), mplayer, dict);
 
-        serviceTracker =
+        eventServiceTracker =
             new ServiceTracker(bc, EventAdmin.class.getName(), null);
-        mplayer.setEventServiceTracker(serviceTracker);
-        serviceTracker.open();
+        mplayer.setEventServiceTracker(eventServiceTracker);
+        eventServiceTracker.open();
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        mplayer.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -113,10 +120,16 @@ public class Activator extends BaseActivator {
         JobContainer jc = JobManager.getJobContainer(job);
         jc.start();
 
-        if (serviceTracker != null) {
+        if (eventServiceTracker != null) {
 
-            serviceTracker.close();
-            serviceTracker = null;
+            eventServiceTracker.close();
+            eventServiceTracker = null;
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

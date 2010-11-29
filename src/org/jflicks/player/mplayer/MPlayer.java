@@ -306,7 +306,7 @@ public class MPlayer extends BasePlayer {
             MPlayerJob job = null;
             if (isForceFullscreen()) {
 
-                job = new MPlayerJob(null, getArgs(), position, time, url,
+                job = new MPlayerJob(this, null, getArgs(), position, time, url,
                     isAutoSkip());
                 setMPlayerJob(job);
 
@@ -350,7 +350,7 @@ public class MPlayer extends BasePlayer {
                 long canid = Native.getComponentID(can);
                 String wid = "" + canid;
 
-                job = new MPlayerJob(wid, getArgs(), position, time, url,
+                job = new MPlayerJob(this, wid, getArgs(), position, time, url,
                     isAutoSkip());
                 setMPlayerJob(job);
 
@@ -517,6 +517,7 @@ public class MPlayer extends BasePlayer {
         MPlayerJob job = getMPlayerJob();
         if ((s != null) && (job != null)) {
 
+            log(DEBUG, "send command to mplayer <" + s + ">");
             job.command(s);
         }
     }

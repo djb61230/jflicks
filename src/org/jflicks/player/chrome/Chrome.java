@@ -105,7 +105,7 @@ public class Chrome extends BasePlayer {
             setPlaying(true);
             setCompleted(false);
 
-            ChromeJob job = new ChromeJob(url);
+            ChromeJob job = new ChromeJob(this, url);
             setChromeJob(job);
 
             JobContainer jc = JobManager.getJobContainer(job);
@@ -146,7 +146,7 @@ public class Chrome extends BasePlayer {
 
         } catch (Exception ex) {
 
-            System.out.println("Robot error exiting chrome");
+            log(ERROR, "Robot error exiting chrome");
         }
 
         JobContainer jc = getJobContainer();

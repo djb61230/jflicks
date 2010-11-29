@@ -22,10 +22,11 @@ import org.jflicks.player.Player;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Simple activater that starts the mplayer job.  Also registers the Player
- * based upon mplayer.
+ * Simple activater that starts the chrome job.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -33,6 +34,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends BaseActivator {
 
     private Chrome chrome;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -48,12 +50,23 @@ public class Activator extends BaseActivator {
         dict.put(Player.HANDLE_PROPERTY, chrome.getType());
 
         bc.registerService(Player.class.getName(), chrome, dict);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        chrome.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
      * {@inheritDoc}
      */
     public void stop(BundleContext context) {
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
+        }
     }
 
 }

@@ -22,10 +22,12 @@ import org.jflicks.player.Player;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Simple activater that starts the cvlc job.  Also registers the Player
- * based upon cvlc.
+ * Simple activater that starts the vlc dvd job.  Also registers the Player
+ * based upon vlc.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -33,6 +35,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends BaseActivator {
 
     private VlcDvd vlc;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -48,12 +51,23 @@ public class Activator extends BaseActivator {
         dict.put(Player.HANDLE_PROPERTY, vlc.getType());
 
         bc.registerService(Player.class.getName(), vlc, dict);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        vlc.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
      * {@inheritDoc}
      */
     public void stop(BundleContext context) {
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
+        }
     }
 
 }

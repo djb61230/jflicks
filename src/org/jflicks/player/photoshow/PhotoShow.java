@@ -228,7 +228,6 @@ public class PhotoShow extends BasePlayer implements ActionListener {
      */
     public void stop() {
 
-        System.out.println("stop called!");
         setPaused(false);
         setPlaying(false);
         setCompleted(true);

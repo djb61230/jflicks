@@ -20,7 +20,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Hashtable;
 
-import org.jflicks.db.Db4oServiceTracker;
 import org.jflicks.discovery.ServiceDescription;
 import org.jflicks.discovery.ServiceResponderJob;
 import org.jflicks.job.JobContainer;
@@ -41,7 +40,6 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends BaseActivator {
 
-    private Db4oServiceTracker db4oServiceTracker;
     private RecorderTracker recorderTracker;
     private SchedulerTracker schedulerTracker;
     private LiveTracker liveTracker;
@@ -99,10 +97,6 @@ public class Activator extends BaseActivator {
         OnDemandTracker odtracker = new OnDemandTracker(bc, s);
         setOnDemandTracker(odtracker);
         odtracker.open();
-
-        Db4oServiceTracker dtracker = new Db4oServiceTracker(bc, s);
-        setDb4oServiceTracker(dtracker);
-        dtracker.open();
 
         Hashtable<String, Boolean> props = new Hashtable<String, Boolean>();
         props.put(RemoteOSGiService.R_OSGi_REGISTRATION, Boolean.TRUE);
@@ -197,11 +191,6 @@ public class Activator extends BaseActivator {
             rtracker.close();
         }
 
-        Db4oServiceTracker dtracker = getDb4oServiceTracker();
-        if (dtracker != null) {
-            dtracker.close();
-        }
-
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
@@ -286,14 +275,6 @@ public class Activator extends BaseActivator {
 
     private void setRemoteTracker(RemoteTracker t) {
         remoteTracker = t;
-    }
-
-    private Db4oServiceTracker getDb4oServiceTracker() {
-        return (db4oServiceTracker);
-    }
-
-    private void setDb4oServiceTracker(Db4oServiceTracker t) {
-        db4oServiceTracker = t;
     }
 
     private SystemNMS getSystemNMS() {
