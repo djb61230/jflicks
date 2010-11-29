@@ -42,6 +42,7 @@ public class VlcDvdJob extends AbstractJob implements JobListener {
     /**
      * Constructor with one required argument.
      *
+     * @param vlcDvd The player instance that created this job.
      * @param url The url to listen upon.
      */
     public VlcDvdJob(VlcDvd vlcDvd, String url) {

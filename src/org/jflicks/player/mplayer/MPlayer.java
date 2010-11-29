@@ -146,10 +146,20 @@ public class MPlayer extends BasePlayer {
         setCanvas(can);
     }
 
+    /**
+     * We allow custom arguments to the mplayer process.
+     *
+     * @return The arguments as a String array.
+     */
     public String[] getArgs() {
         return (args);
     }
 
+    /**
+     * We allow custom arguments to the mplayer process.
+     *
+     * @param array The arguments as a String array.
+     */
     public void setArgs(String[] array) {
         args = array;
     }

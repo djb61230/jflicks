@@ -16,7 +16,6 @@
 */
 package org.jflicks.log;
 
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**

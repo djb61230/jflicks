@@ -150,10 +150,20 @@ public class Vlcj extends BasePlayer {
         setArgs(vlcArgs);
     }
 
+    /**
+     * We allow custom arguments to the VLC object.
+     *
+     * @return The arguments as a String array.
+     */
     public String[] getArgs() {
         return (args);
     }
 
+    /**
+     * We allow custom arguments to the VLC object.
+     *
+     * @param array The arguments as a String array.
+     */
     public void setArgs(String[] array) {
         args = array;
     }

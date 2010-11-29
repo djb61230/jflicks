@@ -46,18 +46,38 @@ public class DirectvWeb extends BaseSTB {
         setPort(8080);
     }
 
+    /**
+     * The DirecTV box has a host or IP address.
+     *
+     * @return The IP or host as a String.
+     */
     public String getHost() {
         return (host);
     }
 
+    /**
+     * The DirecTV box has a host or IP address.
+     *
+     * @param s The IP or host as a String.
+     */
     public void setHost(String s) {
         host = s;
     }
 
+    /**
+     * The DirecTV box is listening on a particular port.
+     *
+     * @return The port value.
+     */
     public int getPort() {
         return (port);
     }
 
+    /**
+     * The DirecTV box is listening on a particular port.
+     *
+     * @param i The port value.
+     */
     public void setPort(int i) {
         port = i;
     }
@@ -128,6 +148,11 @@ public class DirectvWeb extends BaseSTB {
 
     }
 
+    /**
+     * The main method to run as a command line.
+     *
+     * @param args The arguments as an array of String instances.
+     */
     public static void main(String[] args) {
 
         String h = null;

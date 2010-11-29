@@ -1158,8 +1158,9 @@ public final class Util {
     /**
      * Write a text file from a String object.
      *
-     * @param file File object representing a text file.
+     * @param f File object representing a text file.
      * @param data The data to write.
+     * @throws IOException on an error.
      */
     public static void writeTextFile(File f, String data) throws IOException {
 

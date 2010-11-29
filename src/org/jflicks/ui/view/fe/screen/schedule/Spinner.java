@@ -16,7 +16,6 @@
 */
 package org.jflicks.ui.view.fe.screen.schedule;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Font;
@@ -26,9 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.InputMap;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -53,7 +50,9 @@ public class Spinner extends JPanel implements ActionListener, FocusListener {
     private TitledBorder titledBorder;
 
     /**
-     * Simple constructor.
+     * Simple constructor with one argument.
+     *
+     * @param f The font to use for the text.
      */
     public Spinner(Font f) {
 
@@ -148,10 +147,20 @@ public class Spinner extends JPanel implements ActionListener, FocusListener {
         rightLabel = l;
     }
 
+    /**
+     * We spin through number and keep track of an amount.
+     *
+     * @return The amount.
+     */
     public int getAmount() {
         return (amount);
     }
 
+    /**
+     * We spin through number and keep track of an amount.
+     *
+     * @param i The amount.
+     */
     public void setAmount(int i) {
 
         int old = amount;
@@ -160,11 +169,21 @@ public class Spinner extends JPanel implements ActionListener, FocusListener {
         updateLabel();
     }
 
+    /**
+     * Pay attention to focus so we can update our border.
+     *
+     * @param event A FocusEvent instance.
+     */
     public void focusGained(FocusEvent event) {
 
         setBorder(titledBorder);
     }
 
+    /**
+     * Pay attention to focus so we can update our border.
+     *
+     * @param event A FocusEvent instance.
+     */
     public void focusLost(FocusEvent event) {
 
         setBorder(emptyBorder);

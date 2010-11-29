@@ -21,7 +21,6 @@ import java.awt.event.KeyEvent;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
-import org.jflicks.job.SystemJob;
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.PlayState;
