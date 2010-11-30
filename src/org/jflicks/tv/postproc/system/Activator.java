@@ -24,6 +24,8 @@ import org.jflicks.tv.postproc.PostProc;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Simple activator for the system postproc.
@@ -36,6 +38,7 @@ public class Activator extends BaseActivator {
     private SystemPostProc systemPostProc;
     private JobContainer lightJobContainer;
     private WorkerTracker workerTracker;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -64,6 +67,11 @@ public class Activator extends BaseActivator {
         dict.put(PostProc.TITLE_PROPERTY, spp.getTitle());
 
         bc.registerService(PostProc.class.getName(), spp, dict);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        spp.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -84,6 +92,12 @@ public class Activator extends BaseActivator {
         jc = getLightJobContainer();
         if (jc != null) {
             jc.stop();
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

@@ -25,6 +25,8 @@ import org.jflicks.tv.scheduler.Scheduler;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Simple activator for the system scheduler.
@@ -36,6 +38,7 @@ public class Activator extends BaseActivator {
 
     private Db4oServiceTracker db4oServiceTracker;
     private SystemScheduler systemScheduler;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -59,6 +62,11 @@ public class Activator extends BaseActivator {
         dict.put(Scheduler.TITLE_PROPERTY, ss.getTitle());
 
         bc.registerService(Scheduler.class.getName(), ss, dict);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        ss.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -79,6 +87,12 @@ public class Activator extends BaseActivator {
         Db4oServiceTracker t = getDb4oServiceTracker();
         if (t != null) {
             t.close();
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

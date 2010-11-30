@@ -103,7 +103,7 @@ public class ChannelJob extends BaseV4l2Job {
             job = SystemJob.getInstance("v4l2-ctl -d " + getDevice()
                 + " --set-freq=" + getChannel());
         }
-        System.out.println("command: <" + job.getCommand() + ">");
+        fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
         setSystemJob(job);
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);
@@ -142,7 +142,8 @@ public class ChannelJob extends BaseV4l2Job {
             SystemJob job = getSystemJob();
             if (job != null) {
 
-                System.out.println("ProgramJob: exit: " + job.getExitValue());
+                fireJobEvent(JobEvent.UPDATE, "ProgramJob: exit: "
+                    + job.getExitValue());
                 stop();
             }
         }

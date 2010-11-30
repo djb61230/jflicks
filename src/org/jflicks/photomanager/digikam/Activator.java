@@ -23,6 +23,8 @@ import org.jflicks.photomanager.PhotoManager;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Simple activator for the digikam photo manager.
@@ -34,6 +36,7 @@ public class Activator extends BaseActivator {
 
     private Db4oServiceTracker db4oServiceTracker;
     private DigikamPhotoManager digikamPhotoManager;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -52,6 +55,11 @@ public class Activator extends BaseActivator {
         dict.put(PhotoManager.TITLE_PROPERTY, dpm.getTitle());
 
         bc.registerService(PhotoManager.class.getName(), dpm, dict);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        dpm.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -67,6 +75,12 @@ public class Activator extends BaseActivator {
         Db4oServiceTracker t = getDb4oServiceTracker();
         if (t != null) {
             t.close();
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

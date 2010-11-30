@@ -695,12 +695,12 @@ public class SchedulesDirectProgramData extends BaseProgramData
         if (objectContainer != null) {
 
             boolean result = objectContainer.close();
-            System.out.println("SchedulesDirectProgramData: closed " + result);
+            log(DEBUG, "SchedulesDirectProgramData: closed " + result);
             objectContainer = null;
 
         } else {
 
-            System.out.println("SchedulesDirectProgramData: Tried to close "
+            log(DEBUG, "SchedulesDirectProgramData: Tried to close "
                 + "but objectContainer null.");
         }
     }
@@ -769,12 +769,11 @@ public class SchedulesDirectProgramData extends BaseProgramData
                     if (now > next) {
 
                         result = true;
-                        System.out.println("Time to update! Now is newer!");
+                        log(INFO, "Time to update! Now is newer!");
 
                     } else {
 
-                        System.out.println("Not time to update: "
-                            + new Date(next));
+                        log(INFO, "Not time to update: " + new Date(next));
                     }
 
                 } else {
@@ -783,7 +782,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                     status.setNextUpdate(System.currentTimeMillis());
                     oc.store(status);
                     oc.commit();
-                    System.out.println("Time to update! No history...");
+                    log(INFO, "Time to update! No history...");
                     result = true;
                 }
 
@@ -793,7 +792,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                 status.setNextUpdate(System.currentTimeMillis());
                 oc.store(status);
                 oc.commit();
-                System.out.println("Time to update! No history...");
+                log(INFO, "Time to update! No history...");
                 result = true;
             }
         }

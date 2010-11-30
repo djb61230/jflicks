@@ -93,7 +93,7 @@ public class FrequencyJob extends BaseHDHRJob {
         SystemJob job = SystemJob.getInstance("bin/hdhomerun_config "
             + getId() + " set /tuner" + getTuner() + "/channel "
             + frequencyToString());
-        System.out.println("command: <" + job.getCommand() + ">");
+        fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
         setSystemJob(job);
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);
@@ -132,7 +132,8 @@ public class FrequencyJob extends BaseHDHRJob {
             SystemJob job = getSystemJob();
             if (job != null) {
 
-                System.out.println("FrequencyJob: exit: " + job.getExitValue());
+                fireJobEvent(JobEvent.UPDATE, "FrequencyJob: exit: "
+                    + job.getExitValue());
                 stop();
             }
         }

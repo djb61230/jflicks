@@ -109,6 +109,15 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
         hdhrRecorder = l;
     }
 
+    private void log(int status, String message) {
+
+        HDHRRecorder r = getHDHRRecorder();
+        if ((r != null) && (message != null)) {
+
+            r.log(status, message);
+        }
+    }
+
     private String getId() {
 
         String result = null;
@@ -302,10 +311,14 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
 
             } else if (event.getSource() == getNoneFrequencyJob()) {
 
-                System.out.println("recording done at "
+                log(HDHRRecorder.INFO, "recording done at "
                     + new Date(System.currentTimeMillis()));
                 stop();
             }
+
+        } else if (event.getType() == JobEvent.UPDATE) {
+
+            log(HDHRRecorder.DEBUG, event.getMessage());
         }
     }
 

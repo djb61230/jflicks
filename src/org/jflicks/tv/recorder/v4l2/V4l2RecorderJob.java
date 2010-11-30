@@ -91,6 +91,15 @@ public class V4l2RecorderJob extends AbstractJob implements JobListener {
         v4l2Recorder = r;
     }
 
+    private void log(int status, String message) {
+
+        V4l2Recorder r = getV4l2Recorder();
+        if ((r != null) && (message != null)) {
+
+            r.log(status, message);
+        }
+    }
+
     private String getDevice() {
 
         String result = null;
@@ -239,8 +248,10 @@ public class V4l2RecorderJob extends AbstractJob implements JobListener {
         setTerminate(true);
         JobContainer jc = getJobContainer();
         if (jc != null) {
+
             jc.stop();
         }
+
         V4l2Recorder r = getV4l2Recorder();
         if (r != null) {
 
@@ -269,10 +280,14 @@ public class V4l2RecorderJob extends AbstractJob implements JobListener {
 
             } else if (event.getSource() == getRecordJob()) {
 
-                System.out.println("recording done at "
+                log(V4l2Recorder.INFO, "recording done at "
                     + new Date(System.currentTimeMillis()));
                 stop();
             }
+
+        } else if (event.getType() == JobEvent.UPDATE) {
+
+            log(V4l2Recorder.DEBUG, event.getMessage());
         }
     }
 

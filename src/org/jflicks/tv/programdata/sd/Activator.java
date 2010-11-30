@@ -25,6 +25,8 @@ import org.jflicks.tv.programdata.ProgramData;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Simple activator for the Schedules Direct Program Data service.
@@ -36,6 +38,7 @@ public class Activator extends BaseActivator {
 
     private Db4oServiceTracker db4oServiceTracker;
     private SchedulesDirectProgramData schedulesDirectProgramData;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -61,6 +64,11 @@ public class Activator extends BaseActivator {
         dict.put(ProgramData.TITLE_PROPERTY, pd.getTitle());
 
         bc.registerService(ProgramData.class.getName(), pd, dict);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        pd.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -81,6 +89,12 @@ public class Activator extends BaseActivator {
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

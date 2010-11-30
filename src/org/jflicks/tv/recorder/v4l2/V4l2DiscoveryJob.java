@@ -28,6 +28,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.tv.recorder.Recorder;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * This job supports the V4l2 recorders.  This job will discover the
@@ -49,17 +50,20 @@ public class V4l2DiscoveryJob extends AbstractJob implements JobListener {
     private BundleContext bundleContext;
     private DiscoverJob discoverJob;
     private JobContainer jobContainer;
+    private ServiceTracker logServiceTracker;
 
     /**
      * This job supports the V4l2Recorder plugin.
      *
      * @param bc Need a bundle context to register, unregister V4l2 devices
      * as they "come and go" from the computer.
+     * @param log A log tracker we can pass to instantiated recorders.
      */
-    public V4l2DiscoveryJob(BundleContext bc) {
+    public V4l2DiscoveryJob(BundleContext bc, ServiceTracker log) {
 
         setV4l2RecorderList(new ArrayList<V4l2Recorder>());
         setBundleContext(bc);
+        setLogServiceTracker(log);
     }
 
     private BundleContext getBundleContext() {
@@ -68,6 +72,14 @@ public class V4l2DiscoveryJob extends AbstractJob implements JobListener {
 
     private void setBundleContext(BundleContext bc) {
         bundleContext = bc;
+    }
+
+    private ServiceTracker getLogServiceTracker() {
+        return (logServiceTracker);
+    }
+
+    private void setLogServiceTracker(ServiceTracker st) {
+        logServiceTracker = st;
     }
 
     private DiscoverJob getDiscoverJob() {
@@ -227,6 +239,7 @@ public class V4l2DiscoveryJob extends AbstractJob implements JobListener {
             V4l2Recorder r = new V4l2Recorder();
             r.setDevice(d.getPath());
             r.setCardType(d.getCardType());
+            r.setLogServiceTracker(getLogServiceTracker());
 
             // First we need to ensure a default properties file exists
             // for this device.  If it is missing we can generate it.

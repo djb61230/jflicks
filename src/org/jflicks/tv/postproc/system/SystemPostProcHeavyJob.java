@@ -76,6 +76,15 @@ public class SystemPostProcHeavyJob extends AbstractJob
         max = i;
     }
 
+    private void log(int status, String message) {
+
+        SystemPostProc spp = getSystemPostProc();
+        if (spp != null) {
+
+            spp.log(status, message);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -111,7 +120,7 @@ public class SystemPostProcHeavyJob extends AbstractJob
                                 File file = new File(path);
                                 if (file.exists()) {
 
-                                    System.out.println("We have work!!");
+                                    log(SystemPostProc.INFO, "We have work!!");
                                     w.addWorkerListener(this);
                                     setCount(getCount() + 1);
                                     w.work(r);

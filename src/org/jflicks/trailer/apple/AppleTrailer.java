@@ -136,12 +136,12 @@ public class AppleTrailer extends BaseTrailer implements DbWorker {
         if (objectContainer != null) {
 
             boolean result = objectContainer.close();
-            System.out.println("AppleTrailer: closed " + result);
+            log(INFO, "AppleTrailer: closed " + result);
             objectContainer = null;
 
         } else {
 
-            System.out.println("AppleTrailer: Tried to close "
+            log(INFO, "AppleTrailer: Tried to close "
                 + "but objectContainer null.");
         }
     }
@@ -181,26 +181,25 @@ public class AppleTrailer extends BaseTrailer implements DbWorker {
                     long next = status.getNextUpdate();
                     if (now > next) {
 
-                        System.out.println("Time to update! Now is newer!");
+                        log(DEBUG, "Time to update! Now is newer!");
                         updateStatus();
                         result = true;
 
                     } else {
 
-                        System.out.println("Not time to update: "
-                            + new Date(next));
+                        log(DEBUG, "Not time to update: " + new Date(next));
                     }
 
                 } else {
 
-                    System.out.println("Time to update! No history...");
+                    log(DEBUG, "Time to update! No history...");
                     updateStatus();
                     result = true;
                 }
 
             } else {
 
-                System.out.println("Time to update! No history...");
+                log(DEBUG, "Time to update! No history...");
                 updateStatus();
                 result = true;
             }

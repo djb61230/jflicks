@@ -27,6 +27,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.tv.recorder.Recorder;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * This job supports the HDHR recorder.  This job will discover the
@@ -48,6 +49,7 @@ public class HDHRDiscoveryJob extends AbstractJob implements JobListener {
     private BundleContext bundleContext;
     private DiscoverJob discoverJob;
     private JobContainer jobContainer;
+    private ServiceTracker logServiceTracker;
 
     /**
      * This job supports the HDHRRecorder plugin.
@@ -55,10 +57,19 @@ public class HDHRDiscoveryJob extends AbstractJob implements JobListener {
      * @param bc Need a bundle context to register, unregister HDHR devices
      * as they "come and go" from the network.
      */
-    public HDHRDiscoveryJob(BundleContext bc) {
+    public HDHRDiscoveryJob(BundleContext bc, ServiceTracker log) {
 
         setHDHRRecorderList(new ArrayList<HDHRRecorder>());
         setBundleContext(bc);
+        setLogServiceTracker(log);
+    }
+
+    private ServiceTracker getLogServiceTracker() {
+        return (logServiceTracker);
+    }
+
+    private void setLogServiceTracker(ServiceTracker st) {
+        logServiceTracker = st;
     }
 
     private BundleContext getBundleContext() {
@@ -202,6 +213,7 @@ public class HDHRDiscoveryJob extends AbstractJob implements JobListener {
             HDHRRecorder r = new HDHRRecorder();
             r.setDevice(id + "-" + tuner);
             r.updateDefault();
+            r.setLogServiceTracker(getLogServiceTracker());
             addHDHRRecorder(r);
 
             Hashtable<String, String> dict = new Hashtable<String, String>();

@@ -90,7 +90,7 @@ public class ControlJob extends BaseV4l2Job {
         SystemJob job = SystemJob.getInstance("v4l2-ctl -d " + getDevice()
             + " --set-input=" + getVideoInput() + " --set-audio-input="
             + getAudioInput());
-        System.out.println("command: <" + job.getCommand() + ">");
+        fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
         setSystemJob(job);
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);
@@ -129,7 +129,8 @@ public class ControlJob extends BaseV4l2Job {
             SystemJob job = getSystemJob();
             if (job != null) {
 
-                System.out.println("ProgramJob: exit: " + job.getExitValue());
+                fireJobEvent(JobEvent.UPDATE, "ProgramJob: exit: "
+                    + job.getExitValue());
                 stop();
             }
         }

@@ -94,7 +94,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
 
             } else {
 
-                System.out.println("SystemVideoManager: Db4oService null!");
+                log(WARNING, "SystemVideoManager: Db4oService null!");
             }
         }
 
@@ -128,12 +128,12 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
         if (objectContainer != null) {
 
             boolean result = objectContainer.close();
-            System.out.println("SystemVideoManager: closed " + result);
+            log(DEBUG, "SystemVideoManager: closed " + result);
             objectContainer = null;
 
         } else {
 
-            System.out.println("SystemVideoManager: Tried to close "
+            log(DEBUG, "SystemVideoManager: Tried to close "
                 + "but objectContainer null.");
         }
     }
@@ -371,7 +371,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
      */
     public synchronized void videoScan() {
 
-        System.out.println("Time to scan for video files...");
+        log(INFO, "Time to scan for video files...");
 
         String[] array = getConfiguredVideoDirectories();
         if (array != null) {
@@ -439,7 +439,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                     File f = new File(path);
                     if (!f.exists()) {
 
-                        System.out.println("Should remove <" + title
+                        log(INFO, "Should remove <" + title
                             + "> with path <" + path + ">");
                         removeVideo(array[i]);
                     }

@@ -22,6 +22,8 @@ import org.jflicks.tv.ondemand.OnDemand;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Simple activator for the roku OnDemand.
@@ -32,6 +34,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends BaseActivator {
 
     private RokuOnDemand rokuOnDemand;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -46,12 +49,23 @@ public class Activator extends BaseActivator {
         dict.put(OnDemand.TITLE_PROPERTY, rod.getTitle());
 
         bc.registerService(OnDemand.class.getName(), rod, dict);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        rod.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
      * {@inheritDoc}
      */
     public void stop(BundleContext context) {
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
+        }
     }
 
     private RokuOnDemand getRokuOnDemand() {

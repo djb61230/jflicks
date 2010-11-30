@@ -106,12 +106,12 @@ public class DigikamPhotoManager extends BasePhotoManager implements DbWorker {
         if (objectContainer != null) {
 
             boolean result = objectContainer.close();
-            System.out.println("DigikamPhotoManager: closed " + result);
+            log(INFO, "DigikamPhotoManager: closed " + result);
             objectContainer = null;
 
         } else {
 
-            System.out.println("DigikamPhotoManager: Tried to close "
+            log(WARNING, "DigikamPhotoManager: Tried to close "
                 + "but objectContainer null.");
         }
     }
@@ -124,7 +124,6 @@ public class DigikamPhotoManager extends BasePhotoManager implements DbWorker {
         Tag result = null;
 
         ObjectContainer oc = getObjectContainer();
-        System.out.println("digikam oc: " + oc);
         if (oc != null) {
 
             ObjectSet<Tag> os = oc.queryByExample(Tag.class);
@@ -301,16 +300,16 @@ public class DigikamPhotoManager extends BasePhotoManager implements DbWorker {
                                     p.setTagPaths(sarray);
                                 }
 
-                                System.out.println("adding photo with path "
+                                log(DEBUG, "adding photo with path "
                                     + p.getPath());
                                 if (p.getTagPaths() != null) {
 
-                                    System.out.println("    photo with tags "
+                                    log(DEBUG, "    photo with tags "
                                         + p.getTagPaths().length);
 
                                 } else {
 
-                                    System.out.println("    photo with tags 0");
+                                    log(DEBUG, "    photo with tags 0");
                                 }
 
                                 addPhoto(p);
@@ -328,11 +327,11 @@ public class DigikamPhotoManager extends BasePhotoManager implements DbWorker {
 
             } catch (ClassNotFoundException ex) {
 
-                System.out.println("photoScan: " + ex.getMessage());
+                log(WARNING, "photoScan: " + ex.getMessage());
 
             } catch (SQLException ex) {
 
-                System.out.println("photoScan: " + ex.getMessage());
+                log(WARNING, "photoScan: " + ex.getMessage());
             }
         }
     }
@@ -345,8 +344,7 @@ public class DigikamPhotoManager extends BasePhotoManager implements DbWorker {
 
             for (int i = 0; i < array.length; i++) {
 
-                System.out.println("Checking id <" + id + "> with <"
-                    + array[i].getId());
+                log(DEBUG, "Check id <" + id + "> with <" + array[i].getId());
                 if (id == array[i].getId()) {
 
                     result = array[i];
@@ -356,7 +354,7 @@ public class DigikamPhotoManager extends BasePhotoManager implements DbWorker {
 
             if (result == null) {
 
-                System.out.println("Did not find by id: " + id);
+                log(DEBUG, "Did not find by id: " + id);
             }
         }
 
@@ -478,7 +476,7 @@ public class DigikamPhotoManager extends BasePhotoManager implements DbWorker {
     private void addPhoto(Photo p) {
 
         ObjectContainer oc = getObjectContainer();
-        System.out.println("addPhoto: " + p + " " + oc);
+        log(DEBUG, "addPhoto: " + p + " " + oc);
         if ((p != null) && (oc != null)) {
 
             oc.store(p);

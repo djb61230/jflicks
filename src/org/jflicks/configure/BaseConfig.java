@@ -19,6 +19,7 @@ package org.jflicks.configure;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import org.jflicks.log.BaseLog;
 import org.jflicks.util.Util;
 
 /**
@@ -27,7 +28,7 @@ import org.jflicks.util.Util;
  * @author Doug Barnum
  * @version 1.0
  */
-public class BaseConfig implements Config {
+public class BaseConfig extends BaseLog implements Config {
 
     private Configuration configuration;
     private Configuration defaultConfiguration;

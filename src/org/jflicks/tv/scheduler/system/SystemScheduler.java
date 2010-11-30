@@ -153,48 +153,48 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
         if (objectContainer != null) {
 
             boolean result = objectContainer.close();
-            System.out.println("SystemScheduler: closed " + result);
+            log(DEBUG, "SystemScheduler: closed " + result);
             objectContainer = null;
 
         } else {
 
-            System.out.println("SystemScheduler: Tried to close "
+            log(DEBUG, "SystemScheduler: Tried to close "
                 + "but objectContainer null.");
         }
 
         if (cacheObjectContainer != null) {
 
             boolean result = cacheObjectContainer.close();
-            System.out.println("SystemScheduler: (cache) closed " + result);
+            log(DEBUG, "SystemScheduler: (cache) closed " + result);
             cacheObjectContainer = null;
 
         } else {
 
-            System.out.println("SystemScheduler: Tried to close "
+            log(DEBUG, "SystemScheduler: Tried to close "
                 + "but cacheObjectContainer null.");
         }
 
         if (recordedObjectContainer != null) {
 
             boolean result = recordedObjectContainer.close();
-            System.out.println("SystemScheduler (recorded): closed " + result);
+            log(DEBUG, "SystemScheduler (recorded): closed " + result);
             recordedObjectContainer = null;
 
         } else {
 
-            System.out.println("SystemScheduler: Tried to close "
+            log(DEBUG, "SystemScheduler: Tried to close "
                 + "but recordedObjectContainer null.");
         }
 
         if (recordingObjectContainer != null) {
 
             boolean result = recordingObjectContainer.close();
-            System.out.println("SystemScheduler (recording): closed " + result);
+            log(DEBUG, "SystemScheduler (recording): closed " + result);
             recordingObjectContainer = null;
 
         } else {
 
-            System.out.println("SystemScheduler: Tried to close "
+            log(DEBUG, "SystemScheduler: Tried to close "
                 + "but recordingObjectContainer null.");
         }
     }
@@ -280,13 +280,13 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
 
             if (rules != null) {
 
-                System.out.println("Found " + rules.size() + " rules");
+                log(DEBUG, "Found " + rules.size() + " rules");
                 for (int i = 0; i < rules.size(); i++) {
 
                     RecordingRule trule = rules.get(i);
                     if (trule.getId().equals(rr.getId())) {
 
-                        System.out.println("Removing " + trule.getId());
+                        log(DEBUG, "Removing " + trule.getId());
                         oc.delete(trule);
                     }
                 }

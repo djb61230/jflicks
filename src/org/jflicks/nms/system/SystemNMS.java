@@ -150,7 +150,7 @@ public class SystemNMS extends BaseNMS {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log(WARNING, ex.getMessage());
             }
         }
     }
@@ -178,10 +178,10 @@ public class SystemNMS extends BaseNMS {
     private void saveDefaultConfigurations() {
 
         Configuration def = getDefaultConfiguration();
-        System.out.println("SystemNMS: def: " + def);
+        log(DEBUG, "SystemNMS: def: " + def);
         save(def, false);
         setConfiguration(getConfigurationBySource(def.getSource()));
-        System.out.println("SystemNMS: conf: " + getConfiguration());
+        log(DEBUG, "SystemNMS: conf: " + getConfiguration());
 
         Scheduler s = getScheduler();
         if (s != null) {
@@ -240,7 +240,7 @@ public class SystemNMS extends BaseNMS {
             boolean result = f.delete();
             if (!result) {
 
-                System.out.println("Failed to delete " + f.getPath());
+                log(WARNING, "Failed to delete " + f.getPath());
             }
         }
     }
@@ -250,11 +250,11 @@ public class SystemNMS extends BaseNMS {
      */
     public void save(Configuration c, boolean force) {
 
-        System.out.println("save: c: " + c + " force: " + force);
+        log(DEBUG, "save: c: " + c + " force: " + force);
         if (c != null) {
 
             File f = createConfigurationFile(c);
-            System.out.println("save: f: " + f);
+            log(DEBUG, "save: f: " + f);
             if ((f != null) && (f.exists()) && (f.isFile())) {
 
                 // The Configuration does exist.  We over write only if
@@ -276,7 +276,7 @@ public class SystemNMS extends BaseNMS {
 
     private void updateConfiguration(Configuration c) {
 
-        System.out.println("updateConfiguration c: " + c);
+        log(DEBUG, "updateConfiguration c: " + c);
         if (c != null) {
 
             String name = c.getName();
@@ -426,7 +426,7 @@ public class SystemNMS extends BaseNMS {
 
                 } else {
 
-                    System.out.println("Not handling update of "
+                    log(WARNING, "Not handling update of "
                         + c.getName() + "-" + c.getSource());
                 }
             }

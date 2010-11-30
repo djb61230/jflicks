@@ -518,12 +518,14 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
     protected synchronized void updatePendingRecords() {
 
+        log(INFO, "Running updatePendingRecords");
+
         ArrayList<PendingRecord> workList = getWorkPendingRecordList();
         NMS n = getNMS();
         Recorder[] recs = getConfiguredRecorders();
         if ((workList != null) && (n != null) && (recs != null)) {
 
-            System.out.println("CONFIGURED RECORDERS COUNT: " + recs.length);
+            log(DEBUG, "CONFIGURED RECORDERS COUNT: " + recs.length);
             RecorderInformation[] ris = new RecorderInformation[recs.length];
             for (int i = 0; i < ris.length; i++) {
 
@@ -532,7 +534,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                 ris[i].setChannels(getChannelsByRecorder(recs[i]));
                 if (recs[i].isRecording()) {
 
-                    System.out.println("recorder: " + recs[i]
+                    log(DEBUG, "recorder: " + recs[i]
                         + " is recording now...adding time range");
                     long started = recs[i].getStartedAt();
                     TimeRange tr = new TimeRange(started,
@@ -541,8 +543,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                 } else {
 
-                    System.out.println("recorder: " + recs[i]
-                        + " is NOT recording now");
+                    log(DEBUG, "recorder " + recs[i] + " is NOT recording now");
                 }
             }
             workList.clear();
@@ -676,7 +677,8 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
             // At this point we have all our PendingRecord instances created.
             // Now we work on eliminating them if we have recorded them
             // before or if we don't have a recorder available.
-            System.out.println("pending record count: " + workList.size());
+            log(DEBUG, "pending record count: " + workList.size()
+                + " before checking whether previous recorded");
             for (int i = 0; i < workList.size(); i++) {
 
                 PendingRecord pr = workList.get(i);
@@ -689,7 +691,6 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
             // Next we need to update the "laterAvailable" and
             // "earlierAvailable" flags to help us sort it out later.
             checkDuplicates(workList);
-            //Collections.sort(workList, new PendingRecordByTime());
 
             // Next we need to assign a Recorder.  Here the "status" could
             // turn to be a "conflict" or "later".
@@ -727,12 +728,12 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                             } else {
 
-                                System.out.println("recorder busy: " + ris[j]);
+                                log(DEBUG, "recorder busy: " + ris[j]);
                             }
 
                         } else {
 
-                            System.out.println("supports channel failed...");
+                            log(DEBUG, "supports channel failed...");
                         }
                     }
                 }
@@ -755,7 +756,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                 PendingRecord pr = workList.get(i);
                 if (pr.isUndeterminedStatus()) {
 
-                    System.out.println("PROBLEM: Should all be solved by now");
+                    log(WARNING, "PROBLEM: Should all be solved by now");
                 }
             }
 
@@ -807,7 +808,8 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
             }
         }
 
-        System.out.println("isRecordingNow: " + sa + " " + result);
+        log(DEBUG, "isRecordingNow: " + sa + " " + result);
+
         return (result);
     }
 
@@ -908,19 +910,26 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
         ArrayList<PendingRecord> realList = getPendingRecordList();
         if (realList != null) {
 
+            int readyCount = 0;
             for (int i = 0; i < realList.size(); i++) {
 
                 PendingRecord pr = realList.get(i);
-                System.out.println("Channel: " + pr.getChannel());
-                System.out.println("Duration: " + pr.getDuration());
-                System.out.println("File: " + pr.getFile());
-                System.out.println("Name: " + pr.getName());
-                System.out.println("Recorder: " + pr.getRecorder());
-                System.out.println("ShowId: " + pr.getShowId());
-                System.out.println("Start: " + new Date(pr.getStart()));
-                System.out.println("Status: " + pr.getStatus());
-                System.out.println("-----------------------------------");
+                log(DEBUG, "Channel: " + pr.getChannel());
+                log(DEBUG, "Duration: " + pr.getDuration());
+                log(DEBUG, "File: " + pr.getFile());
+                log(DEBUG, "Name: " + pr.getName());
+                log(DEBUG, "Recorder: " + pr.getRecorder());
+                log(DEBUG, "ShowId: " + pr.getShowId());
+                log(DEBUG, "Start: " + new Date(pr.getStart()));
+                log(DEBUG, "Status: " + pr.getStatus());
+                log(DEBUG, "-----------------------------------");
+
+                if (pr.isReadyStatus()) {
+                    readyCount++;
+                }
             }
+
+            log(INFO, "There are " + readyCount + " recordings scheduled.");
         }
     }
 

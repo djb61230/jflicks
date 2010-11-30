@@ -103,17 +103,6 @@ public class RecordJob extends BaseV4l2Job {
      */
     public void run() {
 
-        /*
-        SystemJob job = SystemJob.getInstance("bin/cap " + getDevice()
-            + " " + fileToString());
-
-        System.out.println("command: <" + job.getCommand() + ">");
-        setSystemJob(job);
-        job.addJobListener(this);
-        JobContainer jc = JobManager.getJobContainer(job);
-        setJobContainer(jc);
-        */
-
         CopyJob job = new CopyJob(getDevice(), fileToString());
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);
@@ -169,27 +158,6 @@ public class RecordJob extends BaseV4l2Job {
     public void stop() {
 
         setTerminate(true);
-        /*
-        SystemJob job = getSystemJob();
-        if (job != null) {
-
-            try {
-
-                String tmp = "stop\n";
-                //String tmp = "q";
-                job.write(tmp.getBytes(), 0, tmp.length());
-
-            } catch (IOException ex) {
-
-                JobContainer jc = getJobContainer();
-                if (jc != null) {
-
-                    jc.stop();
-                    setJobContainer(null);
-                }
-            }
-        }
-        */
         JobContainer jc = getJobContainer();
         if (jc != null) {
 

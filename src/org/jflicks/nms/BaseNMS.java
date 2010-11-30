@@ -489,13 +489,12 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         ArrayList<Recorder> l = getRecorderList();
         if ((l != null) && (s != null)) {
 
-            System.out.println("getRecorderByDevice: <" + s + ">");
-            System.out.println("getRecorderByDevice: " + l.size());
+            log(DEBUG, "getRecorderByDevice: <" + s + ">");
+            log(DEBUG, "getRecorderByDevice: " + l.size());
             for (int i = 0; i < l.size(); i++) {
 
                 Recorder tmp = l.get(i);
-                System.out.println("getRecorderByDevice: <"
-                    + tmp.getDevice() + ">");
+                log(DEBUG, "getRecorderByDevice: <" + tmp.getDevice() + ">");
                 if (s.equals(tmp.getDevice())) {
 
                     result = tmp;
@@ -1130,7 +1129,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
      */
     public void removeRecording(Recording r, boolean allowRerecord) {
 
-        System.out.println("removeRecording: allowRerecord: " + allowRerecord);
+        log(DEBUG, "removeRecording: allowRerecord: " + allowRerecord);
         Scheduler s = getScheduler();
         if ((s != null) && (r != null)) {
 
@@ -1151,14 +1150,14 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                         // Off course delete the file.
                         if (!file.delete()) {
 
-                            System.out.println(file.getPath() + " delete fail");
+                            log(WARNING, file.getPath() + " delete fail");
                         }
 
                         // The screenshot is a "filename.png" file.
                         File pngfile = new File(file.getPath() + ".png");
                         if (!pngfile.delete()) {
 
-                            System.out.println(pngfile.getPath() + " del fail");
+                            log(WARNING, pngfile.getPath() + " del fail");
                         }
 
                         // Other recorders or processes might add other files
@@ -1180,7 +1179,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                                     if (!array[i].delete()) {
 
-                                        System.out.println(array[i].getPath()
+                                        log(WARNING, array[i].getPath()
                                             + " del fail");
                                     }
                                 }
@@ -1202,7 +1201,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
      */
     public void stopRecording(Recording r) {
 
-        System.out.println("stopRecording");
+        log(INFO, "stopRecording");
         Scheduler s = getScheduler();
         if ((s != null) && (r != null)) {
 
@@ -1332,12 +1331,12 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 } else {
 
-                    System.out.println("can't load <" + url + ">");
+                    log(WARNING, "can't load <" + url + ">");
                 }
 
             } catch (IOException ex) {
 
-                System.out.println("save image: " + ex.getMessage());
+                log(WARNING, "save image: " + ex.getMessage());
             }
         }
     }
@@ -1502,7 +1501,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
         } else {
 
-            System.out.println("Trying to do OnDemand from wrong NMS");
+            log(WARNING, "Trying to do OnDemand from wrong NMS");
         }
 
         return (result);

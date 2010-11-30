@@ -21,6 +21,8 @@ import org.jflicks.job.JobManager;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Simple activator for the HDHR recorder.
@@ -30,6 +32,8 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends BaseActivator {
 
+    private ServiceTracker logServiceTracker;
+
     /**
      * {@inheritDoc}
      */
@@ -37,7 +41,11 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
-        HDHRDiscoveryJob job = new HDHRDiscoveryJob(bc);
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        logServiceTracker.open();
+
+        HDHRDiscoveryJob job = new HDHRDiscoveryJob(bc, logServiceTracker);
         JobContainer jc = JobManager.getJobContainer(job);
         setJobContainer(jc);
         jc.start();
@@ -51,6 +59,12 @@ public class Activator extends BaseActivator {
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

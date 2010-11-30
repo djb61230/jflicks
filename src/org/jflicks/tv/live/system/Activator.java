@@ -22,6 +22,8 @@ import org.jflicks.tv.live.Live;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Simple activator for the system live.
@@ -32,6 +34,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends BaseActivator {
 
     private SystemLive systemLive;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -46,12 +49,23 @@ public class Activator extends BaseActivator {
         dict.put(Live.TITLE_PROPERTY, sl.getTitle());
 
         bc.registerService(Live.class.getName(), sl, dict);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        sl.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
      * {@inheritDoc}
      */
     public void stop(BundleContext context) {
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
+        }
     }
 
     private SystemLive getSystemLive() {

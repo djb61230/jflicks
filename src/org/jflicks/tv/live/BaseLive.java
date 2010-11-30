@@ -216,14 +216,14 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
                         if (!output.delete()) {
 
-                            System.out.println("Failed to delete live file.");
+                            log(WARNING, "Failed to delete live file.");
                         }
                     }
                 }
 
                 Recorder r = computeRecorder(s, c);
-                System.out.println("c: " + c);
-                System.out.println("r: " + r);
+                log(DEBUG, "channel: " + c);
+                log(DEBUG, "recorder: " + r);
                 if ((r != null) && (!r.isRecording())) {
 
                     File output = computeFile(s, c);
@@ -271,12 +271,12 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
                     r.stopRecording();
                     File output = r.getDestination();
-                    System.out.println("closeSession: " + output);
+                    log(DEBUG, "closeSession: " + output);
                     if (output != null) {
 
                         if (!output.delete()) {
 
-                            System.out.println("Failed to delete live file.");
+                            log(WARNING, "Failed to delete live file.");
                         }
                     }
                 }
@@ -370,8 +370,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
                         if (!array[i].isRecording()) {
 
                             String tmp = s.getListingNameByRecorder(array[i]);
-                            System.out.println("findRecorder: found <" + tmp
-                                + ">");
+                            log(DEBUG, "findRecorder: found <" + tmp + ">");
                             if ((tmp != null) && (tmp.equals(name))) {
 
                                 // Found one.  We won't break because we want
@@ -418,7 +417,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
             if (array != null) {
 
                 String startc = getConfiguredStartChannel();
-                System.out.println("startc: " + startc);
+                log(DEBUG, "start channel: " + startc);
                 if (startc != null) {
 
                     for (int i = 0; i < array.length; i++) {
@@ -442,14 +441,14 @@ public abstract class BaseLive extends BaseConfig implements Live {
         RecorderInformation[] array = s.getRecorderInformations();
         if (array != null) {
 
-            System.out.println("computeAllChannels: " + array.length);
+            log(DEBUG, "channel count: " + array.length);
             ArrayList<Channel> clist = new ArrayList<Channel>();
             for (int i = 0; i < array.length; i++) {
 
                 Channel[] tmp = array[i].getChannels();
                 if (tmp != null) {
 
-                    System.out.println("computeAllChannels: adding "
+                    log(DEBUG, "computeAllChannels: adding "
                         + tmp.length + " channels");
                     Collections.addAll(clist, tmp);
                 }

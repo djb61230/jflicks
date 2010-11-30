@@ -189,7 +189,7 @@ public class SystemPostProc extends BasePostProc {
                         Worker w = getWorkerByTitle(array[i].getTitle());
                         if (w != null) {
 
-                            System.out.println("Time to queue up a worker...");
+                            log(INFO, "Time to queue up a worker...");
                             WorkerRecording wr = new WorkerRecording();
                             wr.setWorker(w);
                             wr.setRecording(r);
@@ -215,7 +215,7 @@ public class SystemPostProc extends BasePostProc {
             Recording r = event.getRecording();
             if (r != null) {
 
-                System.out.println("workerUpdate: updating Recording in db");
+                log(INFO, "workerUpdate: updating Recording in db");
                 updateRecording(r);
             }
         }

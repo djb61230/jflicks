@@ -31,6 +31,8 @@ import org.jflicks.util.Util;
 
 import ch.ethz.iks.r_osgi.RemoteOSGiService;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Simple activater that starts our NMS service.
@@ -51,6 +53,7 @@ public class Activator extends BaseActivator {
     private OnDemandTracker onDemandTracker;
     private RemoteTracker remoteTracker;
     private SystemNMS systemNMS;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -102,6 +105,11 @@ public class Activator extends BaseActivator {
         props.put(RemoteOSGiService.R_OSGi_REGISTRATION, Boolean.TRUE);
         bc.registerService(NMS.class.getName(), s, props);
 
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        s.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
+
         try {
 
             ServiceDescription sd = new ServiceDescription();
@@ -127,7 +135,7 @@ public class Activator extends BaseActivator {
 
         } catch (UnknownHostException ex) {
 
-            System.out.println("oh no...discovery not started!");
+            s.log(s.WARNING, "oh no...discovery not started!");
         }
     }
 
@@ -194,6 +202,12 @@ public class Activator extends BaseActivator {
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

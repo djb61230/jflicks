@@ -120,13 +120,13 @@ public abstract class BaseOnDemand extends BaseConfig implements OnDemand {
 
         StreamSession result = null;
 
-        System.out.println("openSession: " + host);
-        System.out.println("openSession: " + port);
+        log(DEBUG, "openSession: host " + host);
+        log(DEBUG, "openSession: port " + port);
         if (host != null) {
 
             Recorder r = getRecorder();
             NMS n = getNMS();
-            System.out.println("openSession: " + r);
+            log(DEBUG, "openSession: recorder " + r);
             if ((n != null) && (r != null) && (!r.isRecording())) {
 
                 result = new StreamSession(getTitle(), n.getHost() + ":"
