@@ -212,6 +212,15 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
         robot = r;
     }
 
+    private void log(int status, String message) {
+
+        LircRC rc = getLircRC();
+        if ((rc != null) && (message != null)) {
+
+            rc.log(status, message);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -250,9 +259,9 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
                 }
 
             } catch (IOException ex) {
-                System.out.println(ex);
+                log(LircRC.WARNING, ex.getMessage());
             } catch (LIRCException ex) {
-                System.out.println(ex);
+                log(LircRC.WARNING, ex.getMessage());
             }
         }
     }
