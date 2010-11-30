@@ -138,7 +138,7 @@ public class SystemImageCache extends BaseImageCache {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log(WARNING, ex.getMessage());
             }
         }
 
@@ -170,7 +170,7 @@ public class SystemImageCache extends BaseImageCache {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log(WARNING, ex.getMessage());
             }
         }
 
@@ -216,7 +216,7 @@ public class SystemImageCache extends BaseImageCache {
 
                             } catch (IOException ex) {
 
-                                System.out.println(ex.getMessage());
+                                log(WARNING, ex.getMessage());
                             }
 
                         } else {
@@ -233,7 +233,7 @@ public class SystemImageCache extends BaseImageCache {
 
                                 } catch (IOException ex) {
 
-                                    System.out.println(ex.getMessage());
+                                    log(WARNING, ex.getMessage());
                                 }
                             }
                         }
@@ -262,7 +262,7 @@ public class SystemImageCache extends BaseImageCache {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log(WARNING, ex.getMessage());
             }
         }
     }

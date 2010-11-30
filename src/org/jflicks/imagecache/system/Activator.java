@@ -22,6 +22,8 @@ import org.jflicks.imagecache.ImageCache;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Simple activater that starts our ImageCache service.
@@ -30,6 +32,8 @@ import org.osgi.framework.BundleContext;
  * @version 1.0
  */
 public class Activator extends BaseActivator {
+
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -43,12 +47,23 @@ public class Activator extends BaseActivator {
         dict.put(ImageCache.TITLE_PROPERTY, s.getTitle());
 
         bc.registerService(ImageCache.class.getName(), s, dict);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        s.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
      * {@inheritDoc}
      */
     public void stop(BundleContext context) {
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
+        }
     }
 
 }
