@@ -354,7 +354,6 @@ public class Display extends Rectangle {
                         int index = find(allrows[i].getCells(), p);
                         if (index != -1) {
 
-                            System.out.println("found it!");
                             setColumnIndex(index);
                             setRowIndex(i);
                             break;

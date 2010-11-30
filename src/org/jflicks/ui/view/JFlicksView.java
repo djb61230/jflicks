@@ -85,7 +85,7 @@ public abstract class JFlicksView extends BaseView implements EventHandler,
         File prop = new File(home, "jflicks.properties");
         if (prop.exists()) {
 
-            System.out.println("old properties exists...");
+            log(INFO, "old properties exists...");
             setProperties(Util.findProperties(prop));
 
         } else {
@@ -218,7 +218,7 @@ public abstract class JFlicksView extends BaseView implements EventHandler,
      */
     public void handleEvent(Event event) {
 
-        System.out.println("handleEvent: " + event);
+        log(INFO, "handleEvent: " + event);
         String message = (String) event.getProperty("message");
         if (message != null) {
 
@@ -279,7 +279,7 @@ public abstract class JFlicksView extends BaseView implements EventHandler,
             }
         }
 
-        System.out.println("getBounds: <" + prefix + "> " + result);
+        log(INFO, "getBounds: <" + prefix + "> " + result);
         return (result);
     }
 

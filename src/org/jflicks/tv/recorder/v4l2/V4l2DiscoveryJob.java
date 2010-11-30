@@ -233,7 +233,6 @@ public class V4l2DiscoveryJob extends AbstractJob implements JobListener {
 
     private void registerRecorder(BundleContext bc, V4l2Device d) {
 
-        System.out.println("registerRecorder: " + bc + " " + d);
         if ((bc != null) && (d != null)) {
 
             V4l2Recorder r = new V4l2Recorder();
@@ -244,7 +243,7 @@ public class V4l2DiscoveryJob extends AbstractJob implements JobListener {
             // First we need to ensure a default properties file exists
             // for this device.  If it is missing we can generate it.
             String pname = r.getPropertiesName();
-            System.out.println("registerRecorder: pname <" + pname + ">");
+            r.log(V4l2Recorder.INFO, "registerRecorder: pname <" + pname + ">");
             if (pname != null) {
 
                 File pfile = new File(pname);
@@ -258,7 +257,8 @@ public class V4l2DiscoveryJob extends AbstractJob implements JobListener {
                         new Hashtable<String, String>();
                     dict.put(Recorder.TITLE_PROPERTY, r.getTitle());
                     bc.registerService(Recorder.class.getName(), r, dict);
-                    System.out.println("registerRecorder: registered in osgi");
+                    r.log(V4l2Recorder.INFO,
+                        "registerRecorder: registered in osgi");
 
                 } else {
 

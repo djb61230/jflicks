@@ -24,6 +24,7 @@ import java.io.IOException;
 import javax.swing.Timer;
 
 import org.jflicks.job.JobContainer;
+import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
 import org.jflicks.util.Util;
 
@@ -89,7 +90,7 @@ public class CopyJob extends RecoverJob {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                fireJobEvent(JobEvent.UPDATE, ex.getMessage());
             }
         }
     }

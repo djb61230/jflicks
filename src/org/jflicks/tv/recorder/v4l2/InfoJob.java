@@ -130,7 +130,7 @@ public class InfoJob extends BaseV4l2Job {
 
         SystemJob job = SystemJob.getInstance("v4l2-ctl -d " + getDevice()
             + " --info");
-        System.out.println("command <" + job.getCommand() + ">");
+        fireJobEvent(JobEvent.UPDATE, "command <" + job.getCommand() + ">");
         setSystemJob(job);
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);

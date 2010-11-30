@@ -51,6 +51,15 @@ public class SchedulesDirectProgramDataJob extends AbstractJob {
         schedulesDirectProgramData = r;
     }
 
+    private void log(int status, String message) {
+
+        SchedulesDirectProgramData pd = getSchedulesDirectProgramData();
+        if ((pd != null) && (message != null)) {
+
+            pd.log(status, message);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -80,7 +89,9 @@ public class SchedulesDirectProgramDataJob extends AbstractJob {
                         }
 
                     } catch (DataDirectException ex) {
-                        System.out.println(ex.getMessage());
+
+                        log(SchedulesDirectProgramData.WARNING,
+                            ex.getMessage());
                     }
                 }
             }

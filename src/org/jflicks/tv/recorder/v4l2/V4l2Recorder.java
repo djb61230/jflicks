@@ -214,7 +214,7 @@ public class V4l2Recorder extends BaseRecorder {
 
                 } catch (IOException ex) {
 
-                    System.out.println(ex.getMessage());
+                    log(WARNING, ex.getMessage());
                     if (fos != null) {
 
                         try {

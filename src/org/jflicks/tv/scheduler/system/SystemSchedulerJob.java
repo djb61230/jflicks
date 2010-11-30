@@ -119,6 +119,15 @@ public class SystemSchedulerJob extends AbstractJob
         }
     }
 
+    private void log(int status, String message) {
+
+        SystemScheduler ss = getSystemScheduler();
+        if ((ss != null) && (message != null)) {
+
+            ss.log(status, message);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -162,14 +171,13 @@ public class SystemSchedulerJob extends AbstractJob
                             addRecording(recorder, crec);
                             recorder.addPropertyChangeListener("Recording",
                                 this);
-                            System.out.println("recording on :"
+                            log(SystemScheduler.INFO, "recording on :"
                                 + array[index].getChannel()
                                 + " "
                                 + new Date(now));
                             long dur = array[index].getDuration();
                             dur -= ((now - array[index].getStart()) / 1000);
-                            System.out.println("adjust duration to: "
-                                + dur);
+                            log(SystemScheduler.INFO, "adjust length: " + dur);
                             crec.setRealStart(now);
                             recorder.startRecording(array[index].getChannel(),
                                 dur, array[index].getFile(), false);
@@ -182,7 +190,8 @@ public class SystemSchedulerJob extends AbstractJob
 
                         } else if (retries < 15) {
 
-                            System.out.println("hmm, recorder busy will retry");
+                            log(SystemScheduler.INFO,
+                                "hmm, recorder busy will retry");
                             JobManager.sleep(1000);
                             retries++;
                             if (recorder.isRecordingLiveTV()) {
@@ -192,7 +201,8 @@ public class SystemSchedulerJob extends AbstractJob
 
                         } else {
 
-                            System.out.println("Recorder stayed busy. Give up");
+                            log(SystemScheduler.INFO,
+                                "Recorder stayed busy. Give up");
                             index++;
                             if (index == array.length) {
                                 done = true;
@@ -235,7 +245,8 @@ public class SystemSchedulerJob extends AbstractJob
         if ((bobj != null) && (!bobj.booleanValue())) {
 
             // A Recorder finished!!
-            System.out.println("Recorder: " + event.getSource() + " finished");
+            log(SystemScheduler.INFO,
+                "Recorder: " + event.getSource() + " finished");
             Recorder r = (Recorder) event.getSource();
             SystemScheduler ss = getSystemScheduler();
             if ((r != null) && (ss != null)) {
@@ -246,7 +257,7 @@ public class SystemSchedulerJob extends AbstractJob
                     rec.setCurrentlyRecording(false);
                     long now = System.currentTimeMillis();
                     rec.setDuration((now - rec.getRealStart()) / 1000L);
-                    System.out.println("Setting true duration: "
+                    log(SystemScheduler.INFO, "Setting true duration: "
                         + rec.getDuration());
                     ss.updateRecording(rec);
                     removeRecording(r);
@@ -268,7 +279,8 @@ public class SystemSchedulerJob extends AbstractJob
                 File recorded = new File(importdir, "recorded.txt");
                 if ((recorded.exists()) && (recorded.isFile())) {
 
-                    System.out.println("SystemScheduler: importing recorded");
+                    log(SystemScheduler.DEBUG,
+                        "SystemScheduler: importing recorded");
                     try {
 
                         // We expect a programid one per line.
@@ -286,15 +298,18 @@ public class SystemSchedulerJob extends AbstractJob
                         br.close();
                         if (!recorded.delete()) {
 
-                            System.out.println("checkImports: delete failed");
+                            log(SystemScheduler.WARNING,
+                                "checkImports: delete failed");
                         }
 
-                        System.out.println("SystemScheduler: imported " + count
+                        log(SystemScheduler.INFO,
+                            "SystemScheduler: imported " + count
                             + " shows from recorded.txt");
 
                     } catch (IOException ex) {
 
-                        System.out.println("checkImports: " + ex.getMessage());
+                        log(SystemScheduler.WARNING,
+                            "checkImports: " + ex.getMessage());
                     }
                 }
             }
