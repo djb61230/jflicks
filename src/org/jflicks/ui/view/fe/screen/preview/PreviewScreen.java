@@ -105,8 +105,8 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
                         thome = fev.transformPath(thome);
                         ppath = fev.transformPath(ppath);
 
-                        System.out.println("thome: " + thome);
-                        System.out.println("ppath: " + ppath);
+                        log(DEBUG, "thome: " + thome);
+                        log(DEBUG, "ppath: " + ppath);
                     }
 
                     File fthome = new File(thome);

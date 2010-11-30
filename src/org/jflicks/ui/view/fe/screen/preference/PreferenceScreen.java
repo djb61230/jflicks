@@ -320,7 +320,7 @@ public class PreferenceScreen extends Screen implements ParameterProperty,
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log(WARNING, ex.getMessage());
             }
         }
 
@@ -346,7 +346,7 @@ public class PreferenceScreen extends Screen implements ParameterProperty,
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log(WARNING, ex.getMessage());
             }
         }
 

@@ -511,7 +511,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
                     if (!playlist.delete()) {
 
-                        System.out.println("couldn't delete olf file...");
+                        log(WARNING, "couldn't delete olf file...");
                     }
                 }
 
@@ -528,7 +528,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
             } catch (IOException ex) {
 
-                System.out.println("BLOW_UP: " + ex.getMessage());
+                log(WARNING, "BLOW_UP: " + ex.getMessage());
             }
         }
     }
