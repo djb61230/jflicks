@@ -279,7 +279,8 @@ public class MetadataView extends JFlicksView implements ActionListener {
                 frame.setIconImage(image);
 
             } catch (IOException ex) {
-                System.out.println("Did not find icon for aplication.");
+
+                log(WARNING, "Did not find icon for aplication.");
             }
 
             frame.pack();
@@ -352,7 +353,7 @@ public class MetadataView extends JFlicksView implements ActionListener {
      */
     public void messageReceived(String s) {
 
-        System.out.println("messageReceived: " + s);
+        log(INFO, "messageReceived: " + s);
     }
 
     /**

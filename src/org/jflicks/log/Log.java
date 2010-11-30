@@ -16,6 +16,7 @@
 */
 package org.jflicks.log;
 
+import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -25,6 +26,26 @@ import org.osgi.util.tracker.ServiceTracker;
  * @version 1.0
  */
 public interface Log {
+
+    /**
+     * As a convenience we have a constant that maps to LogService.LOG_DEBUG.
+     */
+    int DEBUG = LogService.LOG_DEBUG;
+
+    /**
+     * As a convenience we have a constant that maps to LogService.LOG_INFO.
+     */
+    int INFO = LogService.LOG_INFO;
+
+    /**
+     * As a convenience we have a constant that maps to LogService.LOG_WARNING.
+     */
+    int WARNING = LogService.LOG_WARNING;
+
+    /**
+     * As a convenience we have a constant that maps to LogService.LOG_ERROR.
+     */
+    int ERROR = LogService.LOG_ERROR;
 
     /**
      * We need a service tracker to maintain a connection to the log service.

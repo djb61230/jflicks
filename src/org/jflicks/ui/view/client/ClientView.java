@@ -174,7 +174,8 @@ public class ClientView extends JFlicksView {
                 frame.setIconImage(image);
 
             } catch (IOException ex) {
-                System.out.println("Did not find icon for aplication.");
+
+                log(WARNING, "Did not find icon for aplication.");
             }
 
             frame.pack();

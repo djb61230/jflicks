@@ -26,6 +26,7 @@ import org.jflicks.util.EventSender;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
+import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -38,6 +39,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends BaseActivator {
 
     private ServiceTracker controllerServiceTracker;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -49,11 +51,10 @@ public class Activator extends BaseActivator {
         SchedulerView v = new SchedulerView();
         v.setBundleContext(bc);
 
-        ServiceTracker cst =
+        controllerServiceTracker =
             new ServiceTracker(bc, Controller.class.getName(), null);
-        setControllerServiceTracker(cst);
-        v.setControllerServiceTracker(cst);
-        cst.open();
+        v.setControllerServiceTracker(controllerServiceTracker);
+        controllerServiceTracker.open();
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
         dict.put(SchedulerView.TITLE_PROPERTY, "JFLICKS-SCHEDULERCLIENT");
@@ -67,6 +68,11 @@ public class Activator extends BaseActivator {
         Hashtable<String, String[]> eprops = new Hashtable<String, String[]>();
         eprops.put(EventConstants.EVENT_TOPIC, topics);
         bc.registerService(EventHandler.class.getName(), v, eprops);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        v.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -74,18 +80,17 @@ public class Activator extends BaseActivator {
      */
     public void stop(BundleContext context) {
 
-        ServiceTracker cst = getControllerServiceTracker();
-        if (cst != null) {
-            cst.close();
+        if (controllerServiceTracker != null) {
+
+            controllerServiceTracker.close();
+            controllerServiceTracker = null;
         }
-    }
 
-    private ServiceTracker getControllerServiceTracker() {
-        return (controllerServiceTracker);
-    }
+        if (logServiceTracker != null) {
 
-    private void setControllerServiceTracker(ServiceTracker cst) {
-        controllerServiceTracker = cst;
+            logServiceTracker.close();
+            logServiceTracker = null;
+        }
     }
 
 }

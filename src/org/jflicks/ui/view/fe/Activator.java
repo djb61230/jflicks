@@ -28,6 +28,7 @@ import org.jflicks.util.EventSender;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
+import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -42,6 +43,7 @@ public class Activator extends BaseActivator {
     private ServiceTracker controllerServiceTracker;
     private RCTracker rcTracker;
     private ScreenTracker screenTracker;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -79,6 +81,11 @@ public class Activator extends BaseActivator {
         Hashtable<String, String[]> eprops = new Hashtable<String, String[]>();
         eprops.put(EventConstants.EVENT_TOPIC, topics);
         bc.registerService(EventHandler.class.getName(), v, eprops);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        v.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -99,6 +106,12 @@ public class Activator extends BaseActivator {
         ScreenTracker st = getScreenTracker();
         if (st != null) {
             st.close();
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

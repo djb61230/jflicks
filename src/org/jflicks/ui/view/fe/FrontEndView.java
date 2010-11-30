@@ -451,7 +451,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
             } catch (AWTException event) {
 
-                System.out.println("failed to warp mouse...");
+                log(WARNING, "failed to warp mouse...");
             }
 
             frame = new JXFrame();
@@ -496,7 +496,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
                     if (array[i] instanceof ParameterProperty) {
 
-                        System.out.println("Now getting parameter - screen.");
+                        log(WARNING, "Now getting parameter - screen.");
                         ParameterProperty pp = (ParameterProperty) array[i];
                         String[] parameters = pp.getParameters();
                         if (parameters != null) {
@@ -1046,7 +1046,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                 Recording todelete = event.getRecording();
                 if (todelete != null) {
 
-                    System.out.println("whence: " + todelete.getHostPort());
+                    log(DEBUG, "whence: " + todelete.getHostPort());
                     NMS from = NMSUtil.select(array, todelete.getHostPort());
                     if (from != null) {
 

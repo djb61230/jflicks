@@ -272,7 +272,8 @@ public class SchedulerView extends JFlicksView implements ActionListener {
                 frame.setIconImage(image);
 
             } catch (IOException ex) {
-                System.out.println("Did not find icon for aplication.");
+
+                log(WARNING, "Did not find icon for aplication.");
             }
 
             frame.pack();
@@ -458,7 +459,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
             setBounds(MAIN_FRAME, mf.getBounds());
         }
 
-        System.out.println("saving properties....");
+        log(INFO, "saving properties....");
         saveProperties();
 
         super.exitAction();
@@ -660,7 +661,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
         public void jobUpdate(JobEvent event) {
 
             if (event.getType() == JobEvent.COMPLETE) {
-                System.out.println("saved!");
+                log(INFO, "saved!");
             }
         }
 

@@ -23,6 +23,7 @@ import org.jflicks.mvc.View;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -35,6 +36,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends BaseActivator {
 
     private ServiceTracker controllerServiceTracker;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -56,6 +58,11 @@ public class Activator extends BaseActivator {
         dict.put(ClientView.TITLE_PROPERTY, "JFLICKS-CONFIGCLIENT");
 
         bc.registerService(View.class.getName(), v, dict);
+
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        v.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -66,6 +73,12 @@ public class Activator extends BaseActivator {
         ServiceTracker cst = getControllerServiceTracker();
         if (cst != null) {
             cst.close();
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 

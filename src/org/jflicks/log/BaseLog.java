@@ -27,26 +27,6 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class BaseLog implements Log {
 
-    /**
-     * As a convenience we have a constant that maps to LogService.LOG_DEBUG.
-     */
-    public static final int DEBUG = LogService.LOG_DEBUG;
-
-    /**
-     * As a convenience we have a constant that maps to LogService.LOG_INFO.
-     */
-    public static final int INFO = LogService.LOG_INFO;
-
-    /**
-     * As a convenience we have a constant that maps to LogService.LOG_WARNING.
-     */
-    public static final int WARNING = LogService.LOG_WARNING;
-
-    /**
-     * As a convenience we have a constant that maps to LogService.LOG_ERROR.
-     */
-    public static final int ERROR = LogService.LOG_ERROR;
-
     private ServiceTracker logServiceTracker;
 
     /**

@@ -315,7 +315,6 @@ public class RecordingRulePanel extends JPanel implements ActionListener,
             Task[] tasks = rr.getTasks();
             if (tasks != null) {
 
-                System.out.println("tasks.length: " + tasks.length);
                 JCheckBox[] cbuts = new JCheckBox[tasks.length];
                 for (int i = 0; i < cbuts.length; i++) {
 
