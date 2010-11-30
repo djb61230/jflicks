@@ -86,7 +86,7 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
 
         } catch (IOException ex) {
 
-            System.out.println(ex.getMessage());
+            log(WARNING, ex.getMessage());
 
         } finally {
 
@@ -329,7 +329,7 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
 
         if ((event.getSource() == getPlayer()) && (!isDone())) {
 
-            System.out.println("Player set update");
+            log(DEBUG, "Player set update");
 
             // If we get this property update, then it means the video
             // finished playing on it's own.

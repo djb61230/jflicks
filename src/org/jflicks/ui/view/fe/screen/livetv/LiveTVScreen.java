@@ -123,7 +123,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
     private void setGuideMap(HashMap<Channel, ShowAiring[]> m) {
         guideMap = m;
 
-        System.out.println("Guide is done...");
+        log(INFO, "Guide is done...");
     }
 
     private RecordingInfoWindow getRecordingInfoWindow() {
@@ -243,10 +243,10 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
 
                     setWatchingStartTime(System.currentTimeMillis());
                     LiveTV l = n.start();
-                    System.out.println("Called start livetv: " + l);
+                    log(DEBUG, "Called start livetv: " + l);
                     if (l != null) {
 
-                        System.out.println("livetv: " + l.getMessage());
+                        log(DEBUG, "livetv: " + l.getMessage());
                         if (l.getMessageType() == LiveTV.MESSAGE_TYPE_NONE) {
 
                             GuideJob gjob = new GuideJob(n, l.getChannels());
@@ -345,7 +345,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
             NMS n = NMSUtil.select(getNMS(), l.getHostPort());
             if (n != null) {
 
-                System.out.println("calling stop...");
+                log(DEBUG, "calling stop...");
                 n.stop(l);
                 setLiveTV(null);
                 setNextChannel(null);
@@ -402,7 +402,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
     public void up() {
 
         computeNextChannelUp();
-        System.out.println("Up: " + getNextChannel());
+        log(DEBUG, "Up: " + getNextChannel());
 
         ChannelInfoWindow cw = getChannelInfoWindow();
         Channel c = getNextChannel();
@@ -421,7 +421,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
     public void down() {
 
         computeNextChannelDown();
-        System.out.println("Down: " + getNextChannel());
+        log(DEBUG, "Down: " + getNextChannel());
 
         ChannelInfoWindow cw = getChannelInfoWindow();
         Channel c = getNextChannel();
@@ -529,7 +529,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
             if (!bobj.booleanValue()) {
 
                 getPlayer().removePropertyChangeListener(this);
-                System.out.println("we are stopping because mplayer says so");
+                log(DEBUG, "we are stopping because mplayer says so");
 
                 close();
                 setDone(true);
@@ -563,7 +563,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 } else {
 
-                    System.out.println("it ain't ready...." + f.exists());
+                    log(INFO, "it ain't ready...." + f.exists());
                 }
             }
         }
@@ -663,7 +663,6 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
 
     private void updateInfoWindow() {
 
-        System.out.println("updateInfoWindow");
         LiveTV l = getLiveTV();
         if (l != null) {
 

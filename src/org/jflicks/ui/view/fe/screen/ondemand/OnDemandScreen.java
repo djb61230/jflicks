@@ -165,10 +165,10 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
 
                     String hostaddr = addr.getHostAddress();
                     StreamSession ss = n.openSession("Roku", hostaddr, 1234);
-                    System.out.println("Called openstream: " + ss);
+                    log(DEBUG, "Called openstream: " + ss);
                     if (ss != null) {
 
-                        System.out.println("ss: " + ss.getHostPort());
+                        log(DEBUG, "ss: " + ss.getHostPort());
                         setStreamSession(ss);
 
                         Player p = getPlayer();
@@ -241,7 +241,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
             NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
             if (n != null) {
 
-                System.out.println("command home...");
+                log(DEBUG, "command home...");
                 n.command(ss, OnDemand.COMMAND_HOME);
             }
         }
@@ -254,14 +254,14 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
 
         controlKeyboard(true);
         StreamSession ss = getStreamSession();
-        System.out.println("OnDemandScreen: close: " + ss);
+        log(DEBUG, "OnDemandScreen: close: " + ss);
         if (ss != null) {
 
-            System.out.println("OnDemandScreen: close: " + ss.getHostPort());
+            log(DEBUG, "OnDemandScreen: close: " + ss.getHostPort());
             NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
             if (n != null) {
 
-                System.out.println("calling stop...");
+                log(DEBUG, "calling closeSession...");
                 n.closeSession(ss);
                 setStreamSession(null);
 
@@ -299,7 +299,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
             NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
             if (n != null) {
 
-                System.out.println("command fwd...");
+                log(DEBUG, "command fwd...");
                 n.command(ss, OnDemand.COMMAND_FWD);
             }
         }
@@ -316,7 +316,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
             NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
             if (n != null) {
 
-                System.out.println("command back...");
+                log(DEBUG, "command back...");
                 n.command(ss, OnDemand.COMMAND_BACK);
             }
         }
@@ -333,7 +333,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
             NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
             if (n != null) {
 
-                System.out.println("command up...");
+                log(DEBUG, "command up...");
                 n.command(ss, OnDemand.COMMAND_UP);
             }
         }
@@ -350,7 +350,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
             NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
             if (n != null) {
 
-                System.out.println("command down...");
+                log(DEBUG, "command down...");
                 n.command(ss, OnDemand.COMMAND_DOWN);
             }
         }
@@ -367,7 +367,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
             NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
             if (n != null) {
 
-                System.out.println("command left...");
+                log(DEBUG, "command left...");
                 n.command(ss, OnDemand.COMMAND_LEFT);
             }
         }
@@ -384,7 +384,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
             NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
             if (n != null) {
 
-                System.out.println("command right...");
+                log(DEBUG, "command right...");
                 n.command(ss, OnDemand.COMMAND_RIGHT);
             }
         }
@@ -401,7 +401,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
             NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
             if (n != null) {
 
-                System.out.println("command select...");
+                log(DEBUG, "command select...");
                 n.command(ss, OnDemand.COMMAND_SELECT);
             }
         }
@@ -425,7 +425,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                 if (bobj.booleanValue()) {
 
                     getPlayer().removePropertyChangeListener(this);
-                    System.out.println("we are stopping player says so");
+                    log(DEBUG, "we are stopping player says so");
 
                     // What we are doing here is closing our session in
                     // another Thread because we are getting a remote
