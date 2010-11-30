@@ -96,7 +96,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         File home = new File(".");
         File dbhome = new File(home, "db");
         setBookmarkFile(new File(dbhome, "vidbookmarks.dat"));
-        System.out.println(getBookmarkFile());
+        log(DEBUG, getBookmarkFile().getPath());
         load();
 
         setFocusable(true);
@@ -516,7 +516,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         if (isUpdatedParameter()) {
 
-            System.out.println("Seems like we got a new list...");
+            log(DEBUG, "Seems like we got a new list...");
 
             if (array != null) {
                 videos = Arrays.copyOf(array, array.length);
@@ -679,25 +679,25 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             String s = v.getAspectRatio();
             NMS n = NMSUtil.select(getNMS(), v.getHostPort());
             FrontEndView fev = (FrontEndView) getView();
-            System.out.println("aspect: <" + s + ">");
-            System.out.println("nms: <" + n + ">");
-            System.out.println("hostport: <" + v.getHostPort() + ">");
+            log(DEBUG, "aspect: <" + s + ">");
+            log(DEBUG, "nms: <" + n + ">");
+            log(DEBUG, "hostport: <" + v.getHostPort() + ">");
             if ((s != null) && (n != null) && (fev != null)) {
 
                 if (s.equals(NMSConstants.ASPECT_RATIO_16X9)) {
 
                     result = fev.transformPath(n.getFeatureIntro169());
-                    System.out.println("result 169: <" + result + ">");
+                    log(DEBUG, "result 169: <" + result + ">");
 
                 } else if (s.equals(NMSConstants.ASPECT_RATIO_235X1)) {
 
                     result = fev.transformPath(n.getFeatureIntro235());
-                    System.out.println("result 235: <" + result + ">");
+                    log(DEBUG, "result 235: <" + result + ">");
 
                 } else if (s.equals(NMSConstants.ASPECT_RATIO_4X3)) {
 
                     result = fev.transformPath(n.getFeatureIntro43());
-                    System.out.println("result 43: <" + result + ">");
+                    log(DEBUG, "result 43: <" + result + ">");
                 }
             }
         }
@@ -941,11 +941,11 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                     } else if (event.getSource() == getDeleteButton()) {
 
-                        System.out.println("delete hit");
+                        log(DEBUG, "delete hit");
 
                     } else if (event.getSource() == getCancelButton()) {
 
-                        System.out.println("cancel hit");
+                        log(DEBUG, "cancel hit");
                     }
                 }
             }

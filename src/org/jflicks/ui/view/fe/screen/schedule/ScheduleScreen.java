@@ -433,9 +433,9 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             int vis = lp.getVisibleCount();
             Arrays.sort(array, new RecordingRuleSortByName());
             lp.setRecordingRules(array);
-            System.out.println("start: " + start);
-            System.out.println("vis: " + vis);
-            System.out.println("array.length: " + array.length);
+            log(DEBUG, "start: " + start);
+            log(DEBUG, "vis: " + vis);
+            log(DEBUG, "array.length: " + array.length);
             if ((start + vis) <= array.length) {
 
                 // Safe to reset the start index.

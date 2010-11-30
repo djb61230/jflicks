@@ -97,7 +97,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         File home = new File(".");
         File dbhome = new File(home, "db");
         setBookmarkFile(new File(dbhome, "recbookmarks.dat"));
-        System.out.println(getBookmarkFile());
+        log(DEBUG, getBookmarkFile().getPath());
         load();
 
         setFocusable(true);
@@ -144,7 +144,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
             for (int i = 0; i < array.length; i++) {
 
-                System.out.println("timeline: " + array[i].intValue());
+                log(DEBUG, "timeline: " + array[i].intValue());
             }
         }
     }
@@ -248,12 +248,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
      */
     public void updateRecording(Recording r) {
 
-        System.out.println("updateRecording: " + r);
+        log(DEBUG, "updateRecording: " + r);
         if (r != null) {
 
             // First thing is to update the Recording in our array.
             int index = getRecordingById(r.getId());
-            System.out.println("updateRecording: index " + index);
+            log(DEBUG, "updateRecording: index " + index);
             if (index != -1) {
 
                 recordings[index] = r;
@@ -265,7 +265,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                     if (r.equals(rdp.getRecording())) {
 
-                        System.out.println("updateRecording: selected ");
+                        log(DEBUG, "updateRecording: selected ");
                         rdp.setRecording(r);
 
                         ImageCache ic = getImageCache();
@@ -474,7 +474,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
     private void preserveState() {
 
-        System.out.println("preserveState");
+        log(DEBUG, "preserveState");
         RecordingListPanel group = getGroupRecordingListPanel();
         RecordingListPanel rlp = getRecordingListPanel();
         if ((group != null) && (rlp != null)) {
@@ -484,10 +484,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             setCurrentRecordingIndex(rlp.getSelectedIndex());
             setCurrentRecordingStartIndex(rlp.getStartIndex());
             setRestoreState(true);
-            System.out.println("preserveState group: "
-                + getCurrentGroupIndex());
-            System.out.println("preserveState recording: "
-                + getCurrentRecordingIndex());
+            log(DEBUG, "preserveState group: " + getCurrentGroupIndex());
+            log(DEBUG, "preserveState rec: " + getCurrentRecordingIndex());
         }
     }
 
@@ -754,7 +752,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         int old = getCurrentRecordingStartIndex();
                         if (old > 0) {
 
-                            System.out.println("rcount: " + rcount);
+                            log(DEBUG, "rcount: " + rcount);
                             if (old + rlp.getVisibleCount() > rcount) {
 
                                 old--;
@@ -871,7 +869,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
                 }
 
-                System.out.println("about to request focus");
+                log(DEBUG, "about to request focus");
                 requestFocus();
             }
         }
@@ -970,9 +968,9 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                                 int tcurrent = (int) tps.getTime();
                                 int diff = tnext - tcurrent;
-                                System.out.println("tcurrent: " + tcurrent);
-                                System.out.println("tnext: " + tnext);
-                                System.out.println("diff: " + diff);
+                                log(DEBUG, "tcurrent: " + tcurrent);
+                                log(DEBUG, "tnext: " + tnext);
+                                log(DEBUG, "diff: " + diff);
                                 if (Math.abs(diff) > 4) {
                                     tp.seek(diff);
                                 }
@@ -985,7 +983,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else {
 
-                    System.out.println("commercials not set or end");
+                    log(INFO, "commercials not set or end");
                 }
             }
         }
@@ -1013,7 +1011,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else {
 
-                    System.out.println("commercials not set or end");
+                    log(INFO, "commercials not set or end");
                 }
             }
         }
@@ -1147,20 +1145,23 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else if (event.getSource() == getDeleteButton()) {
 
-                    System.out.println("firing delete recording");
+                    log(DEBUG, "firing delete recording");
                     fireScreenEvent(ScreenEvent.DELETE_RECORDING, r);
 
                 } else if (event.getSource() == getDeleteAllowButton()) {
 
+                    log(DEBUG, "firing delete recording - allow");
                     fireScreenEvent(
                         ScreenEvent.DELETE_RECORDING_ALLOW_RERECORDING, r);
 
                 } else if (event.getSource() == getStopRecordingButton()) {
 
+                    log(DEBUG, "firing stop recording");
                     fireScreenEvent(ScreenEvent.STOP_RECORDING, r);
 
                 } else if (event.getSource() == getCancelButton()) {
-                    System.out.println("cancel hit");
+
+                    log(DEBUG, "cancel hit");
                 }
             }
         }
