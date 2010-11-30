@@ -16,13 +16,15 @@
 */
 package org.jflicks.metadata;
 
+import org.jflicks.log.BaseLog;
+
 /**
  * This class is a base implementation of the Metadata interface.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseMetadata implements Metadata {
+public abstract class BaseMetadata extends BaseLog implements Metadata {
 
     private String title;
     private boolean movieData;

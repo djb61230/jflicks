@@ -486,7 +486,6 @@ public class TheMovieDBSearch extends SearchPanel implements ActionListener,
         if ((panel != null) && (imagel != null)) {
 
             Image image = (Image) imagel.getSelectedValue();
-System.out.println("imageDisplayAction image: " + image);
 
             BufferedImage bi = fetchBufferedImage(image);
             if (bi != null) {
