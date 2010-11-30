@@ -268,7 +268,7 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
      */
     public void removeBlankPanel() {
 
-        System.out.println("removeBlankPanel now");
+        log(DEBUG, "removeBlankPanel now");
         JPanel p = getBlankPanel();
         JLayeredPane pane = getLayeredPane();
         if ((p != null) && (pane != null)) {
@@ -300,11 +300,11 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
 
         } catch (ClassNotFoundException ex) {
 
-            System.out.println("Error loading bookmarks:" + ex.getMessage());
+            log(WARNING, "Error loading bookmarks:" + ex.getMessage());
 
         } catch (IOException ex) {
 
-            System.out.println("Error loading bookmarks:" + ex.getMessage());
+            log(WARNING, "Error loading bookmarks:" + ex.getMessage());
         }
     }
 
@@ -329,7 +329,7 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
 
             } catch (IOException ex) {
 
-                System.out.println("Error saving bookmarks:" + ex.getMessage());
+                log(WARNING, "Error saving bookmarks:" + ex.getMessage());
             }
         }
     }
@@ -416,8 +416,7 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
             if (p.isPlaying()) {
 
                 // Then we pay attention to remote events...
-                System.out.println(getClass().getName() + " commandReceived: "
-                    + s);
+                log(DEBUG, getClass().getName() + " commandReceived: " + s);
                 if (s.equals(RC.ESCAPE_COMMAND)) {
 
                     saveBookmark(p);

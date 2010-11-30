@@ -125,7 +125,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void guide() {
 
-        System.out.println("DVDScreen guide");
+        log(DEBUG, "DVDScreen guide");
 
         Player p = getPlayer();
         if (p != null) {
@@ -139,7 +139,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void close() {
 
-        System.out.println("DVDScreen close");
+        log(DEBUG, "DVDScreen close");
         RC rc = getRC();
         if (rc != null) {
 
@@ -154,7 +154,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void rewind() {
 
-        System.out.println("DVDScreen rewind");
+        log(DEBUG, "DVDScreen rewind");
         Player p = getPlayer();
         if (p != null) {
 
@@ -167,7 +167,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void forward() {
 
-        System.out.println("DVDScreen forward");
+        log(DEBUG, "DVDScreen forward");
         Player p = getPlayer();
         if (p != null) {
 
@@ -180,7 +180,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void skipforward() {
 
-        System.out.println("DVDScreen skipforward");
+        log(DEBUG, "DVDScreen skipforward");
         Player p = getPlayer();
         if (p != null) {
 
@@ -193,7 +193,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void skipbackward() {
 
-        System.out.println("DVDScreen skipbackward");
+        log(DEBUG, "DVDScreen skipbackward");
         Player p = getPlayer();
         if (p != null) {
 
@@ -206,7 +206,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void up() {
 
-        System.out.println("DVDScreen up");
+        log(DEBUG, "DVDScreen up");
 
         Player p = getPlayer();
         if (p != null) {
@@ -219,7 +219,8 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      * {@inheritDoc}
      */
     public void down() {
-        System.out.println("DVDScreen down");
+
+        log(DEBUG,"DVDScreen down");
 
         Player p = getPlayer();
         if (p != null) {
@@ -232,7 +233,8 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      * {@inheritDoc}
      */
     public void left() {
-        System.out.println("DVDScreen left");
+
+        log(DEBUG, "DVDScreen left");
 
         Player p = getPlayer();
         if (p != null) {
@@ -245,7 +247,8 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      * {@inheritDoc}
      */
     public void right() {
-        System.out.println("DVDScreen right");
+
+        log(DEBUG, "DVDScreen right");
 
         Player p = getPlayer();
         if (p != null) {
@@ -258,7 +261,8 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      * {@inheritDoc}
      */
     public void enter() {
-        System.out.println("DVDScreen enter");
+
+        log(DEBUG, "DVDScreen enter");
 
         Player p = getPlayer();
         if (p != null) {

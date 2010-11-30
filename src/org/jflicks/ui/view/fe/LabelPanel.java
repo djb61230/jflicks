@@ -471,7 +471,6 @@ public class LabelPanel extends BaseCustomizePanel {
 
                     labelPanel.setBounds((int) x, (int) yarray[i],
                         (int) labwidth, (int) labheight);
-                    System.out.println(labelPanel.getBounds());
                     pane.add(labelPanel, Integer.valueOf(100));
 
                     anis[i] = PropertySetter.createAnimator(750, labelPanel,

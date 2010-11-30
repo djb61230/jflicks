@@ -27,9 +27,13 @@ import java.io.IOException;
 import java.util.Properties;
 import javax.swing.JLayeredPane;
 
+import org.jflicks.log.Log;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
+
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Base class that implements the Customize properties and some basic stuff
@@ -38,8 +42,10 @@ import org.jdesktop.swingx.JXPanel;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseCustomizePanel extends JXPanel implements Customize {
+public abstract class BaseCustomizePanel extends JXPanel implements Customize,
+    Log {
 
+    private ServiceTracker logServiceTracker;
     private double smallFontSize;
     private double mediumFontSize;
     private double largeFontSize;
@@ -129,6 +135,36 @@ public abstract class BaseCustomizePanel extends JXPanel implements Customize {
 
         setLayout(new BorderLayout());
         add(pane, BorderLayout.CENTER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ServiceTracker getLogServiceTracker() {
+        return (logServiceTracker);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLogServiceTracker(ServiceTracker st) {
+        logServiceTracker = st;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void log(int level, String message) {
+
+        ServiceTracker st = getLogServiceTracker();
+        if ((st != null) && (message != null)) {
+
+            LogService ls = (LogService) st.getService();
+            if (ls != null) {
+
+                ls.log(level, message);
+            }
+        }
     }
 
     /**
@@ -526,7 +562,7 @@ public abstract class BaseCustomizePanel extends JXPanel implements Customize {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log(WARNING, ex.getMessage());
 
             } finally {
 
@@ -687,7 +723,7 @@ public abstract class BaseCustomizePanel extends JXPanel implements Customize {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log(WARNING, ex.getMessage());
 
             } finally {
 

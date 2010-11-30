@@ -810,15 +810,12 @@ public class TagListPanel extends BaseCustomizePanel {
      */
     public void setTags(Tag[] array) {
 
-        System.out.println("setTags start");
         if (!isTagsEqual(array)) {
 
-            System.out.println("setTags not equal");
             ArrayList<Tag> l = getTagList();
             if (l != null) {
 
                 l.clear();
-                System.out.println("setTags list clear");
                 if ((array != null) && (array.length > 0)) {
 
                     for (int i = 0; i < array.length; i++) {
@@ -856,8 +853,6 @@ public class TagListPanel extends BaseCustomizePanel {
 
         setSelectedTag(null);
         setStartIndex(0);
-
-        System.out.println("setTags end");
     }
 
     private boolean isTagsEqual(Tag[] array) {
