@@ -50,6 +50,8 @@
             <file override="update"
                 src="fe/db" targetdir="$INSTALL_PATH/"/>
             <file override="update"
+                src="fe/log" targetdir="$INSTALL_PATH/"/>
+            <file override="update"
                 src="fe/theme" targetdir="$INSTALL_PATH/"/>
             <file override="update"
                 src="fe/remotes" targetdir="$INSTALL_PATH/"/>
@@ -82,7 +84,7 @@
             <file override="update"
                 src="fe/bundle/org.apache.felix.eventadmin-1.0.0.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="server/bundle/log_all-3.0.5.jar" targetdir="$INSTALL_PATH/bundle"/>
+                src="fe/bundle/org.apache.sling.commons.log-2.0.6.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/bundle/org.apache.felix.shell-1.4.1.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
