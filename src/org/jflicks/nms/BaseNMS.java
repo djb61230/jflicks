@@ -1201,17 +1201,23 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
      */
     public void stopRecording(Recording r) {
 
-        log(INFO, "stopRecording");
+        log(INFO, "stopRecording <" + r + ">");
         Scheduler s = getScheduler();
         if ((s != null) && (r != null)) {
 
+            // Clients can muck with the properties of a Recording.  We
+            // need to have an instance that is meaningful to us so lets
+            // look it up by Id.
+            r = getRecordingById(r.getId());
+
             Recorder[] array = s.getConfiguredRecorders();
-            if (array != null) {
+            if ((array != null) && (r != null)) {
 
                 for (int i = 0; i < array.length; i++) {
 
                     if (array[i].isRecording(r)) {
 
+                        log(DEBUG, "Stopping <" + array[i] + ">");
                         array[i].stopRecording();
                         break;
                     }

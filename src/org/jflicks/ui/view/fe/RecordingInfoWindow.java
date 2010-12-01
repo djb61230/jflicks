@@ -407,9 +407,17 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
                 if (r.isCurrentlyRecording()) {
 
                     long now = System.currentTimeMillis();
-                    long llength = now - r.getRealStart();
-                    llength /= 1000L;
-                    length = (double) llength;
+                    long realstart = r.getRealStart();
+                    if (realstart == 0L) {
+
+                        length = current;
+
+                    } else {
+
+                        long llength = now - realstart;
+                        llength /= 1000L;
+                        length = (double) llength;
+                    }
                 }
                 double percentage = current / length * 100.0;
                 tp.setValue((int) percentage);

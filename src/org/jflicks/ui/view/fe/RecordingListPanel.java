@@ -193,6 +193,16 @@ public class RecordingListPanel extends BaseListPanel {
                             l.add(index, r);
                         }
                     }
+
+                    Recording selrec = getSelectedRecording();
+                    if (selrec != null) {
+
+                        int sindex = getRecordingById(selrec.getId());
+                        if (sindex == index) {
+
+                            setSelectedRecording(r);
+                        }
+                    }
                 }
             }
         }
