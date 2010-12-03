@@ -17,13 +17,10 @@
 package org.jflicks.nms.system;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Properties;
-import java.util.Set;
 
 import org.jflicks.configure.BaseConfiguration;
 import org.jflicks.configure.Configuration;

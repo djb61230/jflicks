@@ -17,8 +17,6 @@
 package org.jflicks.tv.recorder.v4l2;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -392,6 +390,7 @@ public class V4l2Recorder extends BaseRecorder {
             if ((name != null)
                 && (!name.equals(NMSConstants.AUDIO_INPUT_NAME))
                 && (!name.equals(NMSConstants.VIDEO_INPUT_NAME))
+                && (!name.equals(NMSConstants.FREQUENCY_TABLE_NAME))
                 && (!name.equals(NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME))) {
 
                 result = true;
@@ -401,6 +400,13 @@ public class V4l2Recorder extends BaseRecorder {
         return (result);
     }
 
+    /**
+     * The V4l2 analog devices have a dynamic set of controls defined by
+     * the driver.  By dynamic I mean each driver defines a different
+     * set.  Here we can get what they are in our NameValue object.
+     *
+     * @return An array of NameValue instances.
+     */
     public NameValue[] getConfiguredControls() {
 
         NameValue[] result = null;

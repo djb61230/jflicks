@@ -56,6 +56,7 @@ public class HDHRDiscoveryJob extends AbstractJob implements JobListener {
      *
      * @param bc Need a bundle context to register, unregister HDHR devices
      * as they "come and go" from the network.
+     * @param log A Tracker for the LogService.
      */
     public HDHRDiscoveryJob(BundleContext bc, ServiceTracker log) {
 

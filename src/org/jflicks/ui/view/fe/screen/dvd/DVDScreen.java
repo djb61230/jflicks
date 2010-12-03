@@ -220,7 +220,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void down() {
 
-        log(DEBUG,"DVDScreen down");
+        log(DEBUG, "DVDScreen down");
 
         Player p = getPlayer();
         if (p != null) {

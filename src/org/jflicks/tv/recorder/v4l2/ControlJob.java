@@ -32,6 +32,7 @@ public class ControlJob extends BaseV4l2Job {
     private int audioInput;
     private int videoInput;
     private String controlArgument;
+    private boolean second;
 
     /**
      * Simple no argument constructor.
@@ -93,6 +94,14 @@ public class ControlJob extends BaseV4l2Job {
         controlArgument = s;
     }
 
+    private boolean hasSecond() {
+        return (second);
+    }
+
+    private void setSecond(boolean b) {
+        second = b;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -111,14 +120,15 @@ public class ControlJob extends BaseV4l2Job {
         if (carg != null) {
 
             job = SystemJob.getInstance("v4l2-ctl -d " + getDevice()
-                + " --set-input=" + getVideoInput() + " --set-audio-input="
-                + getAudioInput() + " --set-ctrl=" + carg);
+                + " --set-ctrl=" + carg);
+            setSecond(true);
 
         } else {
 
             job = SystemJob.getInstance("v4l2-ctl -d " + getDevice()
                 + " --set-input=" + getVideoInput() + " --set-audio-input="
                 + getAudioInput());
+            setSecond(false);
         }
 
         fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
@@ -162,7 +172,27 @@ public class ControlJob extends BaseV4l2Job {
 
                 fireJobEvent(JobEvent.UPDATE, "ProgramJob: exit: "
                     + job.getExitValue());
-                stop();
+                if (hasSecond()) {
+
+                    job = SystemJob.getInstance("v4l2-ctl -d " + getDevice()
+                        + " --set-input=" + getVideoInput()
+                        + " --set-audio-input="
+                        + getAudioInput());
+
+                    fireJobEvent(JobEvent.UPDATE, "command: <"
+                        + job.getCommand() + ">");
+
+                    setSecond(false);
+                    setSystemJob(job);
+                    job.addJobListener(this);
+                    JobContainer jc = JobManager.getJobContainer(job);
+                    setJobContainer(jc);
+                    jc.start();
+
+                } else {
+
+                    stop();
+                }
             }
         }
     }

@@ -1028,6 +1028,12 @@ public final class Util {
         return (result);
     }
 
+    /**
+     * Write out our properties with the tags in alpha order.
+     *
+     * @param f A File to write - will clobber so be careful.
+     * @param p The Properties object to write.
+     */
     public static void writeProperties(File f, Properties p) {
 
         if ((f != null) && (p != null)) {
