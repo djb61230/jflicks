@@ -34,6 +34,7 @@ import org.jflicks.job.SystemJob;
 public class ChannelJob extends BaseV4l2Job {
 
     private String channel;
+    private String frequencyTable;
     private String script;
 
     /**
@@ -58,6 +59,24 @@ public class ChannelJob extends BaseV4l2Job {
      */
     public void setChannel(String s) {
         channel = s;
+    }
+
+    /**
+     * The frequency table to use for older analog tuners.
+     *
+     * @return The frequency table name as a String.
+     */
+    public String getFrequencyTable() {
+        return (frequencyTable);
+    }
+
+    /**
+     * The frequency table to use for older analog tuners.
+     *
+     * @param s The frequency table name as a String.
+     */
+    public void setFrequencyTable(String s) {
+        frequencyTable = s;
     }
 
     /**
@@ -100,8 +119,9 @@ public class ChannelJob extends BaseV4l2Job {
         if (scr != null) {
             job = SystemJob.getInstance(scr + " " + getChannel());
         } else {
-            job = SystemJob.getInstance("v4l2-ctl -d " + getDevice()
-                + " --set-freq=" + getChannel());
+            job = SystemJob.getInstance("ivtv-tune -d " + getDevice()
+                + " --freqtable=" + getFrequencyTable()
+                + " --channel=" + getChannel());
         }
         fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
         setSystemJob(job);

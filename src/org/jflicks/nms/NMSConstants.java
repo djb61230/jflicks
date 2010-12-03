@@ -105,6 +105,11 @@ public final class NMSConstants {
     public static final String VIDEO_INPUT_NAME = "Video Input";
 
     /**
+     * The configuration name for a Recorder service "Frequency Table".
+     */
+    public static final String FREQUENCY_TABLE_NAME = "Frequency Table";
+
+    /**
      * The configuration name for a Recorder service to
      * "Change Channel Script".
      */

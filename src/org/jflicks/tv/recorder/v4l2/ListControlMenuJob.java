@@ -352,14 +352,18 @@ public class ListControlMenuJob extends BaseV4l2Job {
 
         if (tag != null) {
 
-            tag = tag.substring(0, tag.indexOf(":"));
-            try {
+            int index = tag.indexOf(":");
+            if (index != -1) {
 
-                Integer.parseInt(tag);
-                result = true;
+                tag = tag.substring(0, tag.indexOf(":"));
+                try {
 
-            } catch (NumberFormatException ex) {
-                result = false;
+                    Integer.parseInt(tag);
+                    result = true;
+
+                } catch (NumberFormatException ex) {
+                    result = false;
+                }
             }
         }
 

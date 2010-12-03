@@ -123,6 +123,15 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private void log(int status, String message) {
+
+        V4l2Recorder r = getV4l2Recorder();
+        if ((r != null) && (message != null)) {
+
+            r.log(status, message);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -226,6 +235,22 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
                 BaseConfiguration bc = getBaseConfiguration();
                 if (bc != null) {
 
+                    NameValue nv = new NameValue();
+                    nv.setName(NMSConstants.FREQUENCY_TABLE_NAME);
+                    nv.setType(NameValue.STRING_FROM_CHOICE_TYPE);
+                    String[] choices = {
+                        "us-cable",
+                        "us-cable-hrc",
+                        "us-cable-irc"
+                    };
+
+                    nv.setDefaultValue(choices[0]);
+                    nv.setValue(choices[0]);
+                    nv.setChoices(choices);
+                    nv.setDescription("Frequency Table");
+                    bc.addNameValue(nv);
+                    System.out.println("added FREQ");
+
                     NameValue[] array = job.getNameValues();
                     if (array != null) {
 
@@ -240,11 +265,13 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
 
                         bc.setName(NMSConstants.RECORDER_NAME);
                         bc.setSource(r.getTitle());
-                        NameValue nv = new NameValue();
-                        nv.setName(NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME);
-                        nv.setType(NameValue.STRING_TYPE);
-                        bc.addNameValue(nv);
+                        NameValue ccnv = new NameValue();
+                        ccnv.setName(NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME);
+                        ccnv.setType(NameValue.STRING_TYPE);
+                        bc.addNameValue(ccnv);
                         r.write(bc);
+
+                        System.out.println("writing it out dude!!!");
                     }
                 }
 

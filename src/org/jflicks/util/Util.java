@@ -49,7 +49,9 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -1024,6 +1026,37 @@ public final class Util {
         }
 
         return (result);
+    }
+
+    public static void writeProperties(File f, Properties p) {
+
+        if ((f != null) && (p != null)) {
+
+            Set<String> set = p.stringPropertyNames();
+            String[] array = set.toArray(new String[set.size()]);
+            Arrays.sort(array);
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < array.length; i++) {
+
+                String value = p.getProperty(array[i]);
+                if (value == null) {
+
+                    value = "";
+                }
+
+                sb.append(array[i] + "=" + value + "\n");
+            }
+
+            try {
+
+                Util.writeTextFile(f, sb.toString());
+
+            } catch (IOException ex) {
+
+                System.out.println(ex.getMessage());
+            }
+        }
     }
 
     /**

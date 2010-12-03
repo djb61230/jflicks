@@ -732,6 +732,23 @@
 
     </target>
 
+    <target name="test-v4l2" depends="build">
+
+        <java classname="org.jflicks.tv.recorder.v4l2.CopyJob"
+            fork="true">
+
+            <arg value="-i"/>
+            <arg value="/dev/dvb/adapter0/dvr0"/>
+            <arg value="-s"/>
+            <arg value="60"/>
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
     <target name="test-vlcj" depends="build">
 
         <java classname="org.jflicks.player.vlcj.Vlcj" fork="true">

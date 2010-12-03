@@ -31,6 +31,7 @@ public class ControlJob extends BaseV4l2Job {
 
     private int audioInput;
     private int videoInput;
+    private String controlArgument;
 
     /**
      * Simple no argument constructor.
@@ -75,6 +76,24 @@ public class ControlJob extends BaseV4l2Job {
     }
 
     /**
+     * The String argument to set all user controls for this V4l2 device.
+     *
+     * @return A String value.
+     */
+    public String getControlArgument() {
+        return (controlArgument);
+    }
+
+    /**
+     * The String argument to set all user controls for this V4l2 device.
+     *
+     * @param s A String value.
+     */
+    public void setControlArgument(String s) {
+        controlArgument = s;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void start() {
@@ -87,9 +106,21 @@ public class ControlJob extends BaseV4l2Job {
      */
     public void run() {
 
-        SystemJob job = SystemJob.getInstance("v4l2-ctl -d " + getDevice()
-            + " --set-input=" + getVideoInput() + " --set-audio-input="
-            + getAudioInput());
+        SystemJob job = null;
+        String carg = getControlArgument();
+        if (carg != null) {
+
+            job = SystemJob.getInstance("v4l2-ctl -d " + getDevice()
+                + " --set-input=" + getVideoInput() + " --set-audio-input="
+                + getAudioInput() + " --set-ctrl=" + carg);
+
+        } else {
+
+            job = SystemJob.getInstance("v4l2-ctl -d " + getDevice()
+                + " --set-input=" + getVideoInput() + " --set-audio-input="
+                + getAudioInput());
+        }
+
         fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
         setSystemJob(job);
         job.addJobListener(this);

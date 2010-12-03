@@ -19,6 +19,7 @@ package org.jflicks.tv.recorder.v4l2;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import org.jflicks.configure.BaseConfiguration;
@@ -29,6 +30,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.recorder.BaseRecorder;
+import org.jflicks.util.Util;
 
 /**
  * Class that can record from an V4l2.
@@ -203,43 +205,7 @@ public class V4l2Recorder extends BaseRecorder {
 
             if (p != null) {
 
-                FileOutputStream fos = null;
-
-                try {
-
-                    fos = new FileOutputStream(getPropertiesName());
-                    p.store(fos, "");
-                    fos.close();
-                    fos = null;
-
-                } catch (IOException ex) {
-
-                    log(WARNING, ex.getMessage());
-                    if (fos != null) {
-
-                        try {
-
-                            fos.close();
-
-                        } catch (IOException cex) {
-
-                            fos = null;
-                        }
-                    }
-
-                } finally {
-
-                    if (fos != null) {
-
-                        try {
-
-                            fos.close();
-                            fos = null;
-
-                        } catch (IOException ex) {
-                        }
-                    }
-                }
+                Util.writeProperties(new File(getPropertiesName()), p);
             }
         }
     }
@@ -341,6 +307,46 @@ public class V4l2Recorder extends BaseRecorder {
      *
      * @return A String path pointing to a script file.
      */
+    public String getConfiguredFrequencyTable() {
+
+        String result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue[] array = c.getNameValues();
+            if (array != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    String name = array[i].getName();
+                    if ((name != null) && (name.equals(
+                        NMSConstants.FREQUENCY_TABLE_NAME))) {
+
+                        result = array[i].getValue();
+                        if (result != null) {
+
+                            result = result.trim();
+                        }
+
+                        if ((result != null) && (result.length() == 0)) {
+                            result = null;
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * Convenience method to get the channel changing script name.
+     *
+     * @return A String path pointing to a script file.
+     */
     public String getConfiguredChannelChangeScriptName() {
 
         String result = null;
@@ -369,6 +375,54 @@ public class V4l2Recorder extends BaseRecorder {
 
                         break;
                     }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private boolean isControl(NameValue nv) {
+
+        boolean result = false;
+
+        if (nv != null) {
+
+            String name = nv.getName();
+            if ((name != null)
+                && (!name.equals(NMSConstants.AUDIO_INPUT_NAME))
+                && (!name.equals(NMSConstants.VIDEO_INPUT_NAME))
+                && (!name.equals(NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME))) {
+
+                result = true;
+            }
+        }
+
+        return (result);
+    }
+
+    public NameValue[] getConfiguredControls() {
+
+        NameValue[] result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue[] array = c.getNameValues();
+            if (array != null) {
+
+                ArrayList<NameValue> l = new ArrayList<NameValue>();
+                for (int i = 0; i < array.length; i++) {
+
+                    if (isControl(array[i])) {
+
+                        l.add(array[i]);
+                    }
+                }
+
+                if (l.size() > 0) {
+
+                    result = l.toArray(new NameValue[l.size()]);
                 }
             }
         }

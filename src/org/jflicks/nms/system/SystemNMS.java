@@ -124,37 +124,6 @@ public class SystemNMS extends BaseNMS {
         return (result);
     }
 
-    private void writeProperties(File f, Properties p) {
-
-        if ((f != null) && (p != null)) {
-
-            Set<String> set = p.stringPropertyNames();
-            String[] array = set.toArray(new String[set.size()]);
-            Arrays.sort(array);
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < array.length; i++) {
-
-                String value = p.getProperty(array[i]);
-                if (value == null) {
-
-                    value = "";
-                }
-
-                sb.append(array[i] + "=" + value + "\n");
-            }
-
-            try {
-
-                Util.writeTextFile(f, sb.toString());
-
-            } catch (IOException ex) {
-
-                log(WARNING, ex.getMessage());
-            }
-        }
-    }
-
     private Configuration findConfigurationBySource(String s,
         Configuration[] array) {
 
@@ -261,14 +230,14 @@ public class SystemNMS extends BaseNMS {
                 // force is true.
                 if (force) {
 
-                    writeProperties(f, toProperties(c));
+                    Util.writeProperties(f, toProperties(c));
                     updateConfiguration(c);
                 }
 
             } else if (f != null) {
 
                 // Ok we have a good path.  We will save it anyway.
-                writeProperties(f, toProperties(c));
+                Util.writeProperties(f, toProperties(c));
                 updateConfiguration(c);
             }
         }

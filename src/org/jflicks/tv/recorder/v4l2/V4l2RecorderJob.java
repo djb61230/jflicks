@@ -19,6 +19,7 @@ package org.jflicks.tv.recorder.v4l2;
 import java.io.File;
 import java.util.Date;
 
+import org.jflicks.configure.NameValue;
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
@@ -139,6 +140,59 @@ public class V4l2RecorderJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private String getControlArgument() {
+
+        String result = null;
+
+        V4l2Recorder r = getV4l2Recorder();
+        if (r != null) {
+
+            NameValue[] array = r.getConfiguredControls();
+            if (array != null) {
+
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < array.length; i++) {
+
+                    String tag = array[i].getName();
+                    String val = array[i].getValue();
+
+                    if ((tag != null) && (val != null)) {
+
+                        tag = tag.trim();
+                        val = val.trim();
+
+                        if (sb.length() > 0) {
+
+                            sb.append(",");
+                        }
+
+                        sb.append(tag + "=" + val);
+                    }
+                }
+
+                if (sb.length() > 0) {
+
+                    result = sb.toString();
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private String getFrequencyTable() {
+
+        String result = null;
+
+        V4l2Recorder r = getV4l2Recorder();
+        if (r != null) {
+
+            result = r.getConfiguredFrequencyTable();
+        }
+
+        return (result);
+    }
+
     private String getChannelChangeScriptName() {
 
         String result = null;
@@ -208,12 +262,14 @@ public class V4l2RecorderJob extends AbstractJob implements JobListener {
         conj.setDevice(getDevice());
         conj.setAudioInput(getAudioInput());
         conj.setVideoInput(getVideoInput());
+        conj.setControlArgument(getControlArgument());
 
         ChannelJob cj = new ChannelJob();
         setChannelJob(cj);
         cj.addJobListener(this);
         cj.setDevice(getDevice());
         cj.setChannel(getChannel());
+        cj.setFrequencyTable(getFrequencyTable());
         cj.setScript(getChannelChangeScriptName());
 
         RecordJob rj = new RecordJob();
