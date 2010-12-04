@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.recorder.v4l2;
+package org.jflicks.tv.recorder.dvb;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import org.jflicks.tv.recorder.BaseDeviceJob;
  */
 public class DiscoverJob extends BaseDeviceJob {
 
-    private ArrayList<V4l2Device> v4l2DeviceList;
+    private ArrayList<DvbDevice> dvbDeviceList;
     private String[] devicePaths;
     private int pathIndex;
 
@@ -41,7 +41,7 @@ public class DiscoverJob extends BaseDeviceJob {
      */
     public DiscoverJob() {
 
-        setV4l2DeviceList(new ArrayList<V4l2Device>());
+        setDvbDeviceList(new ArrayList<DvbDevice>());
     }
 
     private String[] getDevicePaths() {
@@ -78,52 +78,52 @@ public class DiscoverJob extends BaseDeviceJob {
         return (result);
     }
 
-    private ArrayList<V4l2Device> getV4l2DeviceList() {
-        return (v4l2DeviceList);
+    private ArrayList<DvbDevice> getDvbDeviceList() {
+        return (dvbDeviceList);
     }
 
-    private void setV4l2DeviceList(ArrayList<V4l2Device> l) {
-        v4l2DeviceList = l;
+    private void setDvbDeviceList(ArrayList<DvbDevice> l) {
+        dvbDeviceList = l;
     }
 
-    private void addV4l2Device(V4l2Device s) {
+    private void addDvbDevice(DvbDevice s) {
 
-        ArrayList<V4l2Device> l = getV4l2DeviceList();
+        ArrayList<DvbDevice> l = getDvbDeviceList();
         if ((l != null) && (s != null)) {
             l.add(s);
         }
     }
 
-    private void removeV4l2Device(V4l2Device s) {
+    private void removeDvbDevice(DvbDevice d) {
 
-        ArrayList<V4l2Device> l = getV4l2DeviceList();
-        if ((l != null) && (s != null)) {
-            l.remove(s);
+        ArrayList<DvbDevice> l = getDvbDeviceList();
+        if ((l != null) && (d != null)) {
+            l.remove(d);
         }
     }
 
     private void clearDeviceList() {
 
-        ArrayList<V4l2Device> l = getV4l2DeviceList();
+        ArrayList<DvbDevice> l = getDvbDeviceList();
         if (l != null) {
             l.clear();
         }
     }
 
     /**
-     * The array of v4l2 devices found on the computer.  There will be one
-     * device for each v4l2 item found.
+     * The array of DVB devices found on the computer.  There will be one
+     * device for each DVB item found.
      *
-     * @return An array of String instances representing v4l2 devices.
+     * @return An array of String instances representing DVB devices.
      */
-    public V4l2Device[] getV4l2Devices() {
+    public DvbDevice[] getDvbDevices() {
 
-        V4l2Device[] result = null;
+        DvbDevice[] result = null;
 
-        ArrayList<V4l2Device> l = getV4l2DeviceList();
+        ArrayList<DvbDevice> l = getDvbDeviceList();
         if (l != null) {
 
-            result = l.toArray(new V4l2Device[l.size()]);
+            result = l.toArray(new DvbDevice[l.size()]);
         }
 
         return (result);
@@ -136,17 +136,13 @@ public class DiscoverJob extends BaseDeviceJob {
 
         clearDeviceList();
         File dev = new File("/dev");
-        String[] listing = dev.list(new DevVideoFilter());
+        File devdvb = new File(dev, "dvb");
+        String[] listing = devdvb.list(new DevDvbAdapterFilter());
         if ((listing != null) && (listing.length > 0)) {
 
             setTerminate(false);
             setPathIndex(0);
             setDevicePaths(listing);
-            InfoJob ij = new InfoJob();
-            ij.setDevice("/dev/" + getNextDevicePath());
-            ij.addJobListener(this);
-            JobContainer jc = JobManager.getJobContainer(ij);
-            jc.start();
 
         } else {
 
@@ -186,10 +182,11 @@ public class DiscoverJob extends BaseDeviceJob {
      */
     public void jobUpdate(JobEvent event) {
 
+        /*
         if (event.getType() == JobEvent.COMPLETE) {
 
             InfoJob job = (InfoJob) event.getSource();
-            addV4l2Device(job.getV4l2Device());
+            addDvbDevice(job.getDvbDevice());
 
             String path = getNextDevicePath();
             if (path != null) {
@@ -205,6 +202,7 @@ public class DiscoverJob extends BaseDeviceJob {
                 stop();
             }
         }
+        */
     }
 
 }

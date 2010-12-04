@@ -26,6 +26,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.Channel;
+import org.jflicks.tv.recorder.StreamJob;
 
 /**
  * This job supports the V4l2 recorder.  There are several steps to recording

@@ -24,6 +24,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.tv.recorder.BaseDeviceJob;
 
 /**
  * This job finds the video inputs on a V4l2 device.  It uses the v4l2-ctl
@@ -35,7 +36,7 @@ import org.jflicks.nms.NMSConstants;
  * @author Doug Barnum
  * @version 1.0
  */
-public class ListVideoInputJob extends BaseV4l2Job {
+public class ListVideoInputJob extends BaseDeviceJob {
 
     private static final String NAME = "Name";
 

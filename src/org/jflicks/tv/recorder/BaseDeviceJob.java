@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.recorder.v4l2;
+package org.jflicks.tv.recorder;
 
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
@@ -22,13 +22,13 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.SystemJob;
 
 /**
- * An abstract base class supporting V4l2 devices by using the command
+ * An abstract base class supporting Device devices by using the command
  * line program v4l2-ctl.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseV4l2Job extends AbstractJob implements JobListener {
+public abstract class BaseDeviceJob extends AbstractJob implements JobListener {
 
     private SystemJob systemJob;
     private JobContainer jobContainer;
@@ -37,7 +37,7 @@ public abstract class BaseV4l2Job extends AbstractJob implements JobListener {
     /**
      * Simple no argument constructor.
      */
-    public BaseV4l2Job() {
+    public BaseDeviceJob() {
     }
 
     protected SystemJob getSystemJob() {
@@ -57,7 +57,7 @@ public abstract class BaseV4l2Job extends AbstractJob implements JobListener {
     }
 
     /**
-     * The V4l2 type of recorders user a device path like /dev/videoN
+     * The Device type of recorders user a device path like /dev/videoN
      * where N is a number.  We keep this path in the device property.
      *
      * @return A device path.
@@ -67,7 +67,7 @@ public abstract class BaseV4l2Job extends AbstractJob implements JobListener {
     }
 
     /**
-     * The V4l2 type of recorders user a device path like /dev/videoN
+     * The Device type of recorders user a device path like /dev/videoN
      * where N is a number.  We keep this path in the device property.
      *
      * @param s A device path.

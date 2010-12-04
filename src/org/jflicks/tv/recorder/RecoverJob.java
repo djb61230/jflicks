@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.recorder.v4l2;
+package org.jflicks.tv.recorder;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +40,8 @@ import org.jflicks.job.JobEvent;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class RecoverJob extends BaseV4l2Job implements ActionListener {
+public abstract class RecoverJob extends BaseDeviceJob implements
+    ActionListener {
 
     private FileInputStream fileInputStream;
     private FileChannel fileChannel;

@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.recorder.v4l2;
+package org.jflicks.tv.recorder.dvb;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
@@ -23,11 +23,10 @@ import org.jflicks.job.SystemJob;
 import org.jflicks.tv.recorder.BaseDeviceJob;
 
 /**
- * This job will change the channel for a V4l2 device.  It can use the
- * v4l2-ctl program to set the frequency or optionally use an external
- * channel changing script.  This latter choice will be common for V4l2
- * devices hooked up to externel set top boxes.  Also required for the
- * HD-PVR which does not have a tuner.
+ * This job will change the channel for a DVB Linux device.  It can use the
+ * dvb-apps zap family of programs to set the frequency start the video
+ * stream.  It has a property called "script" that is a command-line to
+ * execute.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -35,7 +34,6 @@ import org.jflicks.tv.recorder.BaseDeviceJob;
 public class ChannelJob extends BaseDeviceJob {
 
     private String channel;
-    private String frequencyTable;
     private String script;
 
     /**
@@ -63,40 +61,20 @@ public class ChannelJob extends BaseDeviceJob {
     }
 
     /**
-     * The frequency table to use for older analog tuners.
+     * A channel will be set by running an external program with the last
+     * argument being the Channel property.
      *
-     * @return The frequency table name as a String.
-     */
-    public String getFrequencyTable() {
-        return (frequencyTable);
-    }
-
-    /**
-     * The frequency table to use for older analog tuners.
-     *
-     * @param s The frequency table name as a String.
-     */
-    public void setFrequencyTable(String s) {
-        frequencyTable = s;
-    }
-
-    /**
-     * Optionally a channel can be set by running an external script with
-     * the Channel property as an argument.  Otherwise the channel will be
-     * set using v4l2-ctl.
-     *
-     * @return A path to a script.
+     * @return A command line calling a zap program.
      */
     public String getScript() {
         return (script);
     }
 
     /**
-     * Optionally a channel can be set by running an external script with
-     * the Channel property as an argument.  Otherwise the channel will be
-     * set using v4l2-ctl.
+     * A channel will be set by running an external program with the last
+     * argument being the Channel property.
      *
-     * @param s A path to a script.
+     * @param s A command line calling a zap program.
      */
     public void setScript(String s) {
         script = s;
@@ -118,18 +96,19 @@ public class ChannelJob extends BaseDeviceJob {
         SystemJob job = null;
         String scr = getScript();
         if (scr != null) {
+
             job = SystemJob.getInstance(scr + " " + getChannel());
+            fireJobEvent(JobEvent.UPDATE, "command:<" + job.getCommand() + ">");
+            setSystemJob(job);
+            job.addJobListener(this);
+            JobContainer jc = JobManager.getJobContainer(job);
+            setJobContainer(jc);
+            jc.start();
+
         } else {
-            job = SystemJob.getInstance("ivtv-tune -d " + getDevice()
-                + " --freqtable=" + getFrequencyTable()
-                + " --channel=" + getChannel());
+
+            setTerminate(true);
         }
-        fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
-        setSystemJob(job);
-        job.addJobListener(this);
-        JobContainer jc = JobManager.getJobContainer(job);
-        setJobContainer(jc);
-        jc.start();
 
         while (!isTerminate()) {
 

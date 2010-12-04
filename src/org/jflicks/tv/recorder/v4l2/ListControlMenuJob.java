@@ -24,6 +24,7 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.tv.recorder.BaseDeviceJob;
 import org.jflicks.util.Util;
 
 /**
@@ -34,7 +35,7 @@ import org.jflicks.util.Util;
  * @author Doug Barnum
  * @version 1.0
  */
-public class ListControlMenuJob extends BaseV4l2Job {
+public class ListControlMenuJob extends BaseDeviceJob {
 
     private ArrayList<NameValue> nameValueList;
 

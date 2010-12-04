@@ -20,6 +20,7 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.tv.recorder.BaseDeviceJob;
 
 /**
  * This job will change setup all seetings for the v4l2 device.
@@ -27,7 +28,7 @@ import org.jflicks.job.SystemJob;
  * @author Doug Barnum
  * @version 1.0
  */
-public class ControlJob extends BaseV4l2Job {
+public class ControlJob extends BaseDeviceJob {
 
     private int audioInput;
     private int videoInput;

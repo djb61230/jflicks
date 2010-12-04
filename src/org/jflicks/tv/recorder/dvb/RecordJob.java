@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.recorder.v4l2;
+package org.jflicks.tv.recorder.dvb;
 
 import java.io.File;
 
@@ -25,7 +25,7 @@ import org.jflicks.tv.recorder.BaseDeviceJob;
 import org.jflicks.tv.recorder.CopyJob;
 
 /**
- * After finding, setting a channel, it's time to record from a v4l2
+ * After finding, setting a channel, it's time to record from a DVB
  * device.  The resulting video stream is stored to a local File and
  * the user can configure the time in seconds for the recording job to run.
  *
@@ -110,14 +110,6 @@ public class RecordJob extends BaseDeviceJob {
         JobContainer jc = JobManager.getJobContainer(job);
         setJobContainer(jc);
 
-        // We sleep here because it might take some time to have the v4l2
-        // device "sync-up" with it's source.  This was found when testing
-        // the HD-PVR as just a bit previously the channel was changed by
-        // a script.  Obviously hard-wiring a value here is not the best
-        // solution.
-        JobManager.sleep(4000);
-        jc.start();
-
         // End  a few seconds early...
         long l = getDuration() - 5;
         if (l == 0) {
@@ -174,15 +166,6 @@ public class RecordJob extends BaseDeviceJob {
     public void jobUpdate(JobEvent event) {
 
         if (event.getType() == JobEvent.COMPLETE) {
-
-            /*
-            SystemJob job = getSystemJob();
-            if (job != null) {
-
-                System.out.println("RecordJob: exit: " + job.getExitValue());
-                stop();
-            }
-            */
         }
     }
 
