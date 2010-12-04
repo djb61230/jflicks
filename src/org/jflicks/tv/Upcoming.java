@@ -467,7 +467,7 @@ public class Upcoming implements Serializable, Comparable<Upcoming> {
             Date date1 = u.getDate();
             if ((date0 != null) && (date1 != null)) {
 
-                result = date1.compareTo(date0);
+                result = date0.compareTo(date1);
             }
         }
 
