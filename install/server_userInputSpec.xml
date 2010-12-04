@@ -1,5 +1,6 @@
 <userInput>
     <panel order="0">
+        <createForPack name="DVR Functionality"/>
         <field size="2" txt="Schedule's Direct" type="title"/>
         <field type="text" variable="sdusername">
             <spec size="15" txt="User (email)"/>
@@ -12,9 +13,12 @@
             <validator
                 class="com.izforge.izpack.util.PasswordEqualityValidator" txt="Both passwords must match."/>
         </field>
+    </panel>
+    <panel order="1">
         <field type="check" variable="autostart">
             <description align="left" txt="Setup to autostart on login."/>
             <spec false="false" set="false" true="true" txt="Auto Start on Login"/>
         </field>
     </panel>
+
 </userInput>

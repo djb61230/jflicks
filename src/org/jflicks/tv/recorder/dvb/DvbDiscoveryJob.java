@@ -131,12 +131,10 @@ public class DvbDiscoveryJob extends AbstractJob implements JobListener {
         ArrayList<DvbRecorder> l = getDvbRecorderList();
         if ((d != null) && (l != null)) {
 
-            System.out.println("checking..." + d.getPath());
             for (int i = 0; i < l.size(); i++) {
 
                 DvbRecorder r = l.get(i);
                 String path = d.getPath();
-                System.out.println("checking..." + path);
                 if ((r != null) && (path != null)) {
 
                     result = path.equals(r.getDevice());
@@ -192,14 +190,12 @@ public class DvbDiscoveryJob extends AbstractJob implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("discover should have finished...");
             if (event.getSource() == getDiscoverJob()) {
 
                 DiscoverJob job = getDiscoverJob();
 
                 DvbDevice[] array = job.getDvbDevices();
                 BundleContext bc = getBundleContext();
-                System.out.println("discover " + array + " " + bc);
                 if ((array != null) && (bc != null)) {
 
                     for (int i = 0; i < array.length; i++) {
@@ -216,7 +212,6 @@ public class DvbDiscoveryJob extends AbstractJob implements JobListener {
 
     private void registerRecorder(BundleContext bc, DvbDevice d) {
 
-        System.out.println("registerRecorder: " + d);
         if ((bc != null) && (d != null)) {
 
             DvbRecorder r = new DvbRecorder();

@@ -2,7 +2,7 @@
 <shortcuts>
     <skipIfNotSupported/>
     <defaultCurrentUser/>
-    <programGroup defaultName="JFlicks" location="applications"/>
+    <programGroup defaultName="jflicks" location="applications"/>
     <shortcut KdeUsername="root" applications="no" desktop="no"
         encoding="UTF-8" initialState="normal"
         name="Server Configuration" programGroup="yes" startMenu="no"

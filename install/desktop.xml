@@ -15,7 +15,7 @@
         <pack200/>
         <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
     </info>
-    <guiprefs height="480" resizable="no" width="640">
+    <guiprefs height="600" resizable="no" width="800">
         <modifier key="useFlags" value="yes"/>
         <modifier key="langDisplayType" value="default"/>
     </guiprefs>
@@ -42,7 +42,7 @@
     </variables>
     <packs>
         <pack name="Server Configuration" preselected="yes" required="yes">
-            <description>This application can configure all your JFlicks servers and can run anywhere on your network.</description>
+            <description>This application can configure all your jflicks servers and can run anywhere on your network.  There will be a few configuration adjustments each server will need.</description>
             <file override="update"
                 src="client" targetdir="$INSTALL_PATH/"/>
             <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/client/startup.sh"/>
@@ -50,7 +50,7 @@
                 targetfile="$INSTALL_PATH/client/startup.sh" type="shell"/>
         </pack>
         <pack name="Scheduler" preselected="yes" required="no">
-            <description>This application allows you to schedule recordings for any JFlicks server on your network.  You can also examine upcoming recordings and see what currently is recorded.</description>
+            <description>This application allows you to schedule recordings for any jflicks server on your network.  You can also examine upcoming recordings and see what currently is recorded.  All this functionality is available using the TV user interface, but this application has better search capabilities.  Of course your jflicks server must have DVR functionality enabled to use this program.</description>
             <file override="update"
                 src="scheduler" targetdir="$INSTALL_PATH/"/>
             <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/scheduler/startup.sh"/>
@@ -58,7 +58,7 @@
                 targetfile="$INSTALL_PATH/scheduler/startup.sh" type="shell"/>
         </pack>
         <pack name="Video Manager" preselected="yes" required="no">
-            <description>If you maintain some video files on your network you can add descriptions and artwork that is associated with you files using this application.</description>
+            <description>If you maintain some video files on your network you can add descriptions and artwork that is associated with your files using this application.  This application goes hand in hand with the Video Manager service running in a jflicks server.  If you do not have the Video Manager service in at least one of your jflicks servers, then there is no need for this application.</description>
             <file override="update"
                 src="metadata" targetdir="$INSTALL_PATH/"/>
             <executable failure="abort" keep="true" stage="never" targetfile="$INSTALL_PATH/metadata/startup.sh"/>

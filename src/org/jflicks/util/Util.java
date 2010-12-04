@@ -967,7 +967,6 @@ public final class Util {
 
             } catch (Exception ex) {
 
-                System.out.println("Can't find properties file <" + s + ">");
                 result = null;
             }
         }

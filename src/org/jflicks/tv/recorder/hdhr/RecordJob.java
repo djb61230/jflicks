@@ -105,7 +105,7 @@ public class RecordJob extends BaseHDHRJob {
      */
     public void run() {
 
-        SystemJob job = SystemJob.getInstance("bin/hdhomerun_config "
+        SystemJob job = SystemJob.getInstance("hdhomerun_config "
             + getId() + " save /tuner" + getTuner() + " " + fileToString());
 
         fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");

@@ -90,7 +90,7 @@ public class StreamJob extends BaseHDHRJob {
      */
     public void run() {
 
-        SystemJob job = SystemJob.getInstance("bin/hdhomerun_config "
+        SystemJob job = SystemJob.getInstance("hdhomerun_config "
             + getId() + " set /tuner" + getTuner() + "/target udp://"
             + getHost() + ":" + getPort());
 

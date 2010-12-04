@@ -79,6 +79,8 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-recorder-hdhr.jar"
             todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-tv-recorder-dvb.jar"
+            todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-recorder-v4l2.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-scheduler-system.jar"

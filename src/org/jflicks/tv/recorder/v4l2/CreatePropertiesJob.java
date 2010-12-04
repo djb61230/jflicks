@@ -247,9 +247,8 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
                     nv.setDefaultValue(choices[0]);
                     nv.setValue(choices[0]);
                     nv.setChoices(choices);
-                    nv.setDescription("Frequency Table");
+                    nv.setDescription(NMSConstants.FREQUENCY_TABLE_NAME);
                     bc.addNameValue(nv);
-                    System.out.println("added FREQ");
 
                     NameValue[] array = job.getNameValues();
                     if (array != null) {
@@ -270,8 +269,6 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
                         ccnv.setType(NameValue.STRING_TYPE);
                         bc.addNameValue(ccnv);
                         r.write(bc);
-
-                        System.out.println("writing it out dude!!!");
                     }
                 }
 

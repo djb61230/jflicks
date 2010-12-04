@@ -2,7 +2,7 @@
 <shortcuts>
     <skipIfNotSupported/>
     <defaultCurrentUser/>
-    <programGroup defaultName="JFlicks" location="applications"/>
+    <programGroup defaultName="jflicks" location="applications"/>
     <shortcut applications="no" desktop="no" initialState="noShow"
         name="Server Configuration" programGroup="yes" startMenu="no"
         startup="no" target="$INSTALL_PATH/client/startup.sh" workingDirectory="$INSTALL_PATH/client"/>

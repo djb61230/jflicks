@@ -90,7 +90,7 @@ public class FrequencyJob extends BaseHDHRJob {
      */
     public void run() {
 
-        SystemJob job = SystemJob.getInstance("bin/hdhomerun_config "
+        SystemJob job = SystemJob.getInstance("hdhomerun_config "
             + getId() + " set /tuner" + getTuner() + "/channel "
             + frequencyToString());
         fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
