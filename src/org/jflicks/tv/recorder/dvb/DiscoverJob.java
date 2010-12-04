@@ -44,40 +44,6 @@ public class DiscoverJob extends BaseDeviceJob {
         setDvbDeviceList(new ArrayList<DvbDevice>());
     }
 
-    private String[] getDevicePaths() {
-        return (devicePaths);
-    }
-
-    private void setDevicePaths(String[] array) {
-        devicePaths = array;
-    }
-
-    private int getPathIndex() {
-        return (pathIndex);
-    }
-
-    private void setPathIndex(int i) {
-        pathIndex = i;
-    }
-
-    private String getNextDevicePath() {
-
-        String result = null;
-
-        String[] array = getDevicePaths();
-        if (array != null) {
-
-            int i = getPathIndex();
-            if ((i >= 0) && (i < array.length)) {
-
-                result = array[i];
-                setPathIndex(i + 1);
-            }
-        }
-
-        return (result);
-    }
-
     private ArrayList<DvbDevice> getDvbDeviceList() {
         return (dvbDeviceList);
     }
@@ -135,19 +101,6 @@ public class DiscoverJob extends BaseDeviceJob {
     public void start() {
 
         clearDeviceList();
-        File dev = new File("/dev");
-        File devdvb = new File(dev, "dvb");
-        String[] listing = devdvb.list(new DevDvbAdapterFilter());
-        if ((listing != null) && (listing.length > 0)) {
-
-            setTerminate(false);
-            setPathIndex(0);
-            setDevicePaths(listing);
-
-        } else {
-
-            setTerminate(true);
-        }
     }
 
     /**
@@ -155,9 +108,26 @@ public class DiscoverJob extends BaseDeviceJob {
      */
     public void run() {
 
-        while (!isTerminate()) {
+        File dev = new File("/dev");
+        File devdvb = new File(dev, "dvb");
+        File[] listing = devdvb.listFiles(new DevDvbAdapterFilter());
+        if ((listing != null) && (listing.length > 0)) {
 
-            JobManager.sleep(getSleepTime());
+            // Now for each adapter, check for DVR nodes.
+            for (int i = 0; i < listing.length; i++) {
+
+                File[] dvrs =
+                    listing[i].listFiles(new DevDvbAdapterDvrFilter());
+                if ((dvrs != null) && (dvrs.length > 0)) {
+
+                    for (int j = 0; j < dvrs.length; j++) {
+
+                        DvbDevice tmp = new DvbDevice();
+                        tmp.setPath(dvrs[j].getPath());
+                        addDvbDevice(tmp);
+                    }
+                }
+            }
         }
 
         fireJobEvent(JobEvent.COMPLETE);
@@ -169,40 +139,12 @@ public class DiscoverJob extends BaseDeviceJob {
     public void stop() {
 
         setTerminate(true);
-        JobContainer jc = getJobContainer();
-        if (jc != null) {
-
-            jc.stop();
-            setJobContainer(null);
-        }
     }
 
     /**
      * {@inheritDoc}
      */
     public void jobUpdate(JobEvent event) {
-
-        /*
-        if (event.getType() == JobEvent.COMPLETE) {
-
-            InfoJob job = (InfoJob) event.getSource();
-            addDvbDevice(job.getDvbDevice());
-
-            String path = getNextDevicePath();
-            if (path != null) {
-
-                // We have another to do...
-                job.setDevice("/dev/" + path);
-                JobContainer jc = JobManager.getJobContainer(job);
-                jc.start();
-
-            } else {
-
-                // We are done with them all....
-                stop();
-            }
-        }
-        */
     }
 
 }

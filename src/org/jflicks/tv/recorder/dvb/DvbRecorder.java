@@ -129,31 +129,6 @@ public class DvbRecorder extends BaseRecorder {
     }
 
     /**
-     * The configuration properties name is generated from the card type
-     * property.  We expect a file named "SOURCE.dvb.properties".  The
-     * source will be the "CardType" property from probing the device
-     * with the exception that any spaces in the text will be replaced
-     * by underscore.
-     *
-     * @return The name of the expected properties file.
-     */
-    public String getPropertiesName() {
-
-        String result = null;
-
-        /*
-        String ct = getCardType();
-        if (ct != null) {
-
-            ct = ct.replace(" ", "_");
-            result = "conf/" + ct + ".dvb.properties";
-        }
-        */
-
-        return (result);
-    }
-
-    /**
      * We need to update the "Source" property of the Default Configuration
      * instance because there may be more than one DVB and this will make
      * this instance unique.  We will use the Device property to help us.
