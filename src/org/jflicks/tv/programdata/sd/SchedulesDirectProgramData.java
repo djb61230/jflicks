@@ -591,6 +591,8 @@ public class SchedulesDirectProgramData extends BaseProgramData
                 oc.commit();
             }
 
+            log(INFO, "Schedules Direct data process complete!");
+
             // Let others know...
             fireDataUpdateEvent();
         }

@@ -849,6 +849,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             NMS[] array = getNMS();
             if ((array != null) && (array.length > 0)) {
 
+                log(DEBUG, "NMS count: " + array.length);
                 if (array.length == 1) {
 
                     Recording[] recs = array[0].getRecordings();
@@ -862,13 +863,19 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                     for (int i = 0; i < array.length; i++) {
 
                         Recording[] recs = array[i].getRecordings();
+                        log(DEBUG, "recs from NMS : " + i + " " + recs);
                         if (recs != null) {
 
+                            log(DEBUG, "recs from NMS : " + recs.length);
                             Collections.addAll(list, recs);
                         }
                     }
 
                     Recording[] recs = list.toArray(new Recording[list.size()]);
+                    if (recs != null) {
+
+                        Arrays.sort(recs);
+                    }
                     transformRecordings(recs);
                     rp.setRecordings(recs);
                 }
@@ -942,7 +949,12 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                         }
                     }
 
-                    up.setUpcomings(list.toArray(new Upcoming[list.size()]));
+                    Upcoming[] upa = list.toArray(new Upcoming[list.size()]);
+                    if (upa != null) {
+
+                        Arrays.sort(upa);
+                    }
+                    up.setUpcomings(upa);
                 }
             }
         }

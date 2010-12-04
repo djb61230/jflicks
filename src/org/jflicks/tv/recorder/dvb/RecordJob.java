@@ -109,6 +109,7 @@ public class RecordJob extends BaseDeviceJob {
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);
         setJobContainer(jc);
+        jc.start();
 
         // End  a few seconds early...
         long l = getDuration() - 5;
@@ -165,7 +166,7 @@ public class RecordJob extends BaseDeviceJob {
      */
     public void jobUpdate(JobEvent event) {
 
-        if (event.getType() == JobEvent.COMPLETE) {
+        if (event.getType() == JobEvent.UPDATE) {
         }
     }
 

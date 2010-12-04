@@ -468,6 +468,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                     result[i].setSubtitle(rec.getSubtitle());
                     result[i].setDescription(rec.getDescription());
                     result[i].setSeriesId(rec.getSeriesId());
+                    result[i].setDate(rec.getDate());
 
                 } else {
 

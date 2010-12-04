@@ -17,6 +17,7 @@
 package org.jflicks.tv;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.jflicks.util.RandomGUID;
 
@@ -26,7 +27,7 @@ import org.jflicks.util.RandomGUID;
  * @author Doug Barnum
  * @version 1.0
  */
-public class Upcoming implements Serializable {
+public class Upcoming implements Serializable, Comparable<Upcoming> {
 
     private String id;
     private String title;
@@ -45,6 +46,7 @@ public class Upcoming implements Serializable {
     private String posterURL;
     private String fanartURL;
     private String hostPort;
+    private Date date;
 
     /**
      * Simple empty constructor.
@@ -366,6 +368,110 @@ public class Upcoming implements Serializable {
      */
     public void setHostPort(String s) {
         hostPort = s;
+    }
+
+    /**
+     * When the Upcoming will occur.
+     *
+     * @return A Date instance.
+     */
+    public Date getDate() {
+
+        Date result = null;
+
+        if (date != null) {
+
+            result = new Date(date.getTime());
+        }
+
+        return (result);
+    }
+
+    /**
+     * When the Upcoming will occur.
+     *
+     * @param d A Date instance.
+     */
+    public void setDate(Date d) {
+
+        if (d != null) {
+            date = new Date(d.getTime());
+        } else {
+            date = null;
+        }
+    }
+
+    /**
+     * The standard hashcode override.
+     *
+     * @return An int value.
+     */
+    public int hashCode() {
+        return (getId().hashCode());
+    }
+
+    /**
+     * The equals override method.
+     *
+     * @param o A given object to check.
+     * @return True if the objects are equal.
+     */
+    public boolean equals(Object o) {
+
+        boolean result = false;
+
+        if (o == this) {
+
+            result = true;
+
+        } else if (!(o instanceof Upcoming)) {
+
+            result = false;
+
+        } else {
+
+            Upcoming r = (Upcoming) o;
+            String s = getId();
+            if (s != null) {
+
+                result = s.equals(r.getId());
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * The comparable interface.
+     *
+     * @param r The given Upcoming instance to compare.
+     * @throws ClassCastException on the input argument.
+     * @return An int representing their "equality".
+     */
+    public int compareTo(Upcoming u) throws ClassCastException {
+
+        int result = 0;
+
+        if (u == null) {
+
+            throw new NullPointerException();
+        }
+
+        if (u == this) {
+
+            result = 0;
+
+        } else {
+
+            Date date0 = getDate();
+            Date date1 = u.getDate();
+            if ((date0 != null) && (date1 != null)) {
+
+                result = date1.compareTo(date0);
+            }
+        }
+
+        return (result);
     }
 
     /**
