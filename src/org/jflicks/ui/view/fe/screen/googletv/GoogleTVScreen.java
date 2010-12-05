@@ -137,7 +137,7 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
         return (result);
     }
 
-   private void setParameters(String[] array) {
+    private void setParameters(String[] array) {
 
         if (array != null) {
             parameters = Arrays.copyOf(array, array.length);

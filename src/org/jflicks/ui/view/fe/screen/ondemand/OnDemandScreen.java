@@ -24,9 +24,17 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Properties;
+import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
@@ -39,8 +47,10 @@ import org.jflicks.tv.ondemand.OnDemand;
 import org.jflicks.tv.ondemand.StreamSession;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
+import org.jflicks.ui.view.fe.Dialog;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.NMSProperty;
+import org.jflicks.ui.view.fe.ParameterProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.util.Util;
 
@@ -55,11 +65,14 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @version 1.0
  */
 public class OnDemandScreen extends PlayerScreen implements NMSProperty,
-    PropertyChangeListener {
+    ParameterProperty, PropertyChangeListener {
 
     private NMS[] nms;
     private StreamSession streamSession;
     private JobContainer guideJobContainer;
+    private Properties properties;
+    private String selectedParameter;
+    private String[] parameters;
 
     /**
      * Simple empty constructor.
@@ -69,6 +82,62 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
         setTitle("On Demand");
         BufferedImage bi = getImageByName("On_Demand");
         setDefaultBackgroundImage(bi);
+
+        Properties p = null;
+        FileReader fr = null;
+        try {
+
+            File here = new File(".");
+            File conf = new File(here, "conf");
+            if ((conf.exists()) && (conf.isDirectory())) {
+
+                File prop = new File(conf, "ondemand.properties");
+                if ((prop.exists()) && (prop.isFile())) {
+
+                    p = new Properties();
+                    fr = new FileReader(prop);
+                    p.load(fr);
+                    fr.close();
+                    fr = null;
+                }
+            }
+
+        } catch (IOException ex) {
+
+            log(WARNING, ex.getMessage());
+
+        } finally {
+
+            try {
+
+                if (fr != null) {
+
+                    fr.close();
+                    fr = null;
+                }
+
+            } catch (IOException ex) {
+
+                fr = null;
+            }
+        }
+
+        if (p != null) {
+
+            setProperties(p);
+            ArrayList<String> l = new ArrayList<String>();
+            Enumeration en = p.propertyNames();
+            while (en.hasMoreElements()) {
+
+                l.add((String) en.nextElement());
+            }
+
+            if (l.size() > 0) {
+
+                Collections.sort(l);
+                setParameters(l.toArray(new String[l.size()]));
+            }
+        }
     }
 
     private StreamSession getStreamSession() {
@@ -77,6 +146,52 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
 
     private void setStreamSession(StreamSession ss) {
         streamSession = ss;
+    }
+
+    private Properties getProperties() {
+        return (properties);
+    }
+
+    private void setProperties(Properties p) {
+        properties = p;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String[] getParameters() {
+
+        String[] result = null;
+
+        if (parameters != null) {
+
+            result = Arrays.copyOf(parameters, parameters.length);
+        }
+
+        return (result);
+    }
+
+    private void setParameters(String[] array) {
+
+        if (array != null) {
+            parameters = Arrays.copyOf(array, array.length);
+        } else {
+            parameters = null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getSelectedParameter() {
+        return (selectedParameter);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setSelectedParameter(String s) {
+        selectedParameter = s;
     }
 
     /**
@@ -139,14 +254,15 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
         if (b) {
 
             NMS[] array = getNMS();
-            if ((array != null) && (array.length > 0)) {
+            String odname = getSelectedParameter();
+            if ((array != null) && (array.length > 0) && (odname != null)) {
 
                 NMS n = null;
 
                 // Just use the first one we find....
                 for (int i = 0; i < array.length; i++) {
 
-                    if (array[i].supportsOnDemand()) {
+                    if (array[i].supportsOnDemand(odname)) {
 
                         n = array[i];
                         break;
@@ -164,7 +280,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                 if ((addr != null) && (n != null)) {
 
                     String hostaddr = addr.getHostAddress();
-                    StreamSession ss = n.openSession("Roku", hostaddr, 1234);
+                    StreamSession ss = n.openSession(odname, hostaddr, 1234);
                     log(DEBUG, "Called openstream: " + ss);
                     if (ss != null) {
 
@@ -189,6 +305,15 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
 
                     } else {
 
+                        JXLabel l =
+                            new JXLabel("Sorry, " + odname + " is busy.");
+                        l.setFont(getLargeFont());
+                        JButton ok = new JButton("OK");
+                        ok.setFont(getLargeFont());
+                        JXPanel p = new JXPanel(new BorderLayout());
+                        p.add(l, BorderLayout.NORTH);
+                        p.add(ok, BorderLayout.SOUTH);
+                        Dialog.showPanel(Util.findFrame(this), p, ok);
                         setDone(true);
                     }
 

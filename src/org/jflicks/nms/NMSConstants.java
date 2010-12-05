@@ -110,6 +110,12 @@ public final class NMSConstants {
     public static final String FREQUENCY_TABLE_NAME = "Frequency Table";
 
     /**
+     * Some Recorder instances may need to use the channel name to change
+     * channels.  That can be controlled with this property.
+     */
+    public static final String USE_CHANNEL_NAME = "Use Channel Name";
+
+    /**
      * The configuration name for a Recorder service to
      * "Change Channel Script".
      */

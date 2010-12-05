@@ -1678,6 +1678,29 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public boolean supportsOnDemand(String name) {
+
+        boolean result = false;
+
+        if ((name != null) && (supportsOnDemand())) {
+
+            OnDemand[] array = getOnDemands();
+            for (int i = 0; i < array.length; i++) {
+
+                if (name.equals(array[i].getTitle())) {
+
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    /**
      * Override and use the title property.
      *
      * @return The title property.

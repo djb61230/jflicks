@@ -141,7 +141,11 @@ public class DvbRecorderJob extends AbstractJob implements JobListener {
             Channel c = r.getChannel();
             if (c != null) {
 
-                result = c.getNumber();
+                if (r.isConfiguredUseChannelName()) {
+                    result = c.getName();
+                } else {
+                    result = c.getNumber();
+                }
             }
         }
 

@@ -519,5 +519,14 @@ public interface NMS extends Config {
      * @return True if Live TV is supported.
      */
     boolean supportsOnDemand();
+
+    /**
+     * Of course all services are optional so this method can be used to
+     * see if the OnDemand is supported that has the given name.
+     *
+     * @param name A name of a OnDemand service.
+     * @return True if Live TV is supported.
+     */
+    boolean supportsOnDemand(String name);
 }
 
