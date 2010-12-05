@@ -658,9 +658,10 @@ public class TextImagePanel extends BaseCustomizePanel
                 Dimension cpdim = cp.getPreferredSize();
                 if (cpdim != null) {
 
-                    double x = width - cpdim.getWidth() - hgap - 10.0;
+                    double x =
+                        width - cpdim.getWidth() - hgap - ClockPanel.FUDGE;
                     cp.setBounds((int) x, (int) vgap,
-                        (int) (cpdim.getWidth() + 10.0),
+                        (int) (cpdim.getWidth() + ClockPanel.FUDGE),
                         (int) cpdim.getHeight());
                     pane.add(cp, Integer.valueOf(120));
                 }

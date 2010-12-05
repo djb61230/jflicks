@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import javax.swing.BorderFactory;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 
@@ -36,6 +37,8 @@ import org.jdesktop.swingx.JXPanel;
  * @version 1.0
  */
 public class ClockPanel extends JXPanel implements ActionListener {
+
+    public static final double FUDGE = 60.0;
 
     private SimpleDateFormat simpleDateFormat;
     private JXLabel label;
@@ -52,13 +55,15 @@ public class ClockPanel extends JXPanel implements ActionListener {
 
         setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         setAlpha(alpha);
-        SimpleDateFormat sdf = new SimpleDateFormat("E yyyy-MM-dd 'at' hh:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("E M-d h:mm a");
         setSimpleDateFormat(sdf);
 
         JXLabel l = new JXLabel();
         l.setFont(font);
         l.setForeground(color);
         l.setBackground(back);
+        l.setHorizontalTextPosition(SwingConstants.CENTER);
+        l.setHorizontalAlignment(SwingConstants.CENTER);
         setLabel(l);
 
         setBackground(back);
