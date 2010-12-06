@@ -1133,6 +1133,11 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         Scheduler s = getScheduler();
         if ((s != null) && (r != null)) {
 
+            // Clients can muck with the properties of a Recording.  We
+            // need to have an instance that is meaningful to us so lets
+            // look it up by Id.
+            r = getRecordingById(r.getId());
+
             s.removeRecording(r);
             if (allowRerecord) {
 
