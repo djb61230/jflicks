@@ -217,17 +217,13 @@ public class HDHRStreamJob extends AbstractJob implements JobListener {
         return (result);
     }
 
-    private File getFile() {
-
-        File result = null;
+    private void log(int status, String message) {
 
         HDHRRecorder r = getHDHRRecorder();
-        if (r != null) {
+        if ((r != null) && (message != null)) {
 
-            result = r.getDestination();
+            r.log(status, message);
         }
-
-        return (result);
     }
 
     /**
@@ -261,11 +257,11 @@ public class HDHRStreamJob extends AbstractJob implements JobListener {
 
         FrequencyJob nfj = new FrequencyJob();
         setNoneFrequencyJob(nfj);
-        nfj.addJobListener(this);
         nfj.setId(getId());
         nfj.setTuner(getTuner());
         nfj.setFrequency(-1);
 
+        log(HDHRRecorder.DEBUG, "starting frequency job...");
         JobContainer jc = JobManager.getJobContainer(fj);
         setJobContainer(jc);
         jc.start();
@@ -293,6 +289,12 @@ public class HDHRStreamJob extends AbstractJob implements JobListener {
         if (jc != null) {
             jc.stop();
         }
+
+        // Let's set the frequency to none now...
+        jc = JobManager.getJobContainer(getNoneFrequencyJob());
+        setJobContainer(jc);
+        jc.start();
+
         HDHRRecorder r = getHDHRRecorder();
         if (r != null) {
 
@@ -309,29 +311,22 @@ public class HDHRStreamJob extends AbstractJob implements JobListener {
 
             if (event.getSource() == getFrequencyJob()) {
 
+                log(HDHRRecorder.DEBUG, "starting program job...");
                 JobContainer jc = JobManager.getJobContainer(getProgramJob());
                 setJobContainer(jc);
                 jc.start();
 
             } else if (event.getSource() == getProgramJob()) {
 
+                log(HDHRRecorder.DEBUG, "starting streaming job...");
                 JobContainer jc = JobManager.getJobContainer(getStreamJob());
                 setJobContainer(jc);
                 jc.start();
-
-            } else if (event.getSource() == getStreamJob()) {
-
-                JobContainer jc =
-                    JobManager.getJobContainer(getNoneFrequencyJob());
-                setJobContainer(jc);
-                jc.start();
-
-            } else if (event.getSource() == getNoneFrequencyJob()) {
-
-                System.out.println("recording done at "
-                    + new Date(System.currentTimeMillis()));
-                stop();
             }
+
+        } else if (event.getType() == JobEvent.UPDATE) {
+
+            log(HDHRRecorder.DEBUG, event.getMessage());
         }
     }
 

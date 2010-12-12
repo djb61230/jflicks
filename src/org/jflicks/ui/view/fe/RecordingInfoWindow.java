@@ -419,6 +419,14 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
                         length = (double) llength;
                     }
                 }
+
+                // Sometimes the player can't give us an accurate time.  So
+                // either we display 0 (or at the beginning) or at the end.
+                // It's probably more correct to be at the end...
+                if (current == 0.0) {
+                    current = length;
+                }
+
                 double percentage = current / length * 100.0;
                 tp.setValue((int) percentage);
                 tp.setCurrent((int) current);

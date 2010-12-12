@@ -88,7 +88,7 @@ public class ChannelInfoWindow extends JWindow implements ActionListener {
         int loffset = (int) (maxWidth * 0.10);
         int toffset = (int) (maxHeight - (maxHeight * 0.25));
         int width = maxWidth - (2 * loffset);
-        int height = (int) (maxHeight / 6);
+        int height = (int) (maxHeight / 5);
 
         // We need to set the loffset since it's a top level window it needs
         // to be centered on the screen.  We just are not guaranteed that the
@@ -138,19 +138,19 @@ public class ChannelInfoWindow extends JWindow implements ActionListener {
         description.setLineWrap(true);
         setDescriptionLabel(description);
 
-        double fifthWidth = ((double) width) / 5.0;
+        double quarterWidth = ((double) width) / 4.0;
         double titleHeight = ((double) height) * 0.2;
         double chanHeight = ((double) height) * 0.2;
         double descHeight = ((double) height) * 0.8;
         double chanTop = (((double) height) - chanHeight) / 2.0;
 
         channelLab.setBounds((int) hgap, (int) chanTop,
-            (int) fifthWidth, (int) chanHeight);
-        title.setBounds((int) (hgap + fifthWidth), (int) vgap,
-            (int) (fifthWidth * 4), (int) titleHeight);
-        description.setBounds((int) (hgap + fifthWidth),
+            (int) quarterWidth, (int) chanHeight);
+        title.setBounds((int) (hgap + quarterWidth), (int) vgap,
+            (int) (quarterWidth * 4), (int) titleHeight);
+        description.setBounds((int) (hgap + quarterWidth),
             (int) (vgap + titleHeight + vgap),
-            (int) (fifthWidth * 4), (int) descHeight);
+            (int) (quarterWidth * 4), (int) descHeight);
 
         pane.add(channelLab, Integer.valueOf(100));
         pane.add(title, Integer.valueOf(100));

@@ -1419,7 +1419,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
-    public LiveTV start() {
+    public LiveTV openSession() {
 
         LiveTV result = null;
 
@@ -1430,6 +1430,30 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             if (result != null) {
 
                 result.setHostPort(getHost() + ":" + getPort());
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public LiveTV openSession(String host, int port) {
+
+        LiveTV result = null;
+
+        Live lve = getLive();
+        if (lve != null) {
+
+            log(DEBUG, "request Host " + host);
+            log(DEBUG, "request Port " + port);
+            result = lve.openSession(host, port);
+            if (result != null) {
+
+                result.setHostPort(getHost() + ":" + getPort());
+                log(DEBUG, "DestinationHost " + result.getDestinationHost());
+                log(DEBUG, "DestinationPort " + result.getDestinationPort());
             }
         }
 
@@ -1453,7 +1477,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
-    public void stop(LiveTV l) {
+    public void closeSession(LiveTV l) {
 
         Live lve = getLive();
         if (lve != null) {

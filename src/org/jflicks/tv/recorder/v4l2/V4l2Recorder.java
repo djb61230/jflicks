@@ -118,6 +118,8 @@ public class V4l2Recorder extends BaseRecorder {
 
         if (!isRecording()) {
 
+            log(DEBUG, "stream to <" + host + "> port <" + port + ">");
+            log(DEBUG, "\t channel " + c);
             setChannel(c);
             setHost(host);
             setPort(port);
@@ -139,6 +141,7 @@ public class V4l2Recorder extends BaseRecorder {
         JobContainer jc = getJobContainer();
         if (jc != null) {
 
+            log(DEBUG, "stopStreaming!");
             jc.stop();
             setJobContainer(null);
             setRecording(false);

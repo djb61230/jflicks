@@ -199,10 +199,72 @@ public abstract class BaseLive extends BaseConfig implements Live {
     /**
      * {@inheritDoc}
      */
+    public LiveTV openSession(String host, int port) {
+
+        LiveTV result = new LiveTV(host, port);
+        result.setMessageType(LiveTV.MESSAGE_TYPE_NONE);
+
+        NMS n = getNMS();
+        Recorder[] recs = getRecorders();
+        if ((n != null) && (recs != null)) {
+
+            String[] names = getListingNames();
+            if (names != null) {
+
+                ArrayList<RecorderInformation> ris =
+                    new ArrayList<RecorderInformation>();
+                for (int i = 0; i < names.length; i++) {
+
+                    Recorder tmp = findRecorder(recs, names[i]);
+                    if (tmp != null) {
+
+                        RecorderInformation ri = new RecorderInformation();
+                        ri.setRecorder(tmp);
+                        ri.setChannels(n.getChannelsByListingName(names[i]));
+                        ris.add(ri);
+                    }
+                }
+
+                if (ris.size() > 0) {
+
+                    RecorderInformation[] riArray =
+                        ris.toArray(new RecorderInformation[ris.size()]);
+                    Session session = new Session(result, riArray);
+                    addSession(session);
+
+                    result.setChannels(computeAllChannels(session));
+                    Channel c = computeStartChannel(session);
+                    changeChannel(result, c);
+
+                } else {
+
+                    result.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
+                    result.setMessage("No Available Recorders!");
+                }
+
+            } else {
+
+                result.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
+                result.setMessage("No Guide data!");
+            }
+
+        } else {
+
+            result.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
+            result.setMessage("No Recorders!");
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public LiveTV changeChannel(LiveTV l, Channel c) {
 
         if ((l != null) && (c != null)) {
 
+            boolean streaming = l.isStreaming();
             Session s = findSession(l);
             if (s != null) {
 
@@ -210,13 +272,22 @@ public abstract class BaseLive extends BaseConfig implements Live {
                 Recorder old = s.getCurrentRecorder();
                 if (old != null) {
 
-                    old.stopRecording();
-                    File output = old.getDestination();
-                    if (output != null) {
+                    if (streaming) {
 
-                        if (!output.delete()) {
+                        log(DEBUG, "stop streaming");
+                        old.stopStreaming();
 
-                            log(WARNING, "Failed to delete live file.");
+                    } else {
+
+                        log(DEBUG, "stop recording");
+                        old.stopRecording();
+                        File output = old.getDestination();
+                        if (output != null) {
+
+                            if (!output.delete()) {
+
+                                log(WARNING, "Failed to delete live file.");
+                            }
                         }
                     }
                 }
@@ -226,30 +297,45 @@ public abstract class BaseLive extends BaseConfig implements Live {
                 log(DEBUG, "recorder: " + r);
                 if ((r != null) && (!r.isRecording())) {
 
-                    File output = computeFile(s, c);
-                    if (output != null) {
+                    if (streaming) {
 
+                        log(DEBUG, "starting to stream...");
                         s.setCurrentRecorder(r);
-                        r.startRecording(c, 60 * 60 * 4, output, true);
-                        l.setPath(output.getPath());
+                        r.startStreaming(c, l.getDestinationHost(),
+                            l.getDestinationPort());
                         l.setCurrentChannel(c);
 
                     } else {
 
-                        l.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
-                        l.setMessage("No File!");
+                        File output = computeFile(s, c);
+                        if (output != null) {
+
+                            log(DEBUG, "recording to file <" + output + ">");
+                            s.setCurrentRecorder(r);
+                            r.startRecording(c, 60 * 60 * 4, output, true);
+                            l.setPath(output.getPath());
+                            l.setCurrentChannel(c);
+
+                        } else {
+
+                            l.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
+                            l.setMessage("No File!");
+                            log(DEBUG, "No File!");
+                        }
                     }
 
                 } else {
 
                     l.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
                     l.setMessage("No Available Recorders!");
+                    log(DEBUG, "No Available Recorders!");
                 }
 
             } else {
 
                 l.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
                 l.setMessage("Invalid session!");
+                log(DEBUG, "Invalid session!");
             }
         }
 
@@ -263,20 +349,29 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
         if (l != null) {
 
+            boolean streaming = l.isStreaming();
             Session s = findSession(l);
             if (s != null) {
 
                 Recorder r = s.getCurrentRecorder();
                 if (r != null) {
 
-                    r.stopRecording();
-                    File output = r.getDestination();
-                    log(DEBUG, "closeSession: " + output);
-                    if (output != null) {
+                    if (streaming) {
 
-                        if (!output.delete()) {
+                        r.stopStreaming();
+                        log(DEBUG, "closeSession: stopStreaming");
 
-                            log(WARNING, "Failed to delete live file.");
+                    } else {
+
+                        r.stopRecording();
+                        File output = r.getDestination();
+                        log(DEBUG, "closeSession: " + output);
+                        if (output != null) {
+
+                            if (!output.delete()) {
+
+                                log(WARNING, "Failed to delete live file.");
+                            }
                         }
                     }
                 }

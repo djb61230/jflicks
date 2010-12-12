@@ -399,7 +399,16 @@ public interface NMS extends Config {
      *
      * @return A LiveTV instance.
      */
-    LiveTV start();
+    LiveTV openSession();
+
+    /**
+     * Begin a LiveTV session.
+     *
+     * @param host The host destination for video packets.
+     * @param port The port destination for video packets.
+     * @return A LiveTV instance.
+     */
+    LiveTV openSession(String host, int port);
 
     /**
      * Change to the given Channel.
@@ -415,7 +424,7 @@ public interface NMS extends Config {
      *
      * @param l A LiveTV instance.
      */
-    void stop(LiveTV l);
+    void closeSession(LiveTV l);
 
     /**
      * The root Tag contains all defined Tags.

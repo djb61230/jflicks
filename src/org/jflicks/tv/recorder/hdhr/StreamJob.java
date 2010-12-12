@@ -94,7 +94,7 @@ public class StreamJob extends BaseHDHRJob {
             + getId() + " set /tuner" + getTuner() + "/target udp://"
             + getHost() + ":" + getPort());
 
-        System.out.println("command: <" + job.getCommand() + ">");
+        fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
         setSystemJob(job);
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);
@@ -133,7 +133,8 @@ public class StreamJob extends BaseHDHRJob {
             SystemJob job = getSystemJob();
             if (job != null) {
 
-                System.out.println("StreamJob: exit: " + job.getExitValue());
+                fireJobEvent(JobEvent.UPDATE, "StreamJob: exit: "
+                    + job.getExitValue());
                 stop();
             }
         }

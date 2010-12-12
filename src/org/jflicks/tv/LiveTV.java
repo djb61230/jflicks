@@ -50,6 +50,8 @@ public class LiveTV implements Serializable {
     private Channel[] channels;
     private String message;
     private int messageType;
+    private String destinationHost;
+    private int destinationPort;
     private String hostPort;
 
     /**
@@ -58,6 +60,20 @@ public class LiveTV implements Serializable {
     public LiveTV() {
 
         setId(RandomGUID.createGUID());
+        setDestinationHost(null);
+    }
+
+    /**
+     * Simple constructor.
+     *
+     * @param host The destination host.
+     * @param port The destination port.
+     */
+    public LiveTV(String host, int port) {
+
+        setId(RandomGUID.createGUID());
+        setDestinationHost(host);
+        setDestinationPort(port);
     }
 
     /**
@@ -89,6 +105,32 @@ public class LiveTV implements Serializable {
      */
     public void setPath(String s) {
         path = s;
+    }
+
+    /**
+     * The host requesting the live stream.
+     *
+     * @return A host name.
+     */
+    public String getDestinationHost() {
+        return (destinationHost);
+    }
+
+    private void setDestinationHost(String s) {
+        destinationHost = s;
+    }
+
+    /**
+     * The host requesting the live stream has a listening port.
+     *
+     * @return A port value.
+     */
+    public int getDestinationPort() {
+        return (destinationPort);
+    }
+
+    private void setDestinationPort(int i) {
+        destinationPort = i;
     }
 
     /**
@@ -196,6 +238,16 @@ public class LiveTV implements Serializable {
      */
     public void setHostPort(String s) {
         hostPort = s;
+    }
+
+    /**
+     * We assume if the DestinationHost property is non-null that we are in
+     * streaming mode.
+     *
+     * @return True when in streaming mode.
+     */
+    public boolean isStreaming() {
+        return (getDestinationHost() != null);
     }
 
 }

@@ -807,6 +807,7 @@
 
             <fileset dir="${src}">
                 <exclude name="**/Activator.java"/>
+                <include name="**/*.java"/>
             </fileset>
 
             <doctitle><![CDATA[<h1>JFLICKS</h1>]]></doctitle>

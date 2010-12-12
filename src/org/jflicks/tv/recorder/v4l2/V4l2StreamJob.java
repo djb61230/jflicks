@@ -305,6 +305,7 @@ public class V4l2StreamJob extends AbstractJob implements JobListener {
         sj.setHost(getHost());
         sj.setPort(getPort());
 
+        log(V4l2Recorder.DEBUG, "starting control job...");
         JobContainer jc = JobManager.getJobContainer(conj);
         setJobContainer(jc);
         jc.start();
@@ -348,19 +349,26 @@ public class V4l2StreamJob extends AbstractJob implements JobListener {
 
             if (event.getSource() == getControlJob()) {
 
+                log(V4l2Recorder.DEBUG, "starting channel job...");
                 JobContainer jc = JobManager.getJobContainer(getChannelJob());
                 setJobContainer(jc);
                 jc.start();
 
             } else if (event.getSource() == getChannelJob()) {
 
+                log(V4l2Recorder.DEBUG, "starting stream job...");
+
+                // Lets wait a few seconds because the channel was just
+                // changed.  The HD-PVR sometimes needs a bit of time to
+                // sync with the set-top-box.
+                JobManager.sleep(2500);
                 JobContainer jc = JobManager.getJobContainer(getStreamJob());
                 setJobContainer(jc);
                 jc.start();
 
             } else if (event.getSource() == getStreamJob()) {
 
-                System.out.println("streaming done at "
+                log(V4l2Recorder.DEBUG, "streaming done at "
                     + new Date(System.currentTimeMillis()));
                 stop();
             }

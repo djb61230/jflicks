@@ -20,11 +20,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import javax.swing.JLayeredPane;
@@ -35,6 +38,7 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
+import org.jflicks.mvc.View;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSUtil;
 import org.jflicks.tv.Channel;
@@ -44,10 +48,12 @@ import org.jflicks.tv.ShowAiring;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
 import org.jflicks.ui.view.fe.ChannelInfoWindow;
+import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.GuideJob;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.RecordingInfoWindow;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -239,10 +245,23 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
                     }
                 }
 
-                if (n != null) {
+                Player p = getPlayer();
+                if ((n != null) && (p != null)) {
 
                     setWatchingStartTime(System.currentTimeMillis());
-                    LiveTV l = n.start();
+                    LiveTV l = null;
+                    String hostaddr = null;
+                    try {
+
+                        InetAddress local = InetAddress.getLocalHost();
+                        hostaddr = local.getHostAddress();
+                        l = n.openSession(hostaddr, 1234);
+
+                    } catch (UnknownHostException ex) {
+
+                        log(DEBUG, ex.getMessage());
+                    }
+
                     log(DEBUG, "Called start livetv: " + l);
                     if (l != null) {
 
@@ -256,13 +275,27 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
                             jc.start();
 
                             setLiveTV(l);
-                            Timer wait = new Timer(1000, this);
-                            setStartTimer(wait);
-                            wait.start();
+
+                            View v = getView();
+                            if (v instanceof FrontEndView) {
+
+                                FrontEndView fev = (FrontEndView) v;
+                                p.setRectangle(fev.getPosition());
+                            }
+
+                            p.addPropertyChangeListener("Paused", this);
+                            p.addPropertyChangeListener("Completed", this);
+                            //controlKeyboard(false);
+                            p.setFrame(Util.findFrame(this));
+                            p.play("udp://@" + hostaddr + ":1234");
+
+                            //Timer wait = new Timer(1000, this);
+                            //setStartTimer(wait);
+                            //wait.start();
 
                         } else {
 
-                            n.stop(l);
+                            n.closeSession(l);
                             setLiveTV(null);
                             setDone(true);
                         }
@@ -327,6 +360,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void close() {
 
+        //controlKeyboard(true);
         RecordingInfoWindow w = getRecordingInfoWindow();
         if (w != null) {
 
@@ -346,9 +380,15 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
             if (n != null) {
 
                 log(DEBUG, "calling stop...");
-                n.stop(l);
+                n.closeSession(l);
                 setLiveTV(null);
                 setNextChannel(null);
+
+                Player p = getPlayer();
+                if (p != null) {
+
+                    p.stop();
+                }
 
                 JobContainer jc = getGuideJobContainer();
                 if (jc != null) {
@@ -358,6 +398,8 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
                 }
             }
         }
+
+        setDone(true);
     }
 
     /**
@@ -469,15 +511,6 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
 
             if (!c.equals(l.getCurrentChannel())) {
 
-                Player p = getPlayer();
-                if (p != null) {
-
-                    // Remove us from the listener so we won't get the
-                    // stop property update and end the session.
-                    p.removePropertyChangeListener("Playing", this);
-                    p.stop();
-                }
-
                 ChannelInfoWindow cw = getChannelInfoWindow();
                 if (cw != null) {
 
@@ -493,13 +526,10 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
 
                         setLiveTV(l);
                         updateInfoWindow();
-                        Timer wait = new Timer(1000, this);
-                        setStartTimer(wait);
-                        wait.start();
 
                     } else {
 
-                        n.stop(l);
+                        n.closeSession(l);
                         setLiveTV(null);
                         setDone(true);
                     }
@@ -523,50 +553,37 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
 
         if ((event.getSource() == getPlayer()) && (!isDone())) {
 
-            // If we get this property update, then it means the video
-            // finished playing on it's own.
-            Boolean bobj = (Boolean) event.getNewValue();
-            if (!bobj.booleanValue()) {
+            if (event.getPropertyName().equals("Completed")) {
 
-                getPlayer().removePropertyChangeListener(this);
-                log(DEBUG, "we are stopping because mplayer says so");
+                // If we get this property update, then it means the video
+                // finished playing on it's own.
+                Boolean bobj = (Boolean) event.getNewValue();
+                if (!bobj.booleanValue()) {
 
-                close();
-                setDone(true);
+                    getPlayer().removePropertyChangeListener(this);
+                    log(DEBUG, "we are stopping because player says so");
+
+                    ActionListener closePerformer = new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            close();
+                        }
+                    };
+                    Timer closeTimer = new Timer(1000, closePerformer);
+                    closeTimer.setRepeats(false);
+                    closeTimer.start();
+
+                    setDone(true);
+                }
             }
         }
     }
 
     /**
-     * We are listening for a timer event so we can begin playing.  Live TV
-     * needs a few seconds to begin before we can start playing or else we
-     * just exit.
+     * We need to listen for actions.
      *
      * @param event An ActionEvent instance.
      */
     public void actionPerformed(ActionEvent event) {
-
-        if (!isDone()) {
-
-            LiveTV l = getLiveTV();
-            Player p = getPlayer();
-            Timer t = getStartTimer();
-            if ((l != null) && (p != null) && (t != null)) {
-
-                File f = new File(l.getPath());
-                if ((f.exists()) && (f.length() > FILE_MIN_SIZE)) {
-
-                    t.stop();
-                    setStartTimer(null);
-                    p.addPropertyChangeListener("Playing", this);
-                    p.play(l.getPath());
-
-                } else {
-
-                    log(INFO, "it ain't ready...." + f.exists());
-                }
-            }
-        }
     }
 
     /**

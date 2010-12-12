@@ -108,6 +108,7 @@ public class DiscoverJob extends BaseHDHRJob {
     public void run() {
 
         SystemJob job = SystemJob.getInstance("hdhomerun_config discover");
+        fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
         setSystemJob(job);
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);
