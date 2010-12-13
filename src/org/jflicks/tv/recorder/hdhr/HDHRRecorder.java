@@ -41,6 +41,7 @@ public class HDHRRecorder extends BaseRecorder {
 
         setTitle("HDHomerun");
         setExtension("mpg");
+        setQuickTunable(true);
     }
 
     /**
@@ -112,6 +113,31 @@ public class HDHRRecorder extends BaseRecorder {
             setJobContainer(null);
             setRecording(false);
             setRecordingLiveTV(false);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void quickTune(Channel c) {
+
+        if (isRecordingLiveTV()) {
+
+            boolean doFrequency = true;
+            Channel old = getChannel();
+            if ((old != null) && (c != null)) {
+
+                if (old.getFrequency() == c.getFrequency()) {
+
+                    doFrequency = false;
+                }
+            }
+
+            setChannel(c);
+
+            HDHRQuickTuneJob job = new HDHRQuickTuneJob(this, doFrequency);
+            JobContainer jc = JobManager.getJobContainer(job);
+            jc.start();
         }
     }
 

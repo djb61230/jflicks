@@ -48,6 +48,7 @@ public class V4l2Recorder extends BaseRecorder {
 
         setTitle("V4l2");
         setExtension("mpg");
+        setQuickTunable(false);
     }
 
     /**
@@ -148,6 +149,13 @@ public class V4l2Recorder extends BaseRecorder {
             setRecordingLiveTV(false);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void quickTune(Channel c) {
+    }
+
     private JobContainer getJobContainer() {
         return (jobContainer);
     }

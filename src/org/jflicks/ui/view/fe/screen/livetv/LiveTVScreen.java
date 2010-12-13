@@ -22,8 +22,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -66,7 +64,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @version 1.0
  */
 public class LiveTVScreen extends PlayerScreen implements NMSProperty,
-    PropertyChangeListener, JobListener {
+    JobListener {
 
     private static final long FILE_MIN_SIZE = 3072000L;
 
@@ -154,6 +152,39 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
 
     private void setWatchingStartTime(long l) {
         watchingStartTime = l;
+    }
+
+    private void restartPlayer() {
+
+        Player p = getPlayer();
+        if (p != null) {
+
+            if (p.isPlaying()) {
+
+                p.stop();
+            }
+
+            String hostaddr = null;
+            try {
+
+                InetAddress local = InetAddress.getLocalHost();
+                hostaddr = local.getHostAddress();
+
+            } catch (UnknownHostException ex) {
+
+                log(DEBUG, ex.getMessage());
+            }
+
+            View v = getView();
+            if (v instanceof FrontEndView) {
+
+                FrontEndView fev = (FrontEndView) v;
+                p.setRectangle(fev.getPosition());
+            }
+
+            p.setFrame(Util.findFrame(this));
+            p.play("udp://@" + hostaddr + ":1234");
+        }
     }
 
     /**
@@ -245,16 +276,15 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
                     }
                 }
 
-                Player p = getPlayer();
-                if ((n != null) && (p != null)) {
+                if (n != null) {
 
+                    restartPlayer();
                     setWatchingStartTime(System.currentTimeMillis());
                     LiveTV l = null;
-                    String hostaddr = null;
                     try {
 
                         InetAddress local = InetAddress.getLocalHost();
-                        hostaddr = local.getHostAddress();
+                        String hostaddr = local.getHostAddress();
                         l = n.openSession(hostaddr, 1234);
 
                     } catch (UnknownHostException ex) {
@@ -275,23 +305,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
                             jc.start();
 
                             setLiveTV(l);
-
-                            View v = getView();
-                            if (v instanceof FrontEndView) {
-
-                                FrontEndView fev = (FrontEndView) v;
-                                p.setRectangle(fev.getPosition());
-                            }
-
-                            p.addPropertyChangeListener("Paused", this);
-                            p.addPropertyChangeListener("Completed", this);
-                            //controlKeyboard(false);
-                            p.setFrame(Util.findFrame(this));
-                            p.play("udp://@" + hostaddr + ":1234");
-
-                            //Timer wait = new Timer(1000, this);
-                            //setStartTimer(wait);
-                            //wait.start();
+                            controlKeyboard(false);
 
                         } else {
 
@@ -342,6 +356,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void info() {
 
+        updateInfoWindow();
         RecordingInfoWindow w = getRecordingInfoWindow();
         if (w != null) {
 
@@ -360,7 +375,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void close() {
 
-        //controlKeyboard(true);
+        controlKeyboard(true);
         RecordingInfoWindow w = getRecordingInfoWindow();
         if (w != null) {
 
@@ -520,12 +535,12 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
                 NMS n = NMSUtil.select(getNMS(), l.getHostPort());
                 if (n != null) {
 
+                    restartPlayer();
                     setWatchingStartTime(System.currentTimeMillis());
                     l = n.changeChannel(l, c);
                     if (l.getMessageType() == LiveTV.MESSAGE_TYPE_NONE) {
 
                         setLiveTV(l);
-                        updateInfoWindow();
 
                     } else {
 
@@ -537,41 +552,6 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
                 } else {
 
                     setLiveTV(null);
-                    setDone(true);
-                }
-            }
-        }
-    }
-
-    /**
-     * Listen for the Player being "done".  This signifies the video finished
-     * by coming to the end.
-     *
-     * @param event A given PropertyChangeEvent.
-     */
-    public void propertyChange(PropertyChangeEvent event) {
-
-        if ((event.getSource() == getPlayer()) && (!isDone())) {
-
-            if (event.getPropertyName().equals("Completed")) {
-
-                // If we get this property update, then it means the video
-                // finished playing on it's own.
-                Boolean bobj = (Boolean) event.getNewValue();
-                if (!bobj.booleanValue()) {
-
-                    getPlayer().removePropertyChangeListener(this);
-                    log(DEBUG, "we are stopping because player says so");
-
-                    ActionListener closePerformer = new ActionListener() {
-                        public void actionPerformed(ActionEvent evt) {
-                            close();
-                        }
-                    };
-                    Timer closeTimer = new Timer(1000, closePerformer);
-                    closeTimer.setRepeats(false);
-                    closeTimer.start();
-
                     setDone(true);
                 }
             }
@@ -598,7 +578,6 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
             if (s instanceof HashMap<?, ?>) {
 
                 setGuideMap((HashMap<Channel, ShowAiring[]>) s);
-                updateInfoWindow();
                 setGuideJobContainer(null);
             }
         }

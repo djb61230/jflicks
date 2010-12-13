@@ -37,6 +37,7 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
     private String title;
     private String device;
     private boolean recording;
+    private boolean quickTunable;
     private boolean recordingLiveTV;
     private Channel channel;
     private long startedAt;
@@ -216,6 +217,25 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
      */
     public void setPort(int i) {
         port = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isQuickTunable() {
+        return (quickTunable);
+    }
+
+    /**
+     * Convenience method to set the quick tunable property.
+     *
+     * @param b The given boolean value.
+     */
+    public void setQuickTunable(boolean b) {
+
+        boolean old = quickTunable;
+        quickTunable = b;
+        firePropertyChange("QuickTunable", old, quickTunable);
     }
 
     /**

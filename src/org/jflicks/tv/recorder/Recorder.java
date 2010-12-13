@@ -84,6 +84,15 @@ public interface Recorder extends Config {
     void startStreaming(Channel c, String host, int port);
 
     /**
+     * While a recorder is recording or streaming, change the channel
+     * without stopping the stream.  Not all recorders can do this so
+     * check by using isQuickTunable().
+     *
+     * @param c A given Channel to tune.
+     */
+    void quickTune(Channel c);
+
+    /**
      * Stop streaming.
      */
     void stopStreaming();
@@ -111,6 +120,15 @@ public interface Recorder extends Config {
      * @return True if in record mode and specifically doing the Recording.
      */
     boolean isRecording(Recording r);
+
+    /**
+     * Some recorders are able to change channels "on the fly" without
+     * disrupting recording or streaming.  Then of course other recorders
+     * cannot handle changing the stream this way.
+     *
+     * @return True if the recorder can perform a quick tune.
+     */
+    boolean isQuickTunable();
 
     /**
      * The Channel of the most recent or current recording.

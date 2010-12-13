@@ -47,6 +47,7 @@ public class DvbRecorder extends BaseRecorder {
 
         setTitle("DVB");
         setExtension("mpg");
+        setQuickTunable(false);
     }
 
     /**
@@ -120,6 +121,13 @@ public class DvbRecorder extends BaseRecorder {
             setRecordingLiveTV(false);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void quickTune(Channel c) {
+    }
+
     private JobContainer getJobContainer() {
         return (jobContainer);
     }
