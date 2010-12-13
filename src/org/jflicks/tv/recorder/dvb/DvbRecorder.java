@@ -17,7 +17,6 @@
 package org.jflicks.tv.recorder.dvb;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Properties;
 
 import org.jflicks.configure.BaseConfiguration;
@@ -168,6 +167,12 @@ public class DvbRecorder extends BaseRecorder {
         }
     }
 
+    /**
+     * The DVB recorders might want to change channels using the name instead
+     * of the channel number.
+     *
+     * @return True if one should use the channel name to tune to it.
+     */
     public boolean isConfiguredUseChannelName() {
 
         boolean result = false;

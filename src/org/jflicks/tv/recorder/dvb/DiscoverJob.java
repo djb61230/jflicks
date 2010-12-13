@@ -19,9 +19,7 @@ package org.jflicks.tv.recorder.dvb;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
-import org.jflicks.job.JobManager;
 import org.jflicks.tv.recorder.BaseDeviceJob;
 
 /**

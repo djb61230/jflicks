@@ -165,9 +165,6 @@ public class RecordJob extends BaseDeviceJob {
      * {@inheritDoc}
      */
     public void jobUpdate(JobEvent event) {
-
-        if (event.getType() == JobEvent.UPDATE) {
-        }
     }
 
 }

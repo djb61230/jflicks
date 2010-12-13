@@ -277,6 +277,15 @@ public class Vlcj extends BasePlayer {
             setDialog(win);
 
             String[] vlcArgs = getArgs();
+            log(DEBUG, "vlcargs " + (vlcArgs != null));
+            if (vlcArgs != null) {
+
+                for (int i = 0; i < vlcArgs.length; i++) {
+
+                    log(DEBUG, "vlcargs " + i + " " + vlcArgs[i]);
+                }
+            }
+
             MediaPlayerFactory mpf = new MediaPlayerFactory(vlcArgs);
             setMediaPlayerFactory(mpf);
 
@@ -311,7 +320,7 @@ public class Vlcj extends BasePlayer {
      */
     public void stop() {
 
-        System.out.println("stop called!");
+        log(DEBUG, "stop called!");
         setPaused(false);
         setPlaying(false);
 
@@ -364,7 +373,7 @@ public class Vlcj extends BasePlayer {
         EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
         if (p != null) {
 
-            System.out.println("seek length: " + p.getLength());
+            log(DEBUG, "seek length: " + p.getLength());
             if (p.getLength() > 0) {
 
                 p.skip((long) (seconds * 1000));
@@ -375,7 +384,7 @@ public class Vlcj extends BasePlayer {
                 if (denom > 0.0f) {
 
                     float worth = (float) seconds / denom;
-                    System.out.println("figuring : " + worth);
+                    log(DEBUG, "figuring : " + worth);
                     p.setPosition(p.getPosition() + worth);
                 }
             }

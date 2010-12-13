@@ -16,9 +16,6 @@
 */
 package org.jflicks.tv.recorder.hdhr;
 
-import java.io.File;
-import java.util.Date;
-
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;

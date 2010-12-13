@@ -19,8 +19,6 @@ package org.jflicks.tv.recorder.dvb;
 import java.io.File;
 import java.io.FilenameFilter;
 
-import org.jflicks.util.Util;
-
 /**
  * A FilenameFilter for /dev/dvb/adapterN/dvrN files.
  *

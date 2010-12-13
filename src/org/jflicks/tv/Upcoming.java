@@ -444,7 +444,7 @@ public class Upcoming implements Serializable, Comparable<Upcoming> {
     /**
      * The comparable interface.
      *
-     * @param r The given Upcoming instance to compare.
+     * @param u The given Upcoming instance to compare.
      * @throws ClassCastException on the input argument.
      * @return An int representing their "equality".
      */

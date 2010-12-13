@@ -16,18 +16,14 @@
 */
 package org.jflicks.tv.recorder.dvb;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import org.jflicks.configure.BaseConfiguration;
-import org.jflicks.configure.NameValue;
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
-import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.recorder.Recorder;
 
 import org.osgi.framework.BundleContext;

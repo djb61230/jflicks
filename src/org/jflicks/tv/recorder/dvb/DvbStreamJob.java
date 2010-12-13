@@ -18,11 +18,8 @@ package org.jflicks.tv.recorder.dvb;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.Date;
 import javax.swing.Timer;
 
-import org.jflicks.configure.NameValue;
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
@@ -271,9 +268,7 @@ public class DvbStreamJob extends AbstractJob implements JobListener {
      */
     public void jobUpdate(JobEvent event) {
 
-        if (event.getType() == JobEvent.COMPLETE) {
-
-        } else if (event.getType() == JobEvent.UPDATE) {
+        if (event.getType() == JobEvent.UPDATE) {
 
             log(DvbRecorder.DEBUG, event.getMessage());
         }

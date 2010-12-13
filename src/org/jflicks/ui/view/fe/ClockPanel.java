@@ -38,6 +38,9 @@ import org.jdesktop.swingx.JXPanel;
  */
 public class ClockPanel extends JXPanel implements ActionListener {
 
+    /**
+     * Simple constant to make sure enought room to display date/time.
+     */
     public static final double FUDGE = 60.0;
 
     private SimpleDateFormat simpleDateFormat;
