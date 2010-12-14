@@ -29,6 +29,6 @@ public interface Fix {
      *
      * @return A Finding instance.
      */
-    boolean perform();
+    boolean fix();
 }
 

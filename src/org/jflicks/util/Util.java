@@ -1299,6 +1299,55 @@ public final class Util {
     }
 
     /**
+     * Convenience method to find all paths for a given program that can
+     * be accessed at runtime because it's in the users PATH.  The thing to
+     * remember is that the first item in the returned String array is most
+     * likely the one that would be executed because it's the first one
+     * found in the PATH.  But that may be platform dependent.
+     *
+     * @param program The program to find.
+     * @return An array of paths if the program has been found.
+     */
+    public static String[] getProgramPaths(String program) {
+
+        String[] result = null;
+
+        if (isWindows()) {
+
+            program = program + ".exe";
+        }
+
+        String path = System.getenv("PATH");
+        if (path != null) {
+
+            String[] dirs = path.split(System.getProperty("path.separator"));
+            if ((dirs != null) && (dirs.length > 0)) {
+
+                ArrayList<String> l = new ArrayList<String>();
+                for (int i = 0; i < dirs.length; i++) {
+
+                    String tmp = dirs[i] + System.getProperty("file.separator")
+                        + program;
+                    File ftmp = new File(tmp);
+                    if ((ftmp.exists()) && (ftmp.isFile())) {
+
+                        if (!l.contains(tmp)) {
+                            l.add(tmp);
+                        }
+                    }
+                }
+
+                if (l.size() > 0) {
+
+                    result = l.toArray(new String[l.size()]);
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    /**
      * Simple main method that dumps the system properties to stdout.
      *
      * @param args Arguments that happen to be ignored.
