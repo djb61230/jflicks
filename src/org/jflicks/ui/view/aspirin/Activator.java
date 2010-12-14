@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.ui.view.client;
+package org.jflicks.ui.view.aspirin;
 
 import java.util.Hashtable;
 
@@ -27,8 +27,8 @@ import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Simple activator that creates a ClientView and starts it.  Also registers
- * the ClientView so a Controller can find it.
+ * Simple activator that creates a AspirinView and starts it.  Also registers
+ * the AspirinView so a Controller can find it.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -45,7 +45,7 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
-        ClientView v = new ClientView();
+        AspirinView v = new AspirinView();
         v.setBundleContext(bc);
 
         ServiceTracker cst =
@@ -55,7 +55,7 @@ public class Activator extends BaseActivator {
         cst.open();
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
-        dict.put(ClientView.TITLE_PROPERTY, "JFLICKS-CONFIGCLIENT");
+        dict.put(AspirinView.TITLE_PROPERTY, "JFLICKS-ASPIRIN");
 
         bc.registerService(View.class.getName(), v, dict);
 
