@@ -311,6 +311,33 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-ui-view-aspirin.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-aspirin-analyze.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-aspirin-analyze-path.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-ui-view-client.bnd"
             output="${bundle}"
         />
@@ -557,6 +584,12 @@
 
     </target>
 
+    <target name="check-felix-aspirin" unless="felix.aspirin.home">
+
+        <echo message="Felix aspirin home is not defined!"/>
+
+    </target>
+
     <target name="check-felix-client" unless="felix.client.home">
 
         <echo message="Felix client home is not defined!"/>
@@ -581,12 +614,17 @@
 
     </target>
 
-    <target name="deploy" depends="build,check-felix-server,check-felix-client,check-felix-scheduler,check-felix-fe,check-felix-metadata"
+    <target name="deploy" depends="build,check-felix-server,check-felix-aspirin,check-felix-client,check-felix-scheduler,check-felix-fe,check-felix-metadata"
         description="Gotta do more than just compile!">
 
         <!-- First do server side. -->
         <copy todir="${felix.server.home}/bundle">
             <fileset dir="${bundle}" includes="${server.deploy}"/>
+        </copy>
+
+        <!-- Now do aspirin side. -->
+        <copy todir="${felix.aspirin.home}/bundle">
+            <fileset dir="${bundle}" includes="${aspirin.deploy}"/>
         </copy>
 
         <!-- Now do client side. -->

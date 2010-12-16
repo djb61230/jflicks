@@ -114,6 +114,24 @@
         <copy file="${dist}/jflicks-install.jar" todir="server/bin"/>
         <copy file="${topdist}/directvweb.jar" todir="server/bin"/>
 
+        <!-- Now do aspirin side. -->
+        <copy file="${bundle}/jflicks-base.jar"
+            todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-swingx.jar"
+            todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-nms-remote.jar"
+            todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-ui.jar"
+            todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view.jar"
+            todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-aspirin.jar"
+            todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-aspirin-analyze.jar"
+            todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-path.jar"
+            todir="aspirin/bundle"/>
+
         <!-- Now do client side. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="client/bundle"/>

@@ -27,22 +27,6 @@ package org.jflicks.ui.view.aspirin.analyze;
 public interface Analyze {
 
     /**
-     * An Analyze service might be designed to analyze a server side setup.
-     */
-    int SERVER_TYPE = 1;
-
-    /**
-     * An Analyze service might be designed to analyze a client side setup.
-     */
-    int CLIENT_TYPE = 2;
-
-    /**
-     * An Analyze service might be designed to analyze both a server and
-     * client side setup.
-     */
-    int ALL_TYPE = 3;
-
-    /**
      * The Analyze interface needs a title property.
      */
     String TITLE_PROPERTY = "Analyze-Title";
@@ -69,32 +53,11 @@ public interface Analyze {
     String getLongDescription();
 
     /**
-     * The type shows what system the Analyze is best suited to run on.
+     * An Analyze instance is valid against a set of deployed bundles.
      *
-     * @return One of our types, SERVER_TYPE, CLIENT_TYPE, or ALL_TYPE.
+     * @return An array of bundle names.
      */
-    int getType();
-
-    /**
-     * Convenience method to see if it is a server side type.
-     *
-     * @return True if type is SERVER_TYPE.
-     */
-    boolean isServerType();
-
-    /**
-     * Convenience method to see if it is a client side type.
-     *
-     * @return True if type is CLIENT_TYPE.
-     */
-    boolean isClientType();
-
-    /**
-     * Convenience method to see if it is a server side type.
-     *
-     * @return True if type is ALL_TYPE.
-     */
-    boolean isAllType();
+    String[] getBundles();
 
     /**
      * Perform an analysis of the current system and return a Finding.

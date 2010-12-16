@@ -14,8 +14,10 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.ui.view.aspirin.analyze;
+package org.jflicks.ui.view.aspirin.analyze.path;
 
+import org.jflicks.ui.view.aspirin.analyze.BaseAnalyze;
+import org.jflicks.ui.view.aspirin.analyze.Finding;
 import org.jflicks.util.Util;
 
 /**
@@ -28,11 +30,15 @@ import org.jflicks.util.Util;
 public class PathAnalyze extends BaseAnalyze {
 
     private String program;
+    private String download;
+    private String[] paths;
 
     /**
      * Simple empty constructor.
      */
     public PathAnalyze() {
+
+        setPaths(Util.getEnvPaths());
     }
 
     /**
@@ -54,6 +60,34 @@ public class PathAnalyze extends BaseAnalyze {
     }
 
     /**
+     * A String that describes where to download the program off the Internet.
+     * This is most likely a String URL but it doesn't have to be so.
+     *
+     * @return A download String.
+     */
+    public String getDownload() {
+        return (download);
+    }
+
+    /**
+     * A String that describes where to download the program off the Internet.
+     * This is most likely a String URL but it doesn't have to be so.
+     *
+     * @param s A download String.
+     */
+    public void setDownload(String s) {
+        download = s;
+    }
+
+    public String[] getPaths() {
+        return (paths);
+    }
+
+    public void setPaths(String[] array) {
+        paths = array;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public Finding analyze() {
@@ -61,10 +95,12 @@ public class PathAnalyze extends BaseAnalyze {
         Finding result = null;
 
         String s = getProgram();
-        if (s != null) {
+        String[] array = getPaths();
+        if ((s != null) && (array != null)) {
 
             result = new Finding();
-            String[] array = Util.getProgramPaths(s);
+            result.setTitle(getShortDescription());
+            array = Util.getProgramPaths(array, s);
             if (array != null) {
 
                 result.setPassed(true);
@@ -91,7 +127,16 @@ public class PathAnalyze extends BaseAnalyze {
             } else {
 
                 result.setPassed(false);
-                result.setDescription(s + " was not found!");
+                String dl = getDownload();
+                if (dl != null) {
+
+                    result.setDescription(s + " was not found!  More Info: "
+                        + dl);
+
+                } else {
+
+                    result.setDescription(s + " was not found!");
+                }
             }
 
         } else {
@@ -100,6 +145,15 @@ public class PathAnalyze extends BaseAnalyze {
         }
 
         return (result);
+    }
+
+    /**
+     * Override so we look good in UI components.
+     *
+     * @return A String that is the short description property.
+     */
+    public String toString() {
+        return (getShortDescription());
     }
 
 }

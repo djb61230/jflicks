@@ -24,6 +24,7 @@ package org.jflicks.ui.view.aspirin.analyze;
  */
 public class Finding {
 
+    private String title;
     private String description;
     private boolean passed;
     private Fix fix;
@@ -32,6 +33,24 @@ public class Finding {
      * Simple empty constructor.
      */
     public Finding() {
+    }
+
+    /**
+     * A title for the finding.
+     *
+     * @return The description as a String instance.
+     */
+    public String getTitle() {
+        return (title);
+    }
+
+    /**
+     * A title for the finding.
+     *
+     * @param s The description as a String instance.
+     */
+    public void setTitle(String s) {
+        title = s;
     }
 
     /**
@@ -86,6 +105,15 @@ public class Finding {
      */
     public void setFix(Fix f) {
         fix = f;
+    }
+
+    /**
+     * Override so we look good in UI components.
+     *
+     * @return A String that is the title property.
+     */
+    public String toString() {
+        return (getTitle());
     }
 
 }

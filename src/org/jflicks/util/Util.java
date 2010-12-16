@@ -1298,6 +1298,19 @@ public final class Util {
         }
     }
 
+    public static String[] getEnvPaths() {
+
+        String[] result = null;
+
+        String path = System.getenv("PATH");
+        if (path != null) {
+
+            result = path.split(System.getProperty("path.separator"));
+        }
+
+        return (result);
+    }
+
     /**
      * Convenience method to find all paths for a given program that can
      * be accessed at runtime because it's in the users PATH.  The thing to
@@ -1310,6 +1323,19 @@ public final class Util {
      */
     public static String[] getProgramPaths(String program) {
 
+        return (getProgramPaths(getEnvPaths(), program));
+    }
+
+    /**
+     * Convenience method to find all paths for a given program that are
+     * in the given array of directories.
+     *
+     * @param dirs The list of directories to check.
+     * @param program The program to find.
+     * @return An array of paths if the program has been found.
+     */
+    public static String[] getProgramPaths(String[] dirs, String program) {
+
         String[] result = null;
 
         if (isWindows()) {
@@ -1317,30 +1343,25 @@ public final class Util {
             program = program + ".exe";
         }
 
-        String path = System.getenv("PATH");
-        if (path != null) {
+        if ((dirs != null) && (dirs.length > 0)) {
 
-            String[] dirs = path.split(System.getProperty("path.separator"));
-            if ((dirs != null) && (dirs.length > 0)) {
+            ArrayList<String> l = new ArrayList<String>();
+            for (int i = 0; i < dirs.length; i++) {
 
-                ArrayList<String> l = new ArrayList<String>();
-                for (int i = 0; i < dirs.length; i++) {
+                String tmp = dirs[i] + System.getProperty("file.separator")
+                    + program;
+                File ftmp = new File(tmp);
+                if ((ftmp.exists()) && (ftmp.isFile())) {
 
-                    String tmp = dirs[i] + System.getProperty("file.separator")
-                        + program;
-                    File ftmp = new File(tmp);
-                    if ((ftmp.exists()) && (ftmp.isFile())) {
-
-                        if (!l.contains(tmp)) {
-                            l.add(tmp);
-                        }
+                    if (!l.contains(tmp)) {
+                        l.add(tmp);
                     }
                 }
+            }
 
-                if (l.size() > 0) {
+            if (l.size() > 0) {
 
-                    result = l.toArray(new String[l.size()]);
-                }
+                result = l.toArray(new String[l.size()]);
             }
         }
 

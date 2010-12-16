@@ -37,6 +37,7 @@ public class Activator extends BaseActivator {
 
     private ServiceTracker controllerServiceTracker;
     private ServiceTracker logServiceTracker;
+    private AnalyzeTracker analyzeTracker;
 
     /**
      * {@inheritDoc}
@@ -53,6 +54,10 @@ public class Activator extends BaseActivator {
         setControllerServiceTracker(cst);
         v.setControllerServiceTracker(cst);
         cst.open();
+
+        AnalyzeTracker at = new AnalyzeTracker(bc, v);
+        setAnalyzeTracker(at);
+        at.open();
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
         dict.put(AspirinView.TITLE_PROPERTY, "JFLICKS-ASPIRIN");
@@ -75,6 +80,11 @@ public class Activator extends BaseActivator {
             cst.close();
         }
 
+        AnalyzeTracker at = getAnalyzeTracker();
+        if (at != null) {
+            at.close();
+        }
+
         if (logServiceTracker != null) {
 
             logServiceTracker.close();
@@ -88,6 +98,14 @@ public class Activator extends BaseActivator {
 
     private void setControllerServiceTracker(ServiceTracker cst) {
         controllerServiceTracker = cst;
+    }
+
+    private AnalyzeTracker getAnalyzeTracker() {
+        return (analyzeTracker);
+    }
+
+    private void setAnalyzeTracker(AnalyzeTracker t) {
+        analyzeTracker = t;
     }
 
 }

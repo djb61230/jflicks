@@ -29,7 +29,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -37,13 +37,10 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 
-import org.jflicks.configure.Configuration;
-import org.jflicks.configure.ConfigurationPanel;
 import org.jflicks.nms.NMS;
 import org.jflicks.ui.view.JFlicksView;
-import org.jflicks.util.TabClose;
+import org.jflicks.ui.view.aspirin.analyze.Analyze;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXFrame;
@@ -59,34 +56,78 @@ public class AspirinView extends JFlicksView {
     private static final String HOWTO = "http://www.sevenpets.com/blog/"
         + "the-home-theater-automated-ticket-maker-howto/";
 
+    private NMS[] nms;
     private JXFrame frame;
-    private JTabbedPane tabbedPane;
+    private ControlPanel controlPanel;
     private JMenu nmsMenu;
     private AboutPanel aboutPanel;
-    private HashMap<JTabbedPane, NMS> hashMap;
+    private ArrayList<Analyze> analyzeList;
 
     /**
      * Default constructor.
      */
     public AspirinView() {
 
-        setHashMap(new HashMap<JTabbedPane, NMS>());
+        setAnalyzeList(new ArrayList<Analyze>());
     }
 
-    private HashMap<JTabbedPane, NMS> getHashMap() {
-        return (hashMap);
+    private NMS[] getNMS() {
+        return (nms);
     }
 
-    private void setHashMap(HashMap<JTabbedPane, NMS> m) {
-        hashMap = m;
+    private void setNMS(NMS[] array) {
+        nms = array;
     }
 
-    private void add(JTabbedPane p, NMS n) {
+    private ArrayList<Analyze> getAnalyzeList() {
+        return (analyzeList);
+    }
 
-        HashMap<JTabbedPane, NMS> m = getHashMap();
-        if ((m != null) && (p != null) && (n != null)) {
+    private void setAnalyzeList(ArrayList<Analyze> l) {
+        analyzeList = l;
+    }
 
-            m.put(p, n);
+    /**
+     * We keep track of Analyze instances that are available to us.
+     *
+     * @param a A given Analyze.
+     */
+    public void addAnalyze(Analyze a) {
+
+        ArrayList<Analyze> l = getAnalyzeList();
+        if ((l != null) && (a != null)) {
+
+            l.add(a);
+            updateAnalyze();
+        }
+    }
+
+    /**
+     * We keep track of Analyze instances that are available to us.
+     *
+     * @param a A given Analyze.
+     */
+    public void removeAnalyze(Analyze a) {
+
+        ArrayList<Analyze> l = getAnalyzeList();
+        if ((l != null) && (a != null)) {
+
+            l.remove(a);
+            updateAnalyze();
+        }
+    }
+
+    private void updateAnalyze() {
+
+        ArrayList<Analyze> l = getAnalyzeList();
+        ControlPanel cp = getControlPanel();
+        if ((cp != null) && (l != null)) {
+
+            if (l.size() > 0) {
+
+                Analyze[] array = l.toArray(new Analyze[l.size()]);
+                cp.setAnalyzes(array);
+            }
         }
     }
 
@@ -134,11 +175,11 @@ public class AspirinView extends JFlicksView {
 
             frame.setLayout(new BorderLayout());
 
-            JTabbedPane pane = new JTabbedPane();
-            setTabbedPane(pane);
-            pane.setPreferredSize(new Dimension(800, 600));
+            ControlPanel control = new ControlPanel();
+            setControlPanel(control);
+            updateAnalyze();
 
-            frame.add(pane, BorderLayout.CENTER);
+            frame.add(control, BorderLayout.CENTER);
 
             // Build our menubar.
             JMenuBar mb = new JMenuBar();
@@ -150,9 +191,6 @@ public class AspirinView extends JFlicksView {
             JMenu nmenu = new JMenu("NMS");
             setNMSMenu(nmenu);
             fileMenu.add(nmenu);
-
-            DeleteConfigurationAction daction = new DeleteConfigurationAction();
-            fileMenu.add(daction);
 
             ExitAction exitAction = new ExitAction();
             fileMenu.addSeparator();
@@ -184,12 +222,12 @@ public class AspirinView extends JFlicksView {
         return (frame);
     }
 
-    private JTabbedPane getTabbedPane() {
-        return (tabbedPane);
+    private ControlPanel getControlPanel() {
+        return (controlPanel);
     }
 
-    private void setTabbedPane(JTabbedPane tp) {
-        tabbedPane = tp;
+    private void setControlPanel(ControlPanel p) {
+        controlPanel = p;
     }
 
     private JMenu getNMSMenu() {
@@ -307,82 +345,11 @@ public class AspirinView extends JFlicksView {
         }
 
         public void propertyChange(PropertyChangeEvent event) {
-
-            String name = event.getPropertyName();
-            if ((nms != null) && (name != null)) {
-
-                Configuration c = (Configuration) event.getNewValue();
-                if (c != null) {
-
-                    nms.save(c, true);
-                }
-            }
         }
 
         public void actionPerformed(ActionEvent e) {
 
             if (nms != null) {
-
-                // Load up a new tab with a ticket editor.
-                JTabbedPane tp = getTabbedPane();
-                if (tp != null) {
-
-                    int index = tp.getTabCount();
-                    JTabbedPane sub = new JTabbedPane(JTabbedPane.LEFT);
-                    Configuration[] confs = nms.getConfigurations();
-                    if (confs != null) {
-
-                        for (int i = 0; i < confs.length; i++) {
-
-                            ConfigurationPanel cp =
-                                new ConfigurationPanel(confs[i]);
-                            cp.addPropertyChangeListener("Configuration", this);
-                            sub.add(confs[i].getName(), cp);
-                        }
-                    }
-
-                    add(sub, nms);
-                    tp.add(nms.getTitle(), sub);
-                    tp.setTabComponentAt(index,
-                        new TabClose(tp, nms.getTitle()));
-                    tp.setSelectedIndex(index);
-                }
-            }
-        }
-    }
-
-    class DeleteConfigurationAction extends AbstractAction {
-
-        public DeleteConfigurationAction() {
-
-            putValue(NAME, "Delete Configuration");
-        }
-
-        public void actionPerformed(ActionEvent e) {
-
-            HashMap<JTabbedPane, NMS> m = getHashMap();
-            JTabbedPane tp = getTabbedPane();
-            if ((m != null) && (tp != null)) {
-
-                JTabbedPane sub = (JTabbedPane) tp.getSelectedComponent();
-                if (sub != null) {
-
-                    NMS nms = m.get(sub);
-                    if (nms != null) {
-
-                        ConfigurationPanel cp =
-                            (ConfigurationPanel) sub.getSelectedComponent();
-                        if (cp != null) {
-
-                            Configuration c = cp.getConfiguration();
-                            if (c != null) {
-
-                                nms.removeConfiguration(c);
-                                sub.remove(cp);
-                            }
-                        }
-                    }
-                }
             }
         }
     }

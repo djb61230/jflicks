@@ -27,7 +27,7 @@ public abstract class BaseAnalyze implements Analyze {
     private String title;
     private String shortDescription;
     private String longDescription;
-    private int type;
+    private String[] bundles;
 
     /**
      * Simple empty constructor.
@@ -86,38 +86,17 @@ public abstract class BaseAnalyze implements Analyze {
     /**
      * {@inheritDoc}
      */
-    public int getType() {
-        return (type);
+    public String[] getBundles() {
+        return (bundles);
     }
 
     /**
      * Convenience method to set this property.
      *
-     * @param i The given type value.
+     * @param array The given array of bundles.
      */
-    public void setType(int i) {
-        type = i;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isAllType() {
-        return (getType() == ALL_TYPE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isClientType() {
-        return (getType() == CLIENT_TYPE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isServerType() {
-        return (getType() == SERVER_TYPE);
+    public void setBundles(String[] array) {
+        bundles = array;
     }
 
 }
