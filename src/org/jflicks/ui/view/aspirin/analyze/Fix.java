@@ -16,13 +16,15 @@
 */
 package org.jflicks.ui.view.aspirin.analyze;
 
+import java.io.Serializable;
+
 /**
  * The Fix interface defines a method that can fix a problem.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public interface Fix {
+public interface Fix extends Serializable {
 
     /**
      * Perform an analysis of the current system and return a Finding.

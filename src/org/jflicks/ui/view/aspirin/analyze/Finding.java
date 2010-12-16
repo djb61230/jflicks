@@ -16,13 +16,15 @@
 */
 package org.jflicks.ui.view.aspirin.analyze;
 
+import java.io.Serializable;
+
 /**
  * This class contains all the properties representing a finding.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class Finding {
+public class Finding implements Serializable {
 
     private String title;
     private String description;

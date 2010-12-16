@@ -16,6 +16,8 @@
 */
 package org.jflicks.ui.view.aspirin.analyze.path;
 
+import java.util.ArrayList;
+
 import org.jflicks.ui.view.aspirin.analyze.BaseAnalyze;
 import org.jflicks.ui.view.aspirin.analyze.Finding;
 import org.jflicks.util.Util;
@@ -87,6 +89,32 @@ public class PathAnalyze extends BaseAnalyze {
         paths = array;
     }
 
+    private String[] substitute(String[] array) {
+
+        String[] result = array;
+
+        String path = getInstallationPath();
+        if ((path != null) && (array != null) && (array.length > 0)) {
+
+            ArrayList<String> list = new ArrayList<String>();
+            for (int i = 0; i < array.length; i++) {
+
+                String tmp = array[i];
+                int index = tmp.indexOf("$INSTALL");
+                if (index != -1) {
+
+                    tmp = path + tmp.substring(index + 8);
+                }
+
+                list.add(tmp);
+            }
+
+            result = list.toArray(new String[list.size()]);
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -96,6 +124,7 @@ public class PathAnalyze extends BaseAnalyze {
 
         String s = getProgram();
         String[] array = getPaths();
+        array = substitute(array);
         if ((s != null) && (array != null)) {
 
             result = new Finding();

@@ -1340,7 +1340,9 @@ public final class Util {
 
         if (isWindows()) {
 
-            program = program + ".exe";
+            if (!program.endsWith(".exe")) {
+                program = program + ".exe";
+            }
         }
 
         if ((dirs != null) && (dirs.length > 0)) {

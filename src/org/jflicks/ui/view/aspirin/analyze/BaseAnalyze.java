@@ -16,6 +16,9 @@
 */
 package org.jflicks.ui.view.aspirin.analyze;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 /**
  * This class is a base implementation of the Analyze interface.
  *
@@ -28,6 +31,7 @@ public abstract class BaseAnalyze implements Analyze {
     private String shortDescription;
     private String longDescription;
     private String[] bundles;
+    private String installationPath;
 
     /**
      * Simple empty constructor.
@@ -97,6 +101,49 @@ public abstract class BaseAnalyze implements Analyze {
      */
     public void setBundles(String[] array) {
         bundles = array;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getInstallationPath() {
+        return (installationPath);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setInstallationPath(String s) {
+        installationPath = s;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isNeeded(String[] bundleNames) {
+
+        boolean result = false;
+
+        String[] mybundles = getBundles();
+        if ((bundleNames != null) && (mybundles != null)) {
+
+            ArrayList<String> l = new ArrayList<String>();
+            for (int i = 0; i < bundleNames.length; i++) {
+                l.add(bundleNames[i]);
+            }
+            Collections.sort(l);
+            bundleNames = l.toArray(new String[l.size()]);
+            for (int i = 0; i < mybundles.length; i++) {
+
+                if (Arrays.binarySearch(bundleNames, mybundles[i]) >= 0) {
+
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return (result);
     }
 
 }

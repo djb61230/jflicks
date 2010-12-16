@@ -65,5 +65,34 @@ public interface Analyze {
      * @return A Finding instance.
      */
     Finding analyze();
+
+    /**
+     * Convenience method to determine if an Analyze instance is actually
+     * needed given the set of bundles that are being deployed.  No sense
+     * in running an Analyce if it is never needed.
+     *
+     * @param bundleNames The names of deployed bundles.
+     * @return True if at least one of the bundles is dependent upon this
+     * instance.
+     */
+    boolean isNeeded(String[] bundleNames);
+
+    /**
+     * Sometimes an Analyze instance needs a directory path to do it's
+     * work.  Perhaps it needs to know the existance of some file.  This
+     * property tells the Analyze instance this information.
+     *
+     * @return A String representing a directory.
+     */
+    String getInstallationPath();
+
+    /**
+     * Sometimes an Analyze instance needs a directory path to do it's
+     * work.  Perhaps it needs to know the existance of some file.  This
+     * property tells the Analyze instance this information.
+     *
+     * @param s A String representing a directory.
+     */
+    void setInstallationPath(String s);
 }
 

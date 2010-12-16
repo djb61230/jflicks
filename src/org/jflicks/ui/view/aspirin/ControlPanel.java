@@ -16,13 +16,22 @@
 */
 package org.jflicks.ui.view.aspirin;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.ArrayList;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -33,6 +42,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.jflicks.ui.view.aspirin.analyze.Analyze;
 import org.jflicks.ui.view.aspirin.analyze.Finding;
+import org.jflicks.util.BundleFilter;
+import org.jflicks.util.Util;
 
 /**
  * Main panel that allows the user to run Analyze instances against a
@@ -45,11 +56,13 @@ public class ControlPanel extends JPanel implements ActionListener,
     ListSelectionListener {
 
     private Analyze[] analyzes;
+    private Analyze[] currentAnalyzes;
     private JTextField pathTextField;
     private JButton browseButton;
     private JList analyzeList;
     private AnalyzePanel analyzePanel;
     private JButton executeButton;
+    private JFrame executeFrame;
 
     /**
      * Simple constructor.
@@ -58,7 +71,12 @@ public class ControlPanel extends JPanel implements ActionListener,
 
         JTextField pathtf = new JTextField(20);
         pathtf.setEditable(false);
+        pathtf.setBorder(null);
         setPathTextField(pathtf);
+        JPanel pathPanel = new JPanel(new BorderLayout());
+        pathPanel.setBorder(BorderFactory.createTitledBorder(
+            "jflicks installation to examine"));
+        pathPanel.add(pathtf, BorderLayout.CENTER);
 
         JButton browse = new JButton("Browse");
         browse.addActionListener(this);
@@ -72,6 +90,10 @@ public class ControlPanel extends JPanel implements ActionListener,
         JScrollPane alistScroller = new JScrollPane(alist,
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JPanel listPanel = new JPanel(new BorderLayout());
+        listPanel.setBorder(BorderFactory.createTitledBorder(
+            "Analyzers To Execute"));
+        listPanel.add(alistScroller, BorderLayout.CENTER);
 
         AnalyzePanel ap = new AnalyzePanel();
         setAnalyzePanel(ap);
@@ -91,7 +113,7 @@ public class ControlPanel extends JPanel implements ActionListener,
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(4, 4, 4, 4);
 
-        add(pathtf, gbc);
+        add(pathPanel, gbc);
 
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
@@ -113,7 +135,7 @@ public class ControlPanel extends JPanel implements ActionListener,
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(4, 4, 4, 4);
 
-        add(alistScroller, gbc);
+        add(listPanel, gbc);
 
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
@@ -143,13 +165,23 @@ public class ControlPanel extends JPanel implements ActionListener,
     }
 
     public void setAnalyzes(Analyze[] array) {
+
         analyzes = array;
+        setCurrentAnalyzes(array);
 
         JList l = getAnalyzeList();
         if (l != null) {
 
             l.setListData(array);
         }
+    }
+
+    private Analyze[] getCurrentAnalyzes() {
+        return (currentAnalyzes);
+    }
+
+    private void setCurrentAnalyzes(Analyze[] array) {
+        currentAnalyzes = array;
     }
 
     private JTextField getPathTextField() {
@@ -192,10 +224,105 @@ public class ControlPanel extends JPanel implements ActionListener,
         executeButton = b;
     }
 
+    private JFrame getExecuteFrame() {
+        return (executeFrame);
+    }
+
+    private void setExecuteFrame(JFrame f) {
+        executeFrame = f;
+    }
+
     private void browseAction() {
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+
+            File dir = chooser.getSelectedFile();
+            File bundle = new File(dir, "bundle");
+            if ((bundle.exists()) && (bundle.isDirectory())) {
+
+                BundleFilter bf = new BundleFilter();
+                String[] bundleNames = bundle.list(bf);
+
+                Analyze[] all = getAnalyzes();
+                if ((all != null) && (bundleNames != null)) {
+
+                    ArrayList<Analyze> l = new ArrayList<Analyze>();
+                    for (int i = 0; i < all.length; i++) {
+
+                        if (all[i].isNeeded(bundleNames)) {
+
+                            all[i].setInstallationPath(dir.getPath());
+                            l.add(all[i]);
+                        }
+                    }
+
+                    if (l.size() > 0) {
+
+                        Analyze[] array = l.toArray(new Analyze[l.size()]);
+                        setCurrentAnalyzes(array);
+                        JList list = getAnalyzeList();
+                        if (list != null) {
+
+                            list.setListData(array);
+                        }
+                    }
+                }
+
+                JTextField tf = getPathTextField();
+                if (tf != null) {
+
+                    tf.setText(dir.getPath());
+                }
+
+            } else {
+
+                JOptionPane.showMessageDialog(Util.findFrame(this),
+                    "Not a jflicks install!!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void exitAction() {
+
+        System.out.println("exitAction called");
+        JFrame f = getExecuteFrame();
+        if (f != null) {
+
+            f.setVisible(false);
+            f.dispose();
+            setExecuteFrame(null);
+        }
     }
 
     private void executeAction() {
+
+        Analyze[] array = getCurrentAnalyzes();
+        JFrame f = getExecuteFrame();
+        if ((array != null) && (f == null)) {
+
+            ExecutePanel ep = new ExecutePanel();
+            ep.setAnalyzes(array);
+
+            JFrame frame = new JFrame("Aspirin - Execute Analysis");
+            setExecuteFrame(frame);
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent evt) {
+                    exitAction();
+                }
+            });
+
+            frame.setLayout(new BorderLayout());
+            frame.add(ep, BorderLayout.CENTER);
+            frame.pack();
+            frame.setVisible(true);
+
+            ep.execute();
+        }
     }
 
     public void actionPerformed(ActionEvent event) {

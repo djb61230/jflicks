@@ -66,6 +66,7 @@ public class FindingPanel extends JPanel {
         setStatusTextField(statustf);
 
         JButton button = new JButton("Fix");
+        button.setEnabled(false);
         setFixButton(button);
 
         String[] prompts = {
