@@ -118,4 +118,52 @@ public class PromptPanel extends JPanel {
         }
     }
 
+    public PromptPanel(String[] prompts, JComponent[] components,
+        double[] yweights) {
+
+        this(null, prompts, components, yweights);
+    }
+
+    public PromptPanel(String title, String[] prompts, JComponent[] components,
+        double[] yweights) {
+
+        setLayout(new GridBagLayout());
+
+        if (title != null) {
+            setBorder(BorderFactory.createTitledBorder(title));
+        } else {
+            setBorder(BorderFactory.createEmptyBorder());
+        }
+
+        GridBagConstraints gbc = null;
+        for (int i = 0; i < components.length; i++) {
+
+            gbc = new GridBagConstraints();
+
+            // First do do the prompt.
+            gbc.weightx = 0.0;
+            gbc.weighty = yweights[i];
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            gbc.gridwidth = 1;
+            gbc.gridheight = 1;
+            gbc.anchor = GridBagConstraints.EAST;
+            gbc.insets = new Insets(INSET, INSET, INSET, INSET);
+            add(new JLabel(prompts[i]), gbc);
+
+            // Now the component.
+            gbc = new GridBagConstraints();
+            gbc.weightx = 1.0;
+            gbc.weighty = yweights[i];
+            gbc.gridx = 1;
+            gbc.gridy = i;
+            gbc.gridwidth = 1;
+            gbc.gridheight = 1;
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.insets = new Insets(INSET, INSET, INSET, INSET);
+            add(components[i], gbc);
+        }
+    }
+
 }

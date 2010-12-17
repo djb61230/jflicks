@@ -75,7 +75,11 @@ public class AnalyzePanel extends JPanel {
             shorttf, longScroller, bundlelistScroller
         };
 
-        PromptPanel pp = new PromptPanel(prompts, comps);
+        double[] yweights = {
+            0.0, 0.5, 0.5
+        };
+
+        PromptPanel pp = new PromptPanel(prompts, comps, yweights);
 
         setLayout(new BorderLayout());
         add(pp, BorderLayout.CENTER);

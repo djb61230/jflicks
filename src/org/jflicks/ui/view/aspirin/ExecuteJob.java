@@ -65,10 +65,12 @@ public class ExecuteJob extends AbstractJob {
 
         ArrayList<Finding> list = new ArrayList<Finding>();
 
+        int fcount = 0;
         Analyze[] array = getAnalyzes();
-        System.out.println("run: " + array);
         if (array != null) {
 
+            fireJobEvent(JobEvent.UPDATE, "\nRunning " + array.length
+                + " tasks.");
             for (int i = 0; i < array.length; i++) {
 
                 fireJobEvent(JobEvent.UPDATE, "\nCalling "
@@ -76,6 +78,9 @@ public class ExecuteJob extends AbstractJob {
                 Finding f = array[i].analyze();
                 if (f != null) {
 
+                    if (!f.isPassed()) {
+                        fcount++;
+                    }
                     list.add(f);
                     fireJobEvent(JobEvent.UPDATE, f.getDescription());
                 }
@@ -87,6 +92,12 @@ public class ExecuteJob extends AbstractJob {
         }
 
         fireJobEvent(JobEvent.UPDATE, "\nAll tasks have been run.");
+        if (fcount == 1) {
+            fireJobEvent(JobEvent.UPDATE, "There was 1 failure.");
+        } else {
+            fireJobEvent(JobEvent.UPDATE, "There were " + fcount
+                + " failures.");
+        }
         if (list.size() > 0) {
 
             Finding[] result = list.toArray(new Finding[list.size()]);

@@ -75,7 +75,7 @@ public class ControlPanel extends JPanel implements ActionListener,
         setPathTextField(pathtf);
         JPanel pathPanel = new JPanel(new BorderLayout());
         pathPanel.setBorder(BorderFactory.createTitledBorder(
-            "jflicks installation to examine"));
+            "jflicks Installation to Examine"));
         pathPanel.add(pathtf, BorderLayout.CENTER);
 
         JButton browse = new JButton("Browse");

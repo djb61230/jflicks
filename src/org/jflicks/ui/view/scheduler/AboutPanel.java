@@ -60,7 +60,7 @@ public class AboutPanel extends JLayeredPane {
 
         JXLabel title1 = new JXLabel();
         Font font = title1.getFont();
-        String text1 = "JFLICKS";
+        String text1 = "jflicks media system";
         title1.setText(text1);
         title1.setForeground(Color.BLACK);
         TextPainter tpainter =
@@ -78,7 +78,7 @@ public class AboutPanel extends JLayeredPane {
         title2.setBounds(0, 80, 400, 30);
 
         JXLabel version = new JXLabel();
-        String textversion = "Version 0.1";
+        String textversion = "Version 1.0";
         version.setText(textversion);
         version.setForeground(Color.BLACK);
         tpainter =
@@ -88,7 +88,7 @@ public class AboutPanel extends JLayeredPane {
         version.setBounds(0, 130, 400, 30);
 
         JXLabel copy = new JXLabel();
-        String textcopy = "Copyright 2010 Seven Pets Software";
+        String textcopy = "Copyright 2010 Doug Barnum";
         copy.setText(textcopy);
         copy.setForeground(Color.BLACK);
         tpainter =

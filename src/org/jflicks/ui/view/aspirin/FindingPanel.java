@@ -77,7 +77,11 @@ public class FindingPanel extends JPanel {
             titletf, descScroller, statustf, button
         };
 
-        PromptPanel pp = new PromptPanel(prompts, comps);
+        double[] yweights = {
+            0.0, 1.0, 0.0, 0.0
+        };
+
+        PromptPanel pp = new PromptPanel(prompts, comps, yweights);
 
         setLayout(new BorderLayout());
         add(pp, BorderLayout.CENTER);

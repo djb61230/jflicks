@@ -190,7 +190,7 @@ public class MetadataView extends JFlicksView implements ActionListener {
 
         if (frame == null) {
 
-            frame = new JXFrame("JFLICKS Video Manager");
+            frame = new JXFrame("jflicks Video Manager");
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {
@@ -479,7 +479,7 @@ public class MetadataView extends JFlicksView implements ActionListener {
             ImageIcon lge =
                 new ImageIcon(getClass().getResource("about32.png"));
             putValue(NAME, "About");
-            putValue(SHORT_DESCRIPTION, "About JFLICKS Configuration");
+            putValue(SHORT_DESCRIPTION, "About jflicks Video Manager");
             putValue(SMALL_ICON, sm);
             putValue(LARGE_ICON_KEY, lge);
             putValue(MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_A));
