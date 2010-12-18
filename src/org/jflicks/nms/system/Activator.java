@@ -16,7 +16,6 @@
 */
 package org.jflicks.nms.system;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Hashtable;
 
@@ -27,6 +26,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.nms.NMS;
 import org.jflicks.util.BaseActivator;
 import org.jflicks.util.EventSender;
+import org.jflicks.util.Hostname;
 import org.jflicks.util.Util;
 
 import ch.ethz.iks.r_osgi.RemoteOSGiService;
@@ -110,33 +110,26 @@ public class Activator extends BaseActivator {
         s.setLogServiceTracker(logServiceTracker);
         logServiceTracker.open();
 
-        try {
+        ServiceDescription sd = new ServiceDescription();
+        sd.setAddress(Hostname.getLocalhostAddress());
+        sd.setPort(9278);
+        sd.setInstanceName("SystemNMS");
+        System.out.println("Service details: " + sd.toString());
+        s.setTitle("NMS - " + sd.getAddressAsString() + ":" + sd.getPort());
+        s.setHost(sd.getAddressAsString());
+        s.setPort(9278);
+        s.setHttpPort(Util.str2int(
+            bc.getProperty("org.osgi.service.http.port"), 8080));
 
-            ServiceDescription sd = new ServiceDescription();
-            sd.setAddress(InetAddress.getLocalHost());
-            sd.setPort(9278);
-            sd.setInstanceName("SystemNMS");
-            System.out.println("Service details: " + sd.toString());
-            s.setTitle("NMS - " + sd.getAddressAsString() + ":" + sd.getPort());
-            s.setHost(sd.getAddressAsString());
-            s.setPort(9278);
-            s.setHttpPort(Util.str2int(
-                bc.getProperty("org.osgi.service.http.port"), 8080));
+        ServiceResponderJob job = new ServiceResponderJob("nms");
+        job.setServiceDescription(sd);
+        JobContainer jc = JobManager.getJobContainer(job);
+        setJobContainer(jc);
+        jc.start();
 
-            ServiceResponderJob job = new ServiceResponderJob("nms");
-            job.setServiceDescription(sd);
-            JobContainer jc = JobManager.getJobContainer(job);
-            setJobContainer(jc);
-            jc.start();
-
-            RemoteTracker rtracker = new RemoteTracker(bc, sd);
-            setRemoteTracker(rtracker);
-            rtracker.open();
-
-        } catch (UnknownHostException ex) {
-
-            s.log(s.WARNING, "oh no...discovery not started!");
-        }
+        RemoteTracker rtracker = new RemoteTracker(bc, sd);
+        setRemoteTracker(rtracker);
+        rtracker.open();
     }
 
     /**

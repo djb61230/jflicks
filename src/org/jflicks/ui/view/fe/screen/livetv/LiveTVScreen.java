@@ -22,7 +22,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,6 +48,7 @@ import org.jflicks.ui.view.fe.GuideJob;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.RecordingInfoWindow;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.Hostname;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXLabel;
@@ -162,17 +162,6 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
                 p.stop();
             }
 
-            String hostaddr = null;
-            try {
-
-                InetAddress local = InetAddress.getLocalHost();
-                hostaddr = local.getHostAddress();
-
-            } catch (UnknownHostException ex) {
-
-                log(DEBUG, ex.getMessage());
-            }
-
             View v = getView();
             if (v instanceof FrontEndView) {
 
@@ -180,6 +169,7 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
                 p.setRectangle(fev.getPosition());
             }
 
+            String hostaddr = Hostname.getHostAddress();
             p.setFrame(Util.findFrame(this));
             p.play("udp://@" + hostaddr + ":1234");
         }
@@ -279,17 +269,8 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
                     restartPlayer();
                     setWatchingStartTime(System.currentTimeMillis());
                     LiveTV l = null;
-                    try {
-
-                        InetAddress local = InetAddress.getLocalHost();
-                        String hostaddr = local.getHostAddress();
-                        l = n.openSession(hostaddr, 1234);
-
-                    } catch (UnknownHostException ex) {
-
-                        log(DEBUG, ex.getMessage());
-                    }
-
+                    String hostaddr = Hostname.getHostAddress();
+                    l = n.openSession(hostaddr, 1234);
                     log(DEBUG, "Called start livetv: " + l);
                     if (l != null) {
 

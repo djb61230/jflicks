@@ -27,7 +27,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +51,7 @@ import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.Hostname;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXLabel;
@@ -269,17 +269,10 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                     }
                 }
 
-                InetAddress addr = null;
-                try {
+                String hostaddr = Hostname.getHostAddress();
 
-                    addr = InetAddress.getLocalHost();
+                if ((hostaddr != null) && (n != null)) {
 
-                } catch (UnknownHostException ex) {
-                }
-
-                if ((addr != null) && (n != null)) {
-
-                    String hostaddr = addr.getHostAddress();
                     StreamSession ss = n.openSession(odname, hostaddr, 1234);
                     log(DEBUG, "Called openstream: " + ss);
                     if (ss != null) {
