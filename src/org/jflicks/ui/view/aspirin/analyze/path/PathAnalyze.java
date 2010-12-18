@@ -81,10 +81,24 @@ public class PathAnalyze extends BaseAnalyze {
         download = s;
     }
 
+    /**
+     * The paths we use to check for programs.  We default by setting to
+     * the users PATH environment variable but this can be overridden to
+     * only check specific directories.
+     *
+     * @return An array of String instances.
+     */
     public String[] getPaths() {
         return (paths);
     }
 
+    /**
+     * The paths we use to check for programs.  We default by setting to
+     * the users PATH environment variable but this can be overridden to
+     * only check specific directories.
+     *
+     * @param array An array of String instances.
+     */
     public void setPaths(String[] array) {
         paths = array;
     }

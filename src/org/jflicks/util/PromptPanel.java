@@ -118,12 +118,35 @@ public class PromptPanel extends JPanel {
         }
     }
 
+    /**
+     * An array or varargs of components with prompts to put in a 2 column
+     * grid.  The rows are defined by the length of the arrays and it is
+     * assumed the array lengths are equal.
+     *
+     * @param prompts Text used as a prompt to the components.
+     * @param components The components to lay out nicely.
+     * @param yweights The weight each component should receive in the
+     * Y direction.  We are not concerned about the X direction as the
+     * component gets it all.
+     */
     public PromptPanel(String[] prompts, JComponent[] components,
         double[] yweights) {
 
         this(null, prompts, components, yweights);
     }
 
+    /**
+     * An array or varargs of components with prompts to put in a 2 column
+     * grid.  The rows are defined by the length of the arrays and it is
+     * assumed the array lengths are equal.
+     *
+     * @param title The title border text.
+     * @param prompts Text used as a prompt to the components.
+     * @param components The components to lay out nicely.
+     * @param yweights The weight each component should receive in the
+     * Y direction.  We are not concerned about the X direction as the
+     * component gets it all.
+     */
     public PromptPanel(String title, String[] prompts, JComponent[] components,
         double[] yweights) {
 

@@ -16,15 +16,11 @@
 */
 package org.jflicks.util;
 
-import java.util.ArrayList;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.jflicks.job.SystemJob;
 import org.jflicks.job.JobContainer;
-import org.jflicks.job.JobEvent;
-import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 
 /**
@@ -33,7 +29,7 @@ import org.jflicks.job.JobManager;
  * @author Doug Barnum
  * @version 1.0
  */
-public class Hostname {
+public final class Hostname {
 
     private Hostname() {
     }

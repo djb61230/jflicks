@@ -22,7 +22,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import javax.swing.JLayeredPane;

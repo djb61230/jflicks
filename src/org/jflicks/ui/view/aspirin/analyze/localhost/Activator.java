@@ -20,7 +20,6 @@ import java.util.Hashtable;
 
 import org.jflicks.ui.view.aspirin.analyze.Analyze;
 import org.jflicks.util.BaseActivator;
-import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 

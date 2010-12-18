@@ -1298,6 +1298,12 @@ public final class Util {
         }
     }
 
+    /**
+     * Get an array of Strings that represent the PATH environment variable
+     * directories.
+     *
+     * @return An array of String instances.
+     */
     public static String[] getEnvPaths() {
 
         String[] result = null;

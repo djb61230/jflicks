@@ -18,7 +18,6 @@ package org.jflicks.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Arrays;
 
 /**
  * Given a set of extensions, create a FilenameFilter.

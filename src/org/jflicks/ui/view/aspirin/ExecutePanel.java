@@ -28,8 +28,6 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -136,10 +134,20 @@ public class ExecutePanel extends JPanel implements ActionListener,
         add(cancel, gbc);
     }
 
+    /**
+     * We keep track of the Analyze instances we are to execute.
+     *
+     * @return An array of Analyze instances.
+     */
     public Analyze[] getAnalyzes() {
         return (analyzes);
     }
 
+    /**
+     * We keep track of the Analyze instances we are to execute.
+     *
+     * @param array An array of Analyze instances.
+     */
     public void setAnalyzes(Analyze[] array) {
         analyzes = array;
     }
@@ -184,6 +192,9 @@ public class ExecutePanel extends JPanel implements ActionListener,
         jobContainer = jc;
     }
 
+    /**
+     * Convenience method to execute all the Analyze instances.
+     */
     public void execute() {
 
         Analyze[] array = getAnalyzes();
@@ -213,6 +224,11 @@ public class ExecutePanel extends JPanel implements ActionListener,
         }
     }
 
+    /**
+     * Allow the user to cancel the checks.
+     *
+     * @param event An event from the cancel button.
+     */
     public void actionPerformed(ActionEvent event) {
 
         if (event.getSource() == getCancelButton()) {
@@ -220,6 +236,12 @@ public class ExecutePanel extends JPanel implements ActionListener,
         }
     }
 
+    /**
+     * We listen for clicks on the JList so we can update the UI if
+     * necessary.
+     *
+     * @param event A given ListSelectionEvent instance.
+     */
     public void valueChanged(ListSelectionEvent event) {
 
         if (!event.getValueIsAdjusting()) {
@@ -245,6 +267,11 @@ public class ExecutePanel extends JPanel implements ActionListener,
         }
     }
 
+    /**
+     * We listen for job updates from running Analyze instances.
+     *
+     * @param event The given job event instance.
+     */
     public void jobUpdate(JobEvent event) {
 
         if (event.getType() == JobEvent.COMPLETE) {

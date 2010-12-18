@@ -16,7 +16,6 @@
 */
 package org.jflicks.nms.system;
 
-import java.net.UnknownHostException;
 import java.util.Hashtable;
 
 import org.jflicks.discovery.ServiceDescription;

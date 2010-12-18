@@ -18,7 +18,6 @@ package org.jflicks.ui.view.aspirin;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -53,8 +52,8 @@ import org.jdesktop.swingx.JXFrame;
  */
 public class AspirinView extends JFlicksView {
 
-    private static final String HOWTO = "http://www.sevenpets.com/blog/"
-        + "the-home-theater-automated-ticket-maker-howto/";
+    private static final String HOWTO =
+        "http://www.jflicks.org/wiki/index.php?title=Aspirin";
 
     private NMS[] nms;
     private JXFrame frame;
@@ -348,9 +347,6 @@ public class AspirinView extends JFlicksView {
         }
 
         public void actionPerformed(ActionEvent e) {
-
-            if (nms != null) {
-            }
         }
     }
 

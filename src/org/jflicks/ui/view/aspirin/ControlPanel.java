@@ -35,13 +35,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.jflicks.ui.view.aspirin.analyze.Analyze;
-import org.jflicks.ui.view.aspirin.analyze.Finding;
 import org.jflicks.util.BundleFilter;
 import org.jflicks.util.Util;
 
@@ -160,10 +158,20 @@ public class ControlPanel extends JPanel implements ActionListener,
         add(execute, gbc);
     }
 
+    /**
+     * We keep track of the Analyze instances we are to execute.
+     *
+     * @return An array of Analyze instances.
+     */
     public Analyze[] getAnalyzes() {
         return (analyzes);
     }
 
+    /**
+     * We keep track of the Analyze instances we are to execute.
+     *
+     * @param array An array of Analyze instances.
+     */
     public void setAnalyzes(Analyze[] array) {
 
         analyzes = array;
@@ -325,6 +333,11 @@ public class ControlPanel extends JPanel implements ActionListener,
         }
     }
 
+    /**
+     * We listen for events from the Browse and Execute buttons.
+     *
+     * @param event A given ActionEvent instance.
+     */
     public void actionPerformed(ActionEvent event) {
 
         if (event.getSource() == getBrowseButton()) {
@@ -334,6 +347,12 @@ public class ControlPanel extends JPanel implements ActionListener,
         }
     }
 
+    /**
+     * We listen for clicks on our JList so we can update our UI if
+     * necessary.
+     *
+     * @param event A given ListSelectionEvent instance.
+     */
     public void valueChanged(ListSelectionEvent event) {
 
         if (!event.getValueIsAdjusting()) {
