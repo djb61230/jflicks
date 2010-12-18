@@ -863,7 +863,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                     for (int i = 0; i < array.length; i++) {
 
                         Recording[] recs = array[i].getRecordings();
-                        log(DEBUG, "recs from NMS : " + i + " " + recs);
+                        log(DEBUG, "recs from NMS : " + i);
                         if (recs != null) {
 
                             log(DEBUG, "recs from NMS : " + recs.length);

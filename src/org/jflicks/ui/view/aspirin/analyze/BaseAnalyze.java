@@ -91,7 +91,15 @@ public abstract class BaseAnalyze implements Analyze {
      * {@inheritDoc}
      */
     public String[] getBundles() {
-        return (bundles);
+
+        String[] result = null;
+
+        if (bundles != null) {
+
+            result = Arrays.copyOf(bundles, bundles.length);
+        }
+
+        return (result);
     }
 
     /**
@@ -100,7 +108,12 @@ public abstract class BaseAnalyze implements Analyze {
      * @param array The given array of bundles.
      */
     public void setBundles(String[] array) {
-        bundles = array;
+
+        if (array != null) {
+            bundles = Arrays.copyOf(array, array.length);
+        } else {
+            bundles = null;
+        }
     }
 
     /**

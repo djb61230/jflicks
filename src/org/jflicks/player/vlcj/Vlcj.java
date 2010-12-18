@@ -23,6 +23,7 @@ import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.JComponent;
@@ -156,7 +157,15 @@ public class Vlcj extends BasePlayer {
      * @return The arguments as a String array.
      */
     public String[] getArgs() {
-        return (args);
+
+        String[] result = null;
+
+        if (args != null) {
+
+            result = Arrays.copyOf(args, args.length);
+        }
+
+        return (result);
     }
 
     /**
@@ -165,7 +174,12 @@ public class Vlcj extends BasePlayer {
      * @param array The arguments as a String array.
      */
     public void setArgs(String[] array) {
-        args = array;
+
+        if (array != null) {
+            args = Arrays.copyOf(array, array.length);
+        } else {
+            args = null;
+        }
     }
 
     private JDialog getDialog() {
@@ -268,6 +282,7 @@ public class Vlcj extends BasePlayer {
             JDialog win = new JDialog(getFrame());
             win.setUndecorated(true);
             win.setBounds(x, y, width, height);
+            win.setCursor(cursor);
 
             JPanel pan = getKeyPanel();
 
@@ -527,7 +542,7 @@ public class Vlcj extends BasePlayer {
             if (p.getLength() > 0) {
 
                 result.setPosition((long) (p.getPosition() * 1000.0f));
-                result.setTime((double) (p.getTime() / 1000));
+                result.setTime((double) (p.getTime() / 1000.0));
                 result.setPaused(isPaused());
                 result.setPlaying(isPlaying());
 

@@ -17,6 +17,7 @@
 package org.jflicks.ui.view.aspirin.analyze.path;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.jflicks.ui.view.aspirin.analyze.BaseAnalyze;
 import org.jflicks.ui.view.aspirin.analyze.Finding;
@@ -89,7 +90,15 @@ public class PathAnalyze extends BaseAnalyze {
      * @return An array of String instances.
      */
     public String[] getPaths() {
-        return (paths);
+
+        String[] result = null;
+
+        if (paths != null) {
+
+            result = Arrays.copyOf(paths, paths.length);
+        }
+
+        return (result);
     }
 
     /**
@@ -100,7 +109,12 @@ public class PathAnalyze extends BaseAnalyze {
      * @param array An array of String instances.
      */
     public void setPaths(String[] array) {
-        paths = array;
+
+        if (array != null) {
+            paths = Arrays.copyOf(array, array.length);
+        } else {
+            paths = null;
+        }
     }
 
     private String[] substitute(String[] array) {

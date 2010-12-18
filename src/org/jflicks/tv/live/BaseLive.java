@@ -329,12 +329,6 @@ public abstract class BaseLive extends BaseConfig implements Live {
                 l.setMessage("No Available Recorders!");
                 log(DEBUG, "No Available Recorders!");
             }
-
-        } else {
-
-            l.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
-            l.setMessage("Invalid session!");
-            log(DEBUG, "Invalid session!");
         }
 
         return (l);

@@ -23,6 +23,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
+import java.util.Arrays;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -140,7 +141,15 @@ public class ExecutePanel extends JPanel implements ActionListener,
      * @return An array of Analyze instances.
      */
     public Analyze[] getAnalyzes() {
-        return (analyzes);
+
+        Analyze[] result = null;
+
+        if (analyzes != null) {
+
+            result = Arrays.copyOf(analyzes, analyzes.length);
+        }
+
+        return (result);
     }
 
     /**
@@ -149,7 +158,12 @@ public class ExecutePanel extends JPanel implements ActionListener,
      * @param array An array of Analyze instances.
      */
     public void setAnalyzes(Analyze[] array) {
-        analyzes = array;
+
+        if (array != null) {
+            analyzes = Arrays.copyOf(array, array.length);
+        } else {
+            analyzes = null;
+        }
     }
 
     private JList getFindingList() {
@@ -198,7 +212,6 @@ public class ExecutePanel extends JPanel implements ActionListener,
     public void execute() {
 
         Analyze[] array = getAnalyzes();
-        System.out.println("execute " + array);
         if (array != null) {
 
             JButton b = getCancelButton();

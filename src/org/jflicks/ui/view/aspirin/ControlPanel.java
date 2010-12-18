@@ -26,6 +26,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -164,7 +165,15 @@ public class ControlPanel extends JPanel implements ActionListener,
      * @return An array of Analyze instances.
      */
     public Analyze[] getAnalyzes() {
-        return (analyzes);
+
+        Analyze[] result = null;
+
+        if (analyzes != null) {
+
+            result = Arrays.copyOf(analyzes, analyzes.length);
+        }
+
+        return (result);
     }
 
     /**
@@ -174,13 +183,18 @@ public class ControlPanel extends JPanel implements ActionListener,
      */
     public void setAnalyzes(Analyze[] array) {
 
-        analyzes = array;
-        setCurrentAnalyzes(array);
+        if (array != null) {
+            analyzes = Arrays.copyOf(array, array.length);
+        } else {
+            analyzes = null;
+        }
+
+        setCurrentAnalyzes(analyzes);
 
         JList l = getAnalyzeList();
         if (l != null) {
 
-            l.setListData(array);
+            l.setListData(analyzes);
         }
     }
 

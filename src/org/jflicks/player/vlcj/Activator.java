@@ -39,7 +39,6 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class Activator extends BaseActivator {
 
-    private Vlcj vlcj;
     private ServiceTracker eventServiceTracker;
     private ServiceTracker logServiceTracker;
 

@@ -23,6 +23,7 @@ import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.JComponent;
@@ -152,7 +153,15 @@ public class MPlayer extends BasePlayer {
      * @return The arguments as a String array.
      */
     public String[] getArgs() {
-        return (args);
+
+        String[] result = null;
+
+        if (args != null) {
+
+            result = Arrays.copyOf(args, args.length);
+        }
+
+        return (result);
     }
 
     /**
@@ -161,7 +170,12 @@ public class MPlayer extends BasePlayer {
      * @param array The arguments as a String array.
      */
     public void setArgs(String[] array) {
-        args = array;
+
+        if (array != null) {
+            args = Arrays.copyOf(array, array.length);
+        } else {
+            args = null;
+        }
     }
 
     private JDialog getDialog() {
@@ -443,7 +457,7 @@ public class MPlayer extends BasePlayer {
             if (min != Double.MAX_VALUE) {
 
                 int place = seconds + (int) min;
-                command("seek " + seconds + " 2\n");
+                command("seek " + place + " 2\n");
                 command("set_property fullscreen 1\n");
             }
         }

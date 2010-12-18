@@ -330,7 +330,8 @@ public class AspirinView extends JFlicksView {
         }
     }
 
-    class NMSAction extends AbstractAction implements PropertyChangeListener {
+    static class NMSAction extends AbstractAction implements
+        PropertyChangeListener {
 
         private NMS nms;
 

@@ -31,8 +31,6 @@ import org.jflicks.tv.recorder.BaseDeviceJob;
 public class DiscoverJob extends BaseDeviceJob {
 
     private ArrayList<DvbDevice> dvbDeviceList;
-    private String[] devicePaths;
-    private int pathIndex;
 
     /**
      * Simple no argument constructor.
