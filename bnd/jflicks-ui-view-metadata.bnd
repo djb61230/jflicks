@@ -32,7 +32,7 @@ Include-Resource:\
  org/jflicks/ui/view/metadata/missing_fanart.png=../resources/missing_fanart.png,\
  org/jflicks/ui/view/metadata/missing_poster.png=../resources/missing_poster.png,\
  org/jflicks/ui/view/metadata/aboutbg.png=../resources/aboutbg.png,\
- org/jflicks/ui/view/metadata/icon.png=../resources/icon.png
+ org/jflicks/ui/view/metadata/icon.png=../resources/metadata_icon.png
 
 Export-Package:\
  org.jflicks.ui.view.metadata;version="1.0.0"

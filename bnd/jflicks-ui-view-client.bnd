@@ -13,7 +13,7 @@ Include-Resource:\
  org/jflicks/ui/view/client/help16.png=../resources/help16.png,\
  org/jflicks/ui/view/client/help32.png=../resources/help32.png,\
  org/jflicks/ui/view/client/aboutbg.png=../resources/aboutbg.png,\
- org/jflicks/ui/view/client/icon.png=../resources/icon.png
+ org/jflicks/ui/view/client/icon.png=../resources/server_icon.png
 
 Export-Package:\
  org.jflicks.ui.view.client;version="1.0.0"

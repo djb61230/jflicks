@@ -21,7 +21,7 @@ Include-Resource:\
  org/jflicks/ui/view/scheduler/save16.png=../resources/save16.png,\
  org/jflicks/ui/view/scheduler/save32.png=../resources/save32.png,\
  org/jflicks/ui/view/scheduler/aboutbg.png=../resources/aboutbg.png,\
- org/jflicks/ui/view/scheduler/icon.png=../resources/icon.png
+ org/jflicks/ui/view/scheduler/icon.png=../resources/scheduler_icon.png
 
 Export-Package:\
  org.jflicks.ui.view.scheduler;version="1.0.0"

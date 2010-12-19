@@ -13,7 +13,7 @@ Include-Resource:\
  org/jflicks/ui/view/aspirin/help16.png=../resources/help16.png,\
  org/jflicks/ui/view/aspirin/help32.png=../resources/help32.png,\
  org/jflicks/ui/view/aspirin/aboutbg.png=../resources/aboutbg.png,\
- org/jflicks/ui/view/aspirin/icon.png=../resources/icon.png
+ org/jflicks/ui/view/aspirin/icon.png=../resources/aspirin_icon.png
 
 Export-Package:\
  org.jflicks.ui.view.aspirin;version="1.0.0"
