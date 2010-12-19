@@ -71,8 +71,9 @@ import org.jdesktop.swingx.JXFrame;
  */
 public class SchedulerView extends JFlicksView implements ActionListener {
 
-    private static final String HOWTO = "http://www.sevenpets.com/blog/"
-        + "the-home-theater-automated-ticket-maker-howto/";
+    private static final String HOWTO =
+        "http://www.jflicks.org/wiki/index.php?title=Scheduler";
+
     private static final String RECORDING_FRAME = "recordings";
     private static final String UPCOMING_FRAME = "upcoming";
     private static final String RULE_FRAME = "rule";
@@ -145,7 +146,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
 
         if (frame == null) {
 
-            frame = new JXFrame("jflicks Scheduler");
+            frame = new JXFrame("jflicks media system - Scheduler");
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {

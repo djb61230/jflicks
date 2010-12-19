@@ -164,7 +164,7 @@ public class AspirinView extends JFlicksView {
 
         if (frame == null) {
 
-            frame = new JXFrame("Aspirin");
+            frame = new JXFrame("jflicks media system - Aspirin");
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {

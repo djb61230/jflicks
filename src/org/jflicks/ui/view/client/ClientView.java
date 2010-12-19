@@ -56,8 +56,8 @@ import org.jdesktop.swingx.JXFrame;
  */
 public class ClientView extends JFlicksView {
 
-    private static final String HOWTO = "http://www.sevenpets.com/blog/"
-        + "the-home-theater-automated-ticket-maker-howto/";
+    private static final String HOWTO =
+        "http://www.jflicks.org/wiki/index.php?title=Server_Configuration";
 
     private JXFrame frame;
     private JTabbedPane tabbedPane;
@@ -124,7 +124,7 @@ public class ClientView extends JFlicksView {
 
         if (frame == null) {
 
-            frame = new JXFrame("jflicks Server Configuration");
+            frame = new JXFrame("jflicks media system - Server Configuration");
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {

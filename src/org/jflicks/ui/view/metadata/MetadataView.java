@@ -63,8 +63,8 @@ import org.jdesktop.swingx.JXFrame;
  */
 public class MetadataView extends JFlicksView implements ActionListener {
 
-    private static final String HOWTO = "http://www.sevenpets.com/blog/"
-        + "the-home-theater-automated-ticket-maker-howto/";
+    private static final String HOWTO =
+        "http://www.jflicks.org/wiki/index.php?title=Video_Manager";
 
     private NMS[] nms;
     private JXFrame frame;
@@ -190,7 +190,7 @@ public class MetadataView extends JFlicksView implements ActionListener {
 
         if (frame == null) {
 
-            frame = new JXFrame("jflicks Video Manager");
+            frame = new JXFrame("jflicks media system - Video Manager");
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {
