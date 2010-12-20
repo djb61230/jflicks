@@ -19,6 +19,7 @@ package org.jflicks.nms;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -1302,6 +1303,55 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             }
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void save(int imageType, byte[] data, String id) {
+
+        if ((data != null) && (id != null)) {
+
+            String imageHome = getConfiguredImageHome();
+            if (imageHome == null) {
+                imageHome = ".";
+            }
+
+            String name = null;
+            switch (imageType) {
+
+            default:
+            case NMSConstants.BANNER_IMAGE_TYPE:
+                name = imageHome + "/" + id + "_banner.jpg";
+                break;
+
+            case NMSConstants.FANART_IMAGE_TYPE:
+                name = imageHome + "/" + id + "_fanart.jpg";
+                break;
+
+            case NMSConstants.POSTER_IMAGE_TYPE:
+                name = imageHome + "/" + id + "_poster.jpg";
+                break;
+
+            }
+            try {
+
+                ByteArrayInputStream bais = new ByteArrayInputStream(data);
+                BufferedImage bi = ImageIO.read(bais);
+                if (bi != null) {
+
+                    ImageIO.write(bi, "jpg", new File(name));
+
+                } else {
+
+                    log(WARNING, "can't load <" + data + ">");
+                }
+
+            } catch (IOException ex) {
+
+                log(WARNING, "save image: " + ex.getMessage());
+            }
+        }
     }
 
     /**

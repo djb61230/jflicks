@@ -80,7 +80,7 @@ public class GenerateImageJob extends AbstractJob implements JobListener {
                 File tmp = File.createTempFile("generate", ".png");
                 setImageFile(tmp);
                 ThumbnailerJob job =
-                    new ThumbnailerJob(v.getPath(), tmp.getPath(), 300);
+                    new ThumbnailerJob(v.getPath(), tmp.getPath(), 10);
                 job.addJobListener(this);
                 JobContainer jc = JobManager.getJobContainer(job);
                 jc.start();

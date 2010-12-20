@@ -278,6 +278,18 @@ public interface NMS extends Config {
     void save(int imageType, String url, String id);
 
     /**
+     * The NMS can save images into it's "web space" for later retrieval
+     * by frontend clients.  There are three images types - BANNER_IMAGE_TYPE,
+     * FANART_IMAGE_TYPE, and POSTER_IMAGE_TYPE.  An Id argument is required
+     * to link the image to a Video or Recording.
+     *
+     * @param imageType One of the defined image types in NMSConstants.
+     * @param data The file image loaded as a byte array.
+     * @param id The Id that the image refers.
+     */
+    void save(int imageType, byte[] data, String id);
+
+    /**
      * The NMS can save a Video whose properties have been edited by the
      * user.
      *

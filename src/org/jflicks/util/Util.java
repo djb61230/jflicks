@@ -38,6 +38,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -1138,6 +1139,50 @@ public final class Util {
         } catch (UnsupportedEncodingException ex) {
 
             result = null;
+        }
+
+        return (result);
+    }
+
+    public static byte[] read(File file) {
+
+        byte[] result = null;
+
+        if ((file != null) && (file.exists()) && (file.isFile())) {
+
+            FileInputStream fis = null;
+            DataInputStream dis = null;
+
+            try {
+
+                int offset = 0;
+                int count = 0;
+                int total = (int) file.length();
+                result = new byte[total];
+                fis = new FileInputStream(file);
+                dis = new DataInputStream(fis);
+                dis.readFully(result);
+                dis.close();
+                fis.close();
+                fis = null;
+
+            } catch (IOException ex) {
+            } finally {
+
+                if (fis != null) {
+
+                    try {
+
+                        dis.close();
+                        fis.close();
+
+                    } catch (IOException ex) {
+
+                        dis = null;
+                        fis = null;
+                    }
+                }
+            }
         }
 
         return (result);

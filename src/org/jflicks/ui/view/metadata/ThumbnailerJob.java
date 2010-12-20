@@ -100,7 +100,6 @@ public class ThumbnailerJob extends AbstractJob implements JobListener {
             JobManager.sleep(getSleepTime());
         }
 
-        System.out.println("KKKKKKKKKKKKKKKKKKKK done");
         fireJobEvent(JobEvent.COMPLETE);
     }
 
@@ -117,11 +116,10 @@ public class ThumbnailerJob extends AbstractJob implements JobListener {
      */
     public void jobUpdate(JobEvent event) {
 
-        System.out.println("jjjjjjjjjjj");
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("KKKKKKKKKKKKKKKKKKKK");
             stop();
+
         } else {
 
             System.out.println(event.getMessage());

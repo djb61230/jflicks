@@ -16,11 +16,14 @@
 */
 package org.jflicks.ui.view.metadata;
 
+import java.io.File;
+
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobEvent;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.Video;
+import org.jflicks.util.Util;
 
 /**
  * A job that saves images to an NMS.
@@ -99,7 +102,19 @@ public class SaveVideoJob extends AbstractJob {
 
                     if (url.indexOf(id) == -1) {
 
-                        n.save(NMSConstants.BANNER_IMAGE_TYPE, url, id);
+                        System.out.println("url <" + url + ">");
+                        if (url.startsWith("file")) {
+
+                            String path = url.substring(5);
+                            File fbuf = new File(path);
+                            byte[] b = Util.read(fbuf);
+                            if (b != null) {
+                                n.save(NMSConstants.BANNER_IMAGE_TYPE, b, id);
+                            }
+
+                        } else {
+                            n.save(NMSConstants.BANNER_IMAGE_TYPE, url, id);
+                        }
                     }
                 }
 
@@ -108,7 +123,21 @@ public class SaveVideoJob extends AbstractJob {
 
                     if (url.indexOf(id) == -1) {
 
-                        n.save(NMSConstants.FANART_IMAGE_TYPE, url, id);
+                        System.out.println("url <" + url + ">");
+                        if (url.startsWith("file")) {
+
+                            String path = url.substring(5);
+                            File fbuf = new File(path);
+                            System.out.println("fbuf: " + fbuf);
+                            byte[] b = Util.read(fbuf);
+                            System.out.println("b: " + b);
+                            if (b != null) {
+                                n.save(NMSConstants.FANART_IMAGE_TYPE, b, id);
+                            }
+
+                        } else {
+                            n.save(NMSConstants.FANART_IMAGE_TYPE, url, id);
+                        }
                     }
                 }
 
@@ -117,7 +146,20 @@ public class SaveVideoJob extends AbstractJob {
 
                     if (url.indexOf(id) == -1) {
 
-                        n.save(NMSConstants.POSTER_IMAGE_TYPE, url, id);
+                        System.out.println("url <" + url + ">");
+                        if (url.startsWith("file")) {
+
+                            String path = url.substring(5);
+                            File fbuf = new File(path);
+                            byte[] b = Util.read(fbuf);
+                            if (b != null) {
+                                n.save(NMSConstants.POSTER_IMAGE_TYPE, b, id);
+                            }
+
+                        } else {
+
+                            n.save(NMSConstants.POSTER_IMAGE_TYPE, url, id);
+                        }
                     }
                 }
 
