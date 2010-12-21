@@ -850,15 +850,15 @@
             use="true"
             classpathref="runtime.classpath"
             verbose="false"
-            windowtitle="JFLICKS">
+            windowtitle="jflicks media system">
 
             <fileset dir="${src}">
                 <exclude name="**/Activator.java"/>
                 <include name="**/*.java"/>
             </fileset>
 
-            <doctitle><![CDATA[<h1>JFLICKS</h1>]]></doctitle>
-            <bottom><![CDATA[<i>JFLICKS</i>]]></bottom>
+            <doctitle><![CDATA[<h1>jflicks media system</h1>]]></doctitle>
+            <bottom><![CDATA[<i>jflicks media system</i>]]></bottom>
 
         </javadoc>
 
