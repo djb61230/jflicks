@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
 <installation version="1.0">
     <info>
-        <appname>JFlicks Server</appname>
+        <appname>jflicks media system Server</appname>
         <appversion>1.0</appversion>
         <appsubpath>jflicks-server</appsubpath>
         <authors>
@@ -41,7 +41,7 @@
     </panels>
     <packs>
         <pack name="Base" preselected="yes" required="yes">
-            <description>The base packages one needs to run a jflicks server.</description>
+            <description>The base packages one needs to run a jflicks media system server.</description>
             <file override="update"
                 src="server/COPYING.txt" targetdir="$INSTALL_PATH/"/>
             <file override="update"
@@ -120,7 +120,7 @@
                 src="server/bundle/jflicks-tv-live-system.jar" targetdir="$INSTALL_PATH/bundle"/>
         </pack>
         <pack name="Video Manager" preselected="no" required="no">
-            <description>Add if you want to manage a library of video files to be played on your TV.  The service is managed with the jflicks desktop app called Video Manager.</description>
+            <description>Add if you want to manage a library of video files to be played on your TV.  The service is managed with the jflicks media system desktop app called Video Manager.</description>
             <file override="update"
                 src="server/bundle/jflicks-videomanager-system.jar" targetdir="$INSTALL_PATH/bundle"/>
         </pack>

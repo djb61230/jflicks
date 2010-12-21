@@ -168,38 +168,6 @@ public class DvbRecorder extends BaseRecorder {
     }
 
     /**
-     * The DVB recorders might want to change channels using the name instead
-     * of the channel number.
-     *
-     * @return True if one should use the channel name to tune to it.
-     */
-    public boolean isConfiguredUseChannelName() {
-
-        boolean result = false;
-
-        Configuration c = getConfiguration();
-        if (c != null) {
-
-            NameValue[] array = c.getNameValues();
-            if (array != null) {
-
-                for (int i = 0; i < array.length; i++) {
-
-                    String name = array[i].getName();
-                    if ((name != null) && (name.equals(
-                        NMSConstants.USE_CHANNEL_NAME))) {
-
-                        result = Util.str2boolean(array[i].getValue(), result);
-                        break;
-                    }
-                }
-            }
-        }
-
-        return (result);
-    }
-
-    /**
      * Convenience method to get the channel changing script name.
      *
      * @return A String path pointing to a script file.
