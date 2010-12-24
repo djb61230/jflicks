@@ -52,6 +52,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
     private String title;
     private ArrayList<PendingRecord> pendingRecordList;
     private ArrayList<PendingRecord> workPendingRecordList;
+    private int robinIndex;
 
     /**
      * Simple empty constructor.
@@ -402,8 +403,14 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
         String[] array = getConfiguredRecordingDirecories();
         if ((array != null) && (array.length > 0)) {
 
-            // Just use the first directory for now.
-            File dir = new File(array[0]);
+            // We keep a robinIndex to rotate around directories.
+            if (robinIndex >= array.length) {
+
+                robinIndex = 0;
+            }
+
+            // Use the current directory and then incr.
+            File dir = new File(array[robinIndex++]);
             StringBuffer sb = new StringBuffer();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
             sdf.format(new Date(pr.getStart()), sb, new FieldPosition(0));

@@ -152,6 +152,7 @@ public class SaveVideoJob extends AbstractJob {
                             String path = url.substring(5);
                             File fbuf = new File(path);
                             byte[] b = Util.read(fbuf);
+                            System.out.println("b: " + b);
                             if (b != null) {
                                 n.save(NMSConstants.POSTER_IMAGE_TYPE, b, id);
                             }

@@ -78,9 +78,8 @@ public class ThumbnailerJob extends AbstractJob implements JobListener {
      */
     public void start() {
 
-        SystemJob job = SystemJob.getInstance("ffmpeg -y -ss " + getSeconds()
-            + " -t 0.001 -i " + getInputPath()
-            + " -vcodec png -vframes 1 -an -f "
+        SystemJob job = SystemJob.getInstance("ffmpeg -ss " + getSeconds()
+            + " -y -i " + getInputPath() + " -vcodec png -vframes 1 -an -f "
             + "rawvideo " + getOutputPath());
 
         job.addJobListener(this);

@@ -51,7 +51,7 @@ public class ChromeJob extends AbstractJob implements JobListener {
 
         setChrome(chrome);
         setURL(url);
-        setSleepTime(2500);
+        setSleepTime(4500);
     }
 
     private Chrome getChrome() {
