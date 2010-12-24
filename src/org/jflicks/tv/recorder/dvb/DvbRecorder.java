@@ -49,6 +49,81 @@ public class DvbRecorder extends BaseRecorder {
         setQuickTunable(false);
     }
 
+    private int getAdapterNumber(String s) {
+
+        int result = -1;
+
+        if (s != null) {
+
+            int index = s.indexOf("adapter");
+            if (index != -1) {
+
+                index += 7;
+                int lastIndex = s.indexOf("/", index);
+                if ((lastIndex != -1) && (lastIndex >= index)) {
+
+                    result =
+                        Util.str2int(s.substring(index, lastIndex), result);
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private int getDvrNumber(String s) {
+
+        int result = -1;
+
+        if (s != null) {
+
+            int index = s.indexOf("dvr");
+            if (index != -1) {
+
+                index += 3;
+                result = Util.str2int(s.substring(index), result);
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Configuration getDefaultConfiguration() {
+
+        BaseConfiguration bc =
+            (BaseConfiguration) super.getDefaultConfiguration();
+
+        if (bc != null) {
+
+            // What we want to do is set the CHANGE_CHANNEL_SCRIPT_NAME
+            // to something consistant.  The user can always change it
+            // to whatever they want but in this moment of time we do
+            // know the device name so we can customize it a lot nicer.
+            String dname = getDevice();
+            if (dname != null) {
+
+                NameValue nv = bc.findNameValueByName(
+                    NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME);
+                if (nv != null) {
+
+                    int adapter = getAdapterNumber(dname);
+                    int dvr = getDvrNumber(dname);
+                    if ((adapter != -1) && (dvr != -1)) {
+
+                        nv.setValue("azap -a " + adapter + " -f " + dvr
+                            + " -c conf/adapter" + adapter + "_dvr" + dvr
+                            + "_channels.conf -r");
+                    }
+                }
+            }
+        }
+
+        return (bc);
+    }
+
     /**
      * {@inheritDoc}
      */

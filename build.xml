@@ -775,6 +775,29 @@
 
     </target>
 
+    <target name="test-scan" depends="build">
+
+        <java classname="org.jflicks.tv.recorder.dvb.ScanJob"
+            fork="true">
+
+            <arg value="w_scan"/>
+            <arg value="-c"/>
+            <arg value="US"/>
+            <arg value="-o"/>
+            <arg value="7"/>
+            <arg value="-f"/>
+            <arg value="a"/>
+            <arg value="-X"/>
+            <arg value="-O"/>
+            <arg value="0"/>
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
     <target name="test-sd" depends="build">
 
         <java classname="org.jflicks.tv.programdata.sd.SchedulesDirect"
