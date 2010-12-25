@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.recorder.dvb;
+package org.jflicks.ui.view.aspirin.analyze.dvbscan;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,35 +32,35 @@ import org.jflicks.util.DevDvbAdapterDvrFilter;
  */
 public class DiscoverJob extends BaseDeviceJob {
 
-    private ArrayList<DvbDevice> dvbDeviceList;
+    private ArrayList<DvbPath> dvbPathList;
 
     /**
      * Simple no argument constructor.
      */
     public DiscoverJob() {
 
-        setDvbDeviceList(new ArrayList<DvbDevice>());
+        setDvbPathList(new ArrayList<DvbPath>());
     }
 
-    private ArrayList<DvbDevice> getDvbDeviceList() {
-        return (dvbDeviceList);
+    private ArrayList<DvbPath> getDvbPathList() {
+        return (dvbPathList);
     }
 
-    private void setDvbDeviceList(ArrayList<DvbDevice> l) {
-        dvbDeviceList = l;
+    private void setDvbPathList(ArrayList<DvbPath> l) {
+        dvbPathList = l;
     }
 
-    private void addDvbDevice(DvbDevice s) {
+    private void addDvbPath(DvbPath s) {
 
-        ArrayList<DvbDevice> l = getDvbDeviceList();
+        ArrayList<DvbPath> l = getDvbPathList();
         if ((l != null) && (s != null)) {
             l.add(s);
         }
     }
 
-    private void removeDvbDevice(DvbDevice d) {
+    private void removeDvbPath(DvbPath d) {
 
-        ArrayList<DvbDevice> l = getDvbDeviceList();
+        ArrayList<DvbPath> l = getDvbPathList();
         if ((l != null) && (d != null)) {
             l.remove(d);
         }
@@ -68,7 +68,7 @@ public class DiscoverJob extends BaseDeviceJob {
 
     private void clearDeviceList() {
 
-        ArrayList<DvbDevice> l = getDvbDeviceList();
+        ArrayList<DvbPath> l = getDvbPathList();
         if (l != null) {
             l.clear();
         }
@@ -80,14 +80,14 @@ public class DiscoverJob extends BaseDeviceJob {
      *
      * @return An array of String instances representing DVB devices.
      */
-    public DvbDevice[] getDvbDevices() {
+    public DvbPath[] getDvbPaths() {
 
-        DvbDevice[] result = null;
+        DvbPath[] result = null;
 
-        ArrayList<DvbDevice> l = getDvbDeviceList();
+        ArrayList<DvbPath> l = getDvbPathList();
         if (l != null) {
 
-            result = l.toArray(new DvbDevice[l.size()]);
+            result = l.toArray(new DvbPath[l.size()]);
         }
 
         return (result);
@@ -120,9 +120,9 @@ public class DiscoverJob extends BaseDeviceJob {
 
                     for (int j = 0; j < dvrs.length; j++) {
 
-                        DvbDevice tmp = new DvbDevice();
+                        DvbPath tmp = new DvbPath();
                         tmp.setPath(dvrs[j].getPath());
-                        addDvbDevice(tmp);
+                        addDvbPath(tmp);
                     }
                 }
             }

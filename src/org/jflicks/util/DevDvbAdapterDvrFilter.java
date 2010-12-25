@@ -14,31 +14,31 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.recorder.dvb;
+package org.jflicks.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
 /**
- * A FilenameFilter for /dev/dvb/adapterN directories.
+ * A FilenameFilter for /dev/dvb/adapterN/dvrN files.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class DevDvbAdapterFilter implements FilenameFilter {
+public class DevDvbAdapterDvrFilter implements FilenameFilter {
 
     /**
      * Simple constructor.
      */
-    public DevDvbAdapterFilter() {
+    public DevDvbAdapterDvrFilter() {
     }
 
     /**
      * Check a File object.
      *
-     * @param dir The directory where is located (we assume /dev/dvb).
+     * @param dir The directory where is located (we assume /dev/dvb/adapterN).
      * @param name The name of the file.
-     * @return True if in the form adapterN.
+     * @return True if in the form dvrN.
      */
     public boolean accept(File dir, String name) {
 
@@ -46,7 +46,7 @@ public class DevDvbAdapterFilter implements FilenameFilter {
 
         if (name != null) {
 
-            result = name.startsWith("adapter");
+            result = name.startsWith("dvr");
         }
 
         return (result);

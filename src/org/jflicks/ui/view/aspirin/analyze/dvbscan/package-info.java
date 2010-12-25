@@ -14,42 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.recorder.dvb;
-
-import org.jflicks.util.Util;
-
 /**
- * This bean encapsulates the basic properties for a found dvb device.
- *
- * @author Doug Barnum
- * @version 1.0
+ * The localhost analyze package defines a services that can check
+ * the host to ensure it's IP address is set properly and does not
+ * resolve to the loopback interface.
  */
-public class DvbDevice {
-
-    private String path;
-
-    /**
-     * Simple no argument constructor.
-     */
-    public DvbDevice() {
-    }
-
-    /**
-     * Dvb devices are in /dev/dvb/adapterN/dvrM.
-     *
-     * @return the path of the device.
-     */
-    public String getPath() {
-        return (path);
-    }
-
-    /**
-     * Dvb devices are in /dev/dvb/adapterN/dvrM.
-     *
-     * @param s the path of the device.
-     */
-    public void setPath(String s) {
-        path = s;
-    }
-
-}
+package org.jflicks.ui.view.aspirin.analyze.dvbscan;

@@ -347,6 +347,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-ui-view-aspirin-analyze-dvbscan.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-ui-view-client.bnd"
             output="${bundle}"
         />
@@ -777,7 +786,7 @@
 
     <target name="test-scan" depends="build">
 
-        <java classname="org.jflicks.tv.recorder.dvb.ScanJob"
+        <java classname="org.jflicks.tv.recorder.ScanJob"
             fork="true">
 
             <arg value="w_scan"/>

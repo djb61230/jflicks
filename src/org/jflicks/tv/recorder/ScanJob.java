@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.recorder.dvb;
+package org.jflicks.tv.recorder;
 
 import java.util.HashMap;
 
@@ -23,8 +23,6 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
-
-import org.jflicks.tv.recorder.BaseDeviceJob;
 
 /**
  *
