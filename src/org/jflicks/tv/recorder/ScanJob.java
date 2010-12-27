@@ -18,7 +18,6 @@ package org.jflicks.tv.recorder;
 
 import java.util.HashMap;
 
-import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
@@ -38,15 +37,23 @@ public class ScanJob extends BaseDeviceJob {
     private static final String VSB_GOOD_TEXT = "8VSB";
 
     private String[] args;
+    private String fileText;
 
     /**
      * Simple no argument constructor.
+     *
+     * @param args The arguments to use.
      */
     public ScanJob(String[] args) {
 
         setArgs(args);
     }
 
+    /**
+     * Can't do much work with out arguments to run as a system job.
+     *
+     * @return An array of String instances.
+     */
     public String[] getArgs() {
         return (args);
     }
@@ -121,12 +128,8 @@ public class ScanJob extends BaseDeviceJob {
             int index = s.indexOf(NAME_TEXT);
             if (index != -1) {
 
-                System.out.println("s: <" + s + ">");
-                System.out.println("index: " + index);
                 index += NAME_TEXT.length();
-                System.out.println("index: " + index);
                 int lastIndex = s.lastIndexOf("'");
-                System.out.println("lastIndex: " + lastIndex);
                 if ((lastIndex != -1) && (lastIndex > index)) {
 
                     result = s.substring(index, lastIndex);
@@ -147,83 +150,89 @@ public class ScanJob extends BaseDeviceJob {
         return (result);
     }
 
+    /**
+     * Convenience method to parse out the output from the scan program
+     * and format the text so it is proper for our use.
+     *
+     * @return Text usable to write channel config to a conf file.
+     */
     public String getFileText() {
 
-        String result = null;
+        if (fileText == null) {
 
-        SystemJob job = getSystemJob();
-        if (job != null) {
+            SystemJob job = getSystemJob();
+            if (job != null) {
 
-            String output = job.getOutputText();
-            if (output != null) {
+                String output = job.getOutputText();
+                if (output != null) {
 
-                String[] array = output.split("\n");
-                if ((array != null) && (array.length > 0)) {
+                    String[] array = output.split("\n");
+                    if ((array != null) && (array.length > 0)) {
 
-                    StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new StringBuilder();
 
-                    boolean dumpMode = false;
-                    HashMap<String, String> hm = new HashMap<String, String>();
-                    for (int i = 0; i < array.length; i++) {
+                        boolean dumpMode = false;
+                        HashMap<String, String> hm =
+                            new HashMap<String, String>();
+                        for (int i = 0; i < array.length; i++) {
 
-                        if (array[i].startsWith("Done.")) {
+                            if (array[i].startsWith("dumping")) {
 
-                            dumpMode = true;
-                            continue;
-                        }
-
-                        if (dumpMode) {
-
-                            if (array[i].indexOf(VSB_BAD_TEXT) != -1) {
-
-                                array[i] = array[i].replaceAll(VSB_BAD_TEXT,
-                                    VSB_GOOD_TEXT);
+                                dumpMode = true;
+                                continue;
                             }
 
-                            int index = array[i].indexOf(":");
-                            if (index != -1) {
+                            if (dumpMode) {
 
-                                String name = array[i].substring(0, index);
-                                name = ensurePrintable(name);
-                                String rest = array[i].substring(index);
+                                if (array[i].indexOf(VSB_BAD_TEXT) != -1) {
 
-                                String channel = hm.get(name);
-                                if (channel != null) {
+                                    array[i] = array[i].replaceAll(VSB_BAD_TEXT,
+                                        VSB_GOOD_TEXT);
+                                }
 
-                                    sb.append(channel);
-                                    sb.append(rest);
-                                    sb.append("\n");
+                                int index = array[i].indexOf(":");
+                                if (index != -1) {
+
+                                    String name = array[i].substring(0, index);
+                                    name = ensurePrintable(name);
+                                    String rest = array[i].substring(index);
+
+                                    String channel = hm.get(name);
+                                    if (channel != null) {
+
+                                        sb.append(channel);
+                                        sb.append(rest);
+                                        sb.append("\n");
+                                    }
+                                }
+
+                            } else {
+
+                                // We are at the beginning and we look for
+                                // lines that "define" a channel number by
+                                // it's name - we need to substitute it later...
+                                if (array[i].startsWith(SERVICE_LINE)) {
+
+                                    String channel = parseChannel(array[i]);
+                                    String name = parseName(array[i]);
+                                    if ((channel != null) && (name != null)) {
+
+                                        hm.put(name, channel);
+                                    }
                                 }
                             }
-
-                        } else {
-
-                            // We are at the beginning and we look for
-                            // lines that "define" a channel number by
-                            // it's name - we need to substitute it later...
-                            if (array[i].startsWith(SERVICE_LINE)) {
-
-                                String channel = parseChannel(array[i]);
-                                String name = parseName(array[i]);
-                                if ((channel != null) && (name != null)) {
-
-                                    System.out.println("<" + channel + ">");
-                                    System.out.println("<" + name + ">");
-                                    hm.put(name, channel);
-                                }
-                            }
                         }
-                    }
 
-                    if (sb.length() > 0) {
+                        if (sb.length() > 0) {
 
-                        result = sb.toString();
+                            fileText = sb.toString();
+                        }
                     }
                 }
             }
         }
 
-        return (result);
+        return (fileText);
     }
 
     /**
@@ -300,6 +309,7 @@ public class ScanJob extends BaseDeviceJob {
 
                 fireJobEvent(JobEvent.UPDATE, "ProgramJob: exit: "
                     + job.getExitValue());
+                getFileText();
                 stop();
             }
 
@@ -309,6 +319,11 @@ public class ScanJob extends BaseDeviceJob {
         }
     }
 
+    /**
+     * Test main method.
+     *
+     * @param args Arguments to run as a system job.
+     */
     public static void main(String[] args) {
 
         ScanJob job = new ScanJob(args);

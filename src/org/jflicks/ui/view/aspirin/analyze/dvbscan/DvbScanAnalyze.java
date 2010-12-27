@@ -17,12 +17,12 @@
 package org.jflicks.ui.view.aspirin.analyze.dvbscan;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
 import org.jflicks.ui.view.aspirin.analyze.BaseAnalyze;
 import org.jflicks.ui.view.aspirin.analyze.Finding;
-import org.jflicks.util.Hostname;
 
 /**
  * This class is an Analyze implementation that can check if a program
@@ -106,79 +106,58 @@ public class DvbScanAnalyze extends BaseAnalyze {
 
                     } else {
 
-                        found[i] = true;
+                        found[i] = false;
                     }
                 }
 
                 if (fcount == filenames.length) {
 
                     result.setPassed(true);
-                    result.setDescription("Looks like you have a scan  ");
-                    result.setDescription("file for all your DVB devices.");
+                    sb.append("Looks like you have a scan  ");
+                    sb.append("file for all your DVB devices.");
 
                 } else {
 
                     result.setPassed(false);
-                    result.setDescription("You have " + fcount + " missing ");
-                    result.setDescription("scan file(s).  They are:");
+                    sb.append("You have " + (filenames.length - fcount));
+                    sb.append(" missing scan file(s).  They are:\n\n");
 
+                    ArrayList<DvbPath> list = new ArrayList<DvbPath>();
                     for (int i = 0; i < filenames.length; i++) {
 
                         if (!found[i]) {
 
+                            array[i].setConfPath(conf.getPath());
+                            list.add(array[i]);
                             File chan = new File(conf, filenames[i]);
-                            result.setDescription(chan.getPath());
+                            sb.append(chan.getPath() + "\n");
                         }
+                    }
+
+                    if (list.size() > 0) {
+
+                        ScanFix fix = new ScanFix();
+                        fix.setDvbPaths(list.toArray(new DvbPath[list.size()]));
+                        result.setFix(fix);
                     }
                 }
 
             } else {
 
                 result.setPassed(true);
-                result.setDescription("Actually didn't find any DVB ");
-                result.setDescription("devices, so perhaps you do not need ");
-                result.setDescription("to install support for them.");
+                sb.append("Actually didn't find any DVB ");
+                sb.append("devices, so perhaps you do not need ");
+                sb.append("to install support for them.");
             }
 
         } else {
 
             result.setPassed(true);
-            result.setDescription("This check is only effective if you have ");
-            result.setDescription("selected an installation directory.");
+            sb.append("This check is only effective if you have ");
+            sb.append("selected an installation directory.");
         }
 
         result.setDescription(sb.toString());
-
-        /*
-        String ip = Hostname.getHostAddress();
-        if (ip != null) {
-
-            StringBuilder sb = new StringBuilder();
-            if (Hostname.isLoopback(ip)) {
-
-                // Not good, we need to set failure.
-                result.setPassed(false);
-                sb.append("Your localhost resolves to " + ip);
-                sb.append(" which will cause problems.  Please add an");
-                sb.append(" entry to your hosts file or resolve this in");
-                sb.append(" some way.");
-
-            } else {
-
-                // Looks like we are OK.
-                result.setPassed(true);
-                sb.append("Your localhost resolves to " + ip);
-                sb.append(" which should be fine.");
-            }
-
-            result.setDescription(sb.toString());
-
-        } else {
-
-            result.setPassed(false);
-            result.setDescription("Your hostname is NOT set!!");
-        }
-        */
 
         return (result);
     }

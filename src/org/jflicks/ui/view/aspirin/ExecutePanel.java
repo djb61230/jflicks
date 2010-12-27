@@ -39,6 +39,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.ui.view.aspirin.analyze.Analyze;
 import org.jflicks.ui.view.aspirin.analyze.Finding;
+import org.jflicks.ui.view.aspirin.analyze.Fix;
 import org.jflicks.util.MessagePanel;
 
 /**
@@ -55,8 +56,12 @@ public class ExecutePanel extends JPanel implements ActionListener,
     private JList findingList;
     private FindingPanel findingPanel;
     private MessagePanel messagePanel;
+    private JButton fixButton;
     private JButton cancelButton;
-    private JobContainer jobContainer;
+    private ExecuteJob executeJob;
+    private JobContainer executeJobContainer;
+    private Fix fix;
+    private JobContainer fixJobContainer;
 
     /**
      * Simple constructor.
@@ -83,9 +88,18 @@ public class ExecutePanel extends JPanel implements ActionListener,
         MessagePanel mp = new MessagePanel("Log");
         setMessagePanel(mp);
 
+        JButton fixb = new JButton("Fix");
+        fixb.addActionListener(this);
+        fixb.setEnabled(false);
+        setFixButton(fixb);
+
         JButton cancel = new JButton("Cancel");
         cancel.addActionListener(this);
         setCancelButton(cancel);
+
+        JPanel bpanel = new JPanel();
+        bpanel.add(fixb);
+        bpanel.add(cancel);
 
         setLayout(new GridBagLayout());
 
@@ -132,7 +146,7 @@ public class ExecutePanel extends JPanel implements ActionListener,
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(4, 4, 4, 4);
 
-        add(cancel, gbc);
+        add(bpanel, gbc);
     }
 
     /**
@@ -190,6 +204,14 @@ public class ExecutePanel extends JPanel implements ActionListener,
         messagePanel = mp;
     }
 
+    private JButton getFixButton() {
+        return (fixButton);
+    }
+
+    private void setFixButton(JButton b) {
+        fixButton = b;
+    }
+
     private JButton getCancelButton() {
         return (cancelButton);
     }
@@ -198,12 +220,36 @@ public class ExecutePanel extends JPanel implements ActionListener,
         cancelButton = b;
     }
 
-    private JobContainer getJobContainer() {
-        return (jobContainer);
+    private ExecuteJob getExecuteJob() {
+        return (executeJob);
     }
 
-    private void setJobContainer(JobContainer jc) {
-        jobContainer = jc;
+    private void setExecuteJob(ExecuteJob j) {
+        executeJob = j;
+    }
+
+    private JobContainer getExecuteJobContainer() {
+        return (executeJobContainer);
+    }
+
+    private void setExecuteJobContainer(JobContainer jc) {
+        executeJobContainer = jc;
+    }
+
+    private Fix getFix() {
+        return (fix);
+    }
+
+    private void setFix(Fix f) {
+        fix = f;
+    }
+
+    private JobContainer getFixJobContainer() {
+        return (fixJobContainer);
+    }
+
+    private void setFixJobContainer(JobContainer jc) {
+        fixJobContainer = jc;
     }
 
     /**
@@ -220,20 +266,51 @@ public class ExecutePanel extends JPanel implements ActionListener,
                 b.setEnabled(true);
             }
             ExecuteJob job = new ExecuteJob(array);
+            setExecuteJob(job);
             job.addJobListener(this);
             JobContainer jc = JobManager.getJobContainer(job);
-            setJobContainer(jc);
+            setExecuteJobContainer(jc);
             jc.start();
+        }
+    }
+
+    private void fixAction() {
+
+        FindingPanel p = getFindingPanel();
+        if (p != null) {
+
+            Finding f = p.getFinding();
+            if (f != null) {
+
+                Fix myfix = f.getFix();
+                if (myfix != null) {
+
+                    getFixButton().setEnabled(false);
+                    getCancelButton().setEnabled(true);
+                    myfix.addJobListener(this);
+                    setFix(myfix);
+                    JobContainer jc = JobManager.getJobContainer(myfix);
+                    setFixJobContainer(jc);
+                    jc.start();
+                }
+            }
         }
     }
 
     private void cancelAction() {
 
-        JobContainer jc = getJobContainer();
+        JobContainer jc = getExecuteJobContainer();
         if (jc != null) {
 
             jc.stop();
-            setJobContainer(null);
+            setExecuteJobContainer(null);
+        }
+
+        jc = getFixJobContainer();
+        if (jc != null) {
+
+            jc.stop();
+            setFixJobContainer(null);
         }
     }
 
@@ -244,7 +321,9 @@ public class ExecutePanel extends JPanel implements ActionListener,
      */
     public void actionPerformed(ActionEvent event) {
 
-        if (event.getSource() == getCancelButton()) {
+        if (event.getSource() == getFixButton()) {
+            fixAction();
+        } else if (event.getSource() == getCancelButton()) {
             cancelAction();
         }
     }
@@ -270,10 +349,12 @@ public class ExecutePanel extends JPanel implements ActionListener,
 
                         Finding f = (Finding) l.getSelectedValue();
                         fp.setFinding(f);
+                        getFixButton().setEnabled(f.getFix() != null);
 
                     } else {
 
                         fp.setFinding(null);
+                        getFixButton().setEnabled(false);
                     }
                 }
             }
@@ -289,21 +370,51 @@ public class ExecutePanel extends JPanel implements ActionListener,
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            setJobContainer(null);
-            Serializable state = event.getState();
-            if (state instanceof Finding[]) {
+            if (event.getSource() == getExecuteJob()) {
 
-                Finding[] array = (Finding[]) state;
-                JList l = getFindingList();
-                if (l != null) {
+                setExecuteJob(null);
+                setExecuteJobContainer(null);
+                Serializable state = event.getState();
+                if (state instanceof Finding[]) {
 
-                    l.setListData(array);
+                    Finding[] array = (Finding[]) state;
+                    JList l = getFindingList();
+                    if (l != null) {
+
+                        l.setListData(array);
+                    }
                 }
-            }
 
-            JButton b = getCancelButton();
-            if (b != null) {
-                b.setEnabled(false);
+                JButton b = getCancelButton();
+                if (b != null) {
+                    b.setEnabled(false);
+                }
+
+            } else if (event.getSource() == getFix()) {
+
+                setFix(null);
+                setFixJobContainer(null);
+                JButton b = getCancelButton();
+                if (b != null) {
+                    b.setEnabled(false);
+                }
+                b = getFixButton();
+                if (b != null) {
+
+                    FindingPanel fp = getFindingPanel();
+                    if (fp != null) {
+
+                        Finding f = fp.getFinding();
+                        if (f != null) {
+                            b.setEnabled(f.getFix() != null);
+                        } else {
+                            b.setEnabled(false);
+                        }
+
+                    } else {
+                        b.setEnabled(false);
+                    }
+                }
             }
 
         } else if (event.getType() == JobEvent.UPDATE) {

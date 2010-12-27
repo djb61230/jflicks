@@ -6,4 +6,5 @@ Export-Package:\
  org.jflicks.ui.view.aspirin.analyze;version="1.0.0"
 
 Import-Package:\
+ org.jflicks.job;version="1.0.0",\
  org.jflicks.ui.view.aspirin.analyze;version="1.0.0"

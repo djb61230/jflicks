@@ -16,24 +16,38 @@
 */
 package org.jflicks.ui.view.aspirin.analyze;
 
-import java.io.Serializable;
-
-import org.jflicks.job.Job;
-import org.jflicks.job.Jobable;
+import org.jflicks.job.AbstractJob;
 
 /**
- * The Fix interface defines a method that can fix a problem.
+ * This class is a base implementation of the Fix interface.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public interface Fix extends Job, Jobable, Serializable {
+public abstract class BaseFix extends AbstractJob implements Fix {
+
+    private boolean successful;
 
     /**
-     * Perform a task that in some way "fixes" a problem.
-     *
-     * @return True on success.
+     * Simple empty constructor.
      */
-    boolean isSuccessful();
-}
+    public BaseFix() {
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSuccessful() {
+        return (successful);
+    }
+
+    /**
+     * Convenience method to set this property.
+     *
+     * @param b True if success has been achieved.
+     */
+    public void setSuccessful(boolean b) {
+        successful = b;
+    }
+
+}

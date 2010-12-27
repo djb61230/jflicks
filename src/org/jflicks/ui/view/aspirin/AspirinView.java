@@ -18,6 +18,7 @@ package org.jflicks.ui.view.aspirin;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -54,6 +55,9 @@ public class AspirinView extends JFlicksView {
 
     private static final String HOWTO =
         "http://www.jflicks.org/wiki/index.php?title=Aspirin";
+
+    private static final String EXECUTE_FRAME = "execute";
+    private static final String MAIN_FRAME = "main";
 
     private NMS[] nms;
     private JXFrame frame;
@@ -175,6 +179,9 @@ public class AspirinView extends JFlicksView {
             frame.setLayout(new BorderLayout());
 
             ControlPanel control = new ControlPanel();
+            JFrame ef = new JFrame("Aspirin - Execute Analysis");
+            ef.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            control.setExecuteFrame(ef);
             setControlPanel(control);
             updateAnalyze();
 
@@ -216,6 +223,15 @@ public class AspirinView extends JFlicksView {
             }
 
             frame.pack();
+            Rectangle r = getBounds(MAIN_FRAME);
+            if (r != null) {
+                frame.setBounds(r);
+            }
+
+            r = getBounds(EXECUTE_FRAME);
+            if (r != null) {
+                ef.setBounds(r);
+            }
         }
 
         return (frame);
@@ -241,6 +257,32 @@ public class AspirinView extends JFlicksView {
      * {@inheritDoc}
      */
     public void messageReceived(String s) {
+    }
+
+    /**
+     * Time to exit.
+     */
+    public void exitAction() {
+
+        JFrame mf = getFrame();
+        if (mf != null) {
+            setBounds(MAIN_FRAME, mf.getBounds());
+        }
+
+        ControlPanel cp = getControlPanel();
+        if (cp != null) {
+
+            JFrame ef = cp.getExecuteFrame();
+            if (ef != null) {
+
+                setBounds(EXECUTE_FRAME, ef.getBounds());
+            }
+        }
+
+        log(INFO, "saving properties....");
+        saveProperties();
+
+        super.exitAction();
     }
 
     class ExitAction extends AbstractAction {

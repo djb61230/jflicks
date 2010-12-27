@@ -22,8 +22,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +60,7 @@ public class ControlPanel extends JPanel implements ActionListener,
     private AnalyzePanel analyzePanel;
     private JButton executeButton;
     private JFrame executeFrame;
+    private ExecutePanel executePanel;
 
     /**
      * Simple constructor.
@@ -96,6 +95,9 @@ public class ControlPanel extends JPanel implements ActionListener,
 
         AnalyzePanel ap = new AnalyzePanel();
         setAnalyzePanel(ap);
+
+        ExecutePanel ep = new ExecutePanel();
+        setExecutePanel(ep);
 
         JButton execute = new JButton("Execute");
         execute.addActionListener(this);
@@ -238,6 +240,14 @@ public class ControlPanel extends JPanel implements ActionListener,
         analyzePanel = p;
     }
 
+    private ExecutePanel getExecutePanel() {
+        return (executePanel);
+    }
+
+    private void setExecutePanel(ExecutePanel p) {
+        executePanel = p;
+    }
+
     private JButton getExecuteButton() {
         return (executeButton);
     }
@@ -246,12 +256,30 @@ public class ControlPanel extends JPanel implements ActionListener,
         executeButton = b;
     }
 
-    private JFrame getExecuteFrame() {
+    /**
+     * We are given a Frame to use so the View can save it's state.
+     *
+     * @return A JFrame instance.
+     */
+    public JFrame getExecuteFrame() {
         return (executeFrame);
     }
 
-    private void setExecuteFrame(JFrame f) {
+    /**
+     * We are given a Frame to use so the View can save it's state.
+     *
+     * @param f A JFrame instance.
+     */
+    public void setExecuteFrame(JFrame f) {
         executeFrame = f;
+
+        if (f != null) {
+
+            ExecutePanel ep = getExecutePanel();
+            f.setLayout(new BorderLayout());
+            f.add(ep, BorderLayout.CENTER);
+            f.pack();
+        }
     }
 
     private void browseAction() {
@@ -308,40 +336,15 @@ public class ControlPanel extends JPanel implements ActionListener,
         }
     }
 
-    private void exitAction() {
-
-        System.out.println("exitAction called");
-        JFrame f = getExecuteFrame();
-        if (f != null) {
-
-            f.setVisible(false);
-            f.dispose();
-            setExecuteFrame(null);
-        }
-    }
-
     private void executeAction() {
 
         Analyze[] array = getCurrentAnalyzes();
         JFrame f = getExecuteFrame();
-        if ((array != null) && (f == null)) {
+        if ((array != null) && (f != null) && (!f.isVisible())) {
 
-            ExecutePanel ep = new ExecutePanel();
+            ExecutePanel ep = getExecutePanel();
             ep.setAnalyzes(array);
-
-            JFrame frame = new JFrame("Aspirin - Execute Analysis");
-            setExecuteFrame(frame);
-            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-            frame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent evt) {
-                    exitAction();
-                }
-            });
-
-            frame.setLayout(new BorderLayout());
-            frame.add(ep, BorderLayout.CENTER);
-            frame.pack();
-            frame.setVisible(true);
+            f.setVisible(true);
 
             ep.execute();
         }

@@ -77,7 +77,11 @@ public abstract class AbstractJob implements Job, Jobable {
      * {@inheritDoc}
      */
     public void addJobListener(JobListener l) {
-        jobList.add(l);
+
+        if (!jobList.contains(l)) {
+
+            jobList.add(l);
+        }
     }
 
     /**

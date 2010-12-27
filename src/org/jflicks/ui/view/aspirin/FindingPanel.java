@@ -17,7 +17,6 @@
 package org.jflicks.ui.view.aspirin;
 
 import java.awt.BorderLayout;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -40,7 +39,6 @@ public class FindingPanel extends JPanel {
     private JTextField titleTextField;
     private JTextArea descriptionTextArea;
     private JTextField statusTextField;
-    private JButton fixButton;
 
     /**
      * Simple constructor.
@@ -65,20 +63,16 @@ public class FindingPanel extends JPanel {
         statustf.setEditable(false);
         setStatusTextField(statustf);
 
-        JButton button = new JButton("Fix");
-        button.setEnabled(false);
-        setFixButton(button);
-
         String[] prompts = {
-            "Title", "Description", "Status", ""
+            "Title", "Description", "Status",
         };
 
         JComponent[] comps = {
-            titletf, descScroller, statustf, button
+            titletf, descScroller, statustf
         };
 
         double[] yweights = {
-            0.0, 1.0, 0.0, 0.0
+            0.0, 1.0, 0.0
         };
 
         PromptPanel pp = new PromptPanel(prompts, comps, yweights);
@@ -113,14 +107,12 @@ public class FindingPanel extends JPanel {
             } else {
                 apply(getStatusTextField(), "Failed");
             }
-            getFixButton().setEnabled(f.getFix() != null);
 
         } else {
 
             apply(getTitleTextField(), null);
             apply(getDescriptionTextArea(), null);
             apply(getStatusTextField(), null);
-            getFixButton().setEnabled(false);
         }
     }
 
@@ -146,14 +138,6 @@ public class FindingPanel extends JPanel {
 
     private void setStatusTextField(JTextField tf) {
         statusTextField = tf;
-    }
-
-    private JButton getFixButton() {
-        return (fixButton);
-    }
-
-    private void setFixButton(JButton b) {
-        fixButton = b;
     }
 
     private void apply(JTextComponent c, String s) {

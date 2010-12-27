@@ -73,8 +73,8 @@ public class ExecuteJob extends AbstractJob {
                 + " tasks.");
             for (int i = 0; i < array.length; i++) {
 
-                fireJobEvent(JobEvent.UPDATE, "\nCalling "
-                    + array[i].getShortDescription());
+                fireJobEvent(JobEvent.UPDATE, "\nCalling \""
+                    + array[i].getShortDescription() + "\"");
                 Finding f = array[i].analyze();
                 if (f != null) {
 

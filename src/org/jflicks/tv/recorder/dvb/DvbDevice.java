@@ -16,8 +16,6 @@
 */
 package org.jflicks.tv.recorder.dvb;
 
-import org.jflicks.util.Util;
-
 /**
  * This bean encapsulates the basic properties for a found dvb device.
  *

@@ -1144,6 +1144,12 @@ public final class Util {
         return (result);
     }
 
+    /**
+     * Read the entire file into a byte array.
+     *
+     * @param file The file to read.
+     * @return The file contents as a byte array.
+     */
     public static byte[] read(File file) {
 
         byte[] result = null;

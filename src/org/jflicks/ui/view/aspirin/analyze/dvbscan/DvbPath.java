@@ -27,6 +27,7 @@ import org.jflicks.util.Util;
 public class DvbPath {
 
     private String path;
+    private String confPath;
 
     /**
      * Simple no argument constructor.
@@ -37,7 +38,7 @@ public class DvbPath {
     /**
      * Dvb devices are in /dev/dvb/adapterN/dvrM.
      *
-     * @return the path of the device.
+     * @return The path of the device.
      */
     public String getPath() {
         return (path);
@@ -46,12 +47,37 @@ public class DvbPath {
     /**
      * Dvb devices are in /dev/dvb/adapterN/dvrM.
      *
-     * @param s the path of the device.
+     * @param s The path of the device.
      */
     public void setPath(String s) {
         path = s;
     }
 
+    /**
+     * The installation conf directory which used with scan file name gets
+     * the full path of the file.
+     *
+     * @return The path of channel scan file.
+     */
+    public String getConfPath() {
+        return (confPath);
+    }
+
+    /**
+     * The installation conf directory which used with scan file name gets
+     * the full path of the file.
+     *
+     * @param s The path of channel scan file.
+     */
+    public void setConfPath(String s) {
+        confPath = s;
+    }
+
+    /**
+     * Convenience method to compute a unique channel file name.
+     *
+     * @return A name consisting of adapter and dvr unit values.
+     */
     public String getChannelScanFileName() {
 
         String result = null;
@@ -70,7 +96,13 @@ public class DvbPath {
         return (result);
     }
 
-    private int getAdapterNumber(String s) {
+    /**
+     * Convenience method to return the ADAPTER unit number.
+     *
+     * @param s A path String.
+     * @return An int value.
+     */
+    public int getAdapterNumber(String s) {
 
         int result = -1;
 
@@ -92,7 +124,13 @@ public class DvbPath {
         return (result);
     }
 
-    private int getDvrNumber(String s) {
+    /**
+     * Convenience method to return the DVR unit number.
+     *
+     * @param s A path String.
+     * @return An int value.
+     */
+    public int getDvrNumber(String s) {
 
         int result = -1;
 
