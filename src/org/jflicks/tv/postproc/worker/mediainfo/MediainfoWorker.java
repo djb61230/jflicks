@@ -46,6 +46,7 @@ public class MediainfoWorker extends BaseWorker implements JobListener {
         setTitle("MediainfoWorker");
         setDescription("Display video properties in 'Watch Recordings'");
         setHeavy(false);
+        setUserSelectable(false);
 
         setJobContainerList(new ArrayList<JobContainer>());
     }

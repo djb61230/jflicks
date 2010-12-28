@@ -19,6 +19,7 @@ package org.jflicks.ui.view.scheduler;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -158,7 +159,7 @@ public class RecordingRulePanel extends JPanel implements ActionListener,
             apply(getPriorityComboBox(), rr.getPriority());
             apply(getBeginSpinner(), rr.getBeginPadding() / 60);
             apply(getEndSpinner(), rr.getEndPadding() / 60);
-            getAdvancedButton().setEnabled(rr.getTasks() != null);
+            getAdvancedButton().setEnabled(hasTasksToSelect(rr.getTasks()));
 
         } else {
 
@@ -307,6 +308,25 @@ public class RecordingRulePanel extends JPanel implements ActionListener,
         return (result);
     }
 
+    private boolean hasTasksToSelect(Task[] array) {
+
+        boolean result = false;
+
+        if ((array != null) && (array.length > 0)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                if (array[i].isSelectable()) {
+
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
     private void advancedAction() {
 
         RecordingRule rr = getRecordingRule();
@@ -315,12 +335,22 @@ public class RecordingRulePanel extends JPanel implements ActionListener,
             Task[] tasks = rr.getTasks();
             if (tasks != null) {
 
-                JCheckBox[] cbuts = new JCheckBox[tasks.length];
-                for (int i = 0; i < cbuts.length; i++) {
+                ArrayList<JCheckBox> clist = new ArrayList<JCheckBox>();
+                for (int i = 0; i < tasks.length; i++) {
 
-                    cbuts[i] = new JCheckBox(tasks[i].getDescription());
-                    cbuts[i].setToolTipText(tasks[i].getTitle());
-                    cbuts[i].setSelected(tasks[i].isRun());
+                    if (tasks[i].isSelectable()) {
+
+                        JCheckBox b = new JCheckBox(tasks[i].getDescription());
+                        b.setToolTipText(tasks[i].getTitle());
+                        b.setSelected(tasks[i].isRun());
+                        clist.add(b);
+                    }
+                }
+
+                JCheckBox[] cbuts = null;
+                if (clist.size() > 0) {
+
+                    cbuts = clist.toArray(new JCheckBox[clist.size()]);
                 }
 
                 ColumnPanel cp = new ColumnPanel(cbuts);

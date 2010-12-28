@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -132,14 +133,6 @@ public class RecordingRulePanel extends BaseCustomizePanel
         beginprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         beginprompt.setFont(getSmallFont());
 
-        /*
-        SpinnerNumberModel bmodel = new SpinnerNumberModel(0, -120, 120, 1);
-        JSpinner bspinner = new JSpinner(bmodel);
-        bspinner.addChangeListener(this);
-        bspinner.setFont(getSmallFont());
-        setBeginSpinner(bspinner);
-        */
-
         Spinner bspinner = new Spinner(getSmallFont());
         bspinner.addPropertyChangeListener("Amount", this);
         setBeginSpinner(bspinner);
@@ -148,14 +141,6 @@ public class RecordingRulePanel extends BaseCustomizePanel
         endprompt.setHorizontalTextPosition(SwingConstants.RIGHT);
         endprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         endprompt.setFont(getSmallFont());
-
-        /*
-        SpinnerNumberModel emodel = new SpinnerNumberModel(0, -120, 120, 1);
-        JSpinner espinner = new JSpinner(emodel);
-        espinner.addChangeListener(this);
-        espinner.setFont(getSmallFont());
-        setEndSpinner(espinner);
-        */
 
         Spinner espinner = new Spinner(getSmallFont());
         espinner.addPropertyChangeListener("Amount", this);
@@ -446,7 +431,7 @@ public class RecordingRulePanel extends BaseCustomizePanel
             apply(getPriorityRadioButtons(), rr.getPriority());
             apply(getBeginSpinner(), rr.getBeginPadding() / 60);
             apply(getEndSpinner(), rr.getEndPadding() / 60);
-            getAdvancedButton().setEnabled(rr.getTasks() != null);
+            getAdvancedButton().setEnabled(hasTasksToSelect(rr.getTasks()));
 
         } else {
 
@@ -652,6 +637,25 @@ public class RecordingRulePanel extends BaseCustomizePanel
         }
     }
 
+    private boolean hasTasksToSelect(Task[] array) {
+
+        boolean result = false;
+
+        if ((array != null) && (array.length > 0)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                if (array[i].isSelectable()) {
+
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
     private JRadioButton[] createRadioButtons(Font f, String[] array,
         ButtonGroup bg) {
 
@@ -690,22 +694,30 @@ public class RecordingRulePanel extends BaseCustomizePanel
             Task[] tasks = rr.getTasks();
             if (tasks != null) {
 
-                JComponent[] cbuts = new JComponent[tasks.length + 2];
+                ArrayList<JComponent> list = new ArrayList<JComponent>();
+                //JComponent[] cbuts = new JComponent[tasks.length + 2];
                 for (int i = 0; i < tasks.length; i++) {
 
-                    JCheckBox cb = new JCheckBox(tasks[i].getDescription());
-                    cb.setFont(getSmallFont());
+                    if (tasks[i].isSelectable()) {
 
-                    cb.getInputMap().put(KeyStroke.getKeyStroke("ENTER"),
-                        "toggle");
-                    cb.getActionMap().put("toggle", new CheckAction());
+                        JCheckBox cb = new JCheckBox(tasks[i].getDescription());
+                        cb.setFont(getSmallFont());
 
-                    cb.setSelected(tasks[i].isRun());
-                    cbuts[i] = cb;
+                        cb.getInputMap().put(KeyStroke.getKeyStroke("ENTER"),
+                            "toggle");
+                        cb.getActionMap().put("toggle", new CheckAction());
+
+                        cb.setSelected(tasks[i].isRun());
+                        list.add(cb);
+                        //cbuts[i] = cb;
+                    }
                 }
 
-                cbuts[tasks.length] = getAdvancedOkButton();
-                cbuts[tasks.length + 1] = getAdvancedCancelButton();
+                list.add(getAdvancedOkButton());
+                list.add(getAdvancedCancelButton());
+                //cbuts[tasks.length] = getAdvancedOkButton();
+                //cbuts[tasks.length + 1] = getAdvancedCancelButton();
+                JComponent[] cbuts = list.toArray(new JComponent[list.size()]);
 
                 setAdvancedAccept(false);
                 ColumnPanel cp = new ColumnPanel(cbuts);

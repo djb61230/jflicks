@@ -71,11 +71,21 @@ public interface Worker extends Workerable {
     boolean isHeavy();
 
     /**
-     * A Worker  can be flagged to be run as a default, of course the user
+     * A Worker can be flagged to be run as a default, of course the user
      * can always override this property.
      *
      * @return True if the Worker is run as a default as a suggestion.
      */
     boolean isDefaultRun();
+
+    /**
+     * A Worker can be flagged to always be run.  The idea is that we
+     * want to run things as a worker but to allow the user to not run
+     * it doesn't make a lot of sense.  We want to always run it if in
+     * fact the service is deployed.
+     *
+     * @return True if the Worker is run always.
+     */
+    boolean isUserSelectable();
 }
 

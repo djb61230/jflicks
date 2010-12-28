@@ -46,6 +46,7 @@ public class FFmpegScreenshotWorker extends BaseWorker implements JobListener {
         setTitle("FFmpegScreenshotWorker");
         setDescription("Create a screenshot for 'Watch Recordings'");
         setHeavy(false);
+        setUserSelectable(false);
 
         setJobContainerList(new ArrayList<JobContainer>());
     }

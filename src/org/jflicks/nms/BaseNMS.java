@@ -240,6 +240,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                     result[i].setDescription(array[i].getDescription());
                     result[i].setDefaultRun(array[i].isDefaultRun());
                     result[i].setRun(array[i].isDefaultRun());
+                    result[i].setSelectable(array[i].isUserSelectable());
                 }
             }
         }
@@ -1033,6 +1034,21 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         return (result);
     }
 
+    private Task[] reconcile(Task[] array) {
+
+        Task[] result = null;
+
+        PostProc pp = getPostProc();
+        if (pp != null) {
+
+            Worker[] workers = pp.getWorkers();
+            if (workers != null) {
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -1050,6 +1066,17 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 for (int i = 0; i < result.length; i++) {
 
                     result[i].setHostPort(hp);
+
+                    // We should sync up the PostProc Workers with the
+                    // lightweight task instances here so the user gets
+                    // the most recent info.  But we won't delete old
+                    // workers in case it is just temporarily not deployed.
+                    Task[] update = reconcile(result[i].getTasks());
+                    if (update != null) {
+
+                        result[i].setTasks(update);
+                        s.addRecordingRule(result[i]);
+                    }
                 }
             }
         }

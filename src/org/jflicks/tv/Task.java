@@ -31,6 +31,7 @@ public class Task implements Serializable {
     private String description;
     private boolean defaultRun;
     private boolean run;
+    private boolean selectable;
 
     /**
      * Simple empty constructor.
@@ -108,6 +109,24 @@ public class Task implements Serializable {
      */
     public void setRun(boolean b) {
         run = b;
+    }
+
+    /**
+     * Can the user select the task to optionally run?
+     *
+     * @return True if the user can select the task.
+     */
+    public boolean isSelectable() {
+        return (selectable);
+    }
+
+    /**
+     * Can the user select the task to optionally run?
+     *
+     * @param b True if the user can select the task.
+     */
+    public void setSelectable(boolean b) {
+        selectable = b;
     }
 
     /**

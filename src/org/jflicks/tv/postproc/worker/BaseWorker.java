@@ -35,6 +35,7 @@ public abstract class BaseWorker implements Worker {
     private String description;
     private boolean heavy;
     private boolean defaultRun;
+    private boolean userSelectable;
 
     /**
      * Simple empty constructor.
@@ -43,6 +44,7 @@ public abstract class BaseWorker implements Worker {
 
         setHeavy(true);
         setDefaultRun(true);
+        setUserSelectable(true);
     }
 
     /**
@@ -107,6 +109,22 @@ public abstract class BaseWorker implements Worker {
      */
     public void setDefaultRun(boolean b) {
         defaultRun = b;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isUserSelectable() {
+        return (userSelectable);
+    }
+
+    /**
+     * Convenience method to set this property.
+     *
+     * @param b The given boolean value.
+     */
+    public void setUserSelectable(boolean b) {
+        userSelectable = b;
     }
 
     /**
