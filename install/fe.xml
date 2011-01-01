@@ -141,7 +141,7 @@
             <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-schedule.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
+                src="fe/bundle/jflicks-player-mplayer-video-transport-stream.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
             <file override="update"
@@ -152,7 +152,7 @@
             <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-video.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
+                src="fe/bundle/jflicks-player-mplayer-video.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
             <file override="update"
@@ -161,15 +161,13 @@
                 src="fe/conf/videoscreen.properties" targetdir="$INSTALL_PATH/conf"/>
         </pack>
         <pack name="Live TV" preselected="no" required="no">
-            <description>Watch Live TV.  This is a DVR "live" TV that you can pause etc.  Of course you must have at least one jflicks media system server installed on your network with DVR Functionality enabled.</description>
+            <description>Watch Live TV.  This is a classic "live" TV that you just watch as the pixels fly by. No pausing etc.  Of course you must have at least one jflicks media system server installed on your network with Live TV support enabled.</description>
             <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-livetv.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
+                src="fe/bundle/jflicks-player-vlcj-video-stream-udp.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
-            <file override="update"
-                src="fe/conf/mplayer.properties" targetdir="$INSTALL_PATH/conf"/>
+                src="fe/conf/vlc.properties" targetdir="$INSTALL_PATH/conf"/>
         </pack>
         <pack name="Google TV" preselected="no" required="no">
             <description>Watch Google TV web sites.  You need a recent version of chrome installed.  This screen simply launches chrome with a particuler URL.  See conf/googletv.properties to customize your selections.</description>
@@ -192,7 +190,7 @@
             <file override="update"
                 src="fe/bundle/jflicks-ui-view-fe-screen-preview.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
-                src="fe/bundle/jflicks-player-mplayer.jar" targetdir="$INSTALL_PATH/bundle"/>
+                src="fe/bundle/jflicks-player-mplayer-video.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/conf/mplayer.conf" targetdir="$INSTALL_PATH/conf"/>
             <file override="update"
@@ -243,7 +241,7 @@
         <pack name="On Demand" preselected="no" required="no">
             <description>Needed if you plan on watching an On Demand source.  One of the jflicks media system servers on your network must be running an On Demand service.</description>
             <file override="update"
-                src="fe/bundle/jflicks-player-vlcj.jar" targetdir="$INSTALL_PATH/bundle"/>
+                src="fe/bundle/jflicks-player-vlcj-video-stream-udp.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="fe/conf/vlc.properties" targetdir="$INSTALL_PATH/conf"/>
             <file override="update"

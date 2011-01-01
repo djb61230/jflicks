@@ -146,10 +146,21 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
         setPriority(rr.getPriority());
         setSortBy(rr.getSortBy());
         setShowAiring(rr.getShowAiring());
-        setTasks(rr.getTasks());
         setBeginPadding(rr.getBeginPadding());
         setEndPadding(rr.getEndPadding());
         setHostPort(rr.getHostPort());
+
+        Task[] array = rr.getTasks();
+        if (array != null) {
+
+            Task[] ntasks = new Task[array.length];
+            for (int i = 0; i < ntasks.length; i++) {
+
+                ntasks[i] = new Task(array[i]);
+            }
+
+            setTasks(ntasks);
+        }
     }
 
     /**

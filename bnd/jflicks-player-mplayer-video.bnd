@@ -3,7 +3,7 @@ custom=true
 
 Bundle-Version: 1.0.0
 
-Bundle-Activator: ${module}.Activator
+Bundle-Activator: ${module}.ActivatorVideo
 
 Import-Package:\
  org.jflicks.job;version="1.0.0",\

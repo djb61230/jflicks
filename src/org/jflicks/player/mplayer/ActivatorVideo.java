@@ -40,7 +40,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * @author Doug Barnum
  * @version 1.0
  */
-public class Activator extends BaseActivator {
+public class ActivatorVideo extends BaseActivator {
 
     private MPlayer mplayer;
     private ServiceTracker eventServiceTracker;
@@ -61,6 +61,7 @@ public class Activator extends BaseActivator {
         jc.start();
 
         mplayer = new MPlayer();
+        mplayer.setType(MPlayer.PLAYER_VIDEO);
 
         // Check for a properties file for mplayer....
         File conf = new File("conf");

@@ -1038,12 +1038,21 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
         Task[] result = null;
 
-        PostProc pp = getPostProc();
-        if (pp != null) {
+        if (array != null) {
 
-            Worker[] workers = pp.getWorkers();
-            if (workers != null) {
+            for (int i = 0; i < array.length; i++) {
+
+                String title = array[i].getTitle();
+                if (title != null) {
+
+                    if (title.startsWith("Comskip")) {
+
+                        array[i].setSelectable(true);
+                    }
+                }
             }
+
+            result = Arrays.copyOf(array, array.length);
         }
 
         return (result);
@@ -1071,12 +1080,14 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                     // lightweight task instances here so the user gets
                     // the most recent info.  But we won't delete old
                     // workers in case it is just temporarily not deployed.
+                    /*
                     Task[] update = reconcile(result[i].getTasks());
                     if (update != null) {
 
                         result[i].setTasks(update);
                         s.addRecordingRule(result[i]);
                     }
+                    */
                 }
             }
         }

@@ -40,6 +40,21 @@ public class Task implements Serializable {
     }
 
     /**
+     * Constructor to copy a given Task.
+     */
+    public Task(Task t) {
+
+        if (t != null) {
+
+            setTitle(t.getTitle());
+            setDescription(t.getDescription());
+            setDefaultRun(t.isDefaultRun());
+            setRun(t.isRun());
+            setSelectable(t.isSelectable());
+        }
+    }
+
+    /**
      * A Task has an associated title.
      *
      * @return The task title.

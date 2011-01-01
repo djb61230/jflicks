@@ -37,7 +37,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * @author Doug Barnum
  * @version 1.0
  */
-public class Activator extends BaseActivator {
+public class ActivatorVideoStreamUdp extends BaseActivator {
 
     private ServiceTracker eventServiceTracker;
     private ServiceTracker logServiceTracker;
@@ -50,6 +50,7 @@ public class Activator extends BaseActivator {
         setBundleContext(bc);
 
         Vlcj v = new Vlcj();
+        v.setType(Vlcj.PLAYER_VIDEO_STREAM_UDP);
 
         // Check for a properties file for vlc...
         File conf = new File("conf");

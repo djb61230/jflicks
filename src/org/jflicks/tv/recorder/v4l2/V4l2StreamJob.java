@@ -361,7 +361,7 @@ public class V4l2StreamJob extends AbstractJob implements JobListener {
                 // Lets wait a few seconds because the channel was just
                 // changed.  The HD-PVR sometimes needs a bit of time to
                 // sync with the set-top-box.
-                JobManager.sleep(2500);
+                JobManager.sleep(4000);
                 JobContainer jc = JobManager.getJobContainer(getStreamJob());
                 setJobContainer(jc);
                 jc.start();

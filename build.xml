@@ -248,7 +248,7 @@
             eclipse="false"
             failok="false"
             exceptions="true"
-            files="${bnd}/jflicks-player-mplayer.bnd"
+            files="${bnd}/jflicks-player-mplayer-video.bnd"
             output="${bundle}"
         />
 
@@ -257,7 +257,25 @@
             eclipse="false"
             failok="false"
             exceptions="true"
-            files="${bnd}/jflicks-player-vlcj.bnd"
+            files="${bnd}/jflicks-player-mplayer-video-transport-stream.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-player-vlcj-video.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-player-vlcj-video-stream-udp.bnd"
             output="${bundle}"
         />
 
@@ -885,7 +903,7 @@
             windowtitle="jflicks media system">
 
             <fileset dir="${src}">
-                <exclude name="**/Activator.java"/>
+                <exclude name="**/Activator*.java"/>
                 <include name="**/*.java"/>
             </fileset>
 

@@ -312,10 +312,13 @@ public class RecordingRulePanel extends JPanel implements ActionListener,
 
         boolean result = false;
 
+        System.out.println("hasTasksToSelect: " + array);
         if ((array != null) && (array.length > 0)) {
 
             for (int i = 0; i < array.length; i++) {
 
+                System.out.println("hasTasksToSelect: " + array[i].getTitle());
+                System.out.println("hasTasksToSelect: " + array[i].isSelectable());
                 if (array[i].isSelectable()) {
 
                     result = true;

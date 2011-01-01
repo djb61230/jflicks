@@ -131,6 +131,10 @@
             todir="aspirin/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-path.jar"
             todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-localhost.jar"
+            todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-dvbscan.jar"
+            todir="aspirin/bundle"/>
 
         <!-- Now do client side. -->
         <copy file="${bundle}/jflicks-base.jar"
@@ -165,13 +169,15 @@
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-jna.jar"
             todir="fe/bundle"/>
-        <copy file="${bundle}/jflicks-player-mplayer.jar"
+        <copy file="${bundle}/jflicks-player-mplayer-video.jar"
+            todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-player-mplayer-video-transport-stream.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-chrome.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-photoshow.jar"
             todir="fe/bundle"/>
-        <copy file="${bundle}/jflicks-player-vlcj.jar"
+        <copy file="${bundle}/jflicks-player-vlcj-video-stream-udp.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-vlcdvd.jar"
             todir="fe/bundle"/>

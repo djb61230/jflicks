@@ -45,6 +45,12 @@ public interface Player {
     String PLAYER_VIDEO = "Video";
 
     /**
+     * A player that can handle video files that are raw transport
+     * streams.
+     */
+    String PLAYER_VIDEO_TRANSPORT_STREAM = "VideoTransportStream";
+
+    /**
      * A player that can handle web video, most likely a browser.
      */
     String PLAYER_VIDEO_WEB = "VideoWeb";

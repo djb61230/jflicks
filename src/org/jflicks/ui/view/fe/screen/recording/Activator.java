@@ -74,7 +74,7 @@ public class Activator extends BaseActivator {
         try {
 
             Filter filter = bc.createFilter("(Player-Handle="
-                + Player.PLAYER_VIDEO + ")");
+                + Player.PLAYER_VIDEO_TRANSPORT_STREAM + ")");
             ServiceTracker st = new ServiceTracker(bc, filter, null);
             setServiceTracker(st);
             st.open();
