@@ -59,6 +59,7 @@ public class PlayStateJob extends AbstractJob implements JobListener,
     private boolean usedSeconds;
     private PlayState currentPlayState;
     private boolean checkLength;
+    private boolean preferTime;
 
     /**
      * Contructor with two required arguments.
@@ -71,9 +72,11 @@ public class PlayStateJob extends AbstractJob implements JobListener,
      * @param usedSeconds To work around a bug, we try to seek a second in
      * the video as the "-ss seconds" parameter sometimes seem to result
      * in a freeze frame when beginning playback.  This is a hack for sure.
+     * @param preferTime The bookmark should use the time value, so we will
+     * skip setting the position totally.
      */
     public PlayStateJob(MPlayer p, MPlayerJob job, int startSeconds,
-        boolean usedSeconds) {
+        boolean usedSeconds, boolean preferTime) {
 
         setMPlayer(p);
         setUsedSeconds(usedSeconds);
@@ -88,6 +91,7 @@ public class PlayStateJob extends AbstractJob implements JobListener,
             job.addJobListener(this);
         }
 
+        setPreferTime(preferTime);
         setMinimumTime(Double.MAX_VALUE);
         setStartSeconds(startSeconds);
         setPosition(0L);
@@ -151,6 +155,14 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
     private void setCheckLength(boolean b) {
         checkLength = b;
+    }
+
+    private boolean isPreferTime() {
+        return (preferTime);
+    }
+
+    private void setPreferTime(boolean b) {
+        preferTime = b;
     }
 
     private double getTime() {
@@ -290,7 +302,9 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
                     default:
                     case STREAM_POSITION:
-                        command(STREAM_POSITION_COMMAND + "\n");
+                        if (!isPreferTime()) {
+                            command(STREAM_POSITION_COMMAND + "\n");
+                        }
                         break;
 
                     case STREAM_END:
@@ -387,7 +401,8 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
                 } else {
 
-                    log(MPlayer.DEBUG, "From mplayer: " + message);
+                    System.out.println("From mplayer: " + message);
+                    //log(MPlayer.DEBUG, "From mplayer: " + message);
                 }
 
             } else {

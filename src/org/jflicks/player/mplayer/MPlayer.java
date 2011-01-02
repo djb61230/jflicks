@@ -393,8 +393,12 @@ public class MPlayer extends BasePlayer {
                 }
             }
 
-            PlayStateJob psj =
-                new PlayStateJob(this, job, playStateTime, bookmarkSeconds);
+            boolean preferTime = true;
+            if (getType() == PLAYER_VIDEO_TRANSPORT_STREAM) {
+                preferTime = false;
+            }
+            PlayStateJob psj = new PlayStateJob(this, job, playStateTime,
+                bookmarkSeconds, preferTime);
             setPlayStateJob(psj);
 
             JobContainer jc = JobManager.getJobContainer(psj);
