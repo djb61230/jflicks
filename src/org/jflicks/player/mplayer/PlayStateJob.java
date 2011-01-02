@@ -58,6 +58,7 @@ public class PlayStateJob extends AbstractJob implements JobListener,
     private long length;
     private boolean usedSeconds;
     private PlayState currentPlayState;
+    private boolean checkLength;
 
     /**
      * Contructor with two required arguments.
@@ -92,6 +93,7 @@ public class PlayStateJob extends AbstractJob implements JobListener,
         setPosition(0L);
         setLength(0L);
         setSleepTime(3000);
+        setCheckLength(true);
         setCurrentPlayState(new PlayState());
     }
 
@@ -141,6 +143,14 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
     private void setCurrentPlayState(PlayState ps) {
         currentPlayState = ps;
+    }
+
+    private boolean isCheckLength() {
+        return (checkLength);
+    }
+
+    private void setCheckLength(boolean b) {
+        checkLength = b;
     }
 
     private double getTime() {
@@ -284,7 +294,9 @@ public class PlayStateJob extends AbstractJob implements JobListener,
                         break;
 
                     case STREAM_END:
-                        command(STREAM_END_COMMAND + "\n");
+                        if (isCheckLength()) {
+                            command(STREAM_END_COMMAND + "\n");
+                        }
                         break;
                     }
                 }
@@ -342,8 +354,18 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
                 } else if (message.startsWith(STREAM_END_ANSWER)) {
 
-                    setLength(Util.str2long(message.substring(
-                        message.indexOf("=") + 1), 0L));
+                    long oldlength = getLength();
+                    long newlength = Util.str2long(message.substring(
+                        message.indexOf("=") + 1), 0L);
+                    if (oldlength != newlength) {
+
+                        setLength(newlength);
+
+                    } else {
+
+                        setCheckLength(false);
+                    }
+
                     setState(STREAM_POSITION);
 
                 } else if (message.indexOf("V:") != -1) {
