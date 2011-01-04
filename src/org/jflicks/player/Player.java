@@ -111,14 +111,14 @@ public interface Player {
     boolean isAudioType();
 
     /**
-     * Play the supplied URL as a String.
+     * Play the supplied URL (or URLs).
      *
-     * @param url A URL based source of media data.
+     * @param urls One or more URL based source of media data.
      */
-    void play(String url);
+    void play(String ... urls);
 
     /**
-     * Play the supplied URL as a String.
+     * Play the supplied URL at the given bookmark.
      *
      * @param url A URL based source of media data.
      * @param b A bookmark to start.

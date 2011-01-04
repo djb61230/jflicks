@@ -246,9 +246,27 @@ public class Vlcj extends BasePlayer {
     /**
      * {@inheritDoc}
      */
-    public void play(String url) {
+    public void play(String ... urls) {
 
-        play(url, null);
+        if ((urls != null) && (urls.length > 0)) {
+
+            // We just append each URL space separated and playing should
+            // just work.
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < urls.length; i++) {
+
+                sb.append(urls[i]);
+                if ((i + 1) < urls.length) {
+                    sb.append(" ");
+                }
+            }
+
+            String all = sb.toString();
+            if (all.length() > 0) {
+
+                play(all, null);
+            }
+        }
     }
 
     /**

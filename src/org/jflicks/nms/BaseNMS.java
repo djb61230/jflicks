@@ -1042,10 +1042,10 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
             for (int i = 0; i < array.length; i++) {
 
-                String title = array[i].getTitle();
-                if (title != null) {
+                String mytitle = array[i].getTitle();
+                if (mytitle != null) {
 
-                    if (title.startsWith("Comskip")) {
+                    if (mytitle.startsWith("Comskip")) {
 
                         array[i].setSelectable(true);
                     }

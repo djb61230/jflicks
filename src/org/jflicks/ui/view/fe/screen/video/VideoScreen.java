@@ -23,8 +23,6 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -878,28 +876,10 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                             String intropath = getIntro(v);
                             if (intropath != null) {
 
-                                try {
-
-                                    intropath = intropath + "\n";
-                                    String vpath = v.getPath();
-                                    vpath = vpath + "\n";
-                                    FileWriter fw = new FileWriter("intro.txt");
-                                    fw.write(intropath, 0, intropath.length());
-                                    fw.write(vpath, 0, vpath.length());
-                                    fw.close();
-
-                                    controlKeyboard(false);
-                                    p.setFrame(Util.findFrame(this));
-                                    addBlankPanel();
-                                    p.play("-playlist intro.txt");
-
-                                } catch (IOException ex) {
-
-                                    controlKeyboard(false);
-                                    p.setFrame(Util.findFrame(this));
-                                    addBlankPanel();
-                                    p.play(v.getPath());
-                                }
+                                controlKeyboard(false);
+                                p.setFrame(Util.findFrame(this));
+                                addBlankPanel();
+                                p.play(intropath, v.getPath());
 
                             } else {
 

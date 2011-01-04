@@ -23,8 +23,6 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -177,43 +175,26 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
 
                     boolean success = true;
                     Arrays.sort(all, new FileSort());
-
-                    try {
-
-                        FileWriter fw = new FileWriter("preview.txt");
-                        String line = ppath + "\n";
-                        fw.write(line, 0, line.length());
-                        for (int i = 0; i < all.length; i++) {
-
-                            line = all[i].getPath() + "\n";
-                            fw.write(line, 0, line.length());
-                        }
-
-                        fw.close();
-
-                    } catch (IOException ex) {
-
-                        success = false;
+                    String[] urls = new String[all.length + 1];
+                    urls[0] = ppath;
+                    for (int i = 1; i < urls.length; i++) {
+                        urls[i] = all[i - 1].getPath();
                     }
 
-                    // Just need to start the player.
-                    if (success) {
+                    Player p = getPlayer();
+                    if (p != null) {
 
-                        Player p = getPlayer();
-                        if (p != null) {
+                        View v = getView();
+                        if (v instanceof FrontEndView) {
 
-                            View v = getView();
-                            if (v instanceof FrontEndView) {
-
-                                FrontEndView fev = (FrontEndView) v;
-                                p.setRectangle(fev.getPosition());
-                            }
-
-                            p.addPropertyChangeListener("Playing", this);
-                            controlKeyboard(false);
-                            p.setFrame(Util.findFrame(this));
-                            p.play("-playlist preview.txt");
+                            FrontEndView fev = (FrontEndView) v;
+                            p.setRectangle(fev.getPosition());
                         }
+
+                        p.addPropertyChangeListener("Playing", this);
+                        controlKeyboard(false);
+                        p.setFrame(Util.findFrame(this));
+                        p.play(urls);
                     }
                 }
             }

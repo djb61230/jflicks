@@ -23,6 +23,8 @@ import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
@@ -290,9 +292,35 @@ public class MPlayer extends BasePlayer {
     /**
      * {@inheritDoc}
      */
-    public void play(String url) {
+    public void play(String ... urls) {
 
-        play(url, null);
+        if (urls != null) {
+
+            if (urls.length == 1) {
+
+                play(urls[0], null);
+
+            } else {
+
+                // We need to make a playlist file.
+                try {
+
+                    FileWriter fw = new FileWriter("playlist.txt");
+                    for (int i = 0; i < urls.length; i++) {
+
+                        String tmp = urls[i] + "\n";
+                        fw.write(tmp, 0, tmp.length());
+                    }
+
+                    fw.close();
+                    play("-playlist playlist.txt", null);
+
+                } catch (IOException ex) {
+
+                    log(DEBUG, ex.getMessage());
+                }
+            }
+        }
     }
 
     /**

@@ -128,9 +128,12 @@ public class PhotoShow extends BasePlayer implements ActionListener {
     /**
      * {@inheritDoc}
      */
-    public void play(String url) {
+    public void play(String ... urls) {
 
-        play(url, null);
+        if ((urls != null) && (urls.length > 0)) {
+
+            play(urls[0], null);
+        }
     }
 
     /**

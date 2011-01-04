@@ -41,6 +41,8 @@ public class Task implements Serializable {
 
     /**
      * Constructor to copy a given Task.
+     *
+     * @param t A given Task to "clone".
      */
     public Task(Task t) {
 
