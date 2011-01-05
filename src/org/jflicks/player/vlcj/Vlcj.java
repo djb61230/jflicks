@@ -59,6 +59,8 @@ public class Vlcj extends BasePlayer {
     private JPanel keyPanel;
     private Canvas canvas;
     private String[] args;
+    private String[] urls;
+    private int urlIndex;
 
     /**
      * Simple constructor.
@@ -186,6 +188,22 @@ public class Vlcj extends BasePlayer {
         }
     }
 
+    private int getUrlIndex() {
+        return (urlIndex);
+    }
+
+    private void setUrlIndex(int i) {
+        urlIndex = i;
+    }
+
+    private String[] getUrls() {
+        return (urls);
+    }
+
+    private void setUrls(String[] array) {
+        urls = array;
+    }
+
     private JDialog getDialog() {
         return (dialog);
     }
@@ -256,21 +274,16 @@ public class Vlcj extends BasePlayer {
 
             if (urls.length == 1) {
 
-                play(urls[0], null);
+                setUrlIndex(-1);
+                setUrls(null);
 
             } else {
 
-                try {
-
-                    File pfile = new File("playlist.xspf");
-                    Util.writeTextFile(pfile, toXSPF(urls));
-                    play("playlist.xspf", null);
-
-                } catch (IOException ex) {
-
-                    log(DEBUG, ex.getMessage());
-                }
+                setUrlIndex(0);
+                setUrls(urls);
             }
+
+            play(urls[0], null);
         }
     }
 
@@ -330,7 +343,7 @@ public class Vlcj extends BasePlayer {
             EmbeddedMediaPlayer mediaPlayer = mpf.newMediaPlayer(null);
             mediaPlayer.addMediaPlayerEventListener(
                 new MyMediaPlayerEventAdapter());
-            mediaPlayer.setPlaySubItems(true);
+            //mediaPlayer.setPlaySubItems(true);
             mediaPlayer.setEnableKeyInputHandling(false);
             mediaPlayer.setEnableMouseInputHandling(false);
             mediaPlayer.setVideoSurface(getCanvas());
@@ -590,53 +603,56 @@ public class Vlcj extends BasePlayer {
         return (result);
     }
 
-    private String toXSPF(String[] paths) {
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        sb.append("<playlist version=\"1\" ");
-        sb.append("xmlns=\"http://xspf.org/ns/0/\" ");
-        sb.append("xmlns:vlc=\"http://www.videolan.org");
-        sb.append("/vlc/playlist/ns/0/\">\n");
-        sb.append("    <title>Playlist</title>\n");
-        sb.append("    <trackList>\n");
-
-        for (int i = 0; i < paths.length; i++) {
-
-            sb.append("        <track>\n");
-            sb.append("            <location>");
-            sb.append(paths[i]);
-            sb.append("</location>\n");
-            sb.append("            <extension application=\"");
-            sb.append("http://www.videolan.org/vlc/playlist/0\">\n");
-            sb.append("                <vlc:id>" + i + "</vlc:id>\n");
-            sb.append("            </extension>\n");
-            sb.append("        </track>\n");
-        }
-
-        sb.append("    </trackList>\n");
-        sb.append("    <extension application=\"");
-        sb.append("http://www.videolan.org/vlc/playlist/0\">\n");
-        for (int i = 0; i < paths.length; i++) {
-            sb.append("        <vlc:item tid=\"" + i + "\"/>\n");
-        }
-        sb.append("    </extension>\n");
-        sb.append("</playlist>\n");
-
-        return (sb.toString());
-    }
-
     class MyMediaPlayerEventAdapter extends MediaPlayerEventAdapter {
 
         public MyMediaPlayerEventAdapter() {
         }
 
+        public void stopped(MediaPlayer mediaPlayer) {
+
+            System.out.println("stopped");
+        }
+
         public void finished(MediaPlayer mediaPlayer) {
 
-            setPlaying(false);
-            setCompleted(true);
-            stop();
+            System.out.println("finished");
+            String[] all = getUrls();
+            if (urls != null) {
+
+                int index = getUrlIndex() + 1;
+                if (index == urls.length) {
+
+                    setUrlIndex(-1);
+                    setUrls(null);
+                    setPlaying(false);
+                    setCompleted(true);
+                    stop();
+
+                } else {
+
+                    setUrlIndex(index);
+                    mediaPlayer.playMedia(urls[index]);
+                }
+
+            } else {
+
+                setPlaying(false);
+                setCompleted(true);
+                stop();
+            }
+            /*
+            if (!mediaPlayer.playNextSubItem()) {
+
+                System.out.println("finished bee");
+                setPlaying(false);
+                setCompleted(true);
+                stop();
+
+            } else {
+
+                mediaPlayer.play();
+            }
+            */
         }
 
     }
