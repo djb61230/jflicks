@@ -4,11 +4,11 @@ custom=true
 Bundle-Version: 1.0.0
 
 Include-Resource:\
- ../lib/vlcj-1.1.3.jar
+ ../lib/vlcj-1.1.5.jar
 
 Bundle-ClassPath:\
  .,\
- vlcj-1.1.3.jar
+ vlcj-1.1.5.jar
 
 Bundle-Activator: ${module}.ActivatorVideoStreamUdp
 

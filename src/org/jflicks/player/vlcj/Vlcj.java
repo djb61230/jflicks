@@ -23,6 +23,8 @@ import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
@@ -31,6 +33,8 @@ import javax.swing.JPanel;
 import javax.swing.JDialog;
 import javax.swing.Timer;
 
+import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
+import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
@@ -250,21 +254,22 @@ public class Vlcj extends BasePlayer {
 
         if ((urls != null) && (urls.length > 0)) {
 
-            // We just append each URL space separated and playing should
-            // just work.
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < urls.length; i++) {
+            if (urls.length == 1) {
 
-                sb.append(urls[i]);
-                if ((i + 1) < urls.length) {
-                    sb.append(" ");
+                play(urls[0], null);
+
+            } else {
+
+                try {
+
+                    File pfile = new File("playlist.xspf");
+                    Util.writeTextFile(pfile, toXSPF(urls));
+                    play("playlist.xspf", null);
+
+                } catch (IOException ex) {
+
+                    log(DEBUG, ex.getMessage());
                 }
-            }
-
-            String all = sb.toString();
-            if (all.length() > 0) {
-
-                play(all, null);
             }
         }
     }
@@ -323,6 +328,9 @@ public class Vlcj extends BasePlayer {
             setMediaPlayerFactory(mpf);
 
             EmbeddedMediaPlayer mediaPlayer = mpf.newMediaPlayer(null);
+            mediaPlayer.addMediaPlayerEventListener(
+                new MyMediaPlayerEventAdapter());
+            mediaPlayer.setPlaySubItems(true);
             mediaPlayer.setEnableKeyInputHandling(false);
             mediaPlayer.setEnableMouseInputHandling(false);
             mediaPlayer.setVideoSurface(getCanvas());
@@ -580,6 +588,57 @@ public class Vlcj extends BasePlayer {
         }
 
         return (result);
+    }
+
+    private String toXSPF(String[] paths) {
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        sb.append("<playlist version=\"1\" ");
+        sb.append("xmlns=\"http://xspf.org/ns/0/\" ");
+        sb.append("xmlns:vlc=\"http://www.videolan.org");
+        sb.append("/vlc/playlist/ns/0/\">\n");
+        sb.append("    <title>Playlist</title>\n");
+        sb.append("    <trackList>\n");
+
+        for (int i = 0; i < paths.length; i++) {
+
+            sb.append("        <track>\n");
+            sb.append("            <location>");
+            sb.append(paths[i]);
+            sb.append("</location>\n");
+            sb.append("            <extension application=\"");
+            sb.append("http://www.videolan.org/vlc/playlist/0\">\n");
+            sb.append("                <vlc:id>" + i + "</vlc:id>\n");
+            sb.append("            </extension>\n");
+            sb.append("        </track>\n");
+        }
+
+        sb.append("    </trackList>\n");
+        sb.append("    <extension application=\"");
+        sb.append("http://www.videolan.org/vlc/playlist/0\">\n");
+        for (int i = 0; i < paths.length; i++) {
+            sb.append("        <vlc:item tid=\"" + i + "\"/>\n");
+        }
+        sb.append("    </extension>\n");
+        sb.append("</playlist>\n");
+
+        return (sb.toString());
+    }
+
+    class MyMediaPlayerEventAdapter extends MediaPlayerEventAdapter {
+
+        public MyMediaPlayerEventAdapter() {
+        }
+
+        public void finished(MediaPlayer mediaPlayer) {
+
+            setPlaying(false);
+            setCompleted(true);
+            stop();
+        }
+
     }
 
 }
