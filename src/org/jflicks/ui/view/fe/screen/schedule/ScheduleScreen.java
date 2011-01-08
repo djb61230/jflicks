@@ -74,7 +74,7 @@ import org.jflicks.ui.view.fe.UpcomingListPanel;
 import org.jflicks.ui.view.fe.UpcomingDetailPanel;
 import org.jflicks.ui.view.fe.UpcomingProperty;
 import org.jflicks.ui.view.fe.screen.Screen;
-import org.jflicks.util.ProgressBar;
+import org.jflicks.util.Busy;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXLabel;
@@ -1205,10 +1205,9 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                         OverrideUpcomingJob ouj =
                             new OverrideUpcomingJob(n, up);
-                        ProgressBar pbar =
-                            new ProgressBar(getLayeredPane(), ouj);
-                        pbar.addJobListener(this);
-                        pbar.execute();
+                        Busy busy = new Busy(getLayeredPane(), ouj);
+                        busy.addJobListener(this);
+                        busy.execute();
                     }
                 }
             }
@@ -1679,9 +1678,9 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                     rr = p.getRecordingRule();
                     AddRuleJob arj = new AddRuleJob(n, rr);
-                    ProgressBar pbar = new ProgressBar(getLayeredPane(), arj);
-                    pbar.addJobListener(this);
-                    pbar.execute();
+                    Busy busy = new Busy(getLayeredPane(), arj);
+                    busy.addJobListener(this);
+                    busy.execute();
 
                 } else {
 
