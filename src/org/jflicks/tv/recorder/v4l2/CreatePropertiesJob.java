@@ -275,12 +275,12 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
                         custom.setDefaultValue(NMSConstants.LIST_IS_IGNORED);
                         custom.setValue(NMSConstants.LIST_IS_IGNORED);
 
-                        String[] custom_choices = {
+                        String[] customChoices = {
                             NMSConstants.LIST_IS_IGNORED,
                             NMSConstants.LIST_IS_A_WHITELIST,
                             NMSConstants.LIST_IS_A_BLACKLIST
                         };
-                        custom.setChoices(custom_choices);
+                        custom.setChoices(customChoices);
                         bc.addNameValue(custom);
 
                         // Now the actual list.
