@@ -264,8 +264,38 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
 
                         bc.setName(NMSConstants.RECORDER_NAME);
                         bc.setSource(r.getTitle());
+
+                        // We have to put in some properties that Recorders
+                        // need.  First a custum channel list type.
+                        NameValue custom = new NameValue();
+                        custom.setName(NMSConstants.CUSTOM_CHANNEL_LIST_TYPE);
+                        custom.setDescription(
+                            NMSConstants.CUSTOM_CHANNEL_LIST_TYPE);
+                        custom.setType(NameValue.STRING_FROM_CHOICE_TYPE);
+                        custom.setDefaultValue(NMSConstants.LIST_IS_IGNORED);
+                        custom.setValue(NMSConstants.LIST_IS_IGNORED);
+
+                        String[] custom_choices = {
+                            NMSConstants.LIST_IS_IGNORED,
+                            NMSConstants.LIST_IS_A_WHITELIST,
+                            NMSConstants.LIST_IS_A_BLACKLIST
+                        };
+                        custom.setChoices(custom_choices);
+                        bc.addNameValue(custom);
+
+                        // Now the actual list.
+                        NameValue customlist = new NameValue();
+                        customlist.setName(NMSConstants.CUSTOM_CHANNEL_LIST);
+                        customlist.setDescription(
+                            NMSConstants.CUSTOM_CHANNEL_LIST);
+                        customlist.setType(NameValue.STRINGLIST_TYPE);
+                        bc.addNameValue(customlist);
+
+                        // A channel change script.
                         NameValue ccnv = new NameValue();
                         ccnv.setName(NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME);
+                        ccnv.setDescription(
+                            NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME);
                         ccnv.setType(NameValue.STRING_TYPE);
                         bc.addNameValue(ccnv);
                         r.write(bc);

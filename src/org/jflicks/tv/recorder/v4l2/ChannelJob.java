@@ -118,22 +118,34 @@ public class ChannelJob extends BaseDeviceJob {
         SystemJob job = null;
         String scr = getScript();
         if (scr != null) {
+
             job = SystemJob.getInstance(scr + " " + getChannel());
+
         } else {
-            job = SystemJob.getInstance("ivtv-tune -d " + getDevice()
-                + " --freqtable=" + getFrequencyTable()
-                + " --channel=" + getChannel());
+
+            String chan = getChannel();
+            if (chan != null) {
+
+                job = SystemJob.getInstance("ivtv-tune -d " + getDevice()
+                    + " --freqtable=" + getFrequencyTable()
+                    + " --channel=" + getChannel());
+            }
         }
-        fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand() + ">");
-        setSystemJob(job);
-        job.addJobListener(this);
-        JobContainer jc = JobManager.getJobContainer(job);
-        setJobContainer(jc);
-        jc.start();
 
-        while (!isTerminate()) {
+        if (job != null) {
 
-            JobManager.sleep(getSleepTime());
+            fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand()
+                + ">");
+            setSystemJob(job);
+            job.addJobListener(this);
+            JobContainer jc = JobManager.getJobContainer(job);
+            setJobContainer(jc);
+            jc.start();
+
+            while (!isTerminate()) {
+
+                JobManager.sleep(getSleepTime());
+            }
         }
 
         fireJobEvent(JobEvent.COMPLETE);

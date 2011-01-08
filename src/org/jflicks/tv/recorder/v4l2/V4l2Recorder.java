@@ -402,6 +402,8 @@ public class V4l2Recorder extends BaseRecorder {
                 && (!name.equals(NMSConstants.AUDIO_INPUT_NAME))
                 && (!name.equals(NMSConstants.VIDEO_INPUT_NAME))
                 && (!name.equals(NMSConstants.FREQUENCY_TABLE_NAME))
+                && (!name.equals(NMSConstants.CUSTOM_CHANNEL_LIST))
+                && (!name.equals(NMSConstants.CUSTOM_CHANNEL_LIST_TYPE))
                 && (!name.equals(NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME))) {
 
                 result = true;

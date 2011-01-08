@@ -123,6 +123,39 @@ public final class NMSConstants {
         "Change Channel Script";
 
     /**
+     * A Recorder can have a custom Channel list associated with it.  Using
+     * this a user can say a particular Recorder only supports a subset
+     * of Channels from a ProgramData listing.
+     */
+    public static final String CUSTOM_CHANNEL_LIST = "Custom Channel List";
+
+    /**
+     * The type of CUSTOM_CHANNEL_LIST, either LIST_IS_A_BLACKLIST or
+     * LIST_IS_A_WHITELIST.
+     */
+    public static final String CUSTOM_CHANNEL_LIST_TYPE =
+        "Custom Channel List Type";
+
+    /**
+     * The CUSTOM_CHANNEL_LIST is to be ignored.
+     */
+    public static final String LIST_IS_IGNORED = "List is ignored";
+
+    /**
+     * The CUSTOM_CHANNEL_LIST is interpreted as a blacklist of channels
+     * that the Recorder cannot record.  But it can record the rest of the
+     * Channels from the ProgramData listing.
+     */
+    public static final String LIST_IS_A_BLACKLIST = "List is a blacklist";
+
+    /**
+     * The CUSTOM_CHANNEL_LIST is interpreted as a whitelist of channels
+     * that the Recorder can record.  It cannot record the rest of the
+     * Channels from the ProgramData listing.
+     */
+    public static final String LIST_IS_A_WHITELIST = "List is a whitelist";
+
+    /**
      * The configuration name for a "NMS" service.
      */
     public static final String NMS_NAME = "NMS";

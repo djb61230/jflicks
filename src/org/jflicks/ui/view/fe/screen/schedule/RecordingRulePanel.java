@@ -752,8 +752,11 @@ public class RecordingRulePanel extends BaseCustomizePanel
 
                     for (int i = 0; i < tasks.length; i++) {
 
-                        JCheckBox cb = (JCheckBox) cbuts[i];
-                        tasks[i].setRun(cb.isSelected());
+                        if (cbuts[i] instanceof JCheckBox) {
+
+                            JCheckBox cb = (JCheckBox) cbuts[i];
+                            tasks[i].setRun(cb.isSelected());
+                        }
                     }
                 }
             }

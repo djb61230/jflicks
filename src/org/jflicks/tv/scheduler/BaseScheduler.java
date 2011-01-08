@@ -289,6 +289,14 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                                     // Ok found the recorder.
                                     result = n.getChannelsByListingName(tmp);
+
+                                    // The result is all the channels that
+                                    // are defined by the listing.  However
+                                    // this particular Recorder may really
+                                    // just support a subset of channels,
+                                    // or have a list of channels that it
+                                    // doesn't support.
+                                    result = r.getCustomChannels(result);
                                     break;
                                 }
                             }

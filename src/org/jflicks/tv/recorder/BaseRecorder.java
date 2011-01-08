@@ -19,8 +19,12 @@ package org.jflicks.tv.recorder;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
+import java.util.ArrayList;
 
 import org.jflicks.configure.BaseConfig;
+import org.jflicks.configure.Configuration;
+import org.jflicks.configure.NameValue;
+import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.Recording;
 
@@ -46,6 +50,7 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
     private String extension;
     private String host;
     private int port;
+    private String[] channelNameList;
 
     /**
      * Simple empty constructor.
@@ -236,6 +241,168 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
         boolean old = quickTunable;
         quickTunable = b;
         firePropertyChange("QuickTunable", old, quickTunable);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isWhiteList() {
+
+        boolean result = false;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(
+                NMSConstants.CUSTOM_CHANNEL_LIST_TYPE);
+            if (nv != null) {
+
+                result = NMSConstants.LIST_IS_A_WHITELIST.equals(nv.getValue());
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isBlackList() {
+
+        boolean result = false;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(
+                NMSConstants.CUSTOM_CHANNEL_LIST_TYPE);
+            if (nv != null) {
+
+                result = NMSConstants.LIST_IS_A_BLACKLIST.equals(nv.getValue());
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String[] getChannelNameList() {
+
+        String[] result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(
+                NMSConstants.CUSTOM_CHANNEL_LIST);
+            if (nv != null) {
+
+                result = nv.valueToArray();
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Channel[] getCustomChannels(Channel[] array) {
+
+        Channel[] result = array;
+
+        String[] names = getChannelNameList();
+
+        if ((result != null) && (names != null)) {
+
+            log(DEBUG, "Looks like we DO have a custom channel list");
+
+            // We do have a non-null list of channel names.  We proceed in
+            // one of two ways.
+            if (isWhiteList()) {
+
+                log(DEBUG, "It's a WHITELIST");
+
+                // The list tells us the only channels we can really record.
+                // We need to filter the Channel instances to only our list
+                // of names.
+                ArrayList<Channel> list = new ArrayList<Channel>();
+                for (int i = 0; i < array.length; i++) {
+
+                    for (int j = 0; j < names.length; j++) {
+
+                        if (isChannelNameOrNumber(array[i], names[j])) {
+
+                            list.add(array[i]);
+                            break;
+                        }
+                    }
+                }
+
+                if (list.size() > 0) {
+
+                    result = list.toArray(new Channel[list.size()]);
+                }
+
+            } else if (isBlackList()) {
+
+                log(DEBUG, "It's a BLACKLIST");
+
+                // The list tells us the channels we cannot record.
+                // We need to filter the Channel instances to ignore our list
+                // of names.
+                ArrayList<Channel> list = new ArrayList<Channel>();
+                for (int i = 0; i < array.length; i++) {
+
+                    boolean found = false;
+                    for (int j = 0; j < names.length; j++) {
+
+                        if (isChannelNameOrNumber(array[i], names[j])) {
+
+                            found = true;
+                        }
+                    }
+
+                    if (!found) {
+
+                        // Not on our restricted list.
+                        list.add(array[i]);
+                    }
+                }
+
+                if (list.size() > 0) {
+
+                    result = list.toArray(new Channel[list.size()]);
+                }
+
+            } else {
+
+                log(DEBUG, "We are set to IGNORE the list");
+            }
+
+        } else {
+
+            log(DEBUG, "Looks like we do NOT have a custom channel list");
+        }
+
+        return (result);
+    }
+
+    private boolean isChannelNameOrNumber(Channel c, String s) {
+
+        boolean result = false;
+
+        if ((c != null) && (s != null)) {
+
+            String name = c.getName();
+            String number = c.getNumber();
+
+            result = ((s.equals(name)) || (s.equals(number)));
+        }
+
+        return (result);
     }
 
     /**

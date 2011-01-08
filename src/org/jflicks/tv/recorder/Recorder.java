@@ -176,6 +176,45 @@ public interface Recorder extends Config {
     int getPort();
 
     /**
+     * If the user has a list of Channel names, it means they are the only
+     * channels that this recorder can actually record.  They need to be a
+     * subset of the channels from the Program Listing associated with the
+     * Recorder.
+     *
+     * @return True if list is to be interpreted as a whitelist.
+     */
+    boolean isWhiteList();
+
+    /**
+     * If the user has a list of Channel names, it means they are exception
+     * channels that this recorder cannot actually record.  They need to be a
+     * subset of the channels from the Program Listing associated with the
+     * Recorder.
+     *
+     * @return True if list is to be interpreted as a blacklist.
+     */
+    boolean isBlackList();
+
+    /**
+     * A list of custom channels controlled by the user to further customize
+     * a list of channels from a ProgramData listing that is associated with
+     * this Recorder.
+     *
+     * @return An array of Channel names.
+     */
+    String[] getChannelNameList();
+
+    /**
+     * Convenience method to analyze the custom list of channels and apply
+     * them to an array of Channels to return an actual list of correct
+     * Channels that are recordable by this Recorder.
+     *
+     * @param array An array of Channel instances.
+     * @return A subset of channels that are a true list of recordable ones.
+     */
+    Channel[] getCustomChannels(Channel[] array);
+
+    /**
      * Add a listener.
      *
      * @param l A given listener.
