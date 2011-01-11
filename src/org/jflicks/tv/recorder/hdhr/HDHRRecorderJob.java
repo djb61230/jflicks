@@ -160,10 +160,22 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
         HDHRRecorder r = getHDHRRecorder();
         if (r != null) {
 
-            Channel c = r.getChannel();
-            if (c != null) {
+            result = r.getFrequency();
+        }
 
-                result = c.getFrequency();
+        return (result);
+    }
+
+    private String getFrequencyType() {
+
+        String result = "auto";
+
+        HDHRRecorder r = getHDHRRecorder();
+        if (r != null) {
+
+            String tmp = r.getConfiguredFrequencyType();
+            if (tmp != null) {
+                result = tmp;
             }
         }
 
@@ -226,6 +238,7 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
         fj.setId(getId());
         fj.setTuner(getTuner());
         fj.setFrequency(getFrequency());
+        fj.setType(getFrequencyType());
 
         ProgramJob pj = new ProgramJob();
         setProgramJob(pj);

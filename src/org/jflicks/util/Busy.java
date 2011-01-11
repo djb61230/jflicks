@@ -16,19 +16,10 @@
 */
 package org.jflicks.util;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
-import javax.swing.JButton;
 import javax.swing.JLayeredPane;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
 
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.Jobable;
@@ -42,9 +33,8 @@ import org.jdesktop.swingx.icon.EmptyIcon;
 import org.jdesktop.swingx.painter.BusyPainter;
 
 /**
- * A UI that displays a progress bar while a given job is running.  It
- * listens for JobEvents so it will know when the job is complete.  There
- * is also a cancel button supplied so the user can interrupt the job.
+ * A UI that displays a busy label while a given job is running.  It
+ * listens for JobEvents so it will know when the job is complete.
  *
  * @author Doug Barnum
  * @version 1.0

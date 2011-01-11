@@ -622,8 +622,15 @@ public class SchedulesDirectProgramData extends BaseProgramData
                         found.setListingId(l.getId());
                         if (found.getFrequency() != 0) {
 
-                            found.setNumber(map.getChannel() + "."
-                                + map.getChannelMinor());
+                            int minor = map.getChannelMinor();
+                            if (minor != 0) {
+
+                                found.setNumber(map.getChannel() + "." + minor);
+
+                            } else {
+
+                                found.setNumber(map.getChannel());
+                            }
 
                         } else {
 

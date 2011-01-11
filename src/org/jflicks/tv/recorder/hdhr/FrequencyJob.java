@@ -34,11 +34,14 @@ import org.jflicks.job.SystemJob;
 public class FrequencyJob extends BaseHDHRJob {
 
     private int frequency;
+    private String type;
 
     /**
      * Simple no argument constructor.
      */
     public FrequencyJob() {
+
+        setType("auto");
     }
 
     /**
@@ -65,13 +68,31 @@ public class FrequencyJob extends BaseHDHRJob {
         frequency = i;
     }
 
+    /**
+     * The frequency type.  Defaults to "auto".
+     *
+     * @return The frequency type.
+     */
+    public String getType() {
+        return (type);
+    }
+
+    /**
+     * The frequency type.
+     *
+     * @param s The frequency type.
+     */
+    public void setType(String s) {
+        type = s;
+    }
+
     private String frequencyToString() {
 
         String result = "none";
 
         int f = getFrequency();
         if (f > 0) {
-            result = "auto:" + f;
+            result = getType() + ":" + f;
         }
 
         return (result);

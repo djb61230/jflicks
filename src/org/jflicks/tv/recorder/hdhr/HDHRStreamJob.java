@@ -148,11 +148,7 @@ public class HDHRStreamJob extends AbstractJob implements JobListener {
         HDHRRecorder r = getHDHRRecorder();
         if (r != null) {
 
-            Channel c = r.getChannel();
-            if (c != null) {
-
-                result = c.getFrequency();
-            }
+            result = r.getFrequency();
         }
 
         return (result);
