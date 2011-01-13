@@ -103,6 +103,8 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-videomanager-system.jar"
             todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-videomanager-yamj.jar"
+            todir="server/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-jdom.jar"

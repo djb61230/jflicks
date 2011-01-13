@@ -15,6 +15,16 @@
         </field>
     </panel>
     <panel order="1">
+        <createForPack name="Video Manager"/>
+        <field type="radio" variable="videoManagerChoice">
+            <description align="left" txt="Which Manager?" id="Please Select a Video Manager"/>
+            <spec>
+                <choice id="System" value="System" set="true"/>
+                <choice id="Yet Another Movie Jukebox" value="YAMJ"/> 
+            </spec>
+        </field>
+    </panel>
+    <panel order="2">
         <field type="check" variable="autostart">
             <description align="left" txt="Setup to autostart on login."/>
             <spec false="false" set="false" true="true" txt="Auto Start on Login"/>

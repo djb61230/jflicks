@@ -259,6 +259,43 @@ public class Install {
         }
     }
 
+    private void videoManagerChoice() {
+
+        Properties p = getProperties();
+        if (p != null) {
+
+            String val = p.getProperty("videoManagerChoice");
+            String installpath = p.getProperty("installpath");
+            if ((installpath != null) && (val != null)) {
+
+                File installdir = new File(installpath);
+                File bundle = new File(installdir, "bundle");
+                File rid = null;
+
+                if (val.equalsIgnoreCase("System")) {
+
+                    rid = new File(bundle, "jflicks-videomanager-yamj.jar");
+
+                } else if (val.equalsIgnoreCase("YAMJ")) {
+
+                    rid = new File(bundle, "jflicks-videomanager-system.jar");
+                }
+
+                if (rid != null) {
+
+                    if ((rid.exists()) && (rid.isFile())) {
+
+                        if (!rid.delete()) {
+
+                            System.out.println("Failed to delete "
+                                + rid.getPath());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void autostart() {
 
         Properties p = getProperties();
@@ -436,6 +473,7 @@ public class Install {
         generateSchedulesDirect();
         copyRemote();
         autostart();
+        videoManagerChoice();
     }
 
     public void cleanup() {

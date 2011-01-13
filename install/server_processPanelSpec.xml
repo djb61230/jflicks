@@ -10,6 +10,8 @@
             <arg>$sdpassword</arg>
             <arg>-autostart</arg>
             <arg>$autostart</arg>
+            <arg>-videoManagerChoice</arg>
+            <arg>$videoManagerChoice</arg>
         </executefile>
     </job>
 </processing>
