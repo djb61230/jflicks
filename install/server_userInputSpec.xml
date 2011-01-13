@@ -16,8 +16,9 @@
     </panel>
     <panel order="1">
         <createForPack name="Video Manager"/>
+        <field type="staticText" align="left" id="We have two Video Manager implementations.  The 'System' implementation is all of our own code and you manage all metadata using the Video Manager desktop application.  This is a good choice if you have a library of Home Video.  The other choice is an implementation that can used the output of the YAMJ (Yet Another Movie Jukebox) project.  This is a good choice if you just have movies and TV video.  Of course YAMJ must be installed and you have configured and run it to generate it's Jukebox metadata."/>
         <field type="radio" variable="videoManagerChoice">
-            <description align="left" txt="Which Manager?" id="Please Select a Video Manager"/>
+            <description align="left" id="Please Select a Video Manager"/>
             <spec>
                 <choice id="System" value="System" set="true"/>
                 <choice id="Yet Another Movie Jukebox" value="YAMJ"/> 
