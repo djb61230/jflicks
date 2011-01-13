@@ -33,7 +33,9 @@ public class ScanFile {
     private HashMap<String, Integer> channelHashMap;
 
     /**
-     * Simple default constructor.
+     * Constructor with one argument.
+     *
+     * @param device The HDHomrun device or ID.
      */
     public ScanFile(String device) {
 
@@ -210,11 +212,6 @@ public class ScanFile {
         }
 
         return (result);
-    }
-
-    public static void main(String[] args) {
-
-        new ScanFile("fred");
     }
 
 }

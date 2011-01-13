@@ -18,7 +18,6 @@ package org.jflicks.videomanager.yamj;
 
 import java.util.Hashtable;
 
-import org.jflicks.db.Db4oServiceTracker;
 import org.jflicks.videomanager.VideoManager;
 import org.jflicks.util.BaseActivator;
 

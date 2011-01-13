@@ -226,7 +226,7 @@ public class HDHRRecorder extends BaseRecorder {
     }
 
     /**
-     * Convenience method to get the proper frequency
+     * Convenience method to get the proper frequency.
      *
      * @return A frequency as an int.
      */
