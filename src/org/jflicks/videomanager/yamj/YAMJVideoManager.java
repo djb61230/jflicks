@@ -177,7 +177,7 @@ public class YAMJVideoManager extends BaseVideoManager {
                                                 v.setTitle(getTitle(me));
                                                 v.setPath(path);
                                                 v.setDescription(
-                                                    getDescription(me));
+                                                    getEpisodeTitle(me, index));
                                                 v.setReleased(getReleased(me));
                                                 v.setCategory("TV");
                                                 v.setSeason(
@@ -542,6 +542,34 @@ public class YAMJVideoManager extends BaseVideoManager {
 
                             s = s.trim();
                             result = Util.str2int(s, result);
+                        }
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private String getEpisodeTitle(Element e, int index) {
+
+        String result = null;
+
+        if (e != null) {
+
+            Element files = e.getChild("files");
+            if (files != null) {
+
+                List fileList = files.getChildren("file");
+                if ((fileList != null) && (fileList.size() > index)) {
+
+                    Element item = (Element) fileList.get(index);
+                    if (item != null) {
+
+                        result = item.getAttributeValue("title");
+                        if (result != null) {
+
+                            result = "\"" + result + "\"";
                         }
                     }
                 }
