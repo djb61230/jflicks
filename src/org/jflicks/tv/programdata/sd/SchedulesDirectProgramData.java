@@ -605,7 +605,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
         if ((l != null) && (list != null)) {
 
             result = new Listing();
-            result.setName(l.getName());
+            result.setName(l.getName() + "-" + l.getType());
             result.setId(l.getId());
 
             Collection<net.sf.xtvdclient.xtvd.datatypes.Map> coll = l.getMaps();
