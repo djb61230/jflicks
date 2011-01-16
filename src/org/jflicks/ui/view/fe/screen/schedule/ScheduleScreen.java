@@ -977,10 +977,11 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
             String seriesId = rr.getSeriesId();
             int channelId = rr.getChannelId();
+            String lid = rr.getListingId();
             NMS n = NMSUtil.select(getNMS(), rr.getHostPort());
-            if ((seriesId != null) && (n != null)) {
+            if ((seriesId != null) && (n != null) && (lid != null)) {
 
-                Channel c = n.getChannelById(channelId);
+                Channel c = n.getChannelById(channelId, lid);
                 Upcoming[] all = n.getUpcomings();
                 if ((all != null) && (c != null)) {
 
@@ -1754,6 +1755,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                                     rr.setShowId(show.getId());
                                     rr.setSeriesId(show.getSeriesId());
                                     rr.setChannelId(airing.getChannelId());
+                                    rr.setListingId(airing.getListingId());
                                     rr.setDuration(airing.getDuration());
                                     rr.setPriority(
                                         RecordingRule.NORMAL_PRIORITY);

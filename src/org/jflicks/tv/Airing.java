@@ -33,6 +33,7 @@ public class Airing implements Serializable {
     private Date airDate;
     private String showId;
     private int channelId;
+    private String listingId;
 
     /**
      * Simple empty constructor.
@@ -123,6 +124,24 @@ public class Airing implements Serializable {
      */
     public void setChannelId(int i) {
         channelId = i;
+    }
+
+    /**
+     * This Airing is associated with a "listing" by the ListingId property.
+     *
+     * @return The listing ID as a String instance.
+     */
+    public String getListingId() {
+        return (listingId);
+    }
+
+    /**
+     * This Airing is associated with a "listing" by the ListingId property.
+     *
+     * @param s The listing ID as a String instance.
+     */
+    public void setListingId(String s) {
+        listingId = s;
     }
 
     /**

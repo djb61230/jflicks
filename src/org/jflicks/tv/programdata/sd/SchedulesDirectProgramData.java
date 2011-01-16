@@ -206,7 +206,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
     /**
      * {@inheritDoc}
      */
-    public Channel getChannelById(int id) {
+    public Channel getChannelById(int id, String lid) {
 
         Channel result = null;
 
@@ -214,18 +214,47 @@ public class SchedulesDirectProgramData extends BaseProgramData
         if (oc != null) {
 
             final int cid = id;
+            final String clid = lid;
 
             // Should be just one Channel.
             List<Channel> channels = oc.query(new Predicate<Channel>() {
 
                 public boolean match(Channel c) {
-                    return (cid == c.getId());
+
+                    return ((cid == c.getId())
+                        && (clid.equals(c.getListingId())));
                 }
             });
 
             if ((channels != null) && (channels.size() > 0)) {
 
                 result = channels.get(0);
+            }
+        }
+
+        return (result);
+    }
+
+    private Channel[] getAllChannelsById(int id) {
+
+        Channel[] result = null;
+
+        ObjectContainer oc = getObjectContainer();
+        if (oc != null) {
+
+            final int cid = id;
+
+            List<Channel> channels = oc.query(new Predicate<Channel>() {
+
+                public boolean match(Channel c) {
+
+                    return (cid == c.getId());
+                }
+            });
+
+            if ((channels != null) && (channels.size() > 0)) {
+
+                result = channels.toArray(new Channel[channels.size()]);
             }
         }
 
@@ -272,11 +301,14 @@ public class SchedulesDirectProgramData extends BaseProgramData
         if ((oc != null) && (c != null)) {
 
             final int id = c.getId();
+            final String lid = c.getListingId();
 
             List<Airing> airings = oc.query(new Predicate<Airing>() {
 
                 public boolean match(Airing a) {
-                    return (id == a.getChannelId());
+
+                    return ((id == a.getChannelId())
+                        && (lid.equals(a.getListingId())));
                 }
             });
 
@@ -507,6 +539,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                 }
             }
 
+            ArrayList<Channel> multiple = new ArrayList<Channel>();
             Map<String, Lineup> lmap = xtvd.getLineups();
             if (lmap != null) {
 
@@ -518,7 +551,8 @@ public class SchedulesDirectProgramData extends BaseProgramData
                     while (iter.hasNext()) {
 
                         Lineup lineup = iter.next();
-                        Listing listing = processLineup(lineup, clist);
+                        Listing listing =
+                            processLineup(lineup, clist, multiple);
                         oc.store(listing);
                     }
                     oc.commit();
@@ -527,9 +561,9 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
             // We have built all the fields to the Channels we know about.
             // Now lets write then to the DB.
-            for (int i = 0; i < clist.size(); i++) {
+            for (int i = 0; i < multiple.size(); i++) {
 
-                Channel tmp = clist.get(i);
+                Channel tmp = multiple.get(i);
                 oc.store(tmp);
             }
             oc.commit();
@@ -574,17 +608,28 @@ public class SchedulesDirectProgramData extends BaseProgramData
                 while (iter.hasNext()) {
 
                     Schedule s = iter.next();
-                    Airing airing = new Airing();
-                    airing.setShowId(s.getProgram());
-                    airing.setChannelId(s.getStation());
-                    airing.setAirDate(s.getTime().getLocalDate());
-                    Duration dur = s.getDuration();
-                    if (dur != null) {
 
-                        int hours = Util.str2int(dur.getHours(), 0) * 3600;
-                        int mins = Util.str2int(dur.getMinutes(), 0) * 60;
-                        airing.setDuration((long) (hours + mins));
-                        oc.store(airing);
+                    Channel[] array = getAllChannelsById(s.getStation());
+                    if (array != null) {
+
+                        for (int i = 0; i < array.length; i++) {
+
+                            Airing airing = new Airing();
+                            airing.setShowId(s.getProgram());
+                            airing.setChannelId(array[i].getId());
+                            airing.setListingId(array[i].getListingId());
+                            airing.setAirDate(s.getTime().getLocalDate());
+                            Duration dur = s.getDuration();
+                            if (dur != null) {
+
+                                int hours =
+                                    Util.str2int(dur.getHours(), 0) * 3600;
+                                int mins =
+                                    Util.str2int(dur.getMinutes(), 0) * 60;
+                                airing.setDuration((long) (hours + mins));
+                                oc.store(airing);
+                            }
+                        }
                     }
                 }
 
@@ -598,11 +643,12 @@ public class SchedulesDirectProgramData extends BaseProgramData
         }
     }
 
-    private Listing processLineup(Lineup l, ArrayList<Channel> list) {
+    private Listing processLineup(Lineup l, ArrayList<Channel> list,
+        ArrayList<Channel> all) {
 
         Listing result = null;
 
-        if ((l != null) && (list != null)) {
+        if ((l != null) && (list != null) && (all != null)) {
 
             result = new Listing();
             result.setName(l.getName() + "-" + l.getType());
@@ -619,23 +665,26 @@ public class SchedulesDirectProgramData extends BaseProgramData
                     Channel found = findChannel(list, map.getStation());
                     if (found != null) {
 
-                        found.setListingId(l.getId());
-                        if (found.getFrequency() != 0) {
+                        Channel copy = new Channel(found);
+                        copy.setListingId(l.getId());
+                        if (copy.getFrequency() != 0) {
 
                             int minor = map.getChannelMinor();
                             if (minor != 0) {
 
-                                found.setNumber(map.getChannel() + "." + minor);
+                                copy.setNumber(map.getChannel() + "." + minor);
 
                             } else {
 
-                                found.setNumber(map.getChannel());
+                                copy.setNumber(map.getChannel());
                             }
 
                         } else {
 
-                            found.setNumber(map.getChannel());
+                            copy.setNumber(map.getChannel());
                         }
+
+                        all.add(copy);
                     }
                 }
             }

@@ -96,6 +96,7 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
     private String name;
     private int type;
     private int channelId;
+    private String listingId;
     private String showId;
     private String seriesId;
     private long duration;
@@ -127,6 +128,15 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
         this();
         setType(ONCE_TYPE);
         setShowAiring(sa);
+        if (sa != null) {
+
+            Airing a = sa.getAiring();
+            if (a != null) {
+
+                setChannelId(a.getChannelId());
+                setListingId(a.getListingId());
+            }
+        }
     }
 
     /**
@@ -140,6 +150,7 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
         setName(rr.getName());
         setType(rr.getType());
         setChannelId(rr.getChannelId());
+        setListingId(rr.getListingId());
         setShowId(rr.getShowId());
         setSeriesId(rr.getSeriesId());
         setDuration(rr.getDuration());
@@ -260,6 +271,26 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
      */
     public void setChannelId(int i) {
         channelId = i;
+    }
+
+    /**
+     * This RecordingRule is associated with a "listing" by the ListingId
+     * property.
+     *
+     * @return The listing ID as a String instance.
+     */
+    public String getListingId() {
+        return (listingId);
+    }
+
+    /**
+     * This RecordingRule is associated with a "listing" by the ListingId
+     * property.
+     *
+     * @param s The listing ID as a String instance.
+     */
+    public void setListingId(String s) {
+        listingId = s;
     }
 
     /**

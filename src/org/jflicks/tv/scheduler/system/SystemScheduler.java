@@ -565,7 +565,8 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
 
             } else {
 
-                Channel c = n.getChannelById(rr.getChannelId());
+                Channel c =
+                    n.getChannelById(rr.getChannelId(), rr.getListingId());
                 String seriesId = rr.getSeriesId();
                 ShowAiring[] array =
                     n.getShowAiringsByChannelAndSeriesId(c, seriesId);

@@ -415,7 +415,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
             NMS n = getNMS();
             if (n != null) {
 
-                Channel c = n.getChannelById(rr.getChannelId());
+                Channel c = n.getChannelById(rr.getChannelId(),
+                    rr.getListingId());
                 if (c != null) {
                     apply(getChannelLabel(), c.getNumber());
                 } else {

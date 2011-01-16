@@ -991,7 +991,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
-    public Channel getChannelById(int id) {
+    public Channel getChannelById(int id, String lid) {
 
         Channel result = null;
 
@@ -1000,7 +1000,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
             for (int i = 0; i < array.length; i++) {
 
-                result = array[i].getChannelById(id);
+                result = array[i].getChannelById(id, lid);
                 if (result != null) {
 
                     break;

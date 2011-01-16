@@ -579,7 +579,14 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                     // Right now we just have ONCE or SERIES recording types.
                     // Perhaps more in the future but for now...first see
                     // what channel we are talking about...
-                    Channel chan = n.getChannelById(rules[i].getChannelId());
+                    Channel chan = n.getChannelById(rules[i].getChannelId(),
+                        rules[i].getListingId());
+
+                    log(DEBUG, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                    log(DEBUG, "chan: " + chan);
+                    log(DEBUG, "id: " + rules[i].getChannelId());
+                    log(DEBUG, "id: " + rules[i].getListingId());
+                    log(DEBUG, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
                     if (chan != null) {
 
                         long now = System.currentTimeMillis();

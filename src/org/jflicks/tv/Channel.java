@@ -42,6 +42,20 @@ public class Channel implements Serializable, Comparable<Channel> {
     public Channel() {
     }
 
+    public Channel(Channel c) {
+
+        if (c != null) {
+
+            setId(c.getId());
+            setName(c.getName());
+            setFrequency(c.getFrequency());
+            setNumber(c.getNumber());
+            setAffiliate(c.getAffiliate());
+            setCallSign(c.getCallSign());
+            setListingId(c.getListingId());
+        }
+    }
+
     /**
      * A unique ID is associated with this object.
      *

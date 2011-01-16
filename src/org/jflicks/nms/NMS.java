@@ -356,9 +356,10 @@ public interface NMS extends Config {
      * Convenience method to find a Channel given an Id.
      *
      * @param id A given Id as an int.
+     * @param lid A given listing Id.
      * @return A Channel if one exists with the given id.
      */
-    Channel getChannelById(int id);
+    Channel getChannelById(int id, String lid);
 
     /**
      * Convenience method to find a Show given an Id.

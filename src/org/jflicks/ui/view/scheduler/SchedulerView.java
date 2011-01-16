@@ -685,9 +685,13 @@ public class SchedulerView extends JFlicksView implements ActionListener {
                     rr.setShowId(show.getId());
                     rr.setSeriesId(show.getSeriesId());
                     rr.setChannelId(airing.getChannelId());
+                    rr.setListingId(airing.getListingId());
                     rr.setDuration(airing.getDuration());
                     rr.setPriority(RecordingRule.NORMAL_PRIORITY);
                     rr.setTasks(n.getTasks());
+
+                    System.out.println("chanid: " + rr.getChannelId());
+                    System.out.println("listid: " + rr.getListingId());
 
                     RecordingRulePanel rrp = new RecordingRulePanel();
                     rrp.setNMS(n);

@@ -84,9 +84,10 @@ public interface ProgramData extends Config, DataUpdateable {
      * Find a Channel given its Id.
      *
      * @param id A given Id.
+     * @param lid A given listing Id.
      * @return A Channel instance if it is found.
      */
-    Channel getChannelById(int id);
+    Channel getChannelById(int id, String lid);
 
     /**
      * Find a Show given its Id.
