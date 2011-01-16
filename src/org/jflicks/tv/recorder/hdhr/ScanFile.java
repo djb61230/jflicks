@@ -30,7 +30,7 @@ import org.jflicks.util.Util;
  */
 public class ScanFile {
 
-    private HashMap<String, Integer> channelHashMap;
+    private HashMap<String, String> channelHashMap;
 
     /**
      * Constructor with one argument.
@@ -42,16 +42,16 @@ public class ScanFile {
         build(device);
     }
 
-    private HashMap<String, Integer> getChannelHashMap() {
+    private HashMap<String, String> getChannelHashMap() {
         return (channelHashMap);
     }
 
-    private void setChannelHashMap(HashMap<String, Integer> hm) {
+    private void setChannelHashMap(HashMap<String, String> hm) {
         channelHashMap = hm;
     }
 
     /**
-     * Given a channel number as a String (2.1, 6.2 etc) return the
+     * Given a channel number as a String (866, 867 etc) return the
      * frequency number.
      *
      * @param number The channel number as a String.
@@ -61,13 +61,55 @@ public class ScanFile {
 
         int result = 0;
 
-        HashMap<String, Integer> hm = getChannelHashMap();
+        HashMap<String, String> hm = getChannelHashMap();
         if ((number != null) && (hm != null)) {
 
-            Integer iobj = hm.get(number);
-            if (iobj != null) {
+            String val = hm.get(number);
+            if (val != null) {
 
-                result = iobj.intValue();
+                int index = val.indexOf(":");
+                if (index != -1) {
+
+                    index++;
+                    String tmp = val.substring(index);
+                    if (tmp != null) {
+
+                        tmp = tmp.trim();
+                        result = Util.str2int(tmp, result);
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * Given a channel number as a String (866, 867 etc) return the
+     * program as a String.
+     *
+     * @param number The channel number as a String.
+     * @return A String representing the program.
+     */
+    public String getProgram(String number) {
+
+        String result = null;
+
+        HashMap<String, String> hm = getChannelHashMap();
+        if ((number != null) && (hm != null)) {
+
+            String val = hm.get(number);
+            if (val != null) {
+
+                int index = val.indexOf(":");
+                if (index != -1) {
+
+                    result = val.substring(0, index);
+                    if (result != null) {
+
+                        result = result.trim();
+                    }
+                }
             }
         }
 
@@ -89,47 +131,18 @@ public class ScanFile {
                     String[] lines = Util.readTextFile(scan);
                     if (lines != null) {
 
-                        HashMap<String, Integer> hm =
-                            new HashMap<String, Integer>();
-                        String lastScanning = null;
-                        String lastLock = null;
+                        HashMap<String, String> hm =
+                            new HashMap<String, String>();
                         for (int i = 0; i < lines.length; i++) {
 
-                            if (lines[i].startsWith("SCANNING:")) {
-                                lastScanning = lines[i];
-                            } else if (lines[i].startsWith("LOCK:")) {
-                                lastLock = lines[i];
-                            } else if (lines[i].startsWith("PROGRAM")) {
+                            int index = lines[i].indexOf("=");
+                            if (index != -1) {
 
-                                // We found a potential channel.
-                                int index = lines[i].indexOf("encrypted");
-                                if (index == -1) {
-
-                                    // We could have an unencrypted one...
-                                    index = lines[i].indexOf("control");
-                                    if (index == -1) {
-
-                                        // Isn't a control...in our test
-                                        // file some program lines just had
-                                        // a zero.  We won't worry about them
-                                        // as we should not be given a channel
-                                        // 0.
-                                        String third = parseProgram(lines[i]);
-                                        if (third != null) {
-
-                                            // Looks like we have a channel
-                                            Integer freq =
-                                                parseScanning(lastScanning);
-                                            if (freq != null) {
-
-                                                // Put in HashMap...
-                                                hm.put(third, freq);
-                                                System.out.println("put in <"
-                                                    + third + "> " + freq);
-                                            }
-                                        }
-                                    }
-                                }
+                                String tag = lines[i].substring(0, index);
+                                String val = lines[i].substring(index + 1);
+                                tag = tag.trim();
+                                val = val.trim();
+                                hm.put(tag, val);
                             }
                         }
 
@@ -152,7 +165,7 @@ public class ScanFile {
         File result = null;
 
         boolean generic = true;
-        result = new File(dir, device + "-scan.log");
+        result = new File(dir, device + "-scan.conf");
         if ((result.exists()) && (result.isFile())) {
 
             generic = false;
@@ -160,7 +173,7 @@ public class ScanFile {
 
         if (generic) {
 
-            result = new File(dir, "hdhr-scan.log");
+            result = new File(dir, "hdhr-scan.conf");
         }
 
         return (result);

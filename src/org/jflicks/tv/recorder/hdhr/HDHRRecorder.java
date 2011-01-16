@@ -169,7 +169,7 @@ public class HDHRRecorder extends BaseRecorder {
             File conf = new File("conf");
             if ((conf.exists()) && (conf.isDirectory())) {
 
-                File scan = new File(conf, getDevice() + "-scan.log");
+                File scan = new File(conf, getDevice() + "-scan.conf");
                 if ((scan.exists()) && (scan.isFile())) {
 
                     useScanFile = true;
@@ -177,7 +177,7 @@ public class HDHRRecorder extends BaseRecorder {
 
                 } else {
 
-                    scan = new File(conf, "hdhr-scan.log");
+                    scan = new File(conf, "hdhr-scan.conf");
                     if ((scan.exists()) && (scan.isFile())) {
 
                         useScanFile = true;
@@ -212,7 +212,7 @@ public class HDHRRecorder extends BaseRecorder {
         }
     }
 
-    private int getFromScanFile(String s) {
+    private int getFrequencyFromScanFile(String s) {
 
         int result = -1;
 
@@ -220,6 +220,19 @@ public class HDHRRecorder extends BaseRecorder {
         if ((s != null) && (sf != null)) {
 
             result = sf.getFrequency(s);
+        }
+
+        return (result);
+    }
+
+    private String getProgramFromScanFile(String s) {
+
+        String result = null;
+
+        ScanFile sf = getScanFile();
+        if ((s != null) && (sf != null)) {
+
+            result = sf.getProgram(s);
         }
 
         return (result);
@@ -239,11 +252,36 @@ public class HDHRRecorder extends BaseRecorder {
 
             if (isUseScanFile()) {
 
-                result = getFromScanFile(c.getNumber());
+                result = getFrequencyFromScanFile(c.getNumber());
 
             } else {
 
                 result = c.getFrequency();
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * Convenience method to get the proper program.
+     *
+     * @return A program as a String.
+     */
+    public String getProgram() {
+
+        String result = null;
+
+        Channel c = getChannel();
+        if (c != null) {
+
+            if (isUseScanFile()) {
+
+                result = getProgramFromScanFile(c.getNumber());
+
+            } else {
+
+                result = c.getNumber();
             }
         }
 

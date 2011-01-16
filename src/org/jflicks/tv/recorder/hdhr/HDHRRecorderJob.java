@@ -24,7 +24,6 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
-import org.jflicks.tv.Channel;
 import org.jflicks.util.Util;
 
 /**
@@ -189,11 +188,7 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
         HDHRRecorder r = getHDHRRecorder();
         if (r != null) {
 
-            Channel c = r.getChannel();
-            if (c != null) {
-
-                result = c.getNumber();
-            }
+            result = r.getProgram();
         }
 
         return (result);
