@@ -67,7 +67,7 @@ public class Chrome extends BasePlayer {
      * {@inheritDoc}
      */
     public boolean supportsPause() {
-        return (false);
+        return (true);
     }
 
     /**
@@ -164,6 +164,18 @@ public class Chrome extends BasePlayer {
     public void pause(boolean b) {
 
         setPaused(b);
+
+        try {
+
+            Robot r = new Robot();
+
+            r.keyPress(KeyEvent.VK_SPACE);
+            r.keyRelease(KeyEvent.VK_SPACE);
+
+        } catch (Exception ex) {
+
+            log(ERROR, "Robot error hitting space");
+        }
     }
 
     /**
@@ -202,9 +214,8 @@ public class Chrome extends BasePlayer {
 
         } catch (Exception ex) {
 
-            log(ERROR, "Robot error exiting chrome");
+            log(ERROR, "Robot error next chrome");
         }
-
     }
 
     /**
@@ -224,7 +235,7 @@ public class Chrome extends BasePlayer {
 
         } catch (Exception ex) {
 
-            log(ERROR, "Robot error exiting chrome");
+            log(ERROR, "Robot error previous chrome");
         }
     }
 
