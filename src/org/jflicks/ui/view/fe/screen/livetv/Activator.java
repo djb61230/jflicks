@@ -16,13 +16,16 @@
 */
 package org.jflicks.ui.view.fe.screen.livetv;
 
+import java.io.File;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import org.jflicks.player.Player;
 import org.jflicks.rc.RCTracker;
 import org.jflicks.imagecache.ImageCacheTracker;
 import org.jflicks.ui.view.fe.screen.Screen;
 import org.jflicks.util.BaseActivator;
+import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -33,6 +36,8 @@ import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
+ * Activator for the Live TV screen.  It checks for a properties file to
+ * determine whether to start a DVR-like LiveTV or a pure streaming one.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -51,7 +56,17 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
-        LiveTVScreen s = new LiveTVScreen();
+        String playertype = Player.PLAYER_VIDEO_STREAM_UDP;
+        Screen s = null;
+        if (isDVR()) {
+
+            s = new DVRLiveTVScreen();
+            playertype = Player.PLAYER_VIDEO_TRANSPORT_STREAM;
+
+        } else {
+
+            s = new LiveTVScreen();
+        }
 
         // Now we listen for command events.
         String[] topics = new String[] {
@@ -73,7 +88,7 @@ public class Activator extends BaseActivator {
         try {
 
             Filter filter = bc.createFilter("(Player-Handle="
-                + Player.PLAYER_VIDEO_STREAM_UDP + ")");
+                + playertype + ")");
             ServiceTracker st = new ServiceTracker(bc, filter, null);
             setServiceTracker(st);
             st.open();
@@ -142,6 +157,27 @@ public class Activator extends BaseActivator {
 
     private void setImageCacheTracker(ImageCacheTracker t) {
         imageCacheTracker = t;
+    }
+
+    private boolean isDVR() {
+
+        boolean result = false;
+
+        File conf = new File("conf");
+        if ((conf.exists() && (conf.isDirectory()))) {
+
+            File prop = new File(conf, "livetvscreen.properties");
+            if ((prop.exists() && (prop.isFile()))) {
+
+                Properties p = Util.findProperties(prop);
+                if (p != null) {
+
+                    result = Util.str2boolean(p.getProperty("dvr"), result);
+                }
+            }
+        }
+
+        return (result);
     }
 
 }

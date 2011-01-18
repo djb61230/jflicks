@@ -272,12 +272,24 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
      * {@inheritDoc}
      */
     public void skipforward() {
+
+        Player p = getPlayer();
+        if ((p != null) && (p.isPlaying())) {
+
+            p.next();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public void skipbackward() {
+
+        Player p = getPlayer();
+        if ((p != null) && (p.isPlaying())) {
+
+            p.previous();
+        }
     }
 
     /**

@@ -188,12 +188,44 @@ public class Chrome extends BasePlayer {
      * {@inheritDoc}
      */
     public void next() {
+
+        log(INFO, "chrome next");
+
+        try {
+
+            Robot r = new Robot();
+
+            r.keyPress(KeyEvent.VK_ALT);
+            r.keyPress(KeyEvent.VK_RIGHT);
+            r.keyRelease(KeyEvent.VK_RIGHT);
+            r.keyRelease(KeyEvent.VK_ALT);
+
+        } catch (Exception ex) {
+
+            log(ERROR, "Robot error exiting chrome");
+        }
+
     }
 
     /**
      * {@inheritDoc}
      */
     public void previous() {
+
+        log(INFO, "chrome previous");
+        try {
+
+            Robot r = new Robot();
+
+            r.keyPress(KeyEvent.VK_ALT);
+            r.keyPress(KeyEvent.VK_LEFT);
+            r.keyRelease(KeyEvent.VK_LEFT);
+            r.keyRelease(KeyEvent.VK_ALT);
+
+        } catch (Exception ex) {
+
+            log(ERROR, "Robot error exiting chrome");
+        }
     }
 
     /**
