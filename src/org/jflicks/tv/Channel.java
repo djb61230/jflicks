@@ -42,6 +42,11 @@ public class Channel implements Serializable, Comparable<Channel> {
     public Channel() {
     }
 
+    /**
+     * Be able to copy a Channel instance from an instance.
+     *
+     * @param c A given Channel to copy.
+     */
     public Channel(Channel c) {
 
         if (c != null) {

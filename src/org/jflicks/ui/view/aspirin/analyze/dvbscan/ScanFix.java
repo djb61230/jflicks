@@ -102,7 +102,8 @@ public class ScanFix extends BaseFix implements JobListener {
         setTerminate(false);
 
         String[] args = {
-            "w_scan", "-c", "US", "-A", "3", "-o", "7", "-f", "a", "-X", "-O", "0"
+            "w_scan", "-c", "US", "-A", "3", "-o", "7", "-f", "a", "-X",
+            "-O", "0"
         };
 
         ScanJob job = new ScanJob(args);
