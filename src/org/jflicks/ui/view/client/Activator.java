@@ -21,8 +21,11 @@ import java.util.Hashtable;
 import org.jflicks.mvc.Controller;
 import org.jflicks.mvc.View;
 import org.jflicks.util.BaseActivator;
+import org.jflicks.util.EventSender;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -58,6 +61,14 @@ public class Activator extends BaseActivator {
         dict.put(ClientView.TITLE_PROPERTY, "JFLICKS-CONFIGCLIENT");
 
         bc.registerService(View.class.getName(), v, dict);
+
+        String[] topics = new String[] {
+            EventSender.MESSAGE_TOPIC_PATH
+        };
+
+        Hashtable<String, String[]> eprops = new Hashtable<String, String[]>();
+        eprops.put(EventConstants.EVENT_TOPIC, topics);
+        bc.registerService(EventHandler.class.getName(), v, eprops);
 
         logServiceTracker =
             new ServiceTracker(bc, LogService.class.getName(), null);

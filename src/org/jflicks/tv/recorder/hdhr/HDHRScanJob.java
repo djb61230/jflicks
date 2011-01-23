@@ -25,6 +25,8 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
+import org.jflicks.nms.NMS;
+import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.util.Util;
 
@@ -140,6 +142,12 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
         if ((r != null) && (message != null)) {
 
             r.log(status, message);
+            NMS n = r.getNMS();
+            if (n != null) {
+
+                n.sendMessage(NMSConstants.MESSAGE_RECORDER_SCAN_UPDATE
+                    + " " + message);
+            }
         }
     }
 
@@ -204,13 +212,11 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
                     for (int i = 0; i < array.length; i++) {
 
                         String ref = array[i].getReferenceNumber();
-                        log(HDHRRecorder.DEBUG, "Checking ref <" + ref + ">");
                         int freq = psf.get(ref);
                         if (freq != -1) {
 
                             String line = array[i].getNumber() + "="
                                 + ref + ":" + freq;
-                            log(HDHRRecorder.DEBUG, "Adding <" + line + ">");
                             sb.append(line);
                             sb.append("\n");
 
@@ -222,6 +228,9 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
 
                     if (sb.length() > 0) {
 
+                        log(HDHRRecorder.DEBUG, "-------------------------");
+                        log(HDHRRecorder.DEBUG, sb.toString());
+                        log(HDHRRecorder.DEBUG, "-------------------------");
                         File conf = new File("conf");
                         if ((conf.exists()) && (conf.isDirectory())) {
 
@@ -230,6 +239,8 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
                             try {
 
                                 Util.writeTextFile(scan, sb.toString());
+                                log(HDHRRecorder.DEBUG, "Writing "
+                                    + scan.getPath());
 
                             } catch (IOException ex) {
 

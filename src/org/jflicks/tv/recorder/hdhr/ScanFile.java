@@ -18,7 +18,6 @@ package org.jflicks.tv.recorder.hdhr;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 
 import org.jflicks.util.Util;
 

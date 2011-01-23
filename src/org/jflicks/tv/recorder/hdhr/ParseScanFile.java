@@ -117,8 +117,6 @@ public class ParseScanFile {
 
                                         // Put in HashMap...
                                         hm.put(third, freq);
-                                        System.out.println("put in <"
-                                            + third + "> " + freq);
                                     }
                                 }
                             }

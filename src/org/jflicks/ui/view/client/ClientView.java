@@ -44,6 +44,7 @@ import org.jflicks.configure.ConfigurationPanel;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.ui.view.JFlicksView;
+import org.jflicks.util.MessagePanel;
 import org.jflicks.util.TabClose;
 import org.jflicks.util.Util;
 
@@ -65,6 +66,7 @@ public class ClientView extends JFlicksView {
     private JMenu nmsMenu;
     private AboutPanel aboutPanel;
     private HashMap<JTabbedPane, NMS> hashMap;
+    private MessagePanel messagePanel;
 
     /**
      * Default constructor.
@@ -171,6 +173,9 @@ public class ClientView extends JFlicksView {
             mb.add(helpMenu);
             frame.setJMenuBar(mb);
 
+            MessagePanel mp = new MessagePanel("Log", 20, 60);
+            setMessagePanel(mp);
+
             try {
 
                 BufferedImage image =
@@ -204,10 +209,31 @@ public class ClientView extends JFlicksView {
         nmsMenu = m;
     }
 
+    private MessagePanel getMessagePanel() {
+        return (messagePanel);
+    }
+
+    private void setMessagePanel(MessagePanel mp) {
+        messagePanel = mp;
+    }
+
     /**
      * {@inheritDoc}
      */
     public void messageReceived(String s) {
+
+        if ((s != null)
+            && (s.startsWith(NMSConstants.MESSAGE_RECORDER_SCAN_UPDATE))) {
+
+            MessagePanel mp = getMessagePanel();
+            if (mp != null) {
+
+                String tmp = s.substring(
+                    NMSConstants.MESSAGE_RECORDER_SCAN_UPDATE.length());
+                tmp = tmp.trim();
+                mp.addMessage(tmp);
+            }
+        }
     }
 
     class ExitAction extends AbstractAction {
@@ -424,10 +450,13 @@ public class ClientView extends JFlicksView {
                                     System.out.println("src: <" + src + ">");
                                     if (nms.performChannelScan(src)) {
 
-                                        JOptionPane.showMessageDialog(
-                                            getFrame(), "Scan has begun!",
-                                            "alert",
-                                            JOptionPane.INFORMATION_MESSAGE);
+                                        MessagePanel mp = getMessagePanel();
+                                        if (mp != null) {
+
+                                            mp.clearMessage();
+                                            Util.showDoneDialog(getFrame(),
+                                                "Scanning...", mp);
+                                        }
 
                                     } else {
 
@@ -447,8 +476,8 @@ public class ClientView extends JFlicksView {
                                 } else {
 
                                     JOptionPane.showMessageDialog(getFrame(),
-                                        "Please select a " +
-                                        NMSConstants.RECORDER_NAME, "alert",
+                                        "Please select a "
+                                        + NMSConstants.RECORDER_NAME, "alert",
                                         JOptionPane.ERROR_MESSAGE);
                                 }
                             }

@@ -25,6 +25,8 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
+import org.jflicks.nms.NMS;
+import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.util.Util;
 
@@ -105,6 +107,13 @@ public class DvbScanJob extends AbstractJob implements JobListener {
         if ((r != null) && (message != null)) {
 
             r.log(status, message);
+            NMS n = r.getNMS();
+            if (n != null) {
+
+                message = NMSConstants.MESSAGE_RECORDER_SCAN_UPDATE
+                    + " " + message;
+                n.sendMessage(message);
+            }
         }
     }
 
@@ -287,6 +296,8 @@ public class DvbScanJob extends AbstractJob implements JobListener {
                             try {
 
                                 Util.writeTextFile(scan, sb.toString());
+                                log(DvbRecorder.DEBUG, "Writing "
+                                    + scan.getPath());
 
                             } catch (IOException ex) {
 
