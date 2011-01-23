@@ -125,6 +125,8 @@
                 src="server/bundle/jflicks-videomanager-system.jar" targetdir="$INSTALL_PATH/bundle"/>
             <file override="update"
                 src="server/bundle/jflicks-videomanager-yamj.jar" targetdir="$INSTALL_PATH/bundle"/>
+            <file override="update"
+                src="server/bundle/jflicks-jdom.jar" targetdir="$INSTALL_PATH/bundle"/>
         </pack>
         <pack name="Roku On Demand" preselected="no" required="no">
             <description>Use a Roku for On Demand viewing.  The device will need to be attached to a recorder.  The HD-PVR 1212 works great but an analog recorder via s-video would work too.</description>

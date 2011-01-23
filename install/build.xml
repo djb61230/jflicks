@@ -10,10 +10,6 @@
     <property name="lib" location="lib"/>
     <property name="bundle" location="../bundle"/>
     <property name="topdist" location="../dist"/>
-    <property name="install.lib" location="${user.home}/IzPack/lib"/>
-
-    <taskdef name="izpack" classpath="${install.lib}/standalone-compiler.jar"
-        classname="com.izforge.izpack.ant.IzPackTask"/>
 
     <!--
         Make a build classpath for our code.
@@ -245,48 +241,6 @@
         <copy file="${bundle}/jflicks-thetvdbapi.jar"
             todir="metadata/bundle"/>
 
-    </target>
-
-    <target name="fe" depends="deploy" description="Create installer for fe">
-
-        <izpack input="fe.xml"
-            output="jflicks-fe.jar"
-            installerType="standard"
-            inheritAll="true"
-            basedir="."
-            compression="deflate"
-            compressionlevel="9"/>
-
-    </target>
-
-    <target name="server" depends="deploy"
-        description="Create installer for server">
-
-        <izpack input="server.xml"
-            output="jflicks-server.jar"
-            installerType="standard"
-            inheritAll="true"
-            basedir="."
-            compression="deflate"
-            compressionlevel="9"/>
-
-    </target>
-
-    <target name="desktop" depends="deploy"
-        description="Create installer for desktop applications">
-
-        <izpack input="desktop.xml"
-            output="jflicks-desktop.jar"
-            installerType="standard"
-            inheritAll="true"
-            basedir="."
-            compression="deflate"
-            compressionlevel="9"/>
-
-    </target>
-
-    <target name="all" depends="fe,server,desktop"
-        description="Create installers for everything.">
     </target>
 
     <!--
