@@ -374,15 +374,6 @@
             eclipse="false"
             failok="false"
             exceptions="true"
-            files="${bnd}/jflicks-ui-view-aspirin-analyze-dvbscan.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
             files="${bnd}/jflicks-ui-view-client.bnd"
             output="${bundle}"
         />

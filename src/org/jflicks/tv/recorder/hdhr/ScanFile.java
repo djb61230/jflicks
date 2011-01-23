@@ -23,7 +23,9 @@ import java.util.StringTokenizer;
 import org.jflicks.util.Util;
 
 /**
- * Class that can record from an HDHR.
+ * Class that can get frequency and program names from a config file for
+ * an HDHR.  This is our own invention but inspired by similar files for
+ * DVB devices.  The config file is not needed for OTA, just cable/QAM.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -174,54 +176,6 @@ public class ScanFile {
         if (generic) {
 
             result = new File(dir, "hdhr-scan.conf");
-        }
-
-        return (result);
-    }
-
-    private String parseProgram(String s) {
-
-        String result = null;
-
-        if (s != null) {
-
-            StringTokenizer st = new StringTokenizer(s);
-            if (st.countTokens() >= 3) {
-
-                // Throw away...
-                result = st.nextToken();
-
-                // Throw away...
-                result = st.nextToken();
-
-                // Keep...
-                result = st.nextToken();
-            }
-        }
-
-        return (result);
-    }
-
-    private Integer parseScanning(String s) {
-
-        Integer result = null;
-
-        if (s != null) {
-
-            StringTokenizer st = new StringTokenizer(s);
-            if (st.countTokens() >= 2) {
-
-                // Throw away...
-                String tmp = st.nextToken();
-
-                // Keep...
-                tmp = st.nextToken();
-                int val = Util.str2int(tmp, -1);
-                if (val != -1) {
-
-                    result = Integer.valueOf(val);
-                }
-            }
         }
 
         return (result);

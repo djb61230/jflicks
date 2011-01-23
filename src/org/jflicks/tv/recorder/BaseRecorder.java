@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import org.jflicks.configure.BaseConfig;
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
+import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.Recording;
@@ -51,6 +52,7 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
     private String host;
     private int port;
     private String[] channelNameList;
+    private NMS nms;
 
     /**
      * Simple empty constructor.
@@ -222,6 +224,26 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
      */
     public void setPort(int i) {
         port = i;
+    }
+
+    /**
+     * Handy to have a reference to the NMS associated
+     * with this Recorder.
+     *
+     * @return An NMS instance.
+     */
+    public NMS getNMS() {
+        return (nms);
+    }
+
+    /**
+     * Handy to have a reference to the NMS associated
+     * with this Recorder.
+     *
+     * @param n An NMS instance.
+     */
+    public void setNMS(NMS n) {
+        nms = n;
     }
 
     /**

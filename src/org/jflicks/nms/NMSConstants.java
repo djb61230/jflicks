@@ -462,6 +462,13 @@ public final class NMSConstants {
     public static final String MESSAGE_SCHEDULE_UPDATE = "ScheduleUpdate";
 
     /**
+     * Communication from the NMS to clients is handled by sending messages
+     * via the EventAdmin service.  We define a message to tell clients that
+     * there is some update from a Recorder scan performance.
+     */
+    public static final String MESSAGE_RECORDER_SCAN_UPDATE = "RecorderScan";
+
+    /**
      * A search defined to only examine the title.
      */
     public static final int SEARCH_TITLE = 1;

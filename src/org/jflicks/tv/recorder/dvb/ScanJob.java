@@ -14,14 +14,18 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.recorder;
+package org.jflicks.tv.recorder.dvb;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.tv.recorder.BaseDeviceJob;
+import org.jflicks.util.Util;
 
 /**
  *
@@ -36,6 +40,7 @@ public class ScanJob extends BaseDeviceJob {
     private static final String VSB_BAD_TEXT = "VSB_8";
     private static final String VSB_GOOD_TEXT = "8VSB";
 
+    private File file;
     private String[] args;
     private String fileText;
 
@@ -46,7 +51,35 @@ public class ScanJob extends BaseDeviceJob {
      */
     public ScanJob(String[] args) {
 
+        try {
+
+            File f = File.createTempFile("wscan", ".dump");
+            setFile(f);
+            if (args != null) {
+
+                String[] plus = new String[args.length + 2];
+                for (int i = 0; i < args.length; i++) {
+
+                    plus[i] = args[i];
+                }
+
+                plus[args.length] = ">";
+                plus[args.length + 1] = f.getPath();
+                args = plus;
+            }
+
+        } catch (IOException ex) {
+        }
+
         setArgs(args);
+    }
+
+    private File getFile() {
+        return (file);
+    }
+
+    private void setFile(File f) {
+        file = f;
     }
 
     /**
@@ -169,60 +202,59 @@ public class ScanJob extends BaseDeviceJob {
                     String[] array = output.split("\n");
                     if ((array != null) && (array.length > 0)) {
 
-                        StringBuilder sb = new StringBuilder();
-
-                        boolean dumpMode = false;
                         HashMap<String, String> hm =
                             new HashMap<String, String>();
                         for (int i = 0; i < array.length; i++) {
 
-                            if (array[i].startsWith("dumping")) {
+                            // We are at the beginning and we look for
+                            // lines that "define" a channel number by
+                            // it's name - we need to substitute it later...
+                            if (array[i].startsWith(SERVICE_LINE)) {
 
-                                dumpMode = true;
-                                continue;
-                            }
+                                String channel = parseChannel(array[i]);
+                                String name = parseName(array[i]);
+                                if ((channel != null) && (name != null)) {
 
-                            if (dumpMode) {
-
-                                if (array[i].indexOf(VSB_BAD_TEXT) != -1) {
-
-                                    array[i] = array[i].replaceAll(VSB_BAD_TEXT,
-                                        VSB_GOOD_TEXT);
-                                }
-
-                                int index = array[i].indexOf(":");
-                                if (index != -1) {
-
-                                    String name = array[i].substring(0, index);
-                                    name = ensurePrintable(name);
-                                    String rest = array[i].substring(index);
-
-                                    String channel = hm.get(name);
-                                    if (channel != null) {
-
-                                        sb.append(channel);
-                                        sb.append(rest);
-                                        sb.append("\n");
-                                    }
-                                }
-
-                            } else {
-
-                                // We are at the beginning and we look for
-                                // lines that "define" a channel number by
-                                // it's name - we need to substitute it later...
-                                if (array[i].startsWith(SERVICE_LINE)) {
-
-                                    String channel = parseChannel(array[i]);
-                                    String name = parseName(array[i]);
-                                    if ((channel != null) && (name != null)) {
-
-                                        hm.put(name, channel);
-                                    }
+                                    hm.put(name, channel);
                                 }
                             }
                         }
 
+                        // OK we have built a hash of channel names and
+                        // numbers.  The next thing to do is load the
+                        // file output and replace the name with the proper
+                        // number.
+                        StringBuilder sb = new StringBuilder();
+                        array = Util.readTextFile(getFile());
+                        for (int i = 0; i < array.length; i++) {
+
+                            // First a hack to fix ATSC bad text.
+                            if (array[i].indexOf(VSB_BAD_TEXT) != -1) {
+
+                                array[i] = array[i].replaceAll(VSB_BAD_TEXT,
+                                    VSB_GOOD_TEXT);
+                            }
+
+                            int index = array[i].indexOf(":");
+                            if (index != -1) {
+
+                                String name = array[i].substring(0, index);
+                                name = ensurePrintable(name);
+                                String rest = array[i].substring(index);
+
+                                String channel = hm.get(name);
+                                if (channel != null) {
+
+                                    sb.append(channel);
+                                    sb.append(rest);
+                                    sb.append("\n");
+                                }
+                            }
+                        }
+
+                        // Now at this point we should have lines with
+                        // the channel numbers instead of the channel
+                        // names.
                         if (sb.length() > 0) {
 
                             fileText = sb.toString();

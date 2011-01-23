@@ -42,6 +42,7 @@ import javax.swing.JTabbedPane;
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.ConfigurationPanel;
 import org.jflicks.nms.NMS;
+import org.jflicks.nms.NMSConstants;
 import org.jflicks.ui.view.JFlicksView;
 import org.jflicks.util.TabClose;
 import org.jflicks.util.Util;
@@ -153,6 +154,9 @@ public class ClientView extends JFlicksView {
 
             DeleteConfigurationAction daction = new DeleteConfigurationAction();
             fileMenu.add(daction);
+
+            RecorderScanAction rsaction = new RecorderScanAction();
+            fileMenu.add(rsaction);
 
             ExitAction exitAction = new ExitAction();
             fileMenu.addSeparator();
@@ -323,7 +327,7 @@ public class ClientView extends JFlicksView {
 
             if (nms != null) {
 
-                // Load up a new tab with a ticket editor.
+                // Load up a new tab with a ConfigurationPanel.
                 JTabbedPane tp = getTabbedPane();
                 if (tp != null) {
 
@@ -382,6 +386,80 @@ public class ClientView extends JFlicksView {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    class RecorderScanAction extends AbstractAction {
+
+        public RecorderScanAction() {
+
+            putValue(NAME, "Recorder Channel Scan");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            HashMap<JTabbedPane, NMS> m = getHashMap();
+            JTabbedPane tp = getTabbedPane();
+            if ((m != null) && (tp != null)) {
+
+                JTabbedPane sub = (JTabbedPane) tp.getSelectedComponent();
+                if (sub != null) {
+
+                    NMS nms = m.get(sub);
+                    if (nms != null) {
+
+                        ConfigurationPanel cp =
+                            (ConfigurationPanel) sub.getSelectedComponent();
+                        if (cp != null) {
+
+                            Configuration c = cp.getConfiguration();
+                            if (c != null) {
+
+                                String name = c.getName();
+                                if (NMSConstants.RECORDER_NAME.equals(name)) {
+
+                                    String src = c.getSource();
+                                    System.out.println("src: <" + src + ">");
+                                    if (nms.performChannelScan(src)) {
+
+                                        JOptionPane.showMessageDialog(
+                                            getFrame(), "Scan has begun!",
+                                            "alert",
+                                            JOptionPane.INFORMATION_MESSAGE);
+
+                                    } else {
+
+                                        String mess = "Scan NOT started."
+                                            + " This could be because:\n"
+                                            + " 1) This Recorder doesn't"
+                                            + " have a tuner.\n"
+                                            + " 2) It's not connected to a"
+                                            + " Channel Listing.\n"
+                                            + " Please See the Scheduler"
+                                            + " configuration to assign one.";
+                                        JOptionPane.showMessageDialog(
+                                            getFrame(), mess, "alert",
+                                            JOptionPane.ERROR_MESSAGE);
+                                    }
+
+                                } else {
+
+                                    JOptionPane.showMessageDialog(getFrame(),
+                                        "Please select a " +
+                                        NMSConstants.RECORDER_NAME, "alert",
+                                        JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        }
+                    }
+
+                } else {
+
+                    JOptionPane.showMessageDialog(getFrame(),
+                        "Please load an NMS configuration", "alert",
+                        JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

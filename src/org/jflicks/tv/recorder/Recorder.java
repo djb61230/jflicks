@@ -215,6 +215,25 @@ public interface Recorder extends Config {
     Channel[] getCustomChannels(Channel[] array);
 
     /**
+     * Each recorder has a certain way that it needs to scan for
+     * channels that it may receive.  Certain recorders may need
+     * some sort of configuration file to aid it in tuning to a
+     * particular channel.
+     *
+     * @param array The set of Channel instances associated with
+     * this recorder.
+     */
+    void performScan(Channel[] array);
+
+    /**
+     * Not all recorders will have a Tuner so scanning does not
+     * make any sense.
+     *
+     * @return True if a scan is supported or needed.
+     */
+    boolean supportsScan();
+
+    /**
      * Add a listener.
      *
      * @param l A given listener.

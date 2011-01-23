@@ -289,6 +289,31 @@ public class HDHRRecorder extends BaseRecorder {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public void performScan(Channel[] array) {
+
+        log(DEBUG, "performScan hdhr called: " + array);
+        for (int i = 0; i < array.length; i++) {
+
+            log(DEBUG, "number: " + array[i].getNumber());
+            log(DEBUG, "refnumber: " + array[i].getReferenceNumber());
+            log(DEBUG, "------------------");
+        }
+
+        HDHRScanJob scanner = new HDHRScanJob(this, array);
+        JobContainer jc = JobManager.getJobContainer(scanner);
+        jc.start();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supportsScan() {
+        return (true);
+    }
+
+    /**
      * Convenience method to see the configured frequency type.
      *
      * @return The setting as a String.

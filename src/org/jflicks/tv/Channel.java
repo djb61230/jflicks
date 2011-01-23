@@ -35,6 +35,7 @@ public class Channel implements Serializable, Comparable<Channel> {
     private String affiliate;
     private String callSign;
     private String listingId;
+    private String referenceNumber;
 
     /**
      * Simple empty constructor.
@@ -55,6 +56,7 @@ public class Channel implements Serializable, Comparable<Channel> {
             setName(c.getName());
             setFrequency(c.getFrequency());
             setNumber(c.getNumber());
+            setReferenceNumber(c.getReferenceNumber());
             setAffiliate(c.getAffiliate());
             setCallSign(c.getCallSign());
             setListingId(c.getListingId());
@@ -143,6 +145,32 @@ public class Channel implements Serializable, Comparable<Channel> {
      */
     public void setNumber(String s) {
         number = s;
+    }
+
+    /**
+     * The reference number of the channel is it's "natural" number.  What
+     * we mean by that is a Channel that has a common channel number like
+     * 24.1 but perhaps on a multichannel provider it might be some other
+     * number like 868.  The Number property will be 868 but we want to
+     * maintain it common channel number in the ReferenceNumber property.
+     *
+     * @return A String representing the reference number.
+     */
+    public String getReferenceNumber() {
+        return (referenceNumber);
+    }
+
+    /**
+     * The reference number of the channel is it's "natural" number.  What
+     * we mean by that is a Channel that has a common channel number like
+     * 24.1 but perhaps on a multichannel provider it might be some other
+     * number like 868.  The Number property will be 868 but we want to
+     * maintain it common channel number in the ReferenceNumber property.
+     *
+     * @param s A String representing the reference number.
+     */
+    public void setReferenceNumber(String s) {
+        referenceNumber = s;
     }
 
     /**

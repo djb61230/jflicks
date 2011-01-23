@@ -57,6 +57,7 @@ import org.jflicks.tv.programdata.DataUpdateListener;
 import org.jflicks.tv.programdata.ProgramData;
 import org.jflicks.tv.postproc.PostProc;
 import org.jflicks.tv.postproc.worker.Worker;
+import org.jflicks.tv.recorder.BaseRecorder;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.RecordedShow;
 import org.jflicks.tv.scheduler.Scheduler;
@@ -294,17 +295,14 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             Collections.sort(l, new RecorderSortByTitleDevice());
 
             Configuration def = r.getDefaultConfiguration();
-            /*
-            // This code forces a save for v4l2 devices - for debugging...
-            String cn = r.getClass().getName();
-            if (cn.endsWith("V4l2Recorder")) {
-                save(def, true);
-            } else {
-                save(def, false);
-            }
-            */
             save(def, false);
             r.setConfiguration(getConfigurationBySource(def.getSource()));
+
+            if (r instanceof BaseRecorder) {
+
+                BaseRecorder br = (BaseRecorder) r;
+                br.setNMS(this);
+            }
         }
     }
 
@@ -1778,6 +1776,59 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
             vm.videoScan();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean performChannelScan(String recorderSource) {
+
+        boolean result = false;
+
+        log(DEBUG, "performChannelScan using <" + recorderSource + ">");
+        if (recorderSource != null) {
+
+            int index = recorderSource.indexOf(" ");
+            if (index != -1) {
+
+                String device = recorderSource.substring(index);
+                device = device.trim();
+                log(DEBUG, "parse device <" + device + ">");
+                Recorder[] array = getRecorders();
+                if ((array != null) && (array.length > 0)) {
+
+                    log(DEBUG, "recorder count " + array.length);
+                    Recorder r = null;
+                    for (int i = 0; i < array.length; i++) {
+
+                        log(DEBUG, "rec dev: <" + array[i].getDevice() + ">");
+                        if (device.equals(array[i].getDevice())) {
+
+                            r = array[i];
+                            break;
+                        }
+                    }
+
+                    Scheduler s = getScheduler();
+                    if ((s != null) && (r != null) && (r.supportsScan())) {
+
+                        String ln = s.getListingNameByRecorder(r);
+                        if (ln != null) {
+
+                            Channel[] chans = getChannelsByListingName(ln);
+                            chans = r.getCustomChannels(chans);
+                            if (chans != null) {
+
+                                result = true;
+                                r.performScan(chans);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return (result);
     }
 
     /**

@@ -551,6 +551,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                     while (iter.hasNext()) {
 
                         Lineup lineup = iter.next();
+                        processReferenceChannels(lineup, clist);
                         Listing listing =
                             processLineup(lineup, clist, multiple);
                         oc.store(listing);
@@ -643,6 +644,35 @@ public class SchedulesDirectProgramData extends BaseProgramData
         }
     }
 
+    private void processReferenceChannels(Lineup l, ArrayList<Channel> list) {
+
+        if ((l != null) && (list != null)) {
+
+            Collection<net.sf.xtvdclient.xtvd.datatypes.Map> coll = l.getMaps();
+            if (coll != null) {
+
+                Iterator<net.sf.xtvdclient.xtvd.datatypes.Map> iter =
+                    coll.iterator();
+                while (iter.hasNext()) {
+
+                    net.sf.xtvdclient.xtvd.datatypes.Map map = iter.next();
+                    Channel found = findChannel(list, map.getStation());
+                    if (found != null) {
+
+                        if (found.getFrequency() != 0) {
+
+                            int minor = map.getChannelMinor();
+                            if (minor != 0) {
+
+                                found.setNumber(map.getChannel() + "." + minor);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private Listing processLineup(Lineup l, ArrayList<Channel> list,
         ArrayList<Channel> all) {
 
@@ -673,15 +703,18 @@ public class SchedulesDirectProgramData extends BaseProgramData
                             if (minor != 0) {
 
                                 copy.setNumber(map.getChannel() + "." + minor);
+                                copy.setReferenceNumber(copy.getNumber());
 
                             } else {
 
                                 copy.setNumber(map.getChannel());
+                                copy.setReferenceNumber(found.getNumber());
                             }
 
                         } else {
 
                             copy.setNumber(map.getChannel());
+                            copy.setReferenceNumber(found.getNumber());
                         }
 
                         all.add(copy);

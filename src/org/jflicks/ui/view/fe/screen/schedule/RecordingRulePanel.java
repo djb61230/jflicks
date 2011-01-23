@@ -383,8 +383,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
         add(cancel, gbc);
         setBorder(BorderFactory.createLineBorder(getHighlightColor()));
 
-        setFocusable(true);
-        requestFocus();
+        //setFocusable(true);
+        //requestFocus();
 
         InputMap map = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         CancelAction ca = new CancelAction(getCancelButton());
@@ -696,7 +696,6 @@ public class RecordingRulePanel extends BaseCustomizePanel
             if (tasks != null) {
 
                 ArrayList<JComponent> list = new ArrayList<JComponent>();
-                //JComponent[] cbuts = new JComponent[tasks.length + 2];
                 for (int i = 0; i < tasks.length; i++) {
 
                     if (tasks[i].isSelectable()) {
@@ -710,14 +709,11 @@ public class RecordingRulePanel extends BaseCustomizePanel
 
                         cb.setSelected(tasks[i].isRun());
                         list.add(cb);
-                        //cbuts[i] = cb;
                     }
                 }
 
                 list.add(getAdvancedOkButton());
                 list.add(getAdvancedCancelButton());
-                //cbuts[tasks.length] = getAdvancedOkButton();
-                //cbuts[tasks.length + 1] = getAdvancedCancelButton();
                 JComponent[] cbuts = list.toArray(new JComponent[list.size()]);
 
                 setAdvancedAccept(false);
@@ -760,6 +756,9 @@ public class RecordingRulePanel extends BaseCustomizePanel
                         }
                     }
                 }
+
+                requestFocus();
+                getAdvancedButton().requestFocus();
             }
         }
     }

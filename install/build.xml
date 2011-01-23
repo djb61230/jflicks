@@ -135,8 +135,6 @@
             todir="aspirin/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-localhost.jar"
             todir="aspirin/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-dvbscan.jar"
-            todir="aspirin/bundle"/>
 
         <!-- Now do client side. -->
         <copy file="${bundle}/jflicks-base.jar"

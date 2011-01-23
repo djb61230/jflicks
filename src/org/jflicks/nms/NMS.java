@@ -501,6 +501,17 @@ public interface NMS extends Config {
     String[] getOnDemandNames();
 
     /**
+     * Hand off control to a Recorder to perform a channel scan.  This method
+     * returns immediately as a scan does take some time.  If the scan has
+     * been successfully started then return True.
+     *
+     * @param recorderSource The Recorder Source property which is used to
+     * locate the proper Recorder instance so it's scan can be executed.
+     * @return True on successful start.
+     */
+    boolean performChannelScan(String recorderSource);
+
+    /**
      * Open a session to start viewing from an OnDemand source.
      *
      * @param onDemandName The name of the Ondemand name service.

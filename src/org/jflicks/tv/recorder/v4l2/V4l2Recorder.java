@@ -156,6 +156,19 @@ public class V4l2Recorder extends BaseRecorder {
     public void quickTune(Channel c) {
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void performScan(Channel[] array) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supportsScan() {
+        return (false);
+    }
+
     private JobContainer getJobContainer() {
         return (jobContainer);
     }

@@ -160,7 +160,13 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                     currentRead = System.currentTimeMillis();
                     bb.rewind();
-                    count = fileChannel.read(bb);
+
+                    // We only want to block on this read if in fact
+                    // we are not quitting because of some read error.
+                    if (!isTerminate()) {
+
+                        count = fileChannel.read(bb);
+                    }
 
                 } catch (AsynchronousCloseException ex) {
 
