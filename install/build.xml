@@ -131,6 +131,8 @@
             todir="aspirin/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-localhost.jar"
             todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-schedulesdirect.jar"
+            todir="aspirin/bundle"/>
 
         <!-- Now do client side. -->
         <copy file="${bundle}/jflicks-base.jar"
@@ -251,6 +253,7 @@
         <delete dir="${build}"/>
         <delete dir="${dist}"/>
         <delete>
+            <fileset dir="server" includes="bin/directvweb.jar"/>
             <fileset dir="server" includes="bin/jflicks-*.jar"/>
             <fileset dir="server" includes="bundle/jflicks-*.jar"/>
         </delete>
