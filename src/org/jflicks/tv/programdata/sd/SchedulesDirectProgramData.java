@@ -547,11 +547,28 @@ public class SchedulesDirectProgramData extends BaseProgramData
                 if (coll != null) {
 
                     purge(oc, Listing.class);
+
+                    // First go through the lineups and set the proper
+                    // reference number.  A problem here could be that
+                    // the user doesn't have an OTA lineup which would
+                    // probably break things.  I guess we will have to
+                    // use the callsign as a backup.
                     Iterator<Lineup> iter = coll.iterator();
+                    int count = 0;
                     while (iter.hasNext()) {
 
                         Lineup lineup = iter.next();
-                        processReferenceChannels(lineup, clist);
+                        count += processReferenceChannels(lineup, clist);
+                    }
+                    log(DEBUG, "Found <" + count + "> channels to reference");
+
+                    // Now we go through again and if we have
+                    // set the reference number we should be
+                    // good to go.
+                    iter = coll.iterator();
+                    while (iter.hasNext()) {
+
+                        Lineup lineup = iter.next();
                         Listing listing =
                             processLineup(lineup, clist, multiple);
                         oc.store(listing);
@@ -644,7 +661,9 @@ public class SchedulesDirectProgramData extends BaseProgramData
         }
     }
 
-    private void processReferenceChannels(Lineup l, ArrayList<Channel> list) {
+    private int processReferenceChannels(Lineup l, ArrayList<Channel> list) {
+
+        int result = 0;
 
         if ((l != null) && (list != null)) {
 
@@ -665,12 +684,15 @@ public class SchedulesDirectProgramData extends BaseProgramData
                             if (minor != 0) {
 
                                 found.setNumber(map.getChannel() + "." + minor);
+                                result++;
                             }
                         }
                     }
                 }
             }
         }
+
+        return (result);
     }
 
     private Listing processLineup(Lineup l, ArrayList<Channel> list,
