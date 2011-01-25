@@ -1,16 +1,15 @@
 Thanks for trying out the jflicks media system family of software
 applications.
 
-We assume that if you have just installed the jflicks media system
-server, then your next step should be to install the jflicks media system
-desktop applications.  Even if you are building a server you will want to
-run the "Aspirin" application on this installation directory.  The "Aspirin"
-application will tell you what you may be missing on your system or
-what problems you might have right away.  Best to solve these now!
+You have just installed the Aspirin desktop application.  Using this
+program you can examine any jflicks media system server or TV front end
+installation.  The Aspirin program examines the bundles you have installed
+and allows you to execute plugins that determine if the installation is
+ready to run.  To make sure you have the proper installed system programs
+and if there are any missing configuration files.
 
-So the next four steps are to:
+Aspirin just tries to solve problems to make running a HTPC easier.
 
-1) Install the jflicks media system desktop apps.
-2) Run Aspirin and solve all the problems it finds.
-3) Start up this server by running the startup.sh or .bat file in this folder.
-4) Run "Server Configuration".
+If you have installed a jflicks media system server, and after you have
+solved any issues that Aspirin flags, next install the Server Configuration
+application to customize settings for your needs.
