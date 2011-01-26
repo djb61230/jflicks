@@ -448,6 +448,26 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
         }
     }
 
+    private void keyboardAudiosyncPlus() {
+
+        Robot r = getRobot();
+        if (r != null) {
+
+            r.keyPress(KeyEvent.VK_PLUS);
+            r.keyRelease(KeyEvent.VK_PLUS);
+        }
+    }
+
+    private void keyboardAudiosyncMinus() {
+
+        Robot r = getRobot();
+        if (r != null) {
+
+            r.keyPress(KeyEvent.VK_MINUS);
+            r.keyRelease(KeyEvent.VK_MINUS);
+        }
+    }
+
     private void mouseMoveUp() {
 
         Robot r = getRobot();
@@ -761,12 +781,20 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
 
     private void skipbackward() {
 
+        if (isKeyboardControl()) {
+            keyboardSkipBackward();
+        }
+
         if (isEventControl()) {
             eventSkipBackward();
         }
     }
 
     private void skipforward() {
+
+        if (isKeyboardControl()) {
+            keyboardSkipForward();
+        }
 
         if (isEventControl()) {
             eventSkipForward();
@@ -775,12 +803,20 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
 
     private void audiosyncplus() {
 
+        if (isKeyboardControl()) {
+            keyboardAudiosyncPlus();
+        }
+
         if (isEventControl()) {
             eventAudiosyncPlus();
         }
     }
 
     private void audiosyncminus() {
+
+        if (isKeyboardControl()) {
+            keyboardAudiosyncMinus();
+        }
 
         if (isEventControl()) {
             eventAudiosyncMinus();
@@ -814,71 +850,71 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
 
         if (command != null) {
 
-            if (command.equalsIgnoreCase("moveUp")) {
+            if (command.equalsIgnoreCase(RC.UP_COMMAND)) {
 
                 moveUp();
 
-            } else if (command.equalsIgnoreCase("moveDown")) {
+            } else if (command.equalsIgnoreCase(RC.DOWN_COMMAND)) {
 
                 moveDown();
 
-            } else if (command.equalsIgnoreCase("moveLeft")) {
+            } else if (command.equalsIgnoreCase(RC.LEFT_COMMAND)) {
 
                 moveLeft();
 
-            } else if (command.equalsIgnoreCase("moveRight")) {
+            } else if (command.equalsIgnoreCase(RC.RIGHT_COMMAND)) {
 
                 moveRight();
 
-            } else if (command.equalsIgnoreCase("enter")) {
+            } else if (command.equalsIgnoreCase(RC.ENTER_COMMAND)) {
 
                 enter();
 
-            } else if (command.equalsIgnoreCase("escape")) {
+            } else if (command.equalsIgnoreCase(RC.ESCAPE_COMMAND)) {
 
                 escape();
 
-            } else if (command.equalsIgnoreCase("pause")) {
+            } else if (command.equalsIgnoreCase(RC.PAUSE_COMMAND)) {
 
                 pause();
 
-            } else if (command.equalsIgnoreCase("info")) {
+            } else if (command.equalsIgnoreCase(RC.INFO_COMMAND)) {
 
                 info();
 
-            } else if (command.equalsIgnoreCase("guide")) {
+            } else if (command.equalsIgnoreCase(RC.GUIDE_COMMAND)) {
 
                 guide();
 
-            } else if (command.equalsIgnoreCase("pageUp")) {
+            } else if (command.equalsIgnoreCase(RC.PAGE_UP_COMMAND)) {
 
                 pageup();
 
-            } else if (command.equalsIgnoreCase("pageDown")) {
+            } else if (command.equalsIgnoreCase(RC.PAGE_DOWN_COMMAND)) {
 
                 pagedown();
 
-            } else if (command.equalsIgnoreCase("rewind")) {
+            } else if (command.equalsIgnoreCase(RC.REWIND_COMMAND)) {
 
                 rewind();
 
-            } else if (command.equalsIgnoreCase("forward")) {
+            } else if (command.equalsIgnoreCase(RC.FORWARD_COMMAND)) {
 
                 forward();
 
-            } else if (command.equalsIgnoreCase("skipbackward")) {
+            } else if (command.equalsIgnoreCase(RC.SKIPBACKWARD_COMMAND)) {
 
                 skipbackward();
 
-            } else if (command.equalsIgnoreCase("skipforward")) {
+            } else if (command.equalsIgnoreCase(RC.SKIPFORWARD_COMMAND)) {
 
                 skipforward();
 
-            } else if (command.equalsIgnoreCase("audiosyncplus")) {
+            } else if (command.equalsIgnoreCase(RC.AUDIOSYNC_PLUS_COMMAND)) {
 
                 audiosyncplus();
 
-            } else if (command.equalsIgnoreCase("audiosyncminus")) {
+            } else if (command.equalsIgnoreCase(RC.AUDIOSYNC_MINUS_COMMAND)) {
 
                 audiosyncminus();
             }

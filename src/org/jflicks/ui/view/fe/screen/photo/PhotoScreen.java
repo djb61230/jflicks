@@ -111,13 +111,13 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
         map.put(KeyStroke.getKeyStroke("ENTER"), "enter");
         getActionMap().put("enter", enterAction);
 
-        RewindAction rewindAction = new RewindAction();
-        map.put(KeyStroke.getKeyStroke("R"), "r");
-        getActionMap().put("r", rewindAction);
+        BackwardAction backwardAction = new BackwardAction();
+        map.put(KeyStroke.getKeyStroke("Z"), "z");
+        getActionMap().put("z", backwardAction);
 
         ForwardAction forwardAction = new ForwardAction();
-        map.put(KeyStroke.getKeyStroke("F"), "f");
-        getActionMap().put("f", forwardAction);
+        map.put(KeyStroke.getKeyStroke("X"), "x");
+        getActionMap().put("x", forwardAction);
 
         JButton b = getDeleteAllowButton();
         if (b != null) {
@@ -745,9 +745,9 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
         }
     }
 
-    class RewindAction extends AbstractAction {
+    class BackwardAction extends AbstractAction {
 
-        public RewindAction() {
+        public BackwardAction() {
         }
 
         public void actionPerformed(ActionEvent e) {

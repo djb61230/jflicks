@@ -849,13 +849,29 @@
 
     <target name="test-v4l2" depends="build">
 
-        <java classname="org.jflicks.tv.recorder.v4l2.CopyJob"
-            fork="true">
+        <java classname="org.jflicks.tv.recorder.CopyJob" fork="true">
 
             <arg value="-i"/>
-            <arg value="/dev/dvb/adapter0/dvr0"/>
+            <arg value="/dev/video1"/>
             <arg value="-s"/>
             <arg value="60"/>
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-parselirc" depends="build">
+
+        <java classname="org.jflicks.ui.view.aspirin.analyze.lirc.ParseLirc"
+            fork="true">
+
+            <arg value="/etc/lirc/lircd.conf"/>
+            <!--
+            <arg value="/usr/share/lirc/remotes/hauppauge/lircd.conf.hauppauge"/>
+            -->
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>

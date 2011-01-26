@@ -1,0 +1,85 @@
+begin
+	button = UP_COMMAND
+	config = up
+end
+
+begin
+   	button = DOWN_COMMAND
+	config = down
+end
+
+begin
+   	button = LEFT_COMMAND
+	config = left
+end
+
+begin
+	button = RIGHT_COMMAND
+	config = right
+end
+
+begin
+	button = PAGE_UP_COMMAND
+	config = pageup
+end
+
+begin
+	button = PAGE_DOWN_COMMAND
+	config = pagedown
+end
+
+begin
+   	button = ENTER_COMMAND
+	config = enter
+end
+
+begin
+   	button = ESCAPE_COMMAND
+	config = escape
+end
+
+begin
+   	button = PAUSE_COMMAND
+	config = pause
+end
+
+begin
+   	button = GUIDE_COMMAND
+	config = guide
+end
+
+begin
+   	button = INFO_COMMAND
+	config = info
+end
+
+begin
+   	button = REWIND_COMMAND
+	config = rewind
+end
+
+begin
+   	button = FORWARD_COMMAND
+	config = forward
+end
+
+begin
+   	button = SKIPBACKWARD_COMMAND
+	config = skipbackward
+end
+
+begin
+   	button = SKIPFORWARD_COMMAND
+	config = skipforward
+end
+
+begin
+   	button = AUDIOSYNC_PLUS_COMMAND
+	config = audiosyncplus
+end
+
+begin
+   	button = AUDIOSYNC_MINUS_COMMAND
+	config = audiosyncminus
+end
+

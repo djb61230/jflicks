@@ -1,36 +1,36 @@
 begin
 	button = UP
-	config = moveUp
+	config = up
 	repeat = 3
 end
 
 begin
    	button = DOWN
-	config = moveDown
+	config = down
 	repeat = 3
 end
 
 begin
    	button = LEFT
-	config = moveLeft
+	config = left
 	repeat = 3
 end
 
 begin
 	button = RIGHT
-	config = moveRight
+	config = right
 	repeat = 3
 end
 
 begin
 	button = CHANUP
-	config = pageUp
+	config = pageup
 	repeat = 3
 end
 
 begin
 	button = CHANDOWN
-	config = pageDown
+	config = pagedown
 	repeat = 3
 end
 
