@@ -16,6 +16,7 @@
 */
 package org.jflicks.ui.view.aspirin.analyze.lirc;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -24,7 +25,7 @@ import java.util.ArrayList;
  * @author Doug Barnum
  * @version 1.0
  */
-public class Remote {
+public class Remote implements Serializable, Comparable<Remote> {
 
     private String name;
     private ArrayList<String> buttonList;
@@ -76,6 +77,79 @@ public class Remote {
                 l.add(s);
             }
         }
+    }
+
+    /**
+     * The standard hashcode override.
+     *
+     * @return An int value.
+     */
+    public int hashCode() {
+        return (getName().hashCode());
+    }
+
+    /**
+     * The equals override method.
+     *
+     * @param o A given object to check.
+     * @return True if the objects are equal.
+     */
+    public boolean equals(Object o) {
+
+        boolean result = false;
+
+        if (o == this) {
+
+            result = true;
+
+        } else if (!(o instanceof Remote)) {
+
+            result = false;
+
+        } else {
+
+            Remote r = (Remote) o;
+            String s = getName();
+            if (s != null) {
+
+                result = s.equals(r.getName());
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * The comparable interface.
+     *
+     * @param r The given Remote instance to compare.
+     * @throws ClassCastException on the input argument.
+     * @return An int representing their "equality".
+     */
+    public int compareTo(Remote r) throws ClassCastException {
+
+        int result = 0;
+
+        if (r == null) {
+
+            throw new NullPointerException();
+        }
+
+        if (r == this) {
+
+            result = 0;
+
+        } else {
+
+            String name0 = getName();
+            String name1 = r.getName();
+            if ((name0 != null) && (name1 != null)) {
+
+                result = name0.compareTo(name1);
+            }
+        }
+
+        return (result);
     }
 
     public String toString() {
