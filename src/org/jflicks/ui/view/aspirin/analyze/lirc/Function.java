@@ -28,7 +28,7 @@ import org.jflicks.rc.RC;
  * @author Doug Barnum
  * @version 1.0
  */
-public class Function {
+public final class Function {
 
     private String name;
     private String description;
@@ -44,6 +44,12 @@ public class Function {
         setIndex(-1);
     }
 
+    /**
+     * Convenience method to return all the Function instances defined
+     * for the jflicks media system remote control commands.
+     *
+     * @return An array of Function instances.
+     */
     public static Function[] getFunctions() {
 
         Function[] result = new Function[17];
@@ -142,6 +148,11 @@ public class Function {
         index = i;
     }
 
+    /**
+     * Convenience method to return the currently selected choice.
+     *
+     * @return A String instance.
+     */
     public String getSelected() {
 
         String result = null;

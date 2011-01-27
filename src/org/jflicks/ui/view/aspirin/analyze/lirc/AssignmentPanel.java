@@ -16,7 +16,6 @@
 */
 package org.jflicks.ui.view.aspirin.analyze.lirc;
 
-import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -24,10 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -37,10 +33,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import org.jflicks.ui.view.aspirin.analyze.Analyze;
-import org.jflicks.util.BundleFilter;
-import org.jflicks.util.Util;
 
 /**
  * Main panel that allows the user to run Analyze instances against a
@@ -61,7 +53,9 @@ public class AssignmentPanel extends JPanel implements ActionListener,
     private JComboBox choiceComboBox;
 
     /**
-     * Simple constructor.
+     * Simple constructor with one argument.
+     *
+     * @param r A given Remote instance.
      */
     public AssignmentPanel(Remote r) {
 

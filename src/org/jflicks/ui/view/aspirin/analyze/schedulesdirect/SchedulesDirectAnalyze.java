@@ -20,7 +20,6 @@ import java.io.File;
 
 import org.jflicks.ui.view.aspirin.analyze.BaseAnalyze;
 import org.jflicks.ui.view.aspirin.analyze.Finding;
-import org.jflicks.util.Hostname;
 
 /**
  * This class is an Analyze implementation that can check if a program
@@ -37,7 +36,8 @@ public class SchedulesDirectAnalyze extends BaseAnalyze {
     public SchedulesDirectAnalyze() {
 
         setTitle("SchedulesDirectAnalyze");
-        setShortDescription("See if a config file for Schedule's Direct exists.");
+        setShortDescription("See if a config file for Schedule's Direct "
+            + " exists.");
 
         StringBuilder sb = new StringBuilder();
 

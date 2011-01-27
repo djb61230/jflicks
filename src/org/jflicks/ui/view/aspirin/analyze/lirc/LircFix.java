@@ -16,24 +16,15 @@
 */
 package org.jflicks.ui.view.aspirin.analyze.lirc;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 import org.jflicks.job.JobEvent;
 import org.jflicks.ui.view.aspirin.analyze.BaseFix;
-import org.jflicks.util.PromptPanel;
 import org.jflicks.util.Util;
 
 /**
- * Get the user/password from the user and generate an XTVD.xml
- * file.
+ * With the aid of the user create a LircJob.lircrc file.
  *
  * @author Doug Barnum
  * @version 1.0

@@ -290,6 +290,12 @@ public class RemoteSelectPanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Convenience method to write out a LircJob.lircrc file.
+     *
+     * @param f A File pointing to where it goes in an installation.
+     * @return True on success.
+     */
     public boolean write(File f) {
 
         boolean result = false;

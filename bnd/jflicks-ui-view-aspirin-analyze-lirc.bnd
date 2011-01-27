@@ -5,9 +5,6 @@ Bundle-Version: 1.0.0
 
 Bundle-Activator: ${module}.Activator
 
-Include-Resource:\
- org/jflicks/ui/view/aspirin/analyze/lirc/LircJob.lircrc.template=../conf/LircJob.lircrc.template
-
 Export-Package:\
  org.jflicks.ui.view.aspirin.analyze.lirc;version="1.0.0"
 

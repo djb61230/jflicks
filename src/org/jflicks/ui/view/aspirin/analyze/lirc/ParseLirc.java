@@ -50,6 +50,11 @@ public class ParseLirc {
         remoteList = l;
     }
 
+    /**
+     * All the current Remote instances defined.
+     *
+     * @return An array of Remote instances.
+     */
     public Remote[] getRemotes() {
 
         Remote[] result = null;
@@ -63,6 +68,11 @@ public class ParseLirc {
         return (result);
     }
 
+    /**
+     * Convenience method to add a Remote.
+     *
+     * @param r A given Remote to add.
+     */
     public void addRemote(Remote r) {
 
         ArrayList<Remote> l = getRemoteList();

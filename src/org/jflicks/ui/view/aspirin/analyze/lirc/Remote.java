@@ -38,10 +38,20 @@ public class Remote implements Serializable, Comparable<Remote> {
         setButtonList(new ArrayList<String>());
     }
 
+    /**
+     * A Remote has a name.
+     *
+     * @return A String instance.
+     */
     public String getName() {
         return (name);
     }
 
+    /**
+     * A Remote has a name.
+     *
+     * @param s A String instance.
+     */
     public void setName(String s) {
         name = s;
     }
@@ -54,6 +64,11 @@ public class Remote implements Serializable, Comparable<Remote> {
         buttonList = l;
     }
 
+    /**
+     * All the currently defined buttons.
+     *
+     * @return An array of button names.
+     */
     public String[] getButtons() {
 
         String[] result = null;
@@ -67,6 +82,11 @@ public class Remote implements Serializable, Comparable<Remote> {
         return (result);
     }
 
+    /**
+     * Convenience method to add a button name.
+     *
+     * @param s A given button name.
+     */
     public void addButton(String s) {
 
         ArrayList<String> l = getButtonList();
@@ -152,6 +172,11 @@ public class Remote implements Serializable, Comparable<Remote> {
         return (result);
     }
 
+    /**
+     * Override and display the name.
+     *
+     * @return A String instance.
+     */
     public String toString() {
         return (getName());
     }
