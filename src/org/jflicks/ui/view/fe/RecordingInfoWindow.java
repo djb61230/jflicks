@@ -24,6 +24,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.text.FieldPosition;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JLayeredPane;
 import javax.swing.JWindow;
@@ -71,6 +73,7 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
     private ImageCache imageCache;
     private Timer timer;
     private int currentSeconds;
+    private SimpleDateFormat dateFormat;
 
     /**
      * Simple constructor with our required arguments.
@@ -188,6 +191,8 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
         add(p);
         Timer t = new Timer(1000, this);
         setTimer(t);
+
+        setDateFormat(new SimpleDateFormat("EEE MMM d h:mm aaa"));
     }
 
     private JXPanel getPanel() {
@@ -236,6 +241,38 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
 
     private void setSeconds(int i) {
         seconds = i;
+    }
+
+    private SimpleDateFormat getDateFormat() {
+        return (dateFormat);
+    }
+
+    private void setDateFormat(SimpleDateFormat df) {
+        dateFormat = df;
+    }
+
+    private String formatDate(SimpleDateFormat df, Date d) {
+
+        String result = null;
+
+        if (df != null) {
+
+            if (d != null) {
+
+                StringBuffer sb = new StringBuffer();
+                df.format(d, sb, new FieldPosition(0));
+                result = sb.toString();
+            }
+
+        } else {
+
+            if (d != null) {
+
+                result = d.toString();
+            }
+        }
+
+        return (result);
     }
 
     /**
@@ -322,7 +359,7 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
             Date d = r.getDate();
             if ((l != null) && (d != null)) {
 
-                l.setText(d.toString());
+                l.setText(formatDate(getDateFormat(), d));
             }
 
             l = getDescriptionLabel();

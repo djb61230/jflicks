@@ -17,6 +17,9 @@
 package org.jflicks.ui.view.fe;
 
 import java.awt.Dimension;
+import java.text.FieldPosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
@@ -26,7 +29,7 @@ import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- * This class supports Labels in a front end UI on a TV.
+ * This class displays Upcoming details of a Recording.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -43,6 +46,7 @@ public class UpcomingDetailPanel extends BaseCustomizePanel {
     private JXLabel durationLabel;
     private JXLabel recorderNameLabel;
     private JXLabel statusLabel;
+    private SimpleDateFormat dateFormat;
 
     /**
      * Simple empty constructor.
@@ -101,6 +105,8 @@ public class UpcomingDetailPanel extends BaseCustomizePanel {
 
         MattePainter mpainter = new MattePainter(getPanelColor());
         setBackgroundPainter(mpainter);
+
+        setDateFormat(new SimpleDateFormat("EEE MMM d h:mm aaa"));
     }
 
     /**
@@ -164,7 +170,8 @@ public class UpcomingDetailPanel extends BaseCustomizePanel {
             l = getStartLabel();
             if (l != null) {
 
-                l.setText(u.getStart());
+                //l.setText(u.getStart());
+                l.setText(formatDate(getDateFormat(), u.getDate()));
             }
 
             l = getDurationLabel();
@@ -312,6 +319,38 @@ public class UpcomingDetailPanel extends BaseCustomizePanel {
 
     private void setStatusLabel(JXLabel l) {
         statusLabel = l;
+    }
+
+    private SimpleDateFormat getDateFormat() {
+        return (dateFormat);
+    }
+
+    private void setDateFormat(SimpleDateFormat df) {
+        dateFormat = df;
+    }
+
+    private String formatDate(SimpleDateFormat df, Date d) {
+
+        String result = null;
+
+        if (df != null) {
+
+            if (d != null) {
+
+                StringBuffer sb = new StringBuffer();
+                df.format(d, sb, new FieldPosition(0));
+                result = sb.toString();
+            }
+
+        } else {
+
+            if (d != null) {
+
+                result = d.toString();
+            }
+        }
+
+        return (result);
     }
 
     /**
