@@ -131,6 +131,11 @@ public class RemoteSelectPanel extends JPanel implements ActionListener {
         gbc.insets = new Insets(4, 4, 4, 4);
 
         add(create, gbc);
+
+        if (Util.isLinux()) {
+
+            apply("/etc/lirc/lircd.conf");
+        }
     }
 
     private HashMap<Remote, AssignmentPanel> getRemoteHashMap() {
@@ -217,6 +222,33 @@ public class RemoteSelectPanel extends JPanel implements ActionListener {
         return (result);
     }
 
+    private void apply(String path) {
+
+        JTextField tf = getPathTextField();
+        JComboBox cb = getRemoteComboBox();
+        if ((tf != null) && (cb != null) && (path != null)) {
+
+            tf.setText(path);
+
+            clear();
+            Remote none = (Remote) cb.getItemAt(0);
+            cb.removeAllItems();
+            cb.addItem(none);
+            ParseLirc pl = new ParseLirc(tf.getText());
+            Remote[] array = pl.getRemotes();
+            if (array != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    cb.addItem(array[i]);
+                    add(array[i], new AssignmentPanel(array[i]));
+                }
+            }
+
+            cb.setSelectedIndex(0);
+        }
+    }
+
     private void browseAction() {
 
         JFileChooser chooser = new JFileChooser();
@@ -225,32 +257,7 @@ public class RemoteSelectPanel extends JPanel implements ActionListener {
             File lircd = chooser.getSelectedFile();
             if (lircd != null) {
 
-                JTextField tf = getPathTextField();
-                if (tf != null) {
-
-                    tf.setText(lircd.getPath());
-
-                    JComboBox cb = getRemoteComboBox();
-                    if (cb != null) {
-
-                        clear();
-                        Remote none = (Remote) cb.getItemAt(0);
-                        cb.removeAllItems();
-                        cb.addItem(none);
-                        ParseLirc pl = new ParseLirc(tf.getText());
-                        Remote[] array = pl.getRemotes();
-                        if (array != null) {
-
-                            for (int i = 0; i < array.length; i++) {
-
-                                cb.addItem(array[i]);
-                                add(array[i], new AssignmentPanel(array[i]));
-                            }
-                        }
-
-                        cb.setSelectedIndex(0);
-                    }
-                }
+                apply(lircd.getPath());
             }
         }
     }

@@ -155,10 +155,10 @@ public final class Function {
      */
     public String getSelected() {
 
-        String result = null;
+        String result = "NOT_SET";
 
         int i = getIndex();
-        if ((choices != null) && (i < choices.length)) {
+        if ((choices != null) && (i < choices.length) && (i >= 0)) {
 
             result = choices[i];
         }

@@ -16,6 +16,7 @@
 */
 package org.jflicks.ui.view.aspirin.analyze.lirc;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -24,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -48,7 +50,6 @@ public class AssignmentPanel extends JPanel implements ActionListener,
 
     private Function[] functions;
     private JList functionList;
-    private JTextField nameTextField;
     private JTextArea descTextArea;
     private JComboBox choiceComboBox;
 
@@ -84,9 +85,9 @@ public class AssignmentPanel extends JPanel implements ActionListener,
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        JTextField nametf = new JTextField(20);
-        nametf.setEditable(false);
-        setNameTextField(nametf);
+        JPanel listPanel = new JPanel(new BorderLayout());
+        listPanel.add(flistScroller, BorderLayout.CENTER);
+        listPanel.setBorder(BorderFactory.createTitledBorder("Action"));
 
         JTextArea descta = new JTextArea(8, 20);
         descta.setEditable(false);
@@ -97,6 +98,10 @@ public class AssignmentPanel extends JPanel implements ActionListener,
         JScrollPane descScroller = new JScrollPane(descta,
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel descPanel = new JPanel(new BorderLayout());
+        descPanel.add(descScroller, BorderLayout.CENTER);
+        descPanel.setBorder(BorderFactory.createTitledBorder("Description"));
 
         JComboBox cb = new JComboBox();
         cb.addItem(NOT_SET);
@@ -117,40 +122,28 @@ public class AssignmentPanel extends JPanel implements ActionListener,
         gbc.weighty = 1.0;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridheight = 3;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(4, 4, 4, 4);
 
-        add(flistScroller, gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.weightx = 0.5;
-        gbc.weighty = 0.0;
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(4, 4, 4, 4);
-
-        add(nametf, gbc);
+        add(listPanel, gbc);
 
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 1.0;
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(4, 4, 4, 4);
 
-        add(descScroller, gbc);
+        add(descPanel, gbc);
 
         gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 0.0;
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -164,14 +157,6 @@ public class AssignmentPanel extends JPanel implements ActionListener,
 
     private void setFunctionList(JList l) {
         functionList = l;
-    }
-
-    private JTextField getNameTextField() {
-        return (nameTextField);
-    }
-
-    private void setNameTextField(JTextField tf) {
-        nameTextField = tf;
     }
 
     private JTextArea getDescTextArea() {
@@ -282,13 +267,10 @@ public class AssignmentPanel extends JPanel implements ActionListener,
             if (event.getSource() == getFunctionList()) {
 
                 Function f = getFunction();
-                JTextField tf = getNameTextField();
                 JTextArea ta = getDescTextArea();
                 JComboBox cb = getChoiceComboBox();
-                if ((f != null) && (tf != null) && (ta != null)
-                    && (cb != null)) {
+                if ((f != null) && (ta != null) && (cb != null)) {
 
-                    tf.setText(f.getName());
                     ta.setText(f.getDescription());
                     cb.setSelectedIndex(f.getIndex() + 1);
                 }
