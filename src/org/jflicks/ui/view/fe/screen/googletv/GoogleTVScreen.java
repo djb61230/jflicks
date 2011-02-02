@@ -36,8 +36,10 @@ import javax.swing.SwingConstants;
 
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
+import org.jflicks.rc.RC;
 import org.jflicks.ui.view.fe.ParameterProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -183,6 +185,20 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
 
                 String url = prop.getProperty(getSelectedParameter());
                 if (url != null) {
+
+                    int index = url.indexOf(",");
+                    if (index != -1) {
+
+                        String rest = url.substring(index + 1);
+                        rest = rest.trim();
+                        url = url.substring(0, index);
+                        boolean keyboard = Util.str2boolean(rest, true);
+                        RC rc = getRC();
+                        if (rc != null) {
+
+                            rc.setKeyboardControl(keyboard);
+                        }
+                    }
 
                     // Just start up the player!
                     Player p = getPlayer();
@@ -350,6 +366,12 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
 
                 getPlayer().removePropertyChangeListener(this);
                 setDone(true);
+
+                RC rc = getRC();
+                if (rc != null) {
+
+                    rc.setKeyboardControl(true);
+                }
             }
         }
     }
