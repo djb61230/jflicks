@@ -70,6 +70,11 @@ public class PosterPanel extends BaseCustomizePanel {
         this(3);
     }
 
+    /**
+     * Constructor with the number of desired visible posters.
+     *
+     * @param count The number of visible posters displayed at once.
+     */
     public PosterPanel(int count) {
 
         setDoubleBuffered(true);
@@ -79,13 +84,31 @@ public class PosterPanel extends BaseCustomizePanel {
         setBufferedImageList(new ArrayList<BufferedImage>());
     }
 
+    /**
+     * We act upon a set of Video instances to allow the user
+     * to select.
+     *
+     * @return An array of Video objects.
+     */
     public Video[] getVideos() {
 
         Video[] result = null;
 
+        ArrayList<Video> l = getVideoList();
+        if ((l != null) && (l.size() > 0)) {
+
+            result = l.toArray(new Video[l.size()]);
+        }
+
         return (result);
     }
 
+    /**
+     * We act upon a set of Video instances to allow the user
+     * to select.
+     *
+     * @param array An array of Video objects.
+     */
     public void setVideos(Video[] array) {
 
         ArrayList<Video> l = getVideoList();
@@ -103,13 +126,31 @@ public class PosterPanel extends BaseCustomizePanel {
         }
     }
 
+    /**
+     * We act upon a set of BufferedImage instances to display
+     * posters.
+     *
+     * @return An array of BufferedImage objects.
+     */
     public BufferedImage[] getBufferedImages() {
 
         BufferedImage[] result = null;
 
+        ArrayList<BufferedImage> l = getBufferedImageList();
+        if ((l != null) && (l.size() > 0)) {
+
+            result = l.toArray(new BufferedImage[l.size()]);
+        }
+
         return (result);
     }
 
+    /**
+     * We act upon a set of BufferedImage instances to display
+     * posters.
+     *
+     * @param array An array of BufferedImage objects.
+     */
     public void setBufferedImages(BufferedImage[] array) {
 
         ArrayList<BufferedImage> l = getBufferedImageList();
@@ -147,9 +188,15 @@ public class PosterPanel extends BaseCustomizePanel {
         firePropertyChange("SelectedVideo", old, v);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performControl() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performLayout(Dimension d) {
 
         JLayeredPane pane = getLayeredPane();
@@ -296,6 +343,11 @@ public class PosterPanel extends BaseCustomizePanel {
         aspectRatio = d;
     }
 
+    /**
+     * We set our poster to a particular width.
+     *
+     * @return The width in pixels as an int.
+     */
     public int getPosterWidth() {
         return (posterWidth);
     }
@@ -304,6 +356,11 @@ public class PosterPanel extends BaseCustomizePanel {
         posterWidth = i;
     }
 
+    /**
+     * We set our poster to a particular height.
+     *
+     * @return The height in pixels as an int.
+     */
     public int getPosterHeight() {
         return (posterHeight);
     }
@@ -433,6 +490,11 @@ public class PosterPanel extends BaseCustomizePanel {
         return (result);
     }
 
+    /**
+     * Override so we can paint our images.
+     *
+     * @param g A given Graphics object.
+     */
     public void paintComponent(Graphics g) {
 
         super.paintComponent(g);
@@ -454,6 +516,9 @@ public class PosterPanel extends BaseCustomizePanel {
         }
     }
 
+    /**
+     * Go to the next video.
+     */
     public void next() {
 
         stopAll();
@@ -475,6 +540,9 @@ public class PosterPanel extends BaseCustomizePanel {
         }
     }
 
+    /**
+     * Go to the previous video.
+     */
     public void prev() {
 
         stopAll();
@@ -565,13 +633,14 @@ public class PosterPanel extends BaseCustomizePanel {
             if (isGoLeft()) {
 
                 if ((current != null) && (left != null) && (start != null)) {
-                    current.x = (int)(start.x + (left.x - start.x) * fraction);
+                    current.x = (int) (start.x + (left.x - start.x) * fraction);
                 }
 
             } else {
 
                 if ((current != null) && (right != null) && (start != null)) {
-                    current.x = (int)(start.x + (right.x - start.x) * fraction);
+                    current.x =
+                        (int) (start.x + (right.x - start.x) * fraction);
                 }
             }
 

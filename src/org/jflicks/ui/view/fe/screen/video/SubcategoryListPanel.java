@@ -78,7 +78,7 @@ public class SubcategoryListPanel extends BaseListPanel {
     /**
      * We list subcategories in our panel.
      *
-     * @param An array of String instances.
+     * @param array An array of String instances.
      */
     public void setSubcategories(String[] array) {
 

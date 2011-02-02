@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -624,8 +623,6 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     svlp.setControl(true);
                     evlp.setControl(false);
                 }
-
-            } else {
             }
 
             if (videos != null) {
