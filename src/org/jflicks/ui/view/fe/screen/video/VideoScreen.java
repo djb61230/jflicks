@@ -23,10 +23,12 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
@@ -47,11 +49,11 @@ import org.jflicks.player.PlayState;
 import org.jflicks.ui.view.JFlicksView;
 import org.jflicks.ui.view.fe.Dialog;
 import org.jflicks.ui.view.fe.FrontEndView;
-import org.jflicks.ui.view.fe.LabelPanel;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
 import org.jflicks.ui.view.fe.TextIcon;
 import org.jflicks.ui.view.fe.VideoDetailPanel;
+import org.jflicks.ui.view.fe.VideoListPanel;
 import org.jflicks.ui.view.fe.VideoInfoWindow;
 import org.jflicks.ui.view.fe.VideoProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
@@ -72,8 +74,10 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
     private static final double HGAP = 0.02;
     private static final double VGAP = 0.05;
 
-    private LabelPanel subcategoryLabelPanel;
-    private LabelPanel videoLabelPanel;
+    private VideoListPanel seasonVideoListPanel;
+    private VideoListPanel episodeVideoListPanel;
+    private PosterPanel posterPanel;
+    private SubcategoryListPanel subcategoryListPanel;
     private VideoInfoWindow videoInfoWindow;
     private VideoDetailPanel videoDetailPanel;
     private Video[] videos;
@@ -167,20 +171,36 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         }
     }
 
-    private LabelPanel getSubcategoryLabelPanel() {
-        return (subcategoryLabelPanel);
+    private VideoListPanel getSeasonVideoListPanel() {
+        return (seasonVideoListPanel);
     }
 
-    private void setSubcategoryLabelPanel(LabelPanel p) {
-        subcategoryLabelPanel = p;
+    private void setSeasonVideoListPanel(VideoListPanel p) {
+        seasonVideoListPanel = p;
     }
 
-    private LabelPanel getVideoLabelPanel() {
-        return (videoLabelPanel);
+    private VideoListPanel getEpisodeVideoListPanel() {
+        return (episodeVideoListPanel);
     }
 
-    private void setVideoLabelPanel(LabelPanel p) {
-        videoLabelPanel = p;
+    private void setEpisodeVideoListPanel(VideoListPanel p) {
+        episodeVideoListPanel = p;
+    }
+
+    private PosterPanel getPosterPanel() {
+        return (posterPanel);
+    }
+
+    private void setPosterPanel(PosterPanel p) {
+        posterPanel = p;
+    }
+
+    private SubcategoryListPanel getSubcategoryListPanel() {
+        return (subcategoryListPanel);
+    }
+
+    private void setSubcategoryListPanel(SubcategoryListPanel p) {
+        subcategoryListPanel = p;
     }
 
     private VideoDetailPanel getVideoDetailPanel() {
@@ -199,6 +219,24 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         videoInfoWindow = w;
     }
 
+    private boolean isParameterTV() {
+        return (NMSConstants.VIDEO_TV.equals(getSelectedParameter()));
+    }
+
+    /**
+     * Override so we can layout stuff right.
+     *
+     * @param b When true layout the proper components.
+     */
+    public void setVisible(boolean b) {
+
+        super.setVisible(b);
+        if (b) {
+
+            updateLayout();
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -207,42 +245,56 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         JLayeredPane pane = getLayeredPane();
         if ((d != null) && (pane != null)) {
 
-            LabelPanel subPane = new LabelPanel(3, "Sub");
-            subPane.setAspectRatio(3.0);
-            setSubcategoryLabelPanel(subPane);
+            float alpha = (float) getPanelAlpha();
 
-            LabelPanel vidPane = new LabelPanel(3, "Video");
-            setVideoLabelPanel(vidPane);
+            VideoListPanel svlp = new VideoListPanel();
+            svlp.setAlpha(alpha);
+            svlp.addPropertyChangeListener("SelectedVideo", this);
+            svlp.setControl(true);
+            setSeasonVideoListPanel(svlp);
+
+            VideoListPanel evlp = new VideoListPanel();
+            evlp.setAlpha(alpha);
+            evlp.setUseEpisode(true);
+            evlp.addPropertyChangeListener("SelectedVideo", this);
+            setEpisodeVideoListPanel(evlp);
+
+            PosterPanel pp = new PosterPanel();
+            pp.setAlpha(alpha);
+            pp.addPropertyChangeListener("SelectedVideo", this);
+            setPosterPanel(pp);
+
+            SubcategoryListPanel slp = new SubcategoryListPanel();
+            slp.setAlpha(alpha);
+            slp.addPropertyChangeListener("SelectedSubcategory", this);
+            setSubcategoryListPanel(slp);
 
             VideoDetailPanel vdp = new VideoDetailPanel();
-            vdp.setAlpha((float) getPanelAlpha());
+            vdp.setAlpha(alpha);
             setVideoDetailPanel(vdp);
 
-            double width = d.getWidth();
-            double height = d.getHeight();
+            int width = (int) d.getWidth();
+            int height = (int) d.getHeight();
 
-            double hgap = width * HGAP;
-            double vgap = height * VGAP;
+            int wspan = (int) (width * 0.03);
+            int listwidth = (width - (3 * wspan)) / 2;
+            int sublistwidth = (width - (3 * wspan)) / 3;
+            int ppwidth = (width - (3 * wspan)) - sublistwidth;
 
-            double paneWidth = width - (hgap * 2);
-            double paneTopHeight = (height - (vgap * 4)) / 6;
-            double paneMidHeight = (height - (vgap * 4)) / 2;
-            double paneBotHeight = (height - (vgap * 4)) / 3;
+            int hspan = (int) (height * 0.03);
+            int listheight = (int) ((height - (3 * hspan)) * 0.55);
 
-            subPane.setBounds((int) hgap, (int) (vgap), (int) paneWidth,
-                (int) paneTopHeight);
+            int detailwidth = (int) (width - (2 * wspan));
+            int detailheight = height - listheight - (hspan * 3);
 
-            vidPane.setBounds((int) hgap,
-                (int) (vgap * 2.0 + paneTopHeight),
-                (int) paneWidth, (int) paneMidHeight);
-
-            vdp.setBounds((int) hgap,
-                (int) (vgap * 3.0 + paneTopHeight + paneMidHeight),
-                (int) paneWidth, (int) paneBotHeight);
-
-            pane.add(subPane, Integer.valueOf(100));
-            pane.add(vidPane, Integer.valueOf(100));
-            pane.add(vdp, Integer.valueOf(100));
+            svlp.setBounds(wspan, hspan, listwidth, listheight);
+            evlp.setBounds(wspan + wspan + listwidth, hspan, listwidth,
+                listheight);
+            slp.setBounds(wspan, hspan, sublistwidth, listheight);
+            pp.setBounds(wspan + wspan + sublistwidth, hspan, ppwidth,
+                listheight);
+            vdp.setBounds(wspan, hspan + hspan + listheight, detailwidth,
+                detailheight);
 
             setVideoInfoWindow(new VideoInfoWindow((int) width, (int) height,
                 8, getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
@@ -257,6 +309,27 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         }
     }
 
+    private void updateLayout() {
+
+        JLayeredPane pane = getLayeredPane();
+        if (pane != null) {
+
+            pane.removeAll();
+            if (isParameterTV()) {
+
+                pane.add(getSeasonVideoListPanel(), Integer.valueOf(100));
+                pane.add(getEpisodeVideoListPanel(), Integer.valueOf(100));
+                pane.add(getVideoDetailPanel(), Integer.valueOf(100));
+
+            } else {
+
+                pane.add(getPosterPanel(), Integer.valueOf(100));
+                pane.add(getSubcategoryListPanel(), Integer.valueOf(100));
+                pane.add(getVideoDetailPanel(), Integer.valueOf(100));
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -265,22 +338,33 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         Bookmark result = null;
 
         Player p = getPlayer();
-        LabelPanel vidPane = getVideoLabelPanel();
-        if ((vidPane != null) && (p != null)) {
+        if (p != null) {
 
-            PlayState ps = p.getPlayState();
-            TextIcon ti = vidPane.getSelectedTextIcon();
-            if ((ti != null) && (ps != null)) {
+            Video v = null;
+            if (isParameterTV()) {
 
-                Video v = getVideoById(ti.getId());
+                VideoListPanel evlp = getEpisodeVideoListPanel();
+                if (evlp != null) {
 
-                if (v != null) {
-
-                    result = new Bookmark();
-                    result.setTime((int) ps.getTime());
-                    result.setPosition(ps.getPosition());
-                    result.setPreferTime(true);
+                    v = evlp.getSelectedVideo();
                 }
+
+            } else {
+
+                PosterPanel pp = getPosterPanel();
+                if (pp != null) {
+
+                    v = pp.getSelectedVideo();
+                }
+            }
+
+            if (v != null) {
+
+                PlayState ps = p.getPlayState();
+                result = new Bookmark();
+                result.setTime((int) ps.getTime());
+                result.setPosition(ps.getPosition());
+                result.setPreferTime(true);
             }
         }
 
@@ -294,18 +378,27 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         String result = null;
 
-        LabelPanel vidPane = getVideoLabelPanel();
-        if (vidPane != null) {
+        Video v = null;
+        if (isParameterTV()) {
 
-            TextIcon ti = vidPane.getSelectedTextIcon();
-            if (ti != null) {
+            VideoListPanel evlp = getEpisodeVideoListPanel();
+            if (evlp != null) {
 
-                Video v = getVideoById(ti.getId());
-                if (v != null) {
-
-                    result = v.getId();
-                }
+                v = evlp.getSelectedVideo();
             }
+
+        } else {
+
+            PosterPanel pp = getPosterPanel();
+            if (pp != null) {
+
+                v = pp.getSelectedVideo();
+            }
+        }
+
+        if (v != null) {
+
+            result = v.getId();
         }
 
         return (result);
@@ -522,12 +615,17 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                 videos = null;
             }
 
-            LabelPanel subPane = getSubcategoryLabelPanel();
-            LabelPanel vidPane = getVideoLabelPanel();
-            if ((subPane != null) && (vidPane != null)) {
+            if (isParameterTV()) {
 
-                subPane.setControl(true);
-                vidPane.setControl(false);
+                VideoListPanel svlp = getSeasonVideoListPanel();
+                VideoListPanel evlp = getEpisodeVideoListPanel();
+                if ((svlp != null) && (evlp != null)) {
+
+                    svlp.setControl(true);
+                    evlp.setControl(false);
+                }
+
+            } else {
             }
 
             if (videos != null) {
@@ -536,79 +634,191 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                 applySubcategory();
                 applyVideo();
                 applyVideoBackground();
-                applyVideoDetail();
             }
         }
     }
 
+    private boolean equals(Video first, Video second) {
+
+        boolean result = false;
+
+        if ((first != null) && (second != null)) {
+
+            String title = first.getTitle();
+            if (title != null) {
+
+                result = title.equals(second.getTitle());
+                if (result) {
+
+                    result = first.getSeason() == second.getSeason();
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private boolean contains(ArrayList<Video> l, Video v) {
+
+        boolean result = false;
+
+        if ((l != null) && (v != null)) {
+
+            int season = v.getSeason();
+            String title = v.getTitle();
+            if (title != null) {
+
+                for (int i = 0; i < l.size(); i++) {
+
+                    Video tmp = l.get(i);
+                    if ((title.equals(tmp.getTitle()))
+                        && (season == tmp.getSeason())) {
+
+                        result = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
     private void applySubcategory() {
 
-        String cat = getSelectedParameter();
-        LabelPanel subPane = getSubcategoryLabelPanel();
-        if ((cat != null) && (subPane != null)) {
+        if (!isParameterTV()) {
 
-            TextIcon[] array = getByCategory(getVideos(), cat);
-            subPane.setTextIcons(array);
+            String cat = getSelectedParameter();
+            SubcategoryListPanel slp = getSubcategoryListPanel();
+            if ((cat != null) && (slp != null)) {
+
+                String[] array = getSubcategoryByCategory(getVideos(), cat);
+                slp.setSubcategories(array);
+            }
         }
     }
 
     private void applyVideo() {
 
-        String cat = getSelectedParameter();
-        LabelPanel subPane = getSubcategoryLabelPanel();
-        LabelPanel vidPane = getVideoLabelPanel();
-        if ((cat != null) && (subPane != null) && (vidPane != null)) {
+        if (isParameterTV()) {
 
-            TextIcon subti = subPane.getSelectedTextIcon();
-            if (subti != null) {
+            // We have to pick out the TV episodes first.
+            VideoListPanel svlp = getSeasonVideoListPanel();
+            if (svlp != null) {
 
-                TextIcon[] array = getByCategoryAndSubcategory(getVideos(),
-                    cat, subti.getText());
-                vidPane.setTextIcons(array);
+                if (videos != null) {
+
+                    ArrayList<Video> justtv = new ArrayList<Video>();
+                    for (int i = 0; i < videos.length; i++) {
+
+                        if (videos[i].isTV()) {
+
+                            justtv.add(videos[i]);
+                        }
+                    }
+
+                    // Next we make a list of just Title/Season so we have
+                    // a season to pick.
+                    if (justtv.size() > 0) {
+
+                        ArrayList<Video> season = new ArrayList<Video>();
+                        for (int i = 0; i < justtv.size(); i++) {
+
+                            Video tmp = justtv.get(i);
+                            if (!contains(season, tmp)) {
+
+                                season.add(tmp);
+                            }
+                        }
+
+                        // At this point we have all the seasons...
+                        if (season.size() > 0) {
+
+                            Video[] array =
+                                season.toArray(new Video[season.size()]);
+                            svlp.setVideos(array);
+
+                        } else {
+
+                            svlp.setVideos(null);
+                        }
+
+                    } else {
+
+                        svlp.setVideos(null);
+                    }
+
+                } else {
+
+                    svlp.setVideos(null);
+                }
+            }
+
+        } else {
+
+            // We have to pick out the Video by cat and subcat.
+            String cat = getSelectedParameter();
+            SubcategoryListPanel slp = getSubcategoryListPanel();
+            PosterPanel pp = getPosterPanel();
+            if ((cat != null) && (slp != null) && (pp != null)) {
+
+                String sub = slp.getSelectedSubcategory();
+                if ((sub != null) && (videos != null)) {
+
+                    Video[] catsub = getVideoByCategoryAndSubcategory(videos,
+                        cat, sub);
+                    BufferedImage[] images = getVideoPosters(catsub);
+                    pp.setVideos(catsub);
+                    pp.setBufferedImages(images);
+                }
             }
         }
     }
 
     private void applyVideoBackground() {
 
-        LabelPanel vidPane = getVideoLabelPanel();
+        Video v = null;
+        if (isParameterTV()) {
+
+            VideoListPanel evlp = getEpisodeVideoListPanel();
+            if (evlp != null) {
+
+                v = evlp.getSelectedVideo();
+            }
+
+        } else {
+
+            PosterPanel pp = getPosterPanel();
+            if (pp != null) {
+
+                v = pp.getSelectedVideo();
+            }
+        }
+
         ImageCache ic = getImageCache();
-        if ((vidPane != null) && (ic != null)) {
+        if ((v != null) && (ic != null)) {
 
-            TextIcon ti = vidPane.getSelectedTextIcon();
-            if (ti != null) {
+            BufferedImage bi = ic.getImage(v.getFanartURL(), false);
+            if (bi != null) {
 
-                Video v = getVideoById(ti.getId());
-                if (v != null) {
+                Dimension d = getSize();
+                if (d != null) {
 
-                    BufferedImage bi = ic.getImage(v.getFanartURL(), false);
-                    if (bi != null) {
+                    if (bi.getWidth() < d.getWidth()) {
 
-                        Dimension d = getSize();
-                        if (d != null) {
-
-                            if (bi.getWidth() < d.getWidth()) {
-
-                                bi = Util.scaleLarger((int) d.getWidth(), bi);
-                            }
-
-                            setCurrentBackgroundImage(bi);
-
-                        } else {
-
-                            setCurrentBackgroundImage(
-                                getDefaultBackgroundImage());
-                        }
-
-                    } else {
-
-                        setCurrentBackgroundImage(getDefaultBackgroundImage());
+                        bi = Util.scaleLarger((int) d.getWidth(), bi);
                     }
+
+                    setCurrentBackgroundImage(bi);
 
                 } else {
 
                     setCurrentBackgroundImage(getDefaultBackgroundImage());
                 }
+
+            } else {
+
+                setCurrentBackgroundImage(getDefaultBackgroundImage());
             }
 
         } else {
@@ -617,23 +827,9 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         }
     }
 
-    private void applyVideoDetail() {
+    private String[] getSubcategoryByCategory(Video[] array, String category) {
 
-        LabelPanel vidPane = getVideoLabelPanel();
-        VideoDetailPanel vdp = getVideoDetailPanel();
-        if ((vidPane != null) && (vdp != null)) {
-
-            TextIcon ti = vidPane.getSelectedTextIcon();
-            if (ti != null) {
-
-                vdp.setVideo(getVideoById(ti.getId()));
-            }
-        }
-    }
-
-    private TextIcon[] getByCategory(Video[] array, String category) {
-
-        TextIcon[] result = null;
+        String[] result = null;
 
         if ((array != null) && (category != null)) {
 
@@ -654,14 +850,106 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
             if (l.size() > 0) {
 
-                result = new TextIcon[l.size()];
-                for (int i = 0; i < l.size(); i++) {
+                result = l.toArray(new String[l.size()]);
+                Arrays.sort(result);
+            }
+        }
 
-                    String sub = l.get(i);
-                    result[i] = new TextIcon(sub, null);
+        return (result);
+    }
+
+    private Video[] getVideoByCategoryAndSubcategory(Video[] array,
+        String category, String subcategory) {
+
+        Video[] result = null;
+
+        if ((array != null) && (category != null) && (subcategory != null)) {
+
+            ArrayList<Video> l = new ArrayList<Video>();
+            for (int i = 0; i < array.length; i++) {
+
+                if ((array[i].isCategory(category))
+                    && (array[i].isSubcategory(subcategory))) {
+
+                    l.add(array[i]);
+                }
+            }
+
+            if (l.size() > 0) {
+
+                result = l.toArray(new Video[l.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    private BufferedImage[] getVideoPosters(Video[] array) {
+
+        BufferedImage[] result = null;
+
+        ImageCache ic = getImageCache();
+        PosterPanel pp = getPosterPanel();
+        if ((array != null) && (ic != null) && (pp != null)) {
+
+            ArrayList<BufferedImage> l = new ArrayList<BufferedImage>();
+            for (int i = 0; i < array.length; i++) {
+
+                String turl = array[i].getPosterURL();
+
+                // First see if a scaled image exists...
+                BufferedImage bi = ic.getImage(turl + ".scaled.png", false);
+                if (bi == null) {
+
+                    // Then put it in if the original exists...
+                    bi = ic.getImage(turl, false);
+                    if (bi != null) {
+
+                        bi = Util.resize(bi, pp.getPosterWidth(),
+                            pp.getPosterHeight());
+                        if (bi != null) {
+
+                            // next time we find it...
+                            ic.putImage(turl + ".scaled.png", bi);
+                        }
+
+                    } else {
+
+                        try {
+
+                            String tmp = "missing_poster.png";
+                            bi = ImageIO.read(getClass().getResource(tmp));
+                            if (bi != null) {
+
+                                bi = Util.resize(bi, pp.getPosterWidth(),
+                                    pp.getPosterHeight());
+
+                            } else {
+
+                                bi = null;
+                            }
+
+                        } catch (IOException ex) {
+
+                            log(INFO, ex.getMessage());
+                        }
+                    }
+
+                } else {
+
+                    bi = Util.resize(bi, pp.getPosterWidth(),
+                        pp.getPosterHeight());
                 }
 
-                Arrays.sort(result, new TextIconSort());
+                if (bi != null) {
+
+                    l.add(bi);
+                }
+            }
+
+            if (l.size() > 0) {
+
+                result = l.toArray(new BufferedImage[l.size()]);
             }
         }
 
@@ -723,69 +1011,6 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         return (result);
     }
 
-    private TextIcon[] getByCategoryAndSubcategory(Video[] array,
-        String category, String subcategory) {
-
-        TextIcon[] result = null;
-
-        ImageCache ic = getImageCache();
-        LabelPanel vidPane = getVideoLabelPanel();
-        if ((array != null) && (category != null) && (subcategory != null)
-            && (ic != null) && (vidPane != null)) {
-
-            ArrayList<TextIcon> l = new ArrayList<TextIcon>();
-            for (int i = 0; i < array.length; i++) {
-
-                if ((array[i].isCategory(category))
-                    && (array[i].isSubcategory(subcategory))) {
-
-                    ImageIcon ii = null;
-
-                    String turl = array[i].getPosterURL();
-
-                    // First see if a scaled image exists...
-                    BufferedImage bi = ic.getImage(turl + ".scaled.png", false);
-                    if (bi == null) {
-
-                        // Then put it in if the original exists...
-                        bi = ic.getImage(turl, false);
-                        if (bi != null) {
-
-                            bi = Util.resize(bi, vidPane.getLabelWidth(),
-                                vidPane.getLabelHeight());
-                            if (bi != null) {
-
-                                // next time we find it...
-                                ic.putImage(turl + ".scaled.png", bi);
-                            }
-                        }
-                    }
-
-                    if (bi != null) {
-
-                        ii = new ImageIcon(bi);
-
-                    } else {
-
-                        String tmp = "missing_poster.png";
-                        ii = new ImageIcon(getClass().getResource(tmp));
-                    }
-
-                    TextIcon ti = new TextIcon(array[i].getTitle(), ii);
-                    ti.setId(array[i].getId());
-                    l.add(ti);
-                }
-            }
-
-            if (l.size() > 0) {
-
-                result = l.toArray(new TextIcon[l.size()]);
-            }
-        }
-
-        return (result);
-    }
-
     private boolean isWantIntro() {
 
         boolean result = false;
@@ -816,23 +1041,92 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             if (bobj.booleanValue()) {
 
                 getPlayer().removePropertyChangeListener(this);
-                LabelPanel vidPane = getVideoLabelPanel();
-                if (vidPane != null) {
+                Video v = null;
+                if (isParameterTV()) {
 
-                    TextIcon ti = vidPane.getSelectedTextIcon();
-                    if (ti != null) {
+                    VideoListPanel evlp = getEpisodeVideoListPanel();
+                    if (evlp != null) {
 
-                        Video v = getVideoById(ti.getId());
-                        if (v != null) {
-
-                            close();
-                            deleteBookmark(v.getId());
-                        }
+                        v = evlp.getSelectedVideo();
                     }
+
+                } else {
+
+                    PosterPanel pp = getPosterPanel();
+                    if (pp != null) {
+
+                        v = pp.getSelectedVideo();
+                    }
+                }
+
+                if (v != null) {
+
+                    close();
+                    deleteBookmark(v.getId());
                 }
             }
 
             requestFocus();
+
+        } else if (event.getSource() == getSeasonVideoListPanel()) {
+
+            VideoListPanel svlp = getSeasonVideoListPanel();
+            VideoListPanel evlp = getEpisodeVideoListPanel();
+            Video v = svlp.getSelectedVideo();
+            if (v != null) {
+
+                if (videos != null) {
+
+                    ArrayList<Video> vlist = new ArrayList<Video>();
+                    for (int i = 0; i < videos.length; i++) {
+
+                        if (equals(v, videos[i])) {
+
+                            vlist.add(videos[i]);
+                        }
+                    }
+
+                    if (vlist.size() > 0) {
+
+                        Video[] episodes =
+                            vlist.toArray(new Video[vlist.size()]);
+                        Arrays.sort(episodes, new VideoSortByEpisode());
+                        evlp.setVideos(episodes);
+
+                    } else {
+
+                        evlp.setVideos(null);
+                    }
+                }
+
+            } else {
+
+                evlp.setVideos(null);
+            }
+
+        } else if (event.getSource() == getEpisodeVideoListPanel()) {
+
+            VideoDetailPanel dp = getVideoDetailPanel();
+            if (dp != null) {
+
+                Video v = (Video) event.getNewValue();
+                dp.setVideo(v);
+                applyVideoBackground();
+            }
+
+        } else if (event.getSource() == getSubcategoryListPanel()) {
+
+            applyVideo();
+
+        } else if (event.getSource() == getPosterPanel()) {
+
+            VideoDetailPanel dp = getVideoDetailPanel();
+            if (dp != null) {
+
+                Video v = (Video) event.getNewValue();
+                dp.setVideo(v);
+                applyVideoBackground();
+            }
         }
     }
 
@@ -843,51 +1137,56 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
      */
     public void actionPerformed(ActionEvent event) {
 
-        LabelPanel vidPane = getVideoLabelPanel();
         Player p = getPlayer();
-        if ((vidPane != null) && (p != null) && (!p.isPlaying())) {
+        if ((p != null) && (!p.isPlaying())) {
 
-            TextIcon ti = vidPane.getSelectedTextIcon();
-            if (ti != null) {
+            Video v = null;
+            if (isParameterTV()) {
 
-                Video v = getVideoById(ti.getId());
-                if (v != null) {
+                VideoListPanel evlp = getEpisodeVideoListPanel();
+                if (evlp != null) {
 
-                    if (event.getSource() == getBeginningButton()) {
+                    v = evlp.getSelectedVideo();
+                }
 
-                        p.addPropertyChangeListener("Completed", this);
-                        VideoInfoWindow w = getVideoInfoWindow();
-                        if (w != null) {
+            } else {
 
-                            w.setImageCache(getImageCache());
-                            w.setVideo(v);
-                            w.setPlayer(p);
-                        }
+                PosterPanel pp = getPosterPanel();
+                if (pp != null) {
 
-                        View vw = getView();
-                        if (vw instanceof FrontEndView) {
+                    v = pp.getSelectedVideo();
+                }
+            }
 
-                            FrontEndView fev = (FrontEndView) vw;
-                            p.setRectangle(fev.getPosition());
-                        }
+            if (v != null) {
 
-                        if ((v.isPlayIntro()) && (isWantIntro())) {
+                if (event.getSource() == getBeginningButton()) {
 
-                            String intropath = getIntro(v);
-                            if (intropath != null) {
+                    p.addPropertyChangeListener("Completed", this);
+                    VideoInfoWindow w = getVideoInfoWindow();
+                    if (w != null) {
 
-                                controlKeyboard(false);
-                                p.setFrame(Util.findFrame(this));
-                                addBlankPanel();
-                                p.play(intropath, v.getPath());
+                        w.setImageCache(getImageCache());
+                        w.setVideo(v);
+                        w.setPlayer(p);
+                    }
 
-                            } else {
+                    View vw = getView();
+                    if (vw instanceof FrontEndView) {
 
-                                controlKeyboard(false);
-                                p.setFrame(Util.findFrame(this));
-                                addBlankPanel();
-                                p.play(v.getPath());
-                            }
+                        FrontEndView fev = (FrontEndView) vw;
+                        p.setRectangle(fev.getPosition());
+                    }
+
+                    if ((v.isPlayIntro()) && (isWantIntro())) {
+
+                        String intropath = getIntro(v);
+                        if (intropath != null) {
+
+                            controlKeyboard(false);
+                            p.setFrame(Util.findFrame(this));
+                            addBlankPanel();
+                            p.play(intropath, v.getPath());
 
                         } else {
 
@@ -897,39 +1196,47 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                             p.play(v.getPath());
                         }
 
-                    } else if (event.getSource() == getBookmarkButton()) {
-
-                        p.addPropertyChangeListener("Completed", this);
-                        VideoInfoWindow w = getVideoInfoWindow();
-                        if (w != null) {
-
-                            w.setImageCache(getImageCache());
-                            w.setVideo(v);
-                            w.setPlayer(p);
-                        }
-                        View vw = getView();
-                        if (vw instanceof FrontEndView) {
-
-                            FrontEndView fev = (FrontEndView) vw;
-                            p.setRectangle(fev.getPosition());
-                        }
+                    } else {
 
                         controlKeyboard(false);
                         p.setFrame(Util.findFrame(this));
                         addBlankPanel();
-                        p.play(v.getPath(), getBookmark(v.getId()));
-
-                    } else if (event.getSource() == getDeleteButton()) {
-
-                        log(DEBUG, "delete hit");
-
-                    } else if (event.getSource() == getCancelButton()) {
-
-                        log(DEBUG, "cancel hit");
+                        p.play(v.getPath());
                     }
+
+                } else if (event.getSource() == getBookmarkButton()) {
+
+                    p.addPropertyChangeListener("Completed", this);
+                    VideoInfoWindow w = getVideoInfoWindow();
+                    if (w != null) {
+
+                        w.setImageCache(getImageCache());
+                        w.setVideo(v);
+                        w.setPlayer(p);
+                    }
+                    View vw = getView();
+                    if (vw instanceof FrontEndView) {
+
+                        FrontEndView fev = (FrontEndView) vw;
+                        p.setRectangle(fev.getPosition());
+                    }
+
+                    controlKeyboard(false);
+                    p.setFrame(Util.findFrame(this));
+                    addBlankPanel();
+                    p.play(v.getPath(), getBookmark(v.getId()));
+
+                } else if (event.getSource() == getDeleteButton()) {
+
+                    log(DEBUG, "delete hit");
+
+                } else if (event.getSource() == getCancelButton()) {
+
+                    log(DEBUG, "cancel hit");
                 }
             }
         }
+
     }
 
     class LeftAction extends AbstractAction {
@@ -939,22 +1246,27 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            LabelPanel subPane = getSubcategoryLabelPanel();
-            LabelPanel vidPane = getVideoLabelPanel();
-            if ((subPane != null) && (vidPane != null)) {
+            if (isParameterTV()) {
 
-                if (subPane.isControl()) {
+                VideoListPanel svlp = getSeasonVideoListPanel();
+                if (svlp != null) {
 
-                    subPane.prev();
-                    applyVideo();
-
-                } else if (vidPane.isControl()) {
-
-                    vidPane.prev();
+                    svlp.setControl(true);
                 }
 
-                applyVideoBackground();
-                applyVideoDetail();
+                VideoListPanel evlp = getEpisodeVideoListPanel();
+                if (evlp != null) {
+
+                    evlp.setControl(false);
+                }
+
+            } else {
+
+                PosterPanel pp = getPosterPanel();
+                if (pp != null) {
+
+                    pp.prev();
+                }
             }
         }
     }
@@ -966,22 +1278,27 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            LabelPanel subPane = getSubcategoryLabelPanel();
-            LabelPanel vidPane = getVideoLabelPanel();
-            if ((subPane != null) && (vidPane != null)) {
+            if (isParameterTV()) {
 
-                if (subPane.isControl()) {
+                VideoListPanel svlp = getSeasonVideoListPanel();
+                if (svlp != null) {
 
-                    subPane.next();
-                    applyVideo();
-
-                } else if (vidPane.isControl()) {
-
-                    vidPane.next();
+                    svlp.setControl(false);
                 }
 
-                applyVideoBackground();
-                applyVideoDetail();
+                VideoListPanel evlp = getEpisodeVideoListPanel();
+                if (evlp != null) {
+
+                    evlp.setControl(true);
+                }
+
+            } else {
+
+                PosterPanel pp = getPosterPanel();
+                if (pp != null) {
+
+                    pp.next();
+                }
             }
         }
     }
@@ -993,19 +1310,30 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            LabelPanel subPane = getSubcategoryLabelPanel();
-            LabelPanel vidPane = getVideoLabelPanel();
-            if ((subPane != null) && (vidPane != null)) {
+            if (isParameterTV()) {
 
-                if (subPane.isControl()) {
+                VideoListPanel svlp = getSeasonVideoListPanel();
+                if (svlp != null) {
 
-                    subPane.setControl(false);
-                    vidPane.setControl(true);
+                    if (svlp.isControl()) {
+                        svlp.moveUp();
+                    }
+                }
 
-                } else if (vidPane.isControl()) {
+                VideoListPanel evlp = getEpisodeVideoListPanel();
+                if (evlp != null) {
 
-                    subPane.setControl(true);
-                    vidPane.setControl(false);
+                    if (evlp.isControl()) {
+                        evlp.moveUp();
+                    }
+                }
+
+            } else {
+
+                SubcategoryListPanel slp = getSubcategoryListPanel();
+                if (slp != null) {
+
+                    slp.moveUp();
                 }
             }
         }
@@ -1018,19 +1346,30 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            LabelPanel subPane = getSubcategoryLabelPanel();
-            LabelPanel vidPane = getVideoLabelPanel();
-            if ((subPane != null) && (vidPane != null)) {
+            if (isParameterTV()) {
 
-                if (subPane.isControl()) {
+                VideoListPanel svlp = getSeasonVideoListPanel();
+                if (svlp != null) {
 
-                    subPane.setControl(false);
-                    vidPane.setControl(true);
+                    if (svlp.isControl()) {
+                        svlp.moveDown();
+                    }
+                }
 
-                } else if (vidPane.isControl()) {
+                VideoListPanel evlp = getEpisodeVideoListPanel();
+                if (evlp != null) {
 
-                    subPane.setControl(true);
-                    vidPane.setControl(false);
+                    if (evlp.isControl()) {
+                        evlp.moveDown();
+                    }
+                }
+
+            } else {
+
+                SubcategoryListPanel slp = getSubcategoryListPanel();
+                if (slp != null) {
+
+                    slp.moveDown();
                 }
             }
         }
@@ -1101,6 +1440,20 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             String s1 = toCompareString(v1);
 
             return (s0.compareTo(s1));
+        }
+    }
+
+    static class VideoSortByEpisode implements Comparator<Video>, Serializable {
+
+        public VideoSortByEpisode() {
+        }
+
+        public int compare(Video v0, Video v1) {
+
+            Integer i0 = Integer.valueOf(v0.getEpisode());
+            Integer i1 = Integer.valueOf(v1.getEpisode());
+
+            return (i0.compareTo(i1));
         }
     }
 

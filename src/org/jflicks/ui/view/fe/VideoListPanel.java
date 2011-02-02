@@ -18,6 +18,7 @@ package org.jflicks.ui.view.fe;
 
 import java.util.ArrayList;
 
+import org.jdesktop.swingx.JXLabel;
 import org.jflicks.nms.Video;
 
 /**
@@ -29,6 +30,7 @@ import org.jflicks.nms.Video;
 public class VideoListPanel extends BaseListPanel {
 
     private ArrayList<Video> videoList;
+    private boolean useEpisode;
 
     /**
      * Simple empty constructor.
@@ -37,6 +39,32 @@ public class VideoListPanel extends BaseListPanel {
 
         setVideoList(new ArrayList<Video>());
         setPropertyName("SelectedVideo");
+    }
+
+    /**
+     * The button text can either be the Title property or episode title.
+     * If the Video is a TV episode, the season is appended to the title.
+     * If we are to use the episode title, we have to extract it from the
+     * start of the description.  Unfortunately it is not it's own
+     * property.
+     *
+     * @return True if the episode text is used.
+     */
+    public boolean isUseEpisode() {
+        return (useEpisode);
+    }
+
+    /**
+     * The button text can either be the Title property or episode title.
+     * If the Video is a TV episode, the season is appended to the title.
+     * If we are to use the episode title, we have to extract it from the
+     * start of the description.  Unfortunately it is not it's own
+     * property.
+     *
+     * @param b True if the episode text is used.
+     */
+    public void setUseEpisode(boolean b) {
+        useEpisode = b;
     }
 
     /**
@@ -72,6 +100,12 @@ public class VideoListPanel extends BaseListPanel {
 
         Video[] result = null;
 
+        ArrayList<Video> l = getVideoList();
+        if ((l != null) && (l.size() > 0)) {
+
+            result = l.toArray(new Video[l.size()]);
+        }
+
         return (result);
     }
 
@@ -106,6 +140,74 @@ public class VideoListPanel extends BaseListPanel {
      */
     public Video getSelectedVideo() {
         return ((Video) getSelectedObject());
+    }
+
+    /**
+     * Update the UI.  We override because sometimes we want to display
+     * our text differently.
+     */
+    protected void update() {
+
+        ArrayList<Video> l = getVideoList();
+        JXLabel[] labs = getLabels();
+        if ((l != null) && (labs != null)) {
+
+            int index = getStartIndex();
+            for (int i = 0; i < labs.length; i++) {
+
+                if (index < l.size()) {
+
+                    Video v = l.get(index);
+                    if (isUseEpisode()) {
+
+                        String tmp = v.getTitle();
+                        if (v.isTV()) {
+
+                            String desc = v.getDescription();
+                            if (desc != null) {
+
+                                desc = desc.trim();
+                                desc = desc.substring(1);
+                                int qindex = desc.indexOf("\"");
+                                if (qindex != -1) {
+
+                                    tmp = desc.substring(0, qindex);
+                                }
+                            }
+                        }
+
+                        labs[i].setText(tmp);
+
+                    } else {
+
+                        String tmp = v.getTitle();
+                        if (v.isTV()) {
+
+                             tmp += " (Season " + v.getSeason() + ")";
+                        }
+
+                        labs[i].setText(tmp);
+                    }
+
+                } else {
+
+                    labs[i].setText("");
+                }
+
+                index++;
+            }
+
+            applyColor();
+            int sindex = getSelectedIndex() + getStartIndex();
+            if (sindex < 0) {
+                sindex = 0;
+            }
+            if (l.size() > sindex) {
+                setSelectedObject(l.get(sindex));
+            }
+
+            animate();
+        }
     }
 
 }
