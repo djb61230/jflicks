@@ -129,6 +129,10 @@ public class VideoListPanel extends BaseListPanel {
 
                 setSelectedObject(null);
                 setStartIndex(0);
+                if (isUseEpisode()) {
+
+                    setSelectedIndex(0);
+                }
             }
         }
     }

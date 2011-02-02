@@ -648,6 +648,11 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                 if (result) {
 
                     result = first.getSeason() == second.getSeason();
+
+                    if (result) {
+
+                        result = first.isTV() == second.isTV();
+                    }
                 }
             }
         }
