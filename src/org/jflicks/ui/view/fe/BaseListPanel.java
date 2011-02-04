@@ -192,6 +192,7 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
                 top += labelMaxHeight;
                 anis[i] = PropertySetter.createAnimator(250, array[i],
                     "font", feval, getSmallFont(), getLargeFont());
+                anis[i].setResolution(10);
             }
 
             setAnimators(anis);

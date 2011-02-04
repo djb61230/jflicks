@@ -288,6 +288,7 @@ public class PosterPanel extends BaseCustomizePanel {
 
                 itts[i] = new ImageTimingTarget(start, left, right, parray[i]);
                 anis[i] = new Animator(180, itts[i]);
+                anis[i].setResolution(10);
             }
 
             setImageTimingTargets(itts);

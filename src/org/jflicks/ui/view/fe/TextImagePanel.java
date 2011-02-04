@@ -496,6 +496,7 @@ public class TextImagePanel extends BaseCustomizePanel
                     anis[i] = PropertySetter.createAnimator(250, labs[i],
                         "font", feval, getMediumFont(), getLargeFont());
                     anis[i].setEndBehavior(Animator.EndBehavior.HOLD);
+                    anis[i].setResolution(10);
                 }
 
                 setLabels(labs);
@@ -630,6 +631,7 @@ public class TextImagePanel extends BaseCustomizePanel
                     Animator popupAnimator =
                         PropertySetter.createAnimator(300,
                         popup, "alpha", 0.0f, (float) getPanelAlpha());
+                    popupAnimator.setResolution(10);
                     addAnimator(popup, popupAnimator);
 
                     JXLabel[] kidlabels = new JXLabel[kids.length];
@@ -693,6 +695,7 @@ public class TextImagePanel extends BaseCustomizePanel
 
             Animator backAnimator = PropertySetter.createAnimator(300,
                 backPanel, "alpha", 0.0f, 1.0f);
+            backAnimator.setResolution(10);
             setBackgroundAnimator(backAnimator);
 
             // Start at the first item.

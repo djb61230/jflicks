@@ -41,9 +41,7 @@ import org.jdesktop.swingx.painter.ImagePainter;
 
 /**
  * This panel will display an array of JButtons based upon the given
- * JButton objects passed in the constructor.  The panel will update
- * an image on a JLabel depending on which JButton contains the mouse.
- * This panel simulates how the mythTV gui behaves on it's main menu.
+ * JButton objects passed in the constructor.
  *
  * @author Doug Barnum
  * @version 1.0
