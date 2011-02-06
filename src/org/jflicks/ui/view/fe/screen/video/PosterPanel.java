@@ -16,21 +16,27 @@
 */
 package org.jflicks.ui.view.fe.screen.video;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JLayeredPane;
 
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
+import org.jdesktop.animation.timing.interpolation.PropertySetter;
 import org.jdesktop.swingx.painter.MattePainter;
 
 import org.jflicks.nms.Video;
 import org.jflicks.ui.view.fe.BaseCustomizePanel;
+import org.jflicks.util.Util;
 
 /**
  * This is a display of video posters in a panel.
@@ -48,6 +54,7 @@ public class PosterPanel extends BaseCustomizePanel {
 
     private static final double VERTICAL_GAP = 0.05;
     private static final double HORIZONTAL_GAP = 0.05;
+    private static final int EXTRA_PIXEL = 10;
 
     private int visibleCount;
     private Point[] anchorPoints;
@@ -57,6 +64,9 @@ public class PosterPanel extends BaseCustomizePanel {
     private ArrayList<Video> videoList;
     private ArrayList<BufferedImage> bufferedImageList;
     private BufferedImage[] drawImages;
+    private BufferedImage glowBufferedImage;
+    private float glowAlpha;
+    private Animator glowAnimator;
     private Video selectedVideo;
     private int posterWidth;
     private int posterHeight;
@@ -82,6 +92,11 @@ public class PosterPanel extends BaseCustomizePanel {
         setAspectRatio(DEFAULT_ASPECT_RATIO);
         setVideoList(new ArrayList<Video>());
         setBufferedImageList(new ArrayList<BufferedImage>());
+
+        PropertySetter ps = new PropertySetter(this, "glowAlpha", 0.0f, 1.0f);
+        Animator animator = new Animator(600, Animator.INFINITE,
+            Animator.RepeatBehavior.REVERSE, ps);
+        setGlowAnimator(animator);
     }
 
     /**
@@ -127,6 +142,35 @@ public class PosterPanel extends BaseCustomizePanel {
     }
 
     /**
+     * We have a open method so the glow animation can be started when
+     * we are to be displayed.
+     */
+    public void open() {
+
+        Animator a = getGlowAnimator();
+        if (a != null) {
+
+            if (!a.isRunning()) {
+                a.start();
+            }
+        }
+    }
+
+    /**
+     * We have a close method so the glow animation can be stopped.
+     */
+    public void close() {
+
+        Animator a = getGlowAnimator();
+        if (a != null) {
+
+            if (a.isRunning()) {
+                a.stop();
+            }
+        }
+    }
+
+    /**
      * We act upon a set of BufferedImage instances to display
      * posters.
      *
@@ -164,7 +208,48 @@ public class PosterPanel extends BaseCustomizePanel {
                     l.add(array[i]);
                 }
             }
+
+            if (l.size() > 0) {
+
+                setGlowBufferedImage(createGlow(l.get(0)));
+            }
         }
+    }
+
+    private BufferedImage getGlowBufferedImage() {
+        return (glowBufferedImage);
+    }
+
+    private void setGlowBufferedImage(BufferedImage bi) {
+        glowBufferedImage = bi;
+    }
+
+    private Animator getGlowAnimator() {
+        return (glowAnimator);
+    }
+
+    private void setGlowAnimator(Animator a) {
+        glowAnimator = a;
+    }
+
+    /**
+     * To glow the selection we need to control it's alpha.
+     *
+     * @return The alpha value for our selection glow.
+     */
+    public float getGlowAlpha() {
+        return (glowAlpha);
+    }
+
+    /**
+     * To glow the selection we need to control it's alpha.
+     *
+     * @param f The alpha value for our selection glow.
+     */
+    public void setGlowAlpha(float f) {
+
+        glowAlpha = f;
+        repaint();
     }
 
     /**
@@ -203,7 +288,6 @@ public class PosterPanel extends BaseCustomizePanel {
         if ((d != null) && (pane != null)) {
 
             double width = d.getWidth();
-            System.out.println("width: " + width);
             double height = d.getHeight();
             int count = getVisibleCount();
 
@@ -216,9 +300,6 @@ public class PosterPanel extends BaseCustomizePanel {
 
             setPosterWidth((int) labwidth);
             setPosterHeight((int) labheight);
-
-            System.out.println("labwidth: " + labwidth);
-            System.out.println("labheight: " + labheight);
 
             // Do the background.
             Color color = getPanelColor();
@@ -254,8 +335,6 @@ public class PosterPanel extends BaseCustomizePanel {
                     // We can see our image.
                     array[i].x = (int) ((labspan * (i - 1)) + hgap);
                 }
-
-                System.out.println("anchor: " + i + " " + array[i]);
             }
 
             setAnchorPoints(array);
@@ -452,6 +531,12 @@ public class PosterPanel extends BaseCustomizePanel {
                 array[i].stop();
             }
         }
+
+        Animator glow = getGlowAnimator();
+        if (glow != null) {
+
+            glow.stop();
+        }
     }
 
     private void startAll() {
@@ -506,12 +591,38 @@ public class PosterPanel extends BaseCustomizePanel {
         if ((array != null) && (images != null)
             && (array.length == images.length)) {
 
+            int center = array.length / 2;
             Graphics2D g2d = (Graphics2D) g.create();
             for (int i = 0; i < array.length; i++) {
 
                 if (images[i] != null) {
 
-                    g2d.drawImage(images[i], array[i].x, array[i].y, null);
+                    if (i == center) {
+
+                        BufferedImage glow = getGlowBufferedImage();
+                        if (glow != null) {
+
+                            int glowx = array[i].x - EXTRA_PIXEL;
+                            int glowy = array[i].y - EXTRA_PIXEL;
+                            g2d.setComposite(AlphaComposite.SrcOver.derive(
+                                getGlowAlpha()));
+                            g2d.drawImage(glow, glowx, glowy, null);
+                            g2d.setComposite(AlphaComposite.SrcOver);
+                            g2d.drawImage(images[i], array[i].x, array[i].y,
+                                null);
+
+                        } else {
+
+                            // Just draw normally...
+                            g2d.drawImage(images[i], array[i].x, array[i].y,
+                                null);
+                        }
+
+                    } else {
+
+                        // Just draw normally...
+                        g2d.drawImage(images[i], array[i].x, array[i].y, null);
+                    }
                 }
             }
         }
@@ -538,6 +649,9 @@ public class PosterPanel extends BaseCustomizePanel {
             Video vlast = vl.remove(vl.size() - 1);
             vl.add(0, vlast);
             setSelectedVideo(vl.get(0));
+
+            // Update the glow...
+            setGlowBufferedImage(createGlow(l.get(0)));
         }
     }
 
@@ -562,7 +676,54 @@ public class PosterPanel extends BaseCustomizePanel {
             Video vfirst = vl.remove(0);
             vl.add(vfirst);
             setSelectedVideo(vl.get(0));
+
+            // Update the glow...
+            setGlowBufferedImage(createGlow(l.get(0)));
         }
+    }
+
+    private BufferedImage createCompatibleImage(BufferedImage bi) {
+
+        BufferedImage result = null;
+
+        if (bi != null) {
+
+            GraphicsConfiguration gc =
+                GraphicsEnvironment.getLocalGraphicsEnvironment().
+                    getDefaultScreenDevice().getDefaultConfiguration();
+            if (gc != null) {
+
+                int w = bi.getWidth();
+                int h = bi.getHeight();
+                int t = bi.getTransparency();
+                result = gc.createCompatibleImage(w, h, t);
+            }
+        }
+
+        return (result);
+    }
+
+    private BufferedImage createGlow(BufferedImage bi) {
+
+        BufferedImage result = null;
+
+        if (bi != null) {
+
+            result = createCompatibleImage(bi);
+            Graphics2D g2 = result.createGraphics();
+            Rectangle rect = new Rectangle(bi.getWidth(), bi.getHeight());
+            g2.setPaint(getHighlightColor());
+            g2.fill(rect);
+            g2.draw(rect);
+            g2.dispose();
+
+            // Now scale the image.
+            int w = result.getWidth() + EXTRA_PIXEL * 2;
+            int h = result.getHeight() + EXTRA_PIXEL * 2;
+            result = Util.resize(result, w, h);
+        }
+
+        return (result);
     }
 
     class ImageTimingTarget extends TimingTargetAdapter {
@@ -627,6 +788,12 @@ public class PosterPanel extends BaseCustomizePanel {
             current.x = start.x;
             current.y = start.y;
             setDrawImages(null);
+
+            Animator a = getGlowAnimator();
+            if ((a != null) && (!a.isRunning())) {
+
+                a.start();
+            }
         }
 
         public void timingEvent(float fraction) {

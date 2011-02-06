@@ -299,9 +299,11 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
     private void updateLayout() {
 
+        PosterPanel pp = getPosterPanel();
         JLayeredPane pane = getLayeredPane();
-        if (pane != null) {
+        if ((pp != null) && (pane != null)) {
 
+            pp.close();
             pane.removeAll();
             if (isParameterTV()) {
 
@@ -311,7 +313,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
             } else {
 
-                pane.add(getPosterPanel(), Integer.valueOf(100));
+                pp.open();
+                pane.add(pp, Integer.valueOf(100));
                 pane.add(getSubcategoryListPanel(), Integer.valueOf(100));
                 pane.add(getVideoDetailPanel(), Integer.valueOf(100));
             }
@@ -390,6 +393,23 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         }
 
         return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setDone(boolean b) {
+
+        if (b) {
+
+            PosterPanel pp = getPosterPanel();
+            if (pp != null) {
+
+                pp.close();
+            }
+        }
+
+        super.setDone(b);
     }
 
     /**
