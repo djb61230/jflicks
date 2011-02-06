@@ -41,6 +41,7 @@ import org.jflicks.photomanager.PhotoUtil;
 import org.jflicks.photomanager.Tag;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
+import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.Dialog;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.MessagePanel;
@@ -118,34 +119,6 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
         ForwardAction forwardAction = new ForwardAction();
         map.put(KeyStroke.getKeyStroke("X"), "x");
         getActionMap().put("x", forwardAction);
-
-        JButton b = getDeleteAllowButton();
-        if (b != null) {
-            b.setVisible(false);
-        }
-
-        b = getDeleteButton();
-        if (b != null) {
-            b.setVisible(false);
-        }
-
-        b = getStopRecordingButton();
-        if (b != null) {
-            b.setVisible(false);
-        }
-
-        b = getBeginningButton();
-        if (b != null) {
-
-            b.setText("Play using ANY Tags");
-        }
-
-        b = getBookmarkButton();
-        if (b != null) {
-
-            b.setText("Play using ALL Tags");
-        }
-
     }
 
     /**
@@ -541,7 +514,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
     public void actionPerformed(ActionEvent event) {
 
         Player p = getPlayer();
-        if ((p != null) && (!p.isPlaying())) {
+        if ((p != null) && (!p.isPlaying())
+            && (event.getSource() == getPlayButtonPanel())) {
 
             View v = getView();
             if (v instanceof FrontEndView) {
@@ -550,7 +524,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                 p.setRectangle(fev.getPosition());
             }
 
-            if (event.getSource() == getBeginningButton()) {
+            ButtonPanel pbp = getPlayButtonPanel();
+            if (PLAY_USING_ANY_TAGS.equals(pbp.getSelectedButton())) {
 
                 Photo[] any = getAnyPhotos();
                 if (any != null) {
@@ -562,7 +537,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     p.play("list.txt");
                 }
 
-            } else if (event.getSource() == getBookmarkButton()) {
+            } else if (PLAY_USING_ALL_TAGS.equals(pbp.getSelectedButton())) {
 
                 Photo[] all = getAllPhotos();
                 if (all != null) {
@@ -574,6 +549,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     p.play("list.txt");
                 }
             }
+
+            unpopup();
         }
     }
 
@@ -584,23 +561,26 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            TagListPanel atlp = getAllTagListPanel();
-            if (atlp != null) {
+            if (!isPopupEnabled()) {
 
-                if (!atlp.isControl()) {
+                TagListPanel atlp = getAllTagListPanel();
+                if (atlp != null) {
 
-                    atlp.setControl(true);
+                    if (!atlp.isControl()) {
 
-                } else {
+                        atlp.setControl(true);
 
-                    atlp.toggle();
+                    } else {
+
+                        atlp.toggle();
+                    }
                 }
-            }
 
-            TagListPanel tlp = getTagListPanel();
-            if (tlp != null) {
+                TagListPanel tlp = getTagListPanel();
+                if (tlp != null) {
 
-                tlp.setControl(false);
+                    tlp.setControl(false);
+                }
             }
         }
     }
@@ -612,22 +592,25 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            TagListPanel atlp = getAllTagListPanel();
-            if (atlp != null) {
+            if (!isPopupEnabled()) {
 
-                atlp.setControl(false);
-            }
+                TagListPanel atlp = getAllTagListPanel();
+                if (atlp != null) {
 
-            TagListPanel tlp = getTagListPanel();
-            if (tlp != null) {
+                    atlp.setControl(false);
+                }
 
-                if (!tlp.isControl()) {
+                TagListPanel tlp = getTagListPanel();
+                if (tlp != null) {
 
-                    tlp.setControl(true);
+                    if (!tlp.isControl()) {
 
-                } else {
+                        tlp.setControl(true);
 
-                    tlp.toggle();
+                    } else {
+
+                        tlp.toggle();
+                    }
                 }
             }
         }
@@ -640,19 +623,30 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            TagListPanel atlp = getAllTagListPanel();
-            if (atlp != null) {
+            if (isPopupEnabled()) {
 
-                if (atlp.isControl()) {
-                    atlp.moveUp();
+                ButtonPanel bp = getPlayButtonPanel();
+                if (bp != null) {
+
+                    bp.moveDown();
                 }
-            }
 
-            TagListPanel tlp = getTagListPanel();
-            if (tlp != null) {
+            } else {
 
-                if (tlp.isControl()) {
-                    tlp.moveUp();
+                TagListPanel atlp = getAllTagListPanel();
+                if (atlp != null) {
+
+                    if (atlp.isControl()) {
+                        atlp.moveUp();
+                    }
+                }
+
+                TagListPanel tlp = getTagListPanel();
+                if (tlp != null) {
+
+                    if (tlp.isControl()) {
+                        tlp.moveUp();
+                    }
                 }
             }
         }
@@ -665,19 +659,30 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            TagListPanel atlp = getAllTagListPanel();
-            if (atlp != null) {
+            if (isPopupEnabled()) {
 
-                if (atlp.isControl()) {
-                    atlp.moveDown();
+                ButtonPanel bp = getPlayButtonPanel();
+                if (bp != null) {
+
+                    bp.moveDown();
                 }
-            }
 
-            TagListPanel tlp = getTagListPanel();
-            if (tlp != null) {
+            } else {
 
-                if (tlp.isControl()) {
-                    tlp.moveDown();
+                TagListPanel atlp = getAllTagListPanel();
+                if (atlp != null) {
+
+                    if (atlp.isControl()) {
+                        atlp.moveDown();
+                    }
+                }
+
+                TagListPanel tlp = getTagListPanel();
+                if (tlp != null) {
+
+                    if (tlp.isControl()) {
+                        tlp.moveDown();
+                    }
                 }
             }
         }
@@ -690,19 +695,22 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            TagListPanel atlp = getAllTagListPanel();
-            if (atlp != null) {
+            if (!isPopupEnabled()) {
 
-                if (atlp.isControl()) {
-                    atlp.movePageUp();
+                TagListPanel atlp = getAllTagListPanel();
+                if (atlp != null) {
+
+                    if (atlp.isControl()) {
+                        atlp.movePageUp();
+                    }
                 }
-            }
 
-            TagListPanel tlp = getTagListPanel();
-            if (tlp != null) {
+                TagListPanel tlp = getTagListPanel();
+                if (tlp != null) {
 
-                if (tlp.isControl()) {
-                    tlp.movePageUp();
+                    if (tlp.isControl()) {
+                        tlp.movePageUp();
+                    }
                 }
             }
         }
@@ -715,19 +723,22 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            TagListPanel atlp = getAllTagListPanel();
-            if (atlp != null) {
+            if (!isPopupEnabled()) {
 
-                if (atlp.isControl()) {
-                    atlp.movePageDown();
+                TagListPanel atlp = getAllTagListPanel();
+                if (atlp != null) {
+
+                    if (atlp.isControl()) {
+                        atlp.movePageDown();
+                    }
                 }
-            }
 
-            TagListPanel tlp = getTagListPanel();
-            if (tlp != null) {
+                TagListPanel tlp = getTagListPanel();
+                if (tlp != null) {
 
-                if (tlp.isControl()) {
-                    tlp.movePageDown();
+                    if (tlp.isControl()) {
+                        tlp.movePageDown();
+                    }
                 }
             }
         }
@@ -740,8 +751,15 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            Dialog.showButtonPanel(Util.findFrame(getLayeredPane()),
-                getPlayButtonPanel());
+            if (!isPopupEnabled()) {
+
+                String[] buts = {
+                    PLAY_USING_ANY_TAGS,
+                    PLAY_USING_ALL_TAGS
+                };
+
+                popup(buts);
+            }
         }
     }
 
@@ -752,84 +770,88 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            TagListPanel all = getAllTagListPanel();
-            TagListPanel p = getTagListPanel();
-            if ((all != null) && (p != null)) {
+            if (!isPopupEnabled()) {
 
-                if (p.isControl()) {
+                TagListPanel all = getAllTagListPanel();
+                TagListPanel p = getTagListPanel();
+                if ((all != null) && (p != null)) {
 
-                    // Time to remove a tag or (tags) from the selected list.
-                    Tag current = p.getSelectedTag();
-                    if (current != null) {
+                    if (p.isControl()) {
 
-                        // We want to actually copy parents too so the UI
-                        // "structure" stays the same.  However we don't
-                        // remove parents unless they have no other kids
-                        // in the list.  So we make a special parent list
-                        // first.
-                        ArrayList<Tag> l = new ArrayList<Tag>();
-                        l.add(current);
+                        // Time to remove a tag(s) from the selected list.
+                        Tag current = p.getSelectedTag();
+                        if (current != null) {
 
-                        ArrayList<Tag> pl = new ArrayList<Tag>();
+                            // We want to actually copy parents too so the UI
+                            // "structure" stays the same.  However we don't
+                            // remove parents unless they have no other kids
+                            // in the list.  So we make a special parent list
+                            // first.
+                            ArrayList<Tag> l = new ArrayList<Tag>();
+                            l.add(current);
 
-                        Tag parent = current.getParent();
-                        while ((parent != null) && (!parent.isRoot())) {
+                            ArrayList<Tag> pl = new ArrayList<Tag>();
 
-                            pl.add(parent);
-                            parent = parent.getParent();
-                        }
+                            Tag parent = current.getParent();
+                            while ((parent != null) && (!parent.isRoot())) {
 
-                        // Now we add any kids so they are removed.
-                        if (!current.isLeaf()) {
+                                pl.add(parent);
+                                parent = parent.getParent();
+                            }
 
-                            Tag[] kids = current.getChildren();
-                            for (int i = 0; i < kids.length; i++) {
+                            // Now we add any kids so they are removed.
+                            if (!current.isLeaf()) {
 
-                                Tag[] tarray = kids[i].toArray();
-                                if (tarray != null) {
+                                Tag[] kids = current.getChildren();
+                                for (int i = 0; i < kids.length; i++) {
 
-                                    for (int j = 0; j < tarray.length; j++) {
+                                    Tag[] tarray = kids[i].toArray();
+                                    if (tarray != null) {
 
-                                        l.add(tarray[j]);
+                                        for (int j = 0; j < tarray.length;
+                                            j++) {
+
+                                            l.add(tarray[j]);
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        // At this point we should have the current and
-                        // it's children ready to remove.
-                        p.removeTags(l.toArray(new Tag[l.size()]));
+                            // At this point we should have the current and
+                            // it's children ready to remove.
+                            p.removeTags(l.toArray(new Tag[l.size()]));
 
-                        // Last job is to remove any parents that no
-                        // longer have children in the selected list.
-                        for (int i = 0; i < pl.size(); i++) {
+                            // Last job is to remove any parents that no
+                            // longer have children in the selected list.
+                            for (int i = 0; i < pl.size(); i++) {
 
-                            boolean shouldRemove = true;
-                            Tag t = pl.get(i);
-                            Tag[] kids = t.getChildren();
-                            if (kids != null) {
+                                boolean shouldRemove = true;
+                                Tag t = pl.get(i);
+                                Tag[] kids = t.getChildren();
+                                if (kids != null) {
 
-                                for (int j = 0; j < kids.length; j++) {
+                                    for (int j = 0; j < kids.length; j++) {
 
-                                    if (p.containsTag(kids[j])) {
+                                        if (p.containsTag(kids[j])) {
 
-                                        // We keep it.
-                                        shouldRemove = false;
-                                        break;
+                                            // We keep it.
+                                            shouldRemove = false;
+                                            break;
+                                        }
                                     }
-                                }
 
-                                if (shouldRemove) {
+                                    if (shouldRemove) {
 
-                                    p.removeTag(t);
+                                        p.removeTag(t);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            updateStatus();
+                updateStatus();
+            }
         }
 
     }
@@ -841,52 +863,56 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            TagListPanel all = getAllTagListPanel();
-            TagListPanel p = getTagListPanel();
-            if ((all != null) && (p != null)) {
+            if (!isPopupEnabled()) {
 
-                if (all.isControl()) {
+                TagListPanel all = getAllTagListPanel();
+                TagListPanel p = getTagListPanel();
+                if ((all != null) && (p != null)) {
 
-                    // Time to copy a tag or (tags) to the selected list.
-                    Tag current = all.getSelectedTag();
-                    if (current != null) {
+                    if (all.isControl()) {
 
-                        // We want to actually copy parents too so the UI
-                        // "structure" stays the same.
-                        ArrayList<Tag> l = new ArrayList<Tag>();
-                        l.add(current);
-                        Tag parent = current.getParent();
-                        while ((parent != null) && (!parent.isRoot())) {
+                        // Time to copy a tag or (tags) to the selected list.
+                        Tag current = all.getSelectedTag();
+                        if (current != null) {
 
-                            l.add(parent);
-                            parent = parent.getParent();
-                        }
+                            // We want to actually copy parents too so the UI
+                            // "structure" stays the same.
+                            ArrayList<Tag> l = new ArrayList<Tag>();
+                            l.add(current);
+                            Tag parent = current.getParent();
+                            while ((parent != null) && (!parent.isRoot())) {
 
-                        // Now we add any kids.
-                        if (!current.isLeaf()) {
+                                l.add(parent);
+                                parent = parent.getParent();
+                            }
 
-                            Tag[] kids = current.getChildren();
-                            for (int i = 0; i < kids.length; i++) {
+                            // Now we add any kids.
+                            if (!current.isLeaf()) {
 
-                                Tag[] tarray = kids[i].toArray();
-                                if (tarray != null) {
+                                Tag[] kids = current.getChildren();
+                                for (int i = 0; i < kids.length; i++) {
 
-                                    for (int j = 0; j < tarray.length; j++) {
+                                    Tag[] tarray = kids[i].toArray();
+                                    if (tarray != null) {
 
-                                        l.add(tarray[j]);
+                                        for (int j = 0; j < tarray.length;
+                                            j++) {
+
+                                            l.add(tarray[j]);
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        // At this point we should have everything.  The
-                        // TagListPanel will handle any duplications.
-                        p.addTags(l.toArray(new Tag[l.size()]));
+                            // At this point we should have everything.  The
+                            // TagListPanel will handle any duplications.
+                            p.addTags(l.toArray(new Tag[l.size()]));
+                        }
                     }
                 }
-            }
 
-            updateStatus();
+                updateStatus();
+            }
         }
 
     }

@@ -92,6 +92,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
     NMSProperty, UpcomingProperty, PropertyChangeListener, JobListener,
     ActionListener, RecordingRuleProperty {
 
+    private static final String CANCEL = "Cancel";
+
     private static final String BY_TITLE = "By Title";
     private static final String BY_GUIDE = "Using Guide";
     private static final String BY_RULES = "Recording Rules";
@@ -129,8 +131,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
     private JXLabel upcomingLabel;
     private int upcomingState;
     private ButtonPanel upcomingButtonPanel;
-    private JButton overrideButton;
-    private JButton cancelButton;
+    private boolean popupEnabled;
 
     /**
      * Simple empty constructor.
@@ -204,16 +205,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         rrp.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,
             set);
         setRecordingRulePanel(rrp);
-
-        JButton[] buts = new JButton[2];
-        buts[0] = new JButton("Override");
-        setOverrideButton(buts[0]);
-        buts[1] = new JButton("Cancel");
-        setCancelButton(buts[1]);
-
-        ButtonPanel bp = new ButtonPanel(buts);
-        bp.addActionListener(this);
-        setUpcomingButtonPanel(bp);
     }
 
     /**
@@ -557,22 +548,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         upcomingButtonPanel = p;
     }
 
-    private JButton getOverrideButton() {
-        return (overrideButton);
-    }
-
-    private void setOverrideButton(JButton b) {
-        overrideButton = b;
-    }
-
-    private JButton getCancelButton() {
-        return (cancelButton);
-    }
-
-    private void setCancelButton(JButton b) {
-        cancelButton = b;
-    }
-
     private JobContainer getAllGuideJobContainer() {
         return (allGuideJobContainer);
     }
@@ -669,6 +644,59 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         }
 
         return (result);
+    }
+
+    private boolean isPopupEnabled() {
+        return (popupEnabled);
+    }
+
+    protected void setPopupEnabled(boolean b) {
+        popupEnabled = b;
+    }
+
+    protected void popup(String[] choices) {
+
+        JLayeredPane pane = getLayeredPane();
+        if ((pane != null) && (choices != null)) {
+
+            Dimension d = pane.getSize();
+            int width = (int) d.getWidth();
+            int height = (int) d.getHeight();
+
+            ButtonPanel bp = new ButtonPanel();
+            bp.setMediumFont(bp.getLargeFont());
+            bp.setSmallFont(bp.getLargeFont());
+            bp.addActionListener(this);
+            bp.setButtons(choices);
+            setUpcomingButtonPanel(bp);
+
+            d = bp.getPreferredSize();
+            int bpwidth = (int) d.getWidth();
+            int bpheight = (int) d.getHeight();
+            int bpx = (int) ((width - bpwidth) / 2);
+            int bpy = (int) ((height - bpheight) / 2);
+            bp.setBounds(bpx, bpy, bpwidth, bpheight);
+
+            setPopupEnabled(true);
+            pane.add(bp, Integer.valueOf(300));
+            bp.requestFocus();
+            bp.setControl(true);
+            bp.setButtons(choices);
+        }
+    }
+
+    protected void unpopup() {
+
+        setPopupEnabled(false);
+        JLayeredPane pane = getLayeredPane();
+        ButtonPanel bp = getUpcomingButtonPanel();
+        if ((pane != null) && (bp != null)) {
+
+            bp.removeActionListener(this);
+            setUpcomingButtonPanel(null);
+            pane.remove(bp);
+            pane.repaint();
+        }
     }
 
     /**
@@ -1194,9 +1222,10 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
     public void actionPerformed(ActionEvent event) {
 
         UpcomingListPanel ulp = getUpcomingListPanel();
-        if (ulp != null) {
+        if ((ulp != null) && (event.getSource() == getUpcomingButtonPanel())) {
 
-            if (event.getSource() == getOverrideButton()) {
+            ButtonPanel bp = getUpcomingButtonPanel();
+            if (!CANCEL.equals(bp.getSelectedButton())) {
 
                 Upcoming up = ulp.getSelectedUpcoming();
                 if (up != null) {
@@ -1212,6 +1241,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     }
                 }
             }
+
+            unpopup();
         }
     }
 
@@ -1292,77 +1323,80 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            if (isParameterByTitle()) {
+            if (!isPopupEnabled()) {
 
-                TagListPanel tlp = getTitleTagListPanel();
-                if (tlp != null) {
+                if (isParameterByTitle()) {
 
-                    if (tlp.isExpanded()) {
+                    TagListPanel tlp = getTitleTagListPanel();
+                    if (tlp != null) {
 
-                        tlp.toggle();
+                        if (tlp.isExpanded()) {
 
-                    } else {
+                            tlp.toggle();
 
-                        Tag selected = tlp.getSelectedTag();
-                        if (selected != null) {
+                        } else {
 
-                            Tag parent = selected.getParent();
-                            if ((parent != null) && (!parent.isRoot())) {
+                            Tag selected = tlp.getSelectedTag();
+                            if (selected != null) {
 
-                                if (tlp.isExpanded(parent)) {
+                                Tag parent = selected.getParent();
+                                if ((parent != null) && (!parent.isRoot())) {
 
-                                    tlp.setSelectedTag(parent);
-                                    tlp.toggle();
+                                    if (tlp.isExpanded(parent)) {
+
+                                        tlp.setSelectedTag(parent);
+                                        tlp.toggle();
+                                    }
                                 }
                             }
                         }
                     }
+
+                } else if (isParameterByGuide()) {
+
+                    ChannelListPanel clp = getChannelListPanel();
+                    if (clp != null) {
+
+                        clp.setControl(true);
+                    }
+
+                    ShowAiringListPanel salp = getShowAiringListPanel();
+                    if (salp != null) {
+
+                        salp.setControl(false);
+                    }
+
+                } else if (isParameterUpcomingRecordings()) {
+
+                    String text = null;
+                    int state = getUpcomingState();
+                    switch (state) {
+
+                    default:
+                    case ALL_UPCOMING:
+                        state = NOT_RECORDING_UPCOMING;
+                        text = NOT_RECORDING_UPCOMING_TEXT;
+                        break;
+
+                    case RECORDING_UPCOMING:
+                        state = ALL_UPCOMING;
+                        text = ALL_UPCOMING_TEXT;
+                        break;
+
+                    case NOT_RECORDING_UPCOMING:
+                        state = RECORDING_UPCOMING;
+                        text = RECORDING_UPCOMING_TEXT;
+                        break;
+                    }
+
+                    JXLabel l = getUpcomingLabel();
+                    if (l != null) {
+
+                        l.setText(text);
+                    }
+                    setUpcomingState(state);
+                    applyUpcoming();
                 }
-
-            } else if (isParameterByGuide()) {
-
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
-
-                    clp.setControl(true);
-                }
-
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
-
-                    salp.setControl(false);
-                }
-
-            } else if (isParameterUpcomingRecordings()) {
-
-                String text = null;
-                int state = getUpcomingState();
-                switch (state) {
-
-                default:
-                case ALL_UPCOMING:
-                    state = NOT_RECORDING_UPCOMING;
-                    text = NOT_RECORDING_UPCOMING_TEXT;
-                    break;
-
-                case RECORDING_UPCOMING:
-                    state = ALL_UPCOMING;
-                    text = ALL_UPCOMING_TEXT;
-                    break;
-
-                case NOT_RECORDING_UPCOMING:
-                    state = RECORDING_UPCOMING;
-                    text = RECORDING_UPCOMING_TEXT;
-                    break;
-                }
-
-                JXLabel l = getUpcomingLabel();
-                if (l != null) {
-
-                    l.setText(text);
-                }
-                setUpcomingState(state);
-                applyUpcoming();
             }
         }
     }
@@ -1374,58 +1408,61 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            if (isParameterByTitle()) {
+            if (!isPopupEnabled()) {
 
-                TagListPanel tlp = getTitleTagListPanel();
-                if (tlp != null) {
+                if (isParameterByTitle()) {
 
-                    tlp.toggle();
+                    TagListPanel tlp = getTitleTagListPanel();
+                    if (tlp != null) {
+
+                        tlp.toggle();
+                    }
+
+                } else if (isParameterByGuide()) {
+
+                    ChannelListPanel clp = getChannelListPanel();
+                    if (clp != null) {
+
+                        clp.setControl(false);
+                    }
+
+                    ShowAiringListPanel salp = getShowAiringListPanel();
+                    if (salp != null) {
+
+                        salp.setControl(true);
+                    }
+
+                } else if (isParameterUpcomingRecordings()) {
+
+                    String text = null;
+                    int state = getUpcomingState();
+                    switch (state) {
+
+                    default:
+                    case ALL_UPCOMING:
+                        state = RECORDING_UPCOMING;
+                        text = RECORDING_UPCOMING_TEXT;
+                        break;
+
+                    case RECORDING_UPCOMING:
+                        state = NOT_RECORDING_UPCOMING;
+                        text = NOT_RECORDING_UPCOMING_TEXT;
+                        break;
+
+                    case NOT_RECORDING_UPCOMING:
+                        state = ALL_UPCOMING;
+                        text = ALL_UPCOMING_TEXT;
+                        break;
+                    }
+
+                    JXLabel l = getUpcomingLabel();
+                    if (l != null) {
+
+                        l.setText(text);
+                    }
+                    setUpcomingState(state);
+                    applyUpcoming();
                 }
-
-            } else if (isParameterByGuide()) {
-
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
-
-                    clp.setControl(false);
-                }
-
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
-
-                    salp.setControl(true);
-                }
-
-            } else if (isParameterUpcomingRecordings()) {
-
-                String text = null;
-                int state = getUpcomingState();
-                switch (state) {
-
-                default:
-                case ALL_UPCOMING:
-                    state = RECORDING_UPCOMING;
-                    text = RECORDING_UPCOMING_TEXT;
-                    break;
-
-                case RECORDING_UPCOMING:
-                    state = NOT_RECORDING_UPCOMING;
-                    text = NOT_RECORDING_UPCOMING_TEXT;
-                    break;
-
-                case NOT_RECORDING_UPCOMING:
-                    state = ALL_UPCOMING;
-                    text = ALL_UPCOMING_TEXT;
-                    break;
-                }
-
-                JXLabel l = getUpcomingLabel();
-                if (l != null) {
-
-                    l.setText(text);
-                }
-                setUpcomingState(state);
-                applyUpcoming();
             }
         }
     }
@@ -1437,46 +1474,57 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            if (isParameterByTitle()) {
+            if (isPopupEnabled()) {
 
-                TagListPanel tlp = getTitleTagListPanel();
-                if (tlp != null) {
+                ButtonPanel bp = getUpcomingButtonPanel();
+                if (bp != null) {
 
-                    tlp.moveUp();
+                    bp.moveUp();
                 }
 
-            } else if (isParameterByGuide()) {
+            } else {
 
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
+                if (isParameterByTitle()) {
 
-                    if (clp.isControl()) {
-                        clp.moveUp();
+                    TagListPanel tlp = getTitleTagListPanel();
+                    if (tlp != null) {
+
+                        tlp.moveUp();
                     }
-                }
 
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
+                } else if (isParameterByGuide()) {
 
-                    if (salp.isControl()) {
-                        salp.moveUp();
+                    ChannelListPanel clp = getChannelListPanel();
+                    if (clp != null) {
+
+                        if (clp.isControl()) {
+                            clp.moveUp();
+                        }
                     }
-                }
 
-            } else if (isParameterByRules()) {
+                    ShowAiringListPanel salp = getShowAiringListPanel();
+                    if (salp != null) {
 
-                RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
-                if (rrlp != null) {
+                        if (salp.isControl()) {
+                            salp.moveUp();
+                        }
+                    }
 
-                    rrlp.moveUp();
-                }
+                } else if (isParameterByRules()) {
 
-            } else if (isParameterUpcomingRecordings()) {
+                    RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
+                    if (rrlp != null) {
 
-                UpcomingListPanel ulp = getUpcomingListPanel();
-                if (ulp != null) {
+                        rrlp.moveUp();
+                    }
 
-                    ulp.moveUp();
+                } else if (isParameterUpcomingRecordings()) {
+
+                    UpcomingListPanel ulp = getUpcomingListPanel();
+                    if (ulp != null) {
+
+                        ulp.moveUp();
+                    }
                 }
             }
         }
@@ -1489,46 +1537,57 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            if (isParameterByTitle()) {
+            if (isPopupEnabled()) {
 
-                TagListPanel tlp = getTitleTagListPanel();
-                if (tlp != null) {
+                ButtonPanel bp = getUpcomingButtonPanel();
+                if (bp != null) {
 
-                    tlp.moveDown();
+                    bp.moveDown();
                 }
 
-            } else if (isParameterByGuide()) {
+            } else {
 
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
+                if (isParameterByTitle()) {
 
-                    if (clp.isControl()) {
-                        clp.moveDown();
+                    TagListPanel tlp = getTitleTagListPanel();
+                    if (tlp != null) {
+
+                        tlp.moveDown();
                     }
-                }
 
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
+                } else if (isParameterByGuide()) {
 
-                    if (salp.isControl()) {
-                        salp.moveDown();
+                    ChannelListPanel clp = getChannelListPanel();
+                    if (clp != null) {
+
+                        if (clp.isControl()) {
+                            clp.moveDown();
+                        }
                     }
-                }
 
-            } else if (isParameterByRules()) {
+                    ShowAiringListPanel salp = getShowAiringListPanel();
+                    if (salp != null) {
 
-                RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
-                if (rrlp != null) {
+                        if (salp.isControl()) {
+                            salp.moveDown();
+                        }
+                    }
 
-                    rrlp.moveDown();
-                }
+                } else if (isParameterByRules()) {
 
-            } else if (isParameterUpcomingRecordings()) {
+                    RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
+                    if (rrlp != null) {
 
-                UpcomingListPanel ulp = getUpcomingListPanel();
-                if (ulp != null) {
+                        rrlp.moveDown();
+                    }
 
-                    ulp.moveDown();
+                } else if (isParameterUpcomingRecordings()) {
+
+                    UpcomingListPanel ulp = getUpcomingListPanel();
+                    if (ulp != null) {
+
+                        ulp.moveDown();
+                    }
                 }
             }
         }
@@ -1541,46 +1600,49 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            if (isParameterByTitle()) {
+            if (!isPopupEnabled()) {
 
-                TagListPanel tlp = getTitleTagListPanel();
-                if (tlp != null) {
+                if (isParameterByTitle()) {
 
-                    tlp.movePageUp();
-                }
+                    TagListPanel tlp = getTitleTagListPanel();
+                    if (tlp != null) {
 
-            } else if (isParameterByGuide()) {
-
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
-
-                    if (clp.isControl()) {
-                        clp.movePageUp();
+                        tlp.movePageUp();
                     }
-                }
 
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
+                } else if (isParameterByGuide()) {
 
-                    if (salp.isControl()) {
-                        salp.movePageUp();
+                    ChannelListPanel clp = getChannelListPanel();
+                    if (clp != null) {
+
+                        if (clp.isControl()) {
+                            clp.movePageUp();
+                        }
                     }
-                }
 
-            } else if (isParameterByRules()) {
+                    ShowAiringListPanel salp = getShowAiringListPanel();
+                    if (salp != null) {
 
-                RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
-                if (rrlp != null) {
+                        if (salp.isControl()) {
+                            salp.movePageUp();
+                        }
+                    }
 
-                    rrlp.movePageUp();
-                }
+                } else if (isParameterByRules()) {
 
-            } else if (isParameterUpcomingRecordings()) {
+                    RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
+                    if (rrlp != null) {
 
-                UpcomingListPanel ulp = getUpcomingListPanel();
-                if (ulp != null) {
+                        rrlp.movePageUp();
+                    }
 
-                    ulp.movePageUp();
+                } else if (isParameterUpcomingRecordings()) {
+
+                    UpcomingListPanel ulp = getUpcomingListPanel();
+                    if (ulp != null) {
+
+                        ulp.movePageUp();
+                    }
                 }
             }
         }
@@ -1593,46 +1655,49 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            if (isParameterByTitle()) {
+            if (!isPopupEnabled()) {
 
-                TagListPanel tlp = getTitleTagListPanel();
-                if (tlp != null) {
+                if (isParameterByTitle()) {
 
-                    tlp.movePageDown();
-                }
+                    TagListPanel tlp = getTitleTagListPanel();
+                    if (tlp != null) {
 
-            } else if (isParameterByGuide()) {
-
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
-
-                    if (clp.isControl()) {
-                        clp.movePageDown();
+                        tlp.movePageDown();
                     }
-                }
 
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
+                } else if (isParameterByGuide()) {
 
-                    if (salp.isControl()) {
-                        salp.movePageDown();
+                    ChannelListPanel clp = getChannelListPanel();
+                    if (clp != null) {
+
+                        if (clp.isControl()) {
+                            clp.movePageDown();
+                        }
                     }
-                }
 
-            } else if (isParameterByRules()) {
+                    ShowAiringListPanel salp = getShowAiringListPanel();
+                    if (salp != null) {
 
-                RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
-                if (rrlp != null) {
+                        if (salp.isControl()) {
+                            salp.movePageDown();
+                        }
+                    }
 
-                    rrlp.movePageDown();
-                }
+                } else if (isParameterByRules()) {
 
-            } else if (isParameterUpcomingRecordings()) {
+                    RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
+                    if (rrlp != null) {
 
-                UpcomingListPanel ulp = getUpcomingListPanel();
-                if (ulp != null) {
+                        rrlp.movePageDown();
+                    }
 
-                    ulp.movePageDown();
+                } else if (isParameterUpcomingRecordings()) {
+
+                    UpcomingListPanel ulp = getUpcomingListPanel();
+                    if (ulp != null) {
+
+                        ulp.movePageDown();
+                    }
                 }
             }
         }
@@ -1692,31 +1757,32 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         public void handleUpcoming() {
 
-            JButton b = getOverrideButton();
-            ButtonPanel bp = getUpcomingButtonPanel();
             UpcomingListPanel ulp = getUpcomingListPanel();
-            if ((b != null) && (bp != null) && (ulp != null)) {
+            if (ulp != null) {
 
                 Upcoming up = ulp.getSelectedUpcoming();
                 if (up != null) {
 
+                    ArrayList<String> blist = new ArrayList<String>();
                     if (NMSConstants.PREVIOUSLY_RECORDED.equals(
                         up.getStatus())) {
 
-                        b.setText("Forget Old Recording");
+                        blist.add("Forget Old Recording");
 
                     } else {
 
-                        b.setText("Don't Record");
+                        blist.add("Don't Record");
                     }
 
-                    Dialog.showButtonPanel(null, bp);
+                    blist.add(CANCEL);
+                    popup(blist.toArray(new String[blist.size()]));
                 }
             }
         }
 
         public void actionPerformed(ActionEvent e) {
 
+            System.out.println("enter:actionPerformed");
             RecordingRulePanel p = getRecordingRulePanel();
             if (p != null) {
 

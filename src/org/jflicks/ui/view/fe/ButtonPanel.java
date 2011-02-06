@@ -16,184 +16,312 @@
 */
 package org.jflicks.ui.view.fe;
 
-import java.awt.AWTKeyStroke;
-import java.awt.BorderLayout;
-import java.awt.KeyboardFocusManager;
+import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
-import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
-import org.jflicks.util.ColumnPanel;
-import org.jflicks.util.RowPanel;
-
-import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.animation.timing.Animator;
+import org.jdesktop.animation.timing.TimingTargetAdapter;
+import org.jdesktop.animation.timing.interpolation.PropertySetter;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
+import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jdesktop.swingx.painter.ImagePainter;
+import org.jdesktop.swingx.painter.RectanglePainter;
+import org.jdesktop.swingx.painter.Painter;
+
+import org.jflicks.util.Util;
 
 /**
- * This panel will display an array of JButtons based upon the given
- * JButton objects passed in the constructor.
+ * This is a display of a selection of actions for the user.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class ButtonPanel extends JXPanel implements ActionListener {
+public class ButtonPanel extends BaseCustomizePanel {
 
-    private static final double FONT_SIZE = 24.0;
-
+    private BufferedImage bufferedImage;
+    private TextListPanel textListPanel;
     private ArrayList<ActionListener> actionList =
         new ArrayList<ActionListener>();
-    private int orientation;
-    private JButton escapeButton;
 
     /**
-     * Constructor that takes an array of JButton objects.
-     *
-     * @param array An array of defined JButton objects.
+     * Simple empty constructor.
      */
-    public ButtonPanel(JButton[] array) {
+    public ButtonPanel() {
 
-        this(array, null, FONT_SIZE, SwingConstants.VERTICAL);
-    }
-
-    /**
-     * Constructor that takes an array of JButton objects and an
-     * orientation.
-     *
-     * @param array An array of defined JButton objects.
-     * @param orientation Either SwingConstants.VERTICAL or
-     * SwingConstants.HORIZONTAL.
-     */
-    public ButtonPanel(JButton[] array, int orientation) {
-
-        this(array, null, FONT_SIZE, orientation);
-    }
-
-    /**
-     * Constructor that takes an array of JButton objects.
-     *
-     * @param array An array of defined JButton objects.
-     * @param bi The background image.
-     */
-    public ButtonPanel(JButton[] array, BufferedImage bi) {
-
-        this(array, bi, FONT_SIZE, SwingConstants.VERTICAL);
-    }
-
-    /**
-     * Constructor that takes an array of JButton objects.
-     *
-     * @param array An array of defined JButton objects.
-     * @param bi The background image.
-     * @param fontSize The font size.
-     * @param orientation A row or column.
-     */
-    public ButtonPanel(JButton[] array, BufferedImage bi, double fontSize,
-        int orientation) {
-
-        UIManager.put("Button.defaultButtonFollowsFocus", Boolean.TRUE);
-
-        if (bi != null) {
-
-            ImagePainter painter = new ImagePainter(bi);
-            painter.setScaleToFit(true);
-            setBackgroundPainter(painter);
-        }
-
-        setLayout(new BorderLayout());
-        if (array != null) {
-
-            for (int i = 0; i < array.length; i++) {
-
-                JButton b = array[i];
-                b.setBorderPainted(false);
-                b.setContentAreaFilled(false);
-                b.setRolloverEnabled(true);
-                b.addFocusListener(new HighlightFocusAdapter(null, null));
-                b.addActionListener(this);
-                b.setFont(b.getFont().deriveFont((float) fontSize));
-                focusTraversal(b);
-
-                if ((i + 1) == array.length) {
-
-                    setEscapeButton(b);
-                }
-            }
-
-            setLayout(new BorderLayout());
-
-            setOrientation(orientation);
-            if (orientation == SwingConstants.HORIZONTAL) {
-
-                RowPanel rp = new RowPanel(array);
-                rp.setOpaque(false);
-                add(rp, BorderLayout.CENTER);
-
-            } else {
-
-                ColumnPanel cp = new ColumnPanel(array);
-                cp.setOpaque(false);
-                add(cp, BorderLayout.CENTER);
-            }
-        }
+        TextListPanel tlp = new TextListPanel();
+        tlp.setMediumFont(tlp.getLargeFont());
+        tlp.setSmallFont(tlp.getLargeFont());
+        setTextListPanel(tlp);
 
         EscapeAction escapeAction = new EscapeAction();
         InputMap map = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         map.put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
         getActionMap().put("escape", escapeAction);
+
+        EnterAction enterAction = new EnterAction();
+        map.put(KeyStroke.getKeyStroke("ENTER"), "enter");
+        getActionMap().put("enter", enterAction);
+
+        setAlpha(0.0f);
+
+        RectanglePainter rp = new RectanglePainter(getPanelColor(),
+            getPanelColor());
+        rp.setRounded(true);
+        rp.setRoundWidth(30);
+        rp.setRoundHeight(30);
+        CompoundPainter cp = new CompoundPainter(rp);
+        setBackgroundPainter(cp);
     }
 
-    private JButton getEscapeButton() {
-        return (escapeButton);
+    private TextListPanel getTextListPanel() {
+        return (textListPanel);
     }
 
-    private void setEscapeButton(JButton b) {
-        escapeButton = b;
+    private void setTextListPanel(TextListPanel p) {
+        textListPanel = p;
+    }
+
+    public BufferedImage getBufferedImage() {
+        return (bufferedImage);
+    }
+
+    public void setBufferedImage(BufferedImage bi) {
+
+        CompoundPainter cp = (CompoundPainter) getBackgroundPainter();
+        if (cp != null) {
+
+            Painter[] array = cp.getPainters();
+            if (bi != null) {
+
+                if (array.length == 1) {
+
+                    // We need to add an ImagePainter...
+                    ImagePainter ip = new ImagePainter(bi,
+                        HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
+                    ip.setInsets(new Insets(10, 10, 10, 10));
+                    cp.setPainters(array[0], ip);
+
+                } else {
+
+                    // We should have two painters and we just update
+                    // the image in the second.
+                    ImagePainter ip = (ImagePainter) array[1];
+                    ip.setImage(bi);
+                }
+
+            } else {
+
+                // We may have to take out our ImagePainter....
+                if (array.length == 2) {
+                    cp.setPainters(array[0]);
+                }
+            }
+        }
+
+        bufferedImage = bi;
+    }
+
+    private int getImageHeight() {
+
+        int result = 0;
+
+        BufferedImage bi = getBufferedImage();
+        if (bi != null) {
+
+            result = bi.getHeight();
+        }
+
+        return (result);
     }
 
     /**
-     * The buttons are either in a row or column.
-     *
-     * @return The orientation value.
+     * {@inheritDoc}
      */
-    public int getOrientation() {
-        return (orientation);
+    public void setControl(boolean b) {
+
+        super.setControl(b);
+        TextListPanel p = getTextListPanel();
+        if (p != null) {
+
+            p.setControl(b);
+        }
     }
 
     /**
-     * The buttons are either in a row or column.
-     *
-     * @param i The orientation value.
+     * {@inheritDoc}
      */
-    public void setOrientation(int i) {
-        orientation = i;
+    public void performControl() {
+
+        TextListPanel p = getTextListPanel();
+        if (p != null) {
+
+            p.performControl();
+        }
+    }
+
+    public void performLayout(Dimension d) {
+
+        JLayeredPane pane = getLayeredPane();
+        if ((d != null) && (pane != null)) {
+
+            float alpha = (float) getPanelAlpha();
+
+            int width = (int) d.getWidth();
+            int height = (int) d.getHeight();
+
+            TextListPanel p = getTextListPanel();
+            if (p != null) {
+
+                d = p.getPreferredSize();
+                int pwidth = (int) d.getWidth();
+                int pheight = (int) d.getHeight();
+                int x = (width - pwidth) / 2;
+                int y = (height - (pheight + getImageHeight())) / 2;
+                p.setBounds(x, y, pwidth, pheight);
+                pane.add(p, Integer.valueOf(100));
+
+                Animator fadein = PropertySetter.createAnimator(300,
+                    this, "alpha", 0.0f, (float) getPanelAlpha());
+                fadein.start();
+            }
+        }
+    }
+
+    public Dimension getPreferredSize() {
+
+        int width = 0;
+        int height = 0;
+
+        BufferedImage bi = getBufferedImage();
+        if (bi != null) {
+
+            if (width < bi.getWidth()) {
+                width = bi.getWidth();
+            }
+
+            if (height < bi.getHeight()) {
+                height = bi.getHeight();
+            }
+        }
+
+        String[] array = getButtons();
+        if (array != null) {
+
+            int tmp = (int) getMaxWidth(array);
+            if (tmp > width) {
+
+                width = tmp;
+            }
+
+            // Add to the height as our image goes on the bottom.
+            height += (int) (getMaxHeight() * (array.length + 1));
+        }
+
+        return (new Dimension(width + 50, height + 50));
+    }
+
+    public double getMaxWidth(String[] array) {
+
+        double result = 0.0;
+
+        TextListPanel p = getTextListPanel();
+        if (p != null) {
+
+            result = p.getMaxWidth(array);
+        }
+
+        return (result);
+    }
+
+    public double getMaxHeight() {
+
+        double result = 0.0;
+
+        TextListPanel p = getTextListPanel();
+        if (p != null) {
+
+            result = p.getMaxHeight();
+        }
+
+        return (result);
+    }
+
+    public void moveUp() {
+
+        TextListPanel p = getTextListPanel();
+        if (p != null) {
+
+            p.moveUp();
+        }
+    }
+
+    public void moveDown() {
+
+        TextListPanel p = getTextListPanel();
+        if (p != null) {
+
+            p.moveDown();
+        }
     }
 
     /**
-     * Convenience method to see if the buttons are laid out in a row.
+     * We list button names in our panel.
      *
-     * @return True if the buttons are in a row.
+     * @return An array of String instances.
      */
-    public boolean isHorizontal() {
-        return (getOrientation() == SwingConstants.HORIZONTAL);
+    public String[] getButtons() {
+
+        String[] result = null;
+
+        TextListPanel p = getTextListPanel();
+        if (p != null) {
+
+            result = p.getTexts();
+        }
+
+        return (result);
     }
 
     /**
-     * Convenience method to see if the buttons are laid out in a column.
+     * We list button names in our panel.
      *
-     * @return True if the buttons are in a column.
+     * @param array An array of String instances.
      */
-    public boolean isVertical() {
-        return (getOrientation() == SwingConstants.VERTICAL);
+    public void setButtons(String[] array) {
+
+        TextListPanel p = getTextListPanel();
+        if (p != null) {
+
+            p.setTexts(array);
+        }
+    }
+
+    /**
+     * Convenience method to return the selected object as a String instance.
+     *
+     * @return A String instance.
+     */
+    public String getSelectedButton() {
+
+        String result = null;
+
+        TextListPanel p = getTextListPanel();
+        if (p != null) {
+
+            result = p.getSelectedText();
+        }
+
+        return (result);
     }
 
     /**
@@ -231,33 +359,6 @@ public class ButtonPanel extends JXPanel implements ActionListener {
         }
     }
 
-    private void focusTraversal(JButton b) {
-
-        // We need to update the focus keys for this panel
-        Set<AWTKeyStroke> set = new HashSet<AWTKeyStroke>(b.
-            getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
-        set.clear();
-        set.add(KeyStroke.getKeyStroke("DOWN"));
-        b.setFocusTraversalKeys(
-            KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, set);
-
-        set = new HashSet<AWTKeyStroke>(b.getFocusTraversalKeys(
-            KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));
-        set.clear();
-        set.add(KeyStroke.getKeyStroke("UP"));
-        b.setFocusTraversalKeys(
-            KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, set);
-    }
-
-    /**
-     * Just propogate all events to our listeners.
-     *
-     * @param event The event to send along.
-     */
-    public void actionPerformed(ActionEvent event) {
-        fireActionEvent(event);
-    }
-
     class EscapeAction extends AbstractAction {
 
         public EscapeAction() {
@@ -265,13 +366,39 @@ public class ButtonPanel extends JXPanel implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
 
-            System.out.println("EscapeAction.actionPerformed");
-            JButton b = getEscapeButton();
-            if (b != null) {
+            TextListPanel p = getTextListPanel();
+            if (p != null) {
 
-                fireActionEvent(new ActionEvent(b, 1, "last"));
+                String[] array = p.getTexts();
+                if (array != null) {
+
+                    String val = array[array.length - 1];
+                    p.setSelectedObject(val);
+                    fireActionEvent(new ActionEvent(ButtonPanel.this, 1, val));
+                }
+            }
+        }
+    }
+
+    class EnterAction extends AbstractAction {
+
+        public EnterAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            TextListPanel p = getTextListPanel();
+            if (p != null) {
+
+                String[] array = p.getTexts();
+                if ((array != null) && (array.length > 0)) {
+
+                    String val = p.getSelectedText();
+                    fireActionEvent(new ActionEvent(ButtonPanel.this, 1, val));
+                }
             }
         }
     }
 
 }
+

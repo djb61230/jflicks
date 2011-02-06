@@ -595,7 +595,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
         }
     }
 
-    private BufferedImage getLogoImage() {
+    public BufferedImage getLogoImage() {
 
         BufferedImage result = null;
 

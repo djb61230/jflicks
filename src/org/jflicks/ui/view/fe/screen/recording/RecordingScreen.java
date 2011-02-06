@@ -44,6 +44,7 @@ import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
+import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.Dialog;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.RecordingListPanel;
@@ -1069,13 +1070,14 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     public void actionPerformed(ActionEvent event) {
 
         RecordingListPanel rllp = getRecordingListPanel();
-        if (rllp != null) {
+        if ((rllp != null) && (event.getSource() == getPlayButtonPanel())) {
 
             Recording r = rllp.getSelectedRecording();
             Player p = getPlayer();
             if ((p != null) && (!p.isPlaying()) && (r != null)) {
 
-                if (event.getSource() == getBeginningButton()) {
+                ButtonPanel pbp = getPlayButtonPanel();
+                if (PLAY.equals(pbp.getSelectedButton())) {
 
                     View v = getView();
                     if (v instanceof FrontEndView) {
@@ -1102,7 +1104,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     addBlankPanel();
                     p.play(r.getPath());
 
-                } else if (event.getSource() == getBookmarkButton()) {
+                } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
 
                     View v = getView();
                     if (v instanceof FrontEndView) {
@@ -1143,26 +1145,29 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         p.play(rpath, bm);
                     }
 
-                } else if (event.getSource() == getDeleteButton()) {
+                } else if (DELETE.equals(pbp.getSelectedButton())) {
 
                     log(DEBUG, "firing delete recording");
                     fireScreenEvent(ScreenEvent.DELETE_RECORDING, r);
 
-                } else if (event.getSource() == getDeleteAllowButton()) {
+                } else if (DELETE_ALLOW_RERECORDING.equals(
+                    pbp.getSelectedButton())) {
 
                     log(DEBUG, "firing delete recording - allow");
                     fireScreenEvent(
                         ScreenEvent.DELETE_RECORDING_ALLOW_RERECORDING, r);
 
-                } else if (event.getSource() == getStopRecordingButton()) {
+                } else if (STOP_RECORDING.equals(pbp.getSelectedButton())) {
 
                     log(DEBUG, "firing stop recording");
                     fireScreenEvent(ScreenEvent.STOP_RECORDING, r);
 
-                } else if (event.getSource() == getCancelButton()) {
+                } else if (CANCEL.equals(pbp.getSelectedButton())) {
 
                     log(DEBUG, "cancel hit");
                 }
+
+                unpopup();
             }
         }
     }
@@ -1174,16 +1179,19 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            RecordingListPanel gllp = getGroupRecordingListPanel();
-            if (gllp != null) {
+            if (!isPopupEnabled()) {
 
-                gllp.setControl(true);
-            }
+                RecordingListPanel gllp = getGroupRecordingListPanel();
+                if (gllp != null) {
 
-            RecordingListPanel rllp = getRecordingListPanel();
-            if (rllp != null) {
+                    gllp.setControl(true);
+                }
 
-                rllp.setControl(false);
+                RecordingListPanel rllp = getRecordingListPanel();
+                if (rllp != null) {
+
+                    rllp.setControl(false);
+                }
             }
         }
     }
@@ -1195,16 +1203,19 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            RecordingListPanel gllp = getGroupRecordingListPanel();
-            if (gllp != null) {
+            if (!isPopupEnabled()) {
 
-                gllp.setControl(false);
-            }
+                RecordingListPanel gllp = getGroupRecordingListPanel();
+                if (gllp != null) {
 
-            RecordingListPanel rllp = getRecordingListPanel();
-            if (rllp != null) {
+                    gllp.setControl(false);
+                }
 
-                rllp.setControl(true);
+                RecordingListPanel rllp = getRecordingListPanel();
+                if (rllp != null) {
+
+                    rllp.setControl(true);
+                }
             }
         }
     }
@@ -1216,19 +1227,30 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            RecordingListPanel gllp = getGroupRecordingListPanel();
-            if (gllp != null) {
+            if (isPopupEnabled()) {
 
-                if (gllp.isControl()) {
-                    gllp.moveUp();
+                ButtonPanel bp = getPlayButtonPanel();
+                if (bp != null) {
+
+                    bp.moveUp();
                 }
-            }
 
-            RecordingListPanel rllp = getRecordingListPanel();
-            if (rllp != null) {
+            } else {
 
-                if (rllp.isControl()) {
-                    rllp.moveUp();
+                RecordingListPanel gllp = getGroupRecordingListPanel();
+                if (gllp != null) {
+
+                    if (gllp.isControl()) {
+                        gllp.moveUp();
+                    }
+                }
+
+                RecordingListPanel rllp = getRecordingListPanel();
+                if (rllp != null) {
+
+                    if (rllp.isControl()) {
+                        rllp.moveUp();
+                    }
                 }
             }
         }
@@ -1241,19 +1263,30 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            RecordingListPanel gllp = getGroupRecordingListPanel();
-            if (gllp != null) {
+            if (isPopupEnabled()) {
 
-                if (gllp.isControl()) {
-                    gllp.moveDown();
+                ButtonPanel bp = getPlayButtonPanel();
+                if (bp != null) {
+
+                    bp.moveDown();
                 }
-            }
 
-            RecordingListPanel rllp = getRecordingListPanel();
-            if (rllp != null) {
+            } else {
 
-                if (rllp.isControl()) {
-                    rllp.moveDown();
+                RecordingListPanel gllp = getGroupRecordingListPanel();
+                if (gllp != null) {
+
+                    if (gllp.isControl()) {
+                        gllp.moveDown();
+                    }
+                }
+
+                RecordingListPanel rllp = getRecordingListPanel();
+                if (rllp != null) {
+
+                    if (rllp.isControl()) {
+                        rllp.moveDown();
+                    }
                 }
             }
         }
@@ -1266,19 +1299,22 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            RecordingListPanel gllp = getGroupRecordingListPanel();
-            if (gllp != null) {
+            if (!isPopupEnabled()) {
 
-                if (gllp.isControl()) {
-                    gllp.movePageUp();
+                RecordingListPanel gllp = getGroupRecordingListPanel();
+                if (gllp != null) {
+
+                    if (gllp.isControl()) {
+                        gllp.movePageUp();
+                    }
                 }
-            }
 
-            RecordingListPanel rllp = getRecordingListPanel();
-            if (rllp != null) {
+                RecordingListPanel rllp = getRecordingListPanel();
+                if (rllp != null) {
 
-                if (rllp.isControl()) {
-                    rllp.movePageUp();
+                    if (rllp.isControl()) {
+                        rllp.movePageUp();
+                    }
                 }
             }
         }
@@ -1291,19 +1327,22 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            RecordingListPanel gllp = getGroupRecordingListPanel();
-            if (gllp != null) {
+            if (!isPopupEnabled()) {
 
-                if (gllp.isControl()) {
-                    gllp.movePageDown();
+                RecordingListPanel gllp = getGroupRecordingListPanel();
+                if (gllp != null) {
+
+                    if (gllp.isControl()) {
+                        gllp.movePageDown();
+                    }
                 }
-            }
 
-            RecordingListPanel rllp = getRecordingListPanel();
-            if (rllp != null) {
+                RecordingListPanel rllp = getRecordingListPanel();
+                if (rllp != null) {
 
-                if (rllp.isControl()) {
-                    rllp.movePageDown();
+                    if (rllp.isControl()) {
+                        rllp.movePageDown();
+                    }
                 }
             }
         }
@@ -1316,23 +1355,28 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            RecordingListPanel rllp = getRecordingListPanel();
-            if (rllp != null) {
+            if (!isPopupEnabled()) {
 
-                if (rllp.isControl()) {
+                RecordingListPanel rllp = getRecordingListPanel();
+                if (rllp != null) {
 
-                    JButton b = getBookmarkButton();
-                    if (b != null) {
-                        b.setEnabled(hasBookmark(getBookmarkId()));
+                    if (rllp.isControl()) {
+
+                        ArrayList<String> blist = new ArrayList<String>();
+                        blist.add(PLAY);
+                        if (hasBookmark(getBookmarkId())) {
+                            blist.add(PLAY_FROM_BOOKMARK);
+                        }
+                        if (isSelectedRecordingNow()) {
+                            blist.add(STOP_RECORDING);
+                        } else {
+                            blist.add(DELETE);
+                            blist.add(DELETE_ALLOW_RERECORDING);
+                        }
+                        blist.add(CANCEL);
+
+                        popup(blist.toArray(new String[blist.size()]));
                     }
-
-                    b = getStopRecordingButton();
-                    if (b != null) {
-                        b.setEnabled(isSelectedRecordingNow());
-                    }
-
-                    Dialog.showButtonPanel(Util.findFrame(getLayeredPane()),
-                        getPlayButtonPanel());
                 }
             }
         }

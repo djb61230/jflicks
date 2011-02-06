@@ -25,6 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import org.jflicks.util.Util;
 
@@ -50,6 +51,7 @@ public final class Dialog extends JDialog {
 
             getContentPane().setCursor(cursor);
         }
+        UIManager.put("Button.defaultButtonFollowsFocus", Boolean.TRUE);
     }
 
     /**
@@ -90,11 +92,7 @@ public final class Dialog extends JDialog {
 
         JPanel all = new JPanel(new BorderLayout());
         all.add(p, BorderLayout.CENTER);
-        if (bp.isVertical()) {
-            all.add(bp, BorderLayout.EAST);
-        } else {
-            all.add(bp, BorderLayout.SOUTH);
-        }
+        all.add(bp, BorderLayout.SOUTH);
         final Dialog dialog = new Dialog(parent, all);
         dialog.setLocationRelativeTo(parent);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

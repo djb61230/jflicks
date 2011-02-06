@@ -46,7 +46,7 @@ import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
 import org.jflicks.ui.view.JFlicksView;
-import org.jflicks.ui.view.fe.Dialog;
+import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
@@ -131,16 +131,6 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         };
 
         setParameters(array);
-
-        JButton b = getDeleteAllowButton();
-        if (b != null) {
-            b.setVisible(false);
-        }
-
-        b = getStopRecordingButton();
-        if (b != null) {
-            b.setVisible(false);
-        }
     }
 
     /**
@@ -1140,7 +1130,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
     public void actionPerformed(ActionEvent event) {
 
         Player p = getPlayer();
-        if ((p != null) && (!p.isPlaying())) {
+        if ((p != null) && (!p.isPlaying())
+            && (event.getSource() == getPlayButtonPanel())) {
 
             Video v = null;
             if (isParameterTV()) {
@@ -1162,7 +1153,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
             if (v != null) {
 
-                if (event.getSource() == getBeginningButton()) {
+                ButtonPanel pbp = getPlayButtonPanel();
+                if (PLAY.equals(pbp.getSelectedButton())) {
 
                     p.addPropertyChangeListener("Completed", this);
                     VideoInfoWindow w = getVideoInfoWindow();
@@ -1206,7 +1198,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                         p.play(v.getPath());
                     }
 
-                } else if (event.getSource() == getBookmarkButton()) {
+                } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
 
                     p.addPropertyChangeListener("Completed", this);
                     VideoInfoWindow w = getVideoInfoWindow();
@@ -1228,14 +1220,12 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     addBlankPanel();
                     p.play(v.getPath(), getBookmark(v.getId()));
 
-                } else if (event.getSource() == getDeleteButton()) {
-
-                    log(DEBUG, "delete hit");
-
-                } else if (event.getSource() == getCancelButton()) {
+                } else if (CANCEL.equals(pbp.getSelectedButton())) {
 
                     log(DEBUG, "cancel hit");
                 }
+
+                unpopup();
             }
         }
 
@@ -1248,26 +1238,29 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            if (isParameterTV()) {
+            if (!isPopupEnabled()) {
 
-                VideoListPanel svlp = getSeasonVideoListPanel();
-                if (svlp != null) {
+                if (isParameterTV()) {
 
-                    svlp.setControl(true);
-                }
+                    VideoListPanel svlp = getSeasonVideoListPanel();
+                    if (svlp != null) {
 
-                VideoListPanel evlp = getEpisodeVideoListPanel();
-                if (evlp != null) {
+                        svlp.setControl(true);
+                    }
 
-                    evlp.setControl(false);
-                }
+                    VideoListPanel evlp = getEpisodeVideoListPanel();
+                    if (evlp != null) {
 
-            } else {
+                        evlp.setControl(false);
+                    }
 
-                PosterPanel pp = getPosterPanel();
-                if (pp != null) {
+                } else {
 
-                    pp.prev();
+                    PosterPanel pp = getPosterPanel();
+                    if (pp != null) {
+
+                        pp.prev();
+                    }
                 }
             }
         }
@@ -1280,26 +1273,29 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            if (isParameterTV()) {
+            if (!isPopupEnabled()) {
 
-                VideoListPanel svlp = getSeasonVideoListPanel();
-                if (svlp != null) {
+                if (isParameterTV()) {
 
-                    svlp.setControl(false);
-                }
+                    VideoListPanel svlp = getSeasonVideoListPanel();
+                    if (svlp != null) {
 
-                VideoListPanel evlp = getEpisodeVideoListPanel();
-                if (evlp != null) {
+                        svlp.setControl(false);
+                    }
 
-                    evlp.setControl(true);
-                }
+                    VideoListPanel evlp = getEpisodeVideoListPanel();
+                    if (evlp != null) {
 
-            } else {
+                        evlp.setControl(true);
+                    }
 
-                PosterPanel pp = getPosterPanel();
-                if (pp != null) {
+                } else {
 
-                    pp.next();
+                    PosterPanel pp = getPosterPanel();
+                    if (pp != null) {
+
+                        pp.next();
+                    }
                 }
             }
         }
@@ -1312,30 +1308,41 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            if (isParameterTV()) {
+            if (isPopupEnabled()) {
 
-                VideoListPanel svlp = getSeasonVideoListPanel();
-                if (svlp != null) {
+                ButtonPanel bp = getPlayButtonPanel();
+                if (bp != null) {
 
-                    if (svlp.isControl()) {
-                        svlp.moveUp();
-                    }
-                }
-
-                VideoListPanel evlp = getEpisodeVideoListPanel();
-                if (evlp != null) {
-
-                    if (evlp.isControl()) {
-                        evlp.moveUp();
-                    }
+                    bp.moveUp();
                 }
 
             } else {
 
-                SubcategoryListPanel slp = getSubcategoryListPanel();
-                if (slp != null) {
+                if (isParameterTV()) {
 
-                    slp.moveUp();
+                    VideoListPanel svlp = getSeasonVideoListPanel();
+                    if (svlp != null) {
+
+                        if (svlp.isControl()) {
+                            svlp.moveUp();
+                        }
+                    }
+
+                    VideoListPanel evlp = getEpisodeVideoListPanel();
+                    if (evlp != null) {
+
+                        if (evlp.isControl()) {
+                            evlp.moveUp();
+                        }
+                    }
+
+                } else {
+
+                    SubcategoryListPanel slp = getSubcategoryListPanel();
+                    if (slp != null) {
+
+                        slp.moveUp();
+                    }
                 }
             }
         }
@@ -1348,30 +1355,41 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            if (isParameterTV()) {
+            if (isPopupEnabled()) {
 
-                VideoListPanel svlp = getSeasonVideoListPanel();
-                if (svlp != null) {
+                ButtonPanel bp = getPlayButtonPanel();
+                if (bp != null) {
 
-                    if (svlp.isControl()) {
-                        svlp.moveDown();
-                    }
-                }
-
-                VideoListPanel evlp = getEpisodeVideoListPanel();
-                if (evlp != null) {
-
-                    if (evlp.isControl()) {
-                        evlp.moveDown();
-                    }
+                    bp.moveDown();
                 }
 
             } else {
 
-                SubcategoryListPanel slp = getSubcategoryListPanel();
-                if (slp != null) {
+                if (isParameterTV()) {
 
-                    slp.moveDown();
+                    VideoListPanel svlp = getSeasonVideoListPanel();
+                    if (svlp != null) {
+
+                        if (svlp.isControl()) {
+                            svlp.moveDown();
+                        }
+                    }
+
+                    VideoListPanel evlp = getEpisodeVideoListPanel();
+                    if (evlp != null) {
+
+                        if (evlp.isControl()) {
+                            evlp.moveDown();
+                        }
+                    }
+
+                } else {
+
+                    SubcategoryListPanel slp = getSubcategoryListPanel();
+                    if (slp != null) {
+
+                        slp.moveDown();
+                    }
                 }
             }
         }
@@ -1384,13 +1402,14 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            JButton b = getBookmarkButton();
-            if (b != null) {
-                b.setEnabled(hasBookmark(getBookmarkId()));
+            ArrayList<String> blist = new ArrayList<String>();
+            blist.add(PLAY);
+            if (hasBookmark(getBookmarkId())) {
+                blist.add(PLAY_FROM_BOOKMARK);
             }
+            blist.add(CANCEL);
 
-            Dialog.showButtonPanel(Util.findFrame(getLayeredPane()),
-                getPlayButtonPanel());
+            popup(blist.toArray(new String[blist.size()]));
         }
     }
 

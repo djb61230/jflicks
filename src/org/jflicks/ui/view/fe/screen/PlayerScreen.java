@@ -16,14 +16,18 @@
 */
 package org.jflicks.ui.view.fe.screen;
 
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URL;
 import java.util.HashMap;
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -32,6 +36,8 @@ import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
 import org.jflicks.rc.RC;
 import org.jflicks.ui.view.fe.ButtonPanel;
+import org.jflicks.ui.view.fe.FrontEndView;
+import org.jflicks.util.Util;
 
 /**
  * This abstract class supports playing a video in a front end UI on a TV,
@@ -42,16 +48,21 @@ import org.jflicks.ui.view.fe.ButtonPanel;
  */
 public abstract class PlayerScreen extends Screen implements ActionListener {
 
+    public static final String PLAY = "Play";
+    public static final String PLAY_FROM_BOOKMARK = "Play from Bookmark";
+    public static final String PLAY_USING_ANY_TAGS = "Play using ANY Tags";
+    public static final String PLAY_USING_ALL_TAGS = "Play using ALL Tags";
+    public static final String STOP_RECORDING = "Stop Recording";
+    public static final String DELETE = "Delete";
+    public static final String DELETE_ALLOW_RERECORDING =
+        "Delete (Allow Re-Recording)";
+    public static final String CANCEL = "Cancel";
+
     private HashMap<String, Bookmark> bookmarkHashMap;
     private File bookmarkFile;
     private ButtonPanel playButtonPanel;
-    private JButton beginningButton;
-    private JButton bookmarkButton;
-    private JButton stopRecordingButton;
-    private JButton deleteButton;
-    private JButton deleteAllowButton;
-    private JButton cancelButton;
     private JPanel blankPanel;
+    private boolean popupEnabled;
 
     /**
      * Extensions need to display some info banner over the video.
@@ -134,33 +145,6 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
     public PlayerScreen() {
 
         setBookmarkHashMap(new HashMap<String, Bookmark>());
-
-        // We need a ButtonPanel when the user wishes to play
-        JButton begin = new JButton("Play");
-        setBeginningButton(begin);
-
-        JButton book = new JButton("Play from Bookmark");
-        setBookmarkButton(book);
-
-        JButton stop = new JButton("Stop Recording");
-        setStopRecordingButton(stop);
-
-        JButton del = new JButton("Delete");
-        setDeleteButton(del);
-
-        JButton delAllow = new JButton("Delete (Allow Re-Recording)");
-        setDeleteAllowButton(delAllow);
-
-        JButton can = new JButton("Cancel");
-        setCancelButton(can);
-
-        JButton[] buts = {
-            begin, book, stop, del, delAllow, can
-        };
-
-        ButtonPanel bp = new ButtonPanel(buts);
-        bp.addActionListener(this);
-        setPlayButtonPanel(bp);
     }
 
     protected File getBookmarkFile() {
@@ -342,52 +326,64 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
         playButtonPanel = p;
     }
 
-    protected JButton getBeginningButton() {
-        return (beginningButton);
+    protected boolean isPopupEnabled() {
+        return (popupEnabled);
     }
 
-    private void setBeginningButton(JButton b) {
-        beginningButton = b;
+    protected void setPopupEnabled(boolean b) {
+        popupEnabled = b;
     }
 
-    protected JButton getBookmarkButton() {
-        return (bookmarkButton);
+    protected void popup(String[] choices) {
+
+        JLayeredPane pane = getLayeredPane();
+        if ((pane != null) && (choices != null)) {
+
+            Dimension d = pane.getSize();
+            int width = (int) d.getWidth();
+            int height = (int) d.getHeight();
+
+            // See if we have an image as a backgraound...
+            BufferedImage bi = null;
+            FrontEndView fe = (FrontEndView) getView();
+            if (fe != null) {
+
+                bi = fe.getLogoImage();
+            }
+
+            ButtonPanel bp = new ButtonPanel();
+            bp.addActionListener(this);
+            bp.setButtons(choices);
+            bp.setBufferedImage(bi);
+            setPlayButtonPanel(bp);
+
+            d = bp.getPreferredSize();
+            int bpwidth = (int) d.getWidth();
+            int bpheight = (int) d.getHeight();
+            int bpx = (int) ((width - bpwidth) / 2);
+            int bpy = (int) ((height - bpheight) / 2);
+            bp.setBounds(bpx, bpy, bpwidth, bpheight);
+
+            setPopupEnabled(true);
+            pane.add(bp, Integer.valueOf(300));
+            bp.requestFocus();
+            bp.setControl(true);
+            bp.setButtons(choices);
+        }
     }
 
-    private void setBookmarkButton(JButton b) {
-        bookmarkButton = b;
-    }
+    protected void unpopup() {
 
-    protected JButton getStopRecordingButton() {
-        return (stopRecordingButton);
-    }
+        setPopupEnabled(false);
+        JLayeredPane pane = getLayeredPane();
+        ButtonPanel bp = getPlayButtonPanel();
+        if ((pane != null) && (bp != null)) {
 
-    private void setStopRecordingButton(JButton b) {
-        stopRecordingButton = b;
-    }
-
-    protected JButton getDeleteButton() {
-        return (deleteButton);
-    }
-
-    private void setDeleteButton(JButton b) {
-        deleteButton = b;
-    }
-
-    protected JButton getDeleteAllowButton() {
-        return (deleteAllowButton);
-    }
-
-    private void setDeleteAllowButton(JButton b) {
-        deleteAllowButton = b;
-    }
-
-    protected JButton getCancelButton() {
-        return (cancelButton);
-    }
-
-    private void setCancelButton(JButton b) {
-        cancelButton = b;
+            bp.removeActionListener(this);
+            setPlayButtonPanel(null);
+            pane.remove(bp);
+            pane.repaint();
+        }
     }
 
     /**

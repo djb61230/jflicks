@@ -115,6 +115,51 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
         return (result);
     }
 
+    public double getMaxHeight() {
+
+        double result = 0.0;
+
+        JXLabel tst = new JXLabel("TEST IT DUDE");
+        tst.setFont(getLargeFont());
+        tst.setHorizontalTextPosition(SwingConstants.CENTER);
+        tst.setHorizontalAlignment(SwingConstants.LEFT);
+        Dimension fd = tst.getPreferredSize();
+
+        if (fd != null) {
+            result = fd.getHeight();
+        }
+
+        return (result);
+    }
+
+    public double getMaxWidth(String[] array) {
+
+        double result = 0.0;
+
+        if ((array != null) && (array.length > 0)) {
+
+            JXLabel tst = new JXLabel();
+            tst.setFont(getLargeFont());
+            tst.setHorizontalTextPosition(SwingConstants.CENTER);
+            tst.setHorizontalAlignment(SwingConstants.LEFT);
+            for (int i = 0; i < array.length; i++) {
+
+                tst.setText(array[i]);
+                Dimension fd = tst.getPreferredSize();
+                if (fd != null) {
+
+                    double tmp = fd.getWidth();
+                    if (tmp > result) {
+
+                        result = tmp;
+                    }
+                }
+            }
+        }
+
+        return (result + 10);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -139,31 +184,18 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
             double vgap = height * VGAP;
 
             double realHeight = height - (vgap * 2.0);
-
-            // We create and size the labels to the large size.  This
-            // allows us to determine the maximum number of visible
-            // labels we can show.  First make one label and compute
-            // our max.
-            JXLabel tst = new JXLabel("TEST IT DUDE");
-            tst.setFont(getLargeFont());
-            tst.setHorizontalTextPosition(SwingConstants.CENTER);
-            tst.setHorizontalAlignment(SwingConstants.LEFT);
-            Dimension fd = tst.getPreferredSize();
-
-            double labelMaxHeight = 0.0;
-            if (fd != null) {
-                labelMaxHeight = fd.getHeight();
-            }
+            double labelMaxHeight = getMaxHeight();
 
             int vcount = (int) (realHeight / labelMaxHeight);
             JXLabel[] array = new JXLabel[vcount];
-            tst.setText("");
-            tst.setFont(getSmallFont());
-            array[0] = tst;
-            for (int i = 1; i < vcount; i++) {
+            for (int i = 0; i < vcount; i++) {
 
                 array[i] = new JXLabel();
-                array[i].setFont(getSmallFont());
+                if (i == 0) {
+                    array[i].setFont(getLargeFont());
+                } else {
+                    array[i].setFont(getSmallFont());
+                }
                 array[i].setHorizontalTextPosition(SwingConstants.CENTER);
                 array[i].setHorizontalAlignment(SwingConstants.LEFT);
             }
