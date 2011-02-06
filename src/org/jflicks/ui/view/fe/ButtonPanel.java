@@ -29,7 +29,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.KeyStroke;
 
 import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.TimingTargetAdapter;
 import org.jdesktop.animation.timing.interpolation.PropertySetter;
 import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
 import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
@@ -37,8 +36,6 @@ import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.RectanglePainter;
 import org.jdesktop.swingx.painter.Painter;
-
-import org.jflicks.util.Util;
 
 /**
  * This is a display of a selection of actions for the user.
@@ -91,10 +88,24 @@ public class ButtonPanel extends BaseCustomizePanel {
         textListPanel = p;
     }
 
+    /**
+     * We support displaying an image in our background.  We choose
+     * to display the image on the lower right side so keep this in
+     * mind when setting the image.  It will also be inset by 10 pixels.
+     *
+     * @return A BufferedImage instance.
+     */
     public BufferedImage getBufferedImage() {
         return (bufferedImage);
     }
 
+    /**
+     * We support displaying an image in our background.  We choose
+     * to display the image on the lower right side so keep this in
+     * mind when setting the image.  It will also be inset by 10 pixels.
+     *
+     * @param bi A BufferedImage instance.
+     */
     public void setBufferedImage(BufferedImage bi) {
 
         CompoundPainter cp = (CompoundPainter) getBackgroundPainter();
@@ -169,6 +180,9 @@ public class ButtonPanel extends BaseCustomizePanel {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performLayout(Dimension d) {
 
         JLayeredPane pane = getLayeredPane();
@@ -197,6 +211,13 @@ public class ButtonPanel extends BaseCustomizePanel {
         }
     }
 
+    /**
+     * Override so we can supply a reasonable size needed.  Be aware that
+     * this should be called after you have set the BufferedImage and button
+     * selection values as the size we need are depe=ndent on them.
+     *
+     * @return A Dimension instance.
+     */
     public Dimension getPreferredSize() {
 
         int width = 0;
@@ -230,7 +251,7 @@ public class ButtonPanel extends BaseCustomizePanel {
         return (new Dimension(width + 50, height + 50));
     }
 
-    public double getMaxWidth(String[] array) {
+    private double getMaxWidth(String[] array) {
 
         double result = 0.0;
 
@@ -243,7 +264,7 @@ public class ButtonPanel extends BaseCustomizePanel {
         return (result);
     }
 
-    public double getMaxHeight() {
+    private double getMaxHeight() {
 
         double result = 0.0;
 
@@ -256,6 +277,10 @@ public class ButtonPanel extends BaseCustomizePanel {
         return (result);
     }
 
+    /**
+     * We pass on requests to move up to a TextListPanel we are using
+     * to delegate this behavior.
+     */
     public void moveUp() {
 
         TextListPanel p = getTextListPanel();
@@ -265,6 +290,10 @@ public class ButtonPanel extends BaseCustomizePanel {
         }
     }
 
+    /**
+     * We pass on requests to move down to a TextListPanel we are using
+     * to delegate this behavior.
+     */
     public void moveDown() {
 
         TextListPanel p = getTextListPanel();

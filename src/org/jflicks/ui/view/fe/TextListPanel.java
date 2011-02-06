@@ -113,6 +113,13 @@ public class TextListPanel extends BaseListPanel {
         return ((String) getSelectedObject());
     }
 
+    /**
+     * Override so we can compute a reasonable size.  Be aware that this is
+     * best called after you have set it's selections as it computes a size
+     * so there is no scrolling.  In other words all selections are visible.
+     *
+     * @return A Dimension instance.
+     */
     public Dimension getPreferredSize() {
 
         int width = 0;

@@ -25,10 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.URL;
 import java.util.HashMap;
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
@@ -37,7 +34,6 @@ import org.jflicks.player.Player;
 import org.jflicks.rc.RC;
 import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
-import org.jflicks.util.Util;
 
 /**
  * This abstract class supports playing a video in a front end UI on a TV,
@@ -48,14 +44,45 @@ import org.jflicks.util.Util;
  */
 public abstract class PlayerScreen extends Screen implements ActionListener {
 
+    /**
+     * A constant to define a "Play" menu item.
+     */
     public static final String PLAY = "Play";
+
+    /**
+     * A constant to define a "Play from Bookmark" menu item.
+     */
     public static final String PLAY_FROM_BOOKMARK = "Play from Bookmark";
+
+    /**
+     * A constant to define a "Play using ANY Tags" menu item.
+     */
     public static final String PLAY_USING_ANY_TAGS = "Play using ANY Tags";
+
+    /**
+     * A constant to define a "Play using ALL Tags" menu item.
+     */
     public static final String PLAY_USING_ALL_TAGS = "Play using ALL Tags";
+
+    /**
+     * A constant to define a "Stop Recording" menu item.
+     */
     public static final String STOP_RECORDING = "Stop Recording";
+
+    /**
+     * A constant to define a "Delete" menu item.
+     */
     public static final String DELETE = "Delete";
+
+    /**
+     * A constant to define a "Delete (Allow Re-Recording)" menu item.
+     */
     public static final String DELETE_ALLOW_RERECORDING =
         "Delete (Allow Re-Recording)";
+
+    /**
+     * A constant to define a "Cancel" menu item.
+     */
     public static final String CANCEL = "Cancel";
 
     private HashMap<String, Bookmark> bookmarkHashMap;

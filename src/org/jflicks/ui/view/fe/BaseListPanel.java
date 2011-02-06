@@ -18,6 +18,7 @@ package org.jflicks.ui.view.fe;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
@@ -115,6 +116,12 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
         return (result);
     }
 
+    /**
+     * Convenience method to find the general height any particular
+     * JXLabel would need to be using our large Font property.
+     *
+     * @return A double value.
+     */
     public double getMaxHeight() {
 
         double result = 0.0;
@@ -132,16 +139,32 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
         return (result);
     }
 
+    /**
+     * Compute the max width that is needed so all the given String
+     * instances will display correctly given our current large Font
+     * property.
+     *
+     * @param array Need some String instances to check.
+     * @return A double value.
+     */
     public double getMaxWidth(String[] array) {
 
         double result = 0.0;
 
+        double fudge = 12;
         if ((array != null) && (array.length > 0)) {
 
             JXLabel tst = new JXLabel();
             tst.setFont(getLargeFont());
             tst.setHorizontalTextPosition(SwingConstants.CENTER);
             tst.setHorizontalAlignment(SwingConstants.LEFT);
+
+            Insets in = tst.getInsets();
+            if (in != null) {
+
+                fudge += (double) (in.left + in.right);
+            }
+
             for (int i = 0; i < array.length; i++) {
 
                 tst.setText(array[i]);
@@ -157,7 +180,7 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
             }
         }
 
-        return (result + 10);
+        return (result + fudge);
     }
 
     /**

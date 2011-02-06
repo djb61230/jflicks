@@ -595,6 +595,12 @@ public class FrontEndView extends JFlicksView implements ActionListener,
         }
     }
 
+    /**
+     * Screens may want access to the defined logo.  They can get it
+     * here and display it however they choose.
+     *
+     * @return A BufferedImage instance if such a logo exists.
+     */
     public BufferedImage getLogoImage() {
 
         BufferedImage result = null;
