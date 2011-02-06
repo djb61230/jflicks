@@ -16,6 +16,7 @@
 */
 package org.jflicks.ui.view.fe;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -72,10 +73,11 @@ public class ButtonPanel extends BaseCustomizePanel {
         setAlpha(0.0f);
 
         RectanglePainter rp = new RectanglePainter(getPanelColor(),
-            getPanelColor());
+            Color.BLACK);
         rp.setRounded(true);
         rp.setRoundWidth(30);
         rp.setRoundHeight(30);
+        rp.setBorderWidth(5.0f);
         CompoundPainter cp = new CompoundPainter(rp);
         setBackgroundPainter(cp);
     }

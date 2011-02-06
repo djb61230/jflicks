@@ -753,7 +753,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
                 String[] buts = {
                     PLAY_USING_ANY_TAGS,
-                    PLAY_USING_ALL_TAGS
+                    PLAY_USING_ALL_TAGS,
+                    CANCEL
                 };
 
                 popup(buts);
