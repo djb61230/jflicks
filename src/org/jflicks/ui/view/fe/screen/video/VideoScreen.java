@@ -255,6 +255,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             SubcategoryListPanel slp = new SubcategoryListPanel();
             slp.setAlpha(alpha);
             slp.addPropertyChangeListener("SelectedSubcategory", this);
+            slp.setControl(true);
             setSubcategoryListPanel(slp);
 
             VideoDetailPanel vdp = new VideoDetailPanel();
