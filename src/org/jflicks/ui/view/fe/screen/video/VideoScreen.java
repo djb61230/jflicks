@@ -49,6 +49,7 @@ import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
+import org.jflicks.ui.view.fe.TextListPanel;
 import org.jflicks.ui.view.fe.TextIcon;
 import org.jflicks.ui.view.fe.VideoDetailPanel;
 import org.jflicks.ui.view.fe.VideoListPanel;
@@ -75,7 +76,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
     private VideoListPanel seasonVideoListPanel;
     private VideoListPanel episodeVideoListPanel;
     private PosterPanel posterPanel;
-    private SubcategoryListPanel subcategoryListPanel;
+    private TextListPanel subcategoryListPanel;
     private VideoInfoWindow videoInfoWindow;
     private VideoDetailPanel videoDetailPanel;
     private Video[] videos;
@@ -183,11 +184,11 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         posterPanel = p;
     }
 
-    private SubcategoryListPanel getSubcategoryListPanel() {
+    private TextListPanel getTextListPanel() {
         return (subcategoryListPanel);
     }
 
-    private void setSubcategoryListPanel(SubcategoryListPanel p) {
+    private void setTextListPanel(TextListPanel p) {
         subcategoryListPanel = p;
     }
 
@@ -252,11 +253,11 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             pp.addPropertyChangeListener("SelectedVideo", this);
             setPosterPanel(pp);
 
-            SubcategoryListPanel slp = new SubcategoryListPanel();
-            slp.setAlpha(alpha);
-            slp.addPropertyChangeListener("SelectedSubcategory", this);
-            slp.setControl(true);
-            setSubcategoryListPanel(slp);
+            TextListPanel tlp = new TextListPanel();
+            tlp.setAlpha(alpha);
+            tlp.addPropertyChangeListener("SelectedText", this);
+            tlp.setControl(true);
+            setTextListPanel(tlp);
 
             VideoDetailPanel vdp = new VideoDetailPanel();
             vdp.setAlpha(alpha);
@@ -279,7 +280,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             svlp.setBounds(wspan, hspan, listwidth, listheight);
             evlp.setBounds(wspan + wspan + listwidth, hspan, listwidth,
                 listheight);
-            slp.setBounds(wspan, hspan, sublistwidth, listheight);
+            tlp.setBounds(wspan, hspan, sublistwidth, listheight);
             pp.setBounds(wspan + wspan + sublistwidth, hspan, ppwidth,
                 listheight);
             vdp.setBounds(wspan, hspan + hspan + listheight, detailwidth,
@@ -316,7 +317,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                 pp.open();
                 pane.add(pp, Integer.valueOf(100));
-                pane.add(getSubcategoryListPanel(), Integer.valueOf(100));
+                pane.add(getTextListPanel(), Integer.valueOf(100));
                 pane.add(getVideoDetailPanel(), Integer.valueOf(100));
             }
         }
@@ -701,11 +702,11 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         if (!isParameterTV()) {
 
             String cat = getSelectedParameter();
-            SubcategoryListPanel slp = getSubcategoryListPanel();
-            if ((cat != null) && (slp != null)) {
+            TextListPanel tlp = getTextListPanel();
+            if ((cat != null) && (tlp != null)) {
 
                 String[] array = getSubcategoryByCategory(getVideos(), cat);
-                slp.setSubcategories(array);
+                tlp.setTexts(array);
             }
         }
     }
@@ -770,11 +771,11 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
             // We have to pick out the Video by cat and subcat.
             String cat = getSelectedParameter();
-            SubcategoryListPanel slp = getSubcategoryListPanel();
+            TextListPanel tlp = getTextListPanel();
             PosterPanel pp = getPosterPanel();
-            if ((cat != null) && (slp != null) && (pp != null)) {
+            if ((cat != null) && (tlp != null) && (pp != null)) {
 
-                String sub = slp.getSelectedSubcategory();
+                String sub = tlp.getSelectedText();
                 if ((sub != null) && (videos != null)) {
 
                     Video[] catsub = getVideoByCategoryAndSubcategory(videos,
@@ -1126,7 +1127,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                 applyVideoBackground();
             }
 
-        } else if (event.getSource() == getSubcategoryListPanel()) {
+        } else if (event.getSource() == getTextListPanel()) {
 
             applyVideo();
 
@@ -1358,10 +1359,10 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                 } else {
 
-                    SubcategoryListPanel slp = getSubcategoryListPanel();
-                    if (slp != null) {
+                    TextListPanel tlp = getTextListPanel();
+                    if (tlp != null) {
 
-                        slp.moveUp();
+                        tlp.moveUp();
                     }
                 }
             }
@@ -1405,10 +1406,10 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                 } else {
 
-                    SubcategoryListPanel slp = getSubcategoryListPanel();
-                    if (slp != null) {
+                    TextListPanel tlp = getTextListPanel();
+                    if (tlp != null) {
 
-                        slp.moveDown();
+                        tlp.moveDown();
                     }
                 }
             }
