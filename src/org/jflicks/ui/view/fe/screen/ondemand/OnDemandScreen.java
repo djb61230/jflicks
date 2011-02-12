@@ -414,6 +414,12 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
      */
     public void close() {
 
+        SimpleInfoWindow w = getSimpleInfoWindow();
+        if (w != null) {
+
+            w.setVisible(false);
+        }
+
         controlKeyboard(true);
         StreamSession ss = getStreamSession();
         log(DEBUG, "OnDemandScreen: close: " + ss);

@@ -316,6 +316,12 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
      * {@inheritDoc}
      */
     public void close() {
+
+        SimpleInfoWindow w = getSimpleInfoWindow();
+        if (w != null) {
+
+            w.setVisible(false);
+        }
     }
 
     /**
