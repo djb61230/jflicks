@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
+import javax.imageio.ImageIO;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
@@ -241,9 +242,23 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
         if ((d != null) && (pane != null)) {
 
             FrontEndView fev = (FrontEndView) getView();
-            setSimpleInfoWindow(new SimpleInfoWindow(fev.getPosition(), 8,
+            SimpleInfoWindow siv = new SimpleInfoWindow(fev.getPosition(), 8,
                 getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
-                getSmallFont(), getMediumFont()));
+                getSmallFont(), getMediumFont());
+
+            BufferedImage bi = null;
+
+            try {
+
+                bi = ImageIO.read(getClass().getResource("banner.png"));
+
+            } catch (IOException ex) {
+
+                log(INFO, "Failed to load banner image");
+            }
+
+            siv.setBannerBufferedImage(bi);
+            setSimpleInfoWindow(siv);
 
             JXPanel panel = new JXPanel(new BorderLayout());
             JXLabel l = new JXLabel("Launching Chrome, please wait...");

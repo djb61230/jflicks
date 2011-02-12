@@ -23,7 +23,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -442,17 +441,6 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             int y = (int) position.getY();
             int width = (int) position.getWidth();
             int height = (int) position.getHeight();
-
-            // For good measure lets warp the mouse to the bottom right.
-            try {
-
-                Robot robot = new Robot();
-                robot.mouseMove(x + width, (y + height) / 2);
-
-            } catch (AWTException event) {
-
-                log(WARNING, "failed to warp mouse...");
-            }
 
             frame = new JXFrame();
             frame.setTitle("Herm Schmiget");

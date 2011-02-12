@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0
 Bundle-Activator: ${module}.Activator
 
 Include-Resource:\
- org/jflicks/ui/view/fe/screen/ondemand/On_Demand.png=../resources/ondemand_screen.png
+ org/jflicks/ui/view/fe/screen/ondemand/On_Demand.png=../resources/ondemand_screen.png,\
+ org/jflicks/ui/view/fe/screen/ondemand/banner.png=../resources/ondemand_banner.png
 
 Export-Package:\
  org.jflicks.ui.view.fe.screen.ondemand;version="1.0.0"

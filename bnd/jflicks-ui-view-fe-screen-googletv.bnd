@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0
 Bundle-Activator: ${module}.Activator
 
 Include-Resource:\
- org/jflicks/ui/view/fe/screen/googletv/GoogleTV.png=../resources/googletv_screen.png
+ org/jflicks/ui/view/fe/screen/googletv/GoogleTV.png=../resources/googletv_screen.png,\
+ org/jflicks/ui/view/fe/screen/googletv/banner.png=../resources/googletv_banner.png
 
 Export-Package:\
  org.jflicks.ui.view.fe.screen.googletv;version="1.0.0"
