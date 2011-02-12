@@ -286,7 +286,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             vdp.setBounds(wspan, hspan + hspan + listheight, detailwidth,
                 detailheight);
 
-            setVideoInfoWindow(new VideoInfoWindow((int) width, (int) height,
+            FrontEndView fev = (FrontEndView) getView();
+            setVideoInfoWindow(new VideoInfoWindow(fev.getPosition(),
                 8, getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont()));
 

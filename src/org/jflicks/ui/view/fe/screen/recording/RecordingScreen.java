@@ -549,7 +549,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             pane.add(dp, Integer.valueOf(100));
             pane.add(ssp, Integer.valueOf(100));
 
-            setRecordingInfoWindow(new RecordingInfoWindow(width, height, 8,
+            FrontEndView fev = (FrontEndView) getView();
+            setRecordingInfoWindow(new RecordingInfoWindow(fev.getPosition(), 8,
                 getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont()));
 

@@ -20,7 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -78,8 +78,7 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
     /**
      * Simple constructor with our required arguments.
      *
-     * @param maxWidth The maximum the banner can be.  We use 90%.
-     * @param maxHeight We use a height that creates the proper ratio to
+     * @param r The Rectangle defining the location of the main window.
      * use the "poster" image without scaling it ugly.
      * @param seconds the number of seconds to leave the banner visible.
      * @param normal The text color to match the theme.
@@ -89,27 +88,18 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
      * @param small A small font to use.
      * @param large A large font to use.
      */
-    public RecordingInfoWindow(int maxWidth, int maxHeight, int seconds,
-        Color normal, Color backlight, float alpha, Font small, Font large) {
+    public RecordingInfoWindow(Rectangle r, int seconds, Color normal,
+        Color backlight, float alpha, Font small, Font large) {
 
-        //setAlwaysOnTop(true);
-
+        setCursor(Util.getNoCursor());
         setSeconds(seconds);
 
-        int loffset = (int) (maxWidth * 0.05);
-        int toffset = (int) (maxWidth * 0.05);
-        int width = maxWidth - (2 * loffset);
+        int loffset = (int) (r.width * 0.05);
+        int toffset = (int) (r.height * 0.05);
+        int width = r.width - (2 * loffset);
         int height = (int) (width / 5.4);
 
-        // We need to set the loffset since it's a top level window it needs
-        // to be centered on the screen.  We just are not guaranteed that the
-        // maxWidth is the full screen.
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        Dimension full = tk.getScreenSize();
-        int fullwidth = (int) full.getWidth();
-        loffset = (fullwidth - width) / 2;
-
-        setBounds(loffset, toffset, width, height);
+        setBounds(loffset + r.x, toffset + r.y, width, height);
 
         double hgap = width * HGAP;
         double vgap = height * VGAP;

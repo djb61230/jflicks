@@ -189,14 +189,15 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             int width = (int) d.getWidth();
             int height = (int) d.getHeight();
 
-            RecordingInfoWindow w = new RecordingInfoWindow(width, height, 8,
-                getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
+            FrontEndView fev = (FrontEndView) getView();
+            RecordingInfoWindow w = new RecordingInfoWindow(fev.getPosition(),
+                8, getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont());
             w.setImageCache(getImageCache());
             w.setPlayer(getPlayer());
             setRecordingInfoWindow(w);
 
-            ChannelInfoWindow cw = new ChannelInfoWindow(width, height, 8,
+            ChannelInfoWindow cw = new ChannelInfoWindow(fev.getPosition(), 8,
                 getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont());
             setChannelInfoWindow(cw);

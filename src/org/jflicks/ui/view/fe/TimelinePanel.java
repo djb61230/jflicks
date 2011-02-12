@@ -18,7 +18,8 @@ package org.jflicks.ui.view.fe;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
+import java.awt.GradientPaint;
+import java.awt.geom.RoundRectangle2D;
 import javax.swing.JLayeredPane;
 
 import org.jdesktop.swingx.JXLabel;
@@ -35,6 +36,7 @@ public class TimelinePanel extends BaseCustomizePanel {
 
     private static final double VGAP = 0.01;
     private static final double HGAP = 0.01;
+    private static final double ARC = 10.0;
 
     private JXLabel seenLabel;
     private JXLabel unseenLabel;
@@ -111,16 +113,21 @@ public class TimelinePanel extends BaseCustomizePanel {
             double halfWidth = width / 2.0;
 
             JXLabel seen = new JXLabel();
-            Rectangle2D.Double seenrect = new Rectangle2D.Double(
-                0, 0, halfWidth, halfHeight);
+            RoundRectangle2D.Double seenrect = new RoundRectangle2D.Double(
+                0, 0, halfWidth, halfHeight, ARC, ARC);
             ShapePainter sp = new ShapePainter(seenrect, getSelectedColor());
             seen.setBackgroundPainter(sp);
             setSeenLabel(seen);
 
+            // Make a gradient paint based upon the selected color
+            // and White.
+            GradientPaint gp = new GradientPaint(0, 0, getHighlightColor(),
+                0, (int) (halfHeight / 2), Color.WHITE, true);
+
             JXLabel unseen = new JXLabel();
-            Rectangle2D.Double unseenrect = new Rectangle2D.Double(
-                0, 0, halfWidth, halfHeight);
-            sp = new ShapePainter(unseenrect, getHighlightColor());
+            RoundRectangle2D.Double unseenrect = new RoundRectangle2D.Double(
+                0, 0, halfWidth, halfHeight, ARC, ARC);
+            sp = new ShapePainter(unseenrect, gp);
             unseen.setBackgroundPainter(sp);
             setUnseenLabel(unseen);
 
@@ -141,7 +148,7 @@ public class TimelinePanel extends BaseCustomizePanel {
             unseen.setBounds((int) halfWidth, 0, (int) halfWidth,
                 (int) halfHeight);
 
-            pane.add(seen, Integer.valueOf(100));
+            pane.add(seen, Integer.valueOf(90));
             pane.add(unseen, Integer.valueOf(100));
             pane.add(currentLab, Integer.valueOf(100));
             pane.add(lengthLab, Integer.valueOf(100));
@@ -179,16 +186,17 @@ public class TimelinePanel extends BaseCustomizePanel {
             double unseenWidth = width - seenWidth;
 
             ShapePainter sp = (ShapePainter) seen.getBackgroundPainter();
-            Rectangle2D.Double rect = (Rectangle2D.Double) sp.getShape();
-            rect.setRect(0.0, 0.0, seenWidth, halfHeight);
-            sp.setShape(rect);
+            RoundRectangle2D.Double rrect =
+                (RoundRectangle2D.Double) sp.getShape();
+            rrect.setRoundRect(0.0, 0.0, width, halfHeight, ARC, ARC);
+            sp.setShape(rrect);
 
             sp = (ShapePainter) unseen.getBackgroundPainter();
-            rect = (Rectangle2D.Double) sp.getShape();
-            rect.setRect(0.0, 0.0, unseenWidth, halfHeight);
-            sp.setShape(rect);
+            rrect = (RoundRectangle2D.Double) sp.getShape();
+            rrect.setRoundRect(0.0, 0.0, unseenWidth, halfHeight, ARC, ARC);
+            sp.setShape(rrect);
 
-            seen.setBounds(0, 0, (int) seenWidth, (int) halfHeight);
+            seen.setBounds(0, 0, (int) width, (int) halfHeight);
             unseen.setBounds((int) seenWidth, 0, (int) unseenWidth,
                 (int) halfHeight);
         }
@@ -213,15 +221,15 @@ public class TimelinePanel extends BaseCustomizePanel {
         current = i;
 
         JXLabel l = getCurrentLabel();
-        JXLabel seen = getSeenLabel();
+        JXLabel unseen = getUnseenLabel();
         String s = secondsToTime(current);
         Dimension d = getSize();
-        if ((d != null) && (seen != null) && (l != null) && (s != null)) {
+        if ((d != null) && (unseen != null) && (l != null) && (s != null)) {
 
             l.setText(s);
             Dimension ld = l.getPreferredSize();
-            Dimension sd = seen.getSize();
-            if ((ld != null) && (sd != null)) {
+            Dimension usd = unseen.getSize();
+            if ((ld != null) && (usd != null)) {
 
                 double width = d.getWidth();
                 double height = d.getHeight();
@@ -230,8 +238,12 @@ public class TimelinePanel extends BaseCustomizePanel {
                 double x = 0.0;
 
                 // Don't let it go off the screen.
-                if ((sd.getWidth() - lwidth) > x) {
-                    x = sd.getWidth() - lwidth;
+                if (((width - usd.getWidth()) - lwidth) > x) {
+
+                    x = (width - usd.getWidth()) - lwidth;
+                    if (x < 0.0) {
+                        x = 0.0;
+                    }
                 }
 
                 // Don't let it overwrite the length label.

@@ -18,9 +18,8 @@ package org.jflicks.ui.view.fe;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLayeredPane;
@@ -31,6 +30,7 @@ import javax.swing.Timer;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
+import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXLabel;
@@ -67,8 +67,7 @@ public class ChannelInfoWindow extends JWindow implements ActionListener {
     /**
      * Simple constructor with our required arguments.
      *
-     * @param maxWidth The maximum the banner can be.  We use 90%.
-     * @param maxHeight We use a height that creates the proper ratio to
+     * @param r The Rectangle defining the location of the main window.
      * use the "poster" image without scaling it ugly.
      * @param seconds the number of seconds to leave the banner visible.
      * @param normal The text color to match the theme.
@@ -78,27 +77,18 @@ public class ChannelInfoWindow extends JWindow implements ActionListener {
      * @param small A small font to use.
      * @param large A large font to use.
      */
-    public ChannelInfoWindow(int maxWidth, int maxHeight, int seconds,
-        Color normal, Color backlight, float alpha, Font small, Font large) {
+    public ChannelInfoWindow(Rectangle r, int seconds, Color normal,
+        Color backlight, float alpha, Font small, Font large) {
 
-        //setAlwaysOnTop(true);
-
+        setCursor(Util.getNoCursor());
         setSeconds(seconds);
 
-        int loffset = (int) (maxWidth * 0.10);
-        int toffset = (int) (maxHeight - (maxHeight * 0.25));
-        int width = maxWidth - (2 * loffset);
-        int height = (int) (maxHeight / 5);
+        int loffset = (int) (r.width * 0.10);
+        int toffset = (int) (r.height - (r.height * 0.25));
+        int width = r.width - (2 * loffset);
+        int height = (int) (r.height / 5);
 
-        // We need to set the loffset since it's a top level window it needs
-        // to be centered on the screen.  We just are not guaranteed that the
-        // maxWidth is the full screen.
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        Dimension full = tk.getScreenSize();
-        int fullwidth = (int) full.getWidth();
-        loffset = (fullwidth - width) / 2;
-
-        setBounds(loffset, toffset, width, height);
+        setBounds(loffset + r.x, toffset + r.y, width, height);
 
         double hgap = width * HGAP;
         double vgap = height * VGAP;
