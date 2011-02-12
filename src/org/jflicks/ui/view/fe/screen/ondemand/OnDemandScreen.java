@@ -49,6 +49,7 @@ import org.jflicks.ui.view.fe.Dialog;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
+import org.jflicks.ui.view.fe.SimpleInfoWindow;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.util.Hostname;
 import org.jflicks.util.Util;
@@ -72,6 +73,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
     private Properties properties;
     private String selectedParameter;
     private String[] parameters;
+    private SimpleInfoWindow simpleInfoWindow;
 
     /**
      * Simple empty constructor.
@@ -155,6 +157,14 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
         properties = p;
     }
 
+    private SimpleInfoWindow getSimpleInfoWindow() {
+        return (simpleInfoWindow);
+    }
+
+    private void setSimpleInfoWindow(SimpleInfoWindow w) {
+        simpleInfoWindow = w;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -228,6 +238,11 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
         JLayeredPane pane = getLayeredPane();
         if ((d != null) && (pane != null)) {
 
+            FrontEndView fev = (FrontEndView) getView();
+            setSimpleInfoWindow(new SimpleInfoWindow(fev.getPosition(), 8,
+                getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
+                getSmallFont(), getMediumFont()));
+
             JXPanel panel = new JXPanel(new BorderLayout());
             JXLabel l = new JXLabel("Getting stream, please wait...");
             l.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -278,6 +293,15 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
 
                         log(DEBUG, "ss: " + ss.getHostPort());
                         setStreamSession(ss);
+
+                        SimpleInfoWindow w = getSimpleInfoWindow();
+                        if (w != null) {
+
+                            w.setTitle(getSelectedParameter());
+                            w.setDescription("You are watching an On Demand"
+                                + " service called " + getSelectedParameter()
+                                + ".");
+                        }
 
                         Player p = getPlayer();
                         if (p != null) {
@@ -345,6 +369,12 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
      * {@inheritDoc}
      */
     public void info() {
+
+        SimpleInfoWindow w = getSimpleInfoWindow();
+        if (w != null) {
+
+            w.setVisible(!w.isVisible());
+        }
     }
 
     /**

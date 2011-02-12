@@ -37,7 +37,9 @@ import javax.swing.SwingConstants;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
 import org.jflicks.rc.RC;
+import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.ParameterProperty;
+import org.jflicks.ui.view.fe.SimpleInfoWindow;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.util.Util;
 
@@ -57,6 +59,7 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
     private String[] parameters;
     private String selectedParameter;
     private Properties properties;
+    private SimpleInfoWindow simpleInfoWindow;
 
     /**
      * Simple empty constructor.
@@ -170,6 +173,14 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
         properties = p;
     }
 
+    private SimpleInfoWindow getSimpleInfoWindow() {
+        return (simpleInfoWindow);
+    }
+
+    private void setSimpleInfoWindow(SimpleInfoWindow w) {
+        simpleInfoWindow = w;
+    }
+
     /**
      * Override so we can start up the player.
      *
@@ -200,6 +211,15 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
                         }
                     }
 
+                    SimpleInfoWindow w = getSimpleInfoWindow();
+                    if (w != null) {
+
+                        w.setTitle(getSelectedParameter());
+                        w.setDescription("You are watching a Google TV"
+                            + " based website called " + getSelectedParameter()
+                            + ".  The website URL is " + url);
+                    }
+
                     // Just start up the player!
                     Player p = getPlayer();
                     if ((p != null) && (!p.isPlaying())) {
@@ -219,6 +239,11 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
 
         JLayeredPane pane = getLayeredPane();
         if ((d != null) && (pane != null)) {
+
+            FrontEndView fev = (FrontEndView) getView();
+            setSimpleInfoWindow(new SimpleInfoWindow(fev.getPosition(), 8,
+                getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
+                getSmallFont(), getMediumFont()));
 
             JXPanel panel = new JXPanel(new BorderLayout());
             JXLabel l = new JXLabel("Launching Chrome, please wait...");
@@ -258,6 +283,12 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
      * {@inheritDoc}
      */
     public void info() {
+
+        SimpleInfoWindow w = getSimpleInfoWindow();
+        if (w != null) {
+
+            w.setVisible(!w.isVisible());
+        }
     }
 
     /**

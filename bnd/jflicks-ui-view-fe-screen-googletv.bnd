@@ -13,6 +13,7 @@ Export-Package:\
 
 Import-Package:\
  org.jflicks.job;version="1.0.0",\
+ org.jflicks.mvc;version="1.0.0",\
  org.jflicks.player;version="1.0.0",\
  org.jflicks.rc;version="1.0.0",\
  org.jflicks.ui.view.fe;version="1.0.0",\
