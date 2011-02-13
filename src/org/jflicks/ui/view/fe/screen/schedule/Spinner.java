@@ -16,9 +16,11 @@
 */
 package org.jflicks.ui.view.fe.screen.schedule;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,13 +36,18 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import org.jdesktop.swingx.painter.MattePainter;
+
+import org.jflicks.ui.view.fe.BaseCustomizePanel;
+
 /**
  * Panel that is similar to a number spinner.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class Spinner extends JPanel implements ActionListener, FocusListener {
+public class Spinner extends BaseCustomizePanel implements ActionListener,
+    FocusListener {
 
     private JLabel leftLabel;
     private JLabel amountLabel;
@@ -56,17 +63,27 @@ public class Spinner extends JPanel implements ActionListener, FocusListener {
      */
     public Spinner(Font f) {
 
+        Color back = getPanelColor();
+        back = new Color(back.getRed(), back.getGreen(),
+            back.getBlue(), (int) (getPanelAlpha() * 255));
+        setPanelColor(back);
+        MattePainter mpainter = new MattePainter(getPanelColor());
+        setBackgroundPainter(mpainter);
+
         JLabel left = new JLabel("+");
+        left.setForeground(getUnselectedColor());
         left.setFont(f);
         setLeftLabel(left);
 
         JLabel l = new JLabel("0");
+        l.setForeground(getUnselectedColor());
         l.setHorizontalTextPosition(SwingConstants.CENTER);
         l.setHorizontalAlignment(SwingConstants.CENTER);
         l.setFont(f);
         setAmountLabel(l);
 
         JLabel right = new JLabel("-");
+        right.setForeground(getUnselectedColor());
         right.setFont(f);
         setRightLabel(right);
 
@@ -169,6 +186,12 @@ public class Spinner extends JPanel implements ActionListener, FocusListener {
         updateLabel();
     }
 
+    public void performControl() {
+    }
+
+    public void performLayout(Dimension d) {
+    }
+
     /**
      * Pay attention to focus so we can update our border.
      *
@@ -176,7 +199,23 @@ public class Spinner extends JPanel implements ActionListener, FocusListener {
      */
     public void focusGained(FocusEvent event) {
 
-        setBorder(titledBorder);
+        JLabel l = getLeftLabel();
+        if (l != null) {
+
+            l.setForeground(getHighlightColor());
+        }
+
+        l = getAmountLabel();
+        if (l != null) {
+
+            l.setForeground(getHighlightColor());
+        }
+
+        l = getRightLabel();
+        if (l != null) {
+
+            l.setForeground(getHighlightColor());
+        }
     }
 
     /**
@@ -186,7 +225,23 @@ public class Spinner extends JPanel implements ActionListener, FocusListener {
      */
     public void focusLost(FocusEvent event) {
 
-        setBorder(emptyBorder);
+        JLabel l = getLeftLabel();
+        if (l != null) {
+
+            l.setForeground(getUnselectedColor());
+        }
+
+        l = getAmountLabel();
+        if (l != null) {
+
+            l.setForeground(getUnselectedColor());
+        }
+
+        l = getRightLabel();
+        if (l != null) {
+
+            l.setForeground(getUnselectedColor());
+        }
     }
 
     private boolean hasTheFocus() {

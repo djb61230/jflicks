@@ -1736,6 +1736,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                 p.setNMS(n);
                 p.setRecordingRule(rr);
+                p.setFrame(getFrame());
 
                 Dialog.showPanel(getFrame(), p, p.getOkButton(),
                     p.getCancelButton());

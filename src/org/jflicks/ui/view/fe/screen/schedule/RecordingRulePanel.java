@@ -17,19 +17,24 @@
 package org.jflicks.ui.view.fe.screen.schedule;
 
 import java.awt.AWTKeyStroke;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.InputMap;
@@ -44,11 +49,13 @@ import org.jflicks.nms.NMS;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.Task;
-import org.jflicks.util.ColumnPanel;
 import org.jflicks.ui.view.fe.Dialog;
 import org.jflicks.ui.view.fe.BaseCustomizePanel;
 
+import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * Panel that deals with adding a RecordingRule.
@@ -57,7 +64,7 @@ import org.jdesktop.swingx.JXLabel;
  * @version 1.0
  */
 public class RecordingRulePanel extends BaseCustomizePanel
-    implements ActionListener, PropertyChangeListener {
+    implements ActionListener, FocusListener, PropertyChangeListener {
 
     private static final String ADVANCED_TEXT = "Advanced Settings";
 
@@ -70,47 +77,62 @@ public class RecordingRulePanel extends BaseCustomizePanel
     private JRadioButton[] priorityRadioButtons;
     private Spinner beginSpinner;
     private Spinner endSpinner;
-    private JButton advancedButton;
-    private JButton okButton;
-    private JButton cancelButton;
-    private JButton advancedOkButton;
-    private JButton advancedCancelButton;
+    private JXButton advancedButton;
+    private JXButton okButton;
+    private JXButton cancelButton;
+    private JXButton advancedOkButton;
+    private JXButton advancedCancelButton;
     private boolean accept;
     private boolean advancedAccept;
+    private Frame frame;
 
     /**
      * Simple constructor.
      */
     public RecordingRulePanel() {
 
+        Color back = getPanelColor();
+        back = new Color(back.getRed(), back.getGreen(),
+            back.getBlue(), (int) (getPanelAlpha() * 255));
+        setPanelColor(back);
+        MattePainter mpainter = new MattePainter(getPanelColor());
+        setBackgroundPainter(mpainter);
+
         JXLabel nameprompt = new JXLabel("Name");
+        nameprompt.setForeground(getUnselectedColor());
         nameprompt.setHorizontalTextPosition(SwingConstants.RIGHT);
         nameprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         nameprompt.setFont(getSmallFont());
 
         JXLabel namelab = new JXLabel();
+        namelab.setForeground(getUnselectedColor());
         namelab.setFont(getSmallFont());
         setNameLabel(namelab);
 
         JXLabel channelprompt = new JXLabel("Channel");
+        channelprompt.setForeground(getUnselectedColor());
         channelprompt.setHorizontalTextPosition(SwingConstants.RIGHT);
         channelprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         channelprompt.setFont(getSmallFont());
 
         JXLabel channellab = new JXLabel();
+        channellab.setForeground(getUnselectedColor());
         channellab.setFont(getSmallFont());
         setChannelLabel(channellab);
 
         JXLabel durationprompt = new JXLabel("Duration");
+        durationprompt.setForeground(getUnselectedColor());
         durationprompt.setHorizontalTextPosition(SwingConstants.RIGHT);
         durationprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         durationprompt.setFont(getSmallFont());
 
         JXLabel durationlab = new JXLabel();
+        durationlab.setForeground(getUnselectedColor());
         durationlab.setFont(getSmallFont());
         setDurationLabel(durationlab);
 
         JXLabel typeprompt = new JXLabel("Type");
+        typeprompt.setForeground(getUnselectedColor());
         typeprompt.setHorizontalTextPosition(SwingConstants.RIGHT);
         typeprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         typeprompt.setFont(getSmallFont());
@@ -120,6 +142,7 @@ public class RecordingRulePanel extends BaseCustomizePanel
         setTypeRadioButtons(typeRadio);
 
         JXLabel priorityprompt = new JXLabel("Priority");
+        priorityprompt.setForeground(getUnselectedColor());
         priorityprompt.setHorizontalTextPosition(SwingConstants.RIGHT);
         priorityprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         priorityprompt.setFont(getSmallFont());
@@ -129,6 +152,7 @@ public class RecordingRulePanel extends BaseCustomizePanel
         setPriorityRadioButtons(priorityRadio);
 
         JXLabel beginprompt = new JXLabel("Begin Padding (min)");
+        beginprompt.setForeground(getUnselectedColor());
         beginprompt.setHorizontalTextPosition(SwingConstants.RIGHT);
         beginprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         beginprompt.setFont(getSmallFont());
@@ -138,6 +162,7 @@ public class RecordingRulePanel extends BaseCustomizePanel
         setBeginSpinner(bspinner);
 
         JXLabel endprompt = new JXLabel("End Padding (min)");
+        endprompt.setForeground(getUnselectedColor());
         endprompt.setHorizontalTextPosition(SwingConstants.RIGHT);
         endprompt.setHorizontalAlignment(SwingConstants.RIGHT);
         endprompt.setFont(getSmallFont());
@@ -146,30 +171,50 @@ public class RecordingRulePanel extends BaseCustomizePanel
         espinner.addPropertyChangeListener("Amount", this);
         setEndSpinner(espinner);
 
-        JButton advanced = new JButton(ADVANCED_TEXT);
+        JXButton advanced = new JXButton(ADVANCED_TEXT);
+        advanced.setForeground(getUnselectedColor());
+        advanced.setBackground(getPanelColor());
         advanced.addActionListener(this);
         advanced.setEnabled(false);
         advanced.setFont(getSmallFont());
+        advanced.addFocusListener(this);
+        advanced.setFocusPainted(false);
         setAdvancedButton(advanced);
 
-        JButton ok = new JButton("Ok");
+        JXButton ok = new JXButton("Ok");
+        ok.setForeground(getUnselectedColor());
+        ok.setBackground(getPanelColor());
         ok.addActionListener(this);
         ok.setFont(getSmallFont());
+        ok.addFocusListener(this);
+        ok.setFocusPainted(false);
         setOkButton(ok);
 
-        JButton cancel = new JButton("Cancel");
+        JXButton cancel = new JXButton("Cancel");
+        cancel.setForeground(getUnselectedColor());
+        cancel.setBackground(getPanelColor());
         cancel.addActionListener(this);
         cancel.setFont(getSmallFont());
+        cancel.addFocusListener(this);
+        cancel.setFocusPainted(false);
         setCancelButton(cancel);
 
-        JButton aok = new JButton("Ok");
+        JXButton aok = new JXButton("Ok");
+        aok.setForeground(getUnselectedColor());
+        aok.setBackground(getPanelColor());
         aok.addActionListener(this);
         aok.setFont(getSmallFont());
+        aok.addFocusListener(this);
+        aok.setFocusPainted(false);
         setAdvancedOkButton(aok);
 
-        JButton acancel = new JButton("Cancel");
+        JXButton acancel = new JXButton("Cancel");
+        acancel.setForeground(getUnselectedColor());
+        acancel.setBackground(getPanelColor());
         acancel.addActionListener(this);
         acancel.setFont(getSmallFont());
+        acancel.addFocusListener(this);
+        acancel.setFocusPainted(false);
         setAdvancedCancelButton(acancel);
 
         setLayout(new GridBagLayout());
@@ -392,6 +437,14 @@ public class RecordingRulePanel extends BaseCustomizePanel
         getActionMap().put("cancel", ca);
     }
 
+    public Frame getFrame() {
+        return (frame);
+    }
+
+    public void setFrame(Frame f) {
+        frame = f;
+    }
+
     /**
      * All UI components show data from a RecordingRule instance.
      *
@@ -557,11 +610,11 @@ public class RecordingRulePanel extends BaseCustomizePanel
         endSpinner = s;
     }
 
-    private JButton getAdvancedButton() {
+    private JXButton getAdvancedButton() {
         return (advancedButton);
     }
 
-    private void setAdvancedButton(JButton b) {
+    private void setAdvancedButton(JXButton b) {
         advancedButton = b;
     }
 
@@ -569,13 +622,13 @@ public class RecordingRulePanel extends BaseCustomizePanel
      * This panel has an ok button so the user can choose to accept their
      * action.
      *
-     * @return A JButton instance.
+     * @return A JXButton instance.
      */
-    public JButton getOkButton() {
+    public JXButton getOkButton() {
         return (okButton);
     }
 
-    private void setOkButton(JButton b) {
+    private void setOkButton(JXButton b) {
         okButton = b;
     }
 
@@ -583,29 +636,29 @@ public class RecordingRulePanel extends BaseCustomizePanel
      * This panel has a cancel button so the user can choose to do no
      * action.
      *
-     * @return A JButton instance.
+     * @return A JXButton instance.
      */
-    public JButton getCancelButton() {
+    public JXButton getCancelButton() {
         return (cancelButton);
     }
 
-    private void setCancelButton(JButton b) {
+    private void setCancelButton(JXButton b) {
         cancelButton = b;
     }
 
-    private JButton getAdvancedOkButton() {
+    private JXButton getAdvancedOkButton() {
         return (advancedOkButton);
     }
 
-    private void setAdvancedOkButton(JButton b) {
+    private void setAdvancedOkButton(JXButton b) {
         advancedOkButton = b;
     }
 
-    private JButton getAdvancedCancelButton() {
+    private JXButton getAdvancedCancelButton() {
         return (advancedCancelButton);
     }
 
-    private void setAdvancedCancelButton(JButton b) {
+    private void setAdvancedCancelButton(JXButton b) {
         advancedCancelButton = b;
     }
 
@@ -668,6 +721,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
             for (int i = 0; i < result.length; i++) {
 
                 result[i] = new JRadioButton(array[i]);
+                result[i].setForeground(getUnselectedColor());
+                result[i].setBackground(getPanelColor());
                 result[i].setFont(f);
                 result[i].getInputMap().put(KeyStroke.getKeyStroke("ENTER"),
                     "toggle");
@@ -676,6 +731,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
                     "toggle");
                 result[i].getActionMap().put("toggle", new RadioAction());
                 result[i].addActionListener(this);
+                result[i].addFocusListener(this);
+                result[i].setFocusPainted(false);
 
                 if (bg != null) {
 
@@ -701,6 +758,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
                     if (tasks[i].isSelectable()) {
 
                         JCheckBox cb = new JCheckBox(tasks[i].getDescription());
+                        cb.setForeground(getUnselectedColor());
+                        cb.setBackground(getPanelColor());
                         cb.setFont(getSmallFont());
 
                         cb.getInputMap().put(KeyStroke.getKeyStroke("ENTER"),
@@ -708,6 +767,8 @@ public class RecordingRulePanel extends BaseCustomizePanel
                         cb.getActionMap().put("toggle", new CheckAction());
 
                         cb.setSelected(tasks[i].isRun());
+                        cb.addFocusListener(this);
+                        cb.setFocusPainted(false);
                         list.add(cb);
                     }
                 }
@@ -717,7 +778,26 @@ public class RecordingRulePanel extends BaseCustomizePanel
                 JComponent[] cbuts = list.toArray(new JComponent[list.size()]);
 
                 setAdvancedAccept(false);
-                ColumnPanel cp = new ColumnPanel(cbuts);
+
+                JXPanel cp = new JXPanel();
+                cp.setBackgroundPainter(getBackgroundPainter());
+                cp.setLayout(new GridBagLayout());
+
+                for (int i = 0; i < cbuts.length; i++) {
+
+                    GridBagConstraints gbc = new GridBagConstraints();
+                    gbc.weightx = 1.0;
+                    gbc.weighty = 1.0;
+                    gbc.gridx = 0;
+                    gbc.gridy = i;
+                    gbc.gridwidth = 1;
+                    gbc.gridheight = 1;
+                    gbc.anchor = GridBagConstraints.CENTER;
+                    gbc.fill = GridBagConstraints.HORIZONTAL;
+                    gbc.insets = new Insets(4, 4, 4, 4);
+                    cp.add(cbuts[i], gbc);
+                }
+
                 cp.setBorder(BorderFactory.createLineBorder(
                     getHighlightColor()));
                 HashSet<AWTKeyStroke> set =
@@ -741,7 +821,7 @@ public class RecordingRulePanel extends BaseCustomizePanel
                 cp.getActionMap().put("cancel",
                     new CancelAction(getAdvancedCancelButton()));
 
-                Dialog.showPanel(null, cp, getAdvancedOkButton(),
+                Dialog.showPanel(getFrame(), cp, getAdvancedOkButton(),
                     getAdvancedCancelButton());
 
                 requestFocus();
@@ -804,6 +884,24 @@ public class RecordingRulePanel extends BaseCustomizePanel
             } else if (event.getSource() == getAdvancedCancelButton()) {
                 setAdvancedAccept(false);
             }
+        }
+    }
+
+    public void focusGained(FocusEvent event) {
+
+        if (event.getSource() instanceof AbstractButton) {
+
+            AbstractButton b = (AbstractButton) event.getSource();
+            b.setForeground(getHighlightColor());
+        }
+    }
+
+    public void focusLost(FocusEvent event) {
+
+        if (event.getSource() instanceof AbstractButton) {
+
+            AbstractButton b = (AbstractButton) event.getSource();
+            b.setForeground(getUnselectedColor());
         }
     }
 
