@@ -428,12 +428,9 @@ public class RecordingRulePanel extends BaseCustomizePanel
         add(cancel, gbc);
         setBorder(BorderFactory.createLineBorder(getHighlightColor()));
 
-        //setFocusable(true);
-        //requestFocus();
-
         InputMap map = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         CancelAction ca = new CancelAction(getCancelButton());
-        map.put(KeyStroke.getKeyStroke("ESC"), "cancel");
+        map.put(KeyStroke.getKeyStroke("ESCAPE"), "cancel");
         getActionMap().put("cancel", ca);
     }
 
@@ -817,7 +814,7 @@ public class RecordingRulePanel extends BaseCustomizePanel
 
                 InputMap map =
                     cp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-                map.put(KeyStroke.getKeyStroke("ESC"), "cancel");
+                map.put(KeyStroke.getKeyStroke("ESCAPE"), "cancel");
                 cp.getActionMap().put("cancel",
                     new CancelAction(getAdvancedCancelButton()));
 
