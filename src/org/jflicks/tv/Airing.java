@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * This class contains all the properties representing a Airing.  A Airing can
+ * This class contains all the properties representing a Airing.  An Airing can
  * be an episode of a channel or a one time airing.  An instance of a Airing
  * is what is recorded.
  *
@@ -60,7 +60,7 @@ public class Airing implements Serializable {
     }
 
     /**
-     * The time this Airing will be aired.
+     * The time this Airing will be shown.
      *
      * @return The show air date.
      */
@@ -77,7 +77,7 @@ public class Airing implements Serializable {
     }
 
     /**
-     * The time this Airing will be aired.
+     * The time this Airing will be shown.
      *
      * @param d The show air date.
      */
