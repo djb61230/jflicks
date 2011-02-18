@@ -30,7 +30,6 @@ import javax.swing.AbstractAction;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -186,9 +185,15 @@ public class Spinner extends BaseCustomizePanel implements ActionListener,
         updateLabel();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performControl() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performLayout(Dimension d) {
     }
 

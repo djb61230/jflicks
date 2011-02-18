@@ -434,10 +434,22 @@ public class RecordingRulePanel extends BaseCustomizePanel
         getActionMap().put("cancel", ca);
     }
 
+    /**
+     * Be aware of our top level frame so we can center our
+     * dialogs when we use them.
+     *
+     * @return A Frame instance.
+     */
     public Frame getFrame() {
         return (frame);
     }
 
+    /**
+     * Be aware of our top level frame so we can center our
+     * dialogs when we use them.
+     *
+     * @param f A Frame instance.
+     */
     public void setFrame(Frame f) {
         frame = f;
     }
@@ -884,6 +896,11 @@ public class RecordingRulePanel extends BaseCustomizePanel
         }
     }
 
+    /**
+     * Keep track of the focus so we can control the text color.
+     *
+     * @param event The given focus event.
+     */
     public void focusGained(FocusEvent event) {
 
         if (event.getSource() instanceof AbstractButton) {
@@ -893,6 +910,11 @@ public class RecordingRulePanel extends BaseCustomizePanel
         }
     }
 
+    /**
+     * Keep track of the focus so we can control the text color.
+     *
+     * @param event The given focus event.
+     */
     public void focusLost(FocusEvent event) {
 
         if (event.getSource() instanceof AbstractButton) {

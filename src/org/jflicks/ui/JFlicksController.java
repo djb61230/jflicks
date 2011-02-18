@@ -27,11 +27,6 @@ import org.jflicks.mvc.BaseController;
 public class JFlicksController extends BaseController {
 
     /**
-     * The Ticket array property.
-     */
-    public static final String TICKETS_PROPERTY = "Tickets";
-
-    /**
      * Constructor with a given model.
      *
      * @param m An JFLICKSModel instance.
@@ -40,16 +35,5 @@ public class JFlicksController extends BaseController {
 
         addModel(m);
     }
-
-    /**
-     * Called by a view to change the ticket array in the model.
-     *
-     * @param array The updated ticket array.
-     */
-    /*
-    public void changeTickets(Ticket[] array) {
-        setModelProperty(TICKETS_PROPERTY, array);
-    }
-    */
 
 }

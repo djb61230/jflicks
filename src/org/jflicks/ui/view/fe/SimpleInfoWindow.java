@@ -24,13 +24,11 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.util.Date;
 import javax.swing.JLayeredPane;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
-import org.jflicks.imagecache.ImageCache;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
@@ -106,19 +104,19 @@ public class SimpleInfoWindow extends JWindow implements ActionListener {
         JLayeredPane pane = new JLayeredPane();
         top.add(pane, BorderLayout.CENTER);
 
-        JXLabel title = new JXLabel();
-        title.setFont(large);
-        title.setTextAlignment(JXLabel.TextAlignment.LEFT);
-        title.setForeground(normal);
-        setTitleLabel(title);
+        JXLabel titleLab = new JXLabel();
+        titleLab.setFont(large);
+        titleLab.setTextAlignment(JXLabel.TextAlignment.LEFT);
+        titleLab.setForeground(normal);
+        setTitleLabel(titleLab);
 
-        JXLabel description = new JXLabel();
-        description.setFont(small);
-        description.setTextAlignment(JXLabel.TextAlignment.LEFT);
-        description.setVerticalAlignment(SwingConstants.TOP);
-        description.setForeground(normal);
-        description.setLineWrap(true);
-        setDescriptionLabel(description);
+        JXLabel descriptionLab = new JXLabel();
+        descriptionLab.setFont(small);
+        descriptionLab.setTextAlignment(JXLabel.TextAlignment.LEFT);
+        descriptionLab.setVerticalAlignment(SwingConstants.TOP);
+        descriptionLab.setForeground(normal);
+        descriptionLab.setLineWrap(true);
+        setDescriptionLabel(descriptionLab);
 
         ClockPanel cpanel = new ClockPanel(large, normal, backlight, alpha);
         cpanel.setOpaque(false);
@@ -129,14 +127,14 @@ public class SimpleInfoWindow extends JWindow implements ActionListener {
         double descriptionHeight = ((double) height) * 0.4;
         double timelineHeight = ((double) height) * 0.2 - vgap;
 
-        title.setBounds((int) hgap, (int) vgap, (int) halfWidth,
+        titleLab.setBounds((int) hgap, (int) vgap, (int) halfWidth,
             (int) titleHeight);
-        description.setBounds((int) hgap,
+        descriptionLab.setBounds((int) hgap,
             (int) (vgap + titleHeight + chanDateHeight),
             (int) (width - hgap * 2.0), (int) descriptionHeight);
 
-        pane.add(title, Integer.valueOf(100));
-        pane.add(description, Integer.valueOf(100));
+        pane.add(titleLab, Integer.valueOf(100));
+        pane.add(descriptionLab, Integer.valueOf(100));
 
         Dimension cpdim = cpanel.getPreferredSize();
         if (cpdim != null) {

@@ -16,7 +16,6 @@
 */
 package org.jflicks.ui.view.fe;
 
-import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Cursor;
