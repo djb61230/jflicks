@@ -311,6 +311,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-player-hulu.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-player-photoshow.bnd"
             output="${bundle}"
         />
@@ -528,6 +537,15 @@
             failok="false"
             exceptions="true"
             files="${bnd}/jflicks-ui-view-fe-screen-googletv.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-hulu.bnd"
             output="${bundle}"
         />
 

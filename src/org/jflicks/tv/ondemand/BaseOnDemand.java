@@ -103,11 +103,15 @@ public abstract class BaseOnDemand extends BaseConfig implements OnDemand {
 
         String source = getConfiguredRecorderSource();
         NMS n = getNMS();
+        log(DEBUG, "getRecorder: source <" + source + ">");
+        log(DEBUG, "getRecorder: n <" + n + ">");
         if ((source != null) && (n != null)) {
 
             String device = source.substring(source.lastIndexOf(" "));
             device = device.trim();
+            log(DEBUG, "getRecorder: device <" + device + ">");
             result = n.getRecorderByDevice(device);
+            log(DEBUG, "getRecorder: result <" + result + ">");
         }
 
         return (result);

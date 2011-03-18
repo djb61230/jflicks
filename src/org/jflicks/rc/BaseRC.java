@@ -16,6 +16,7 @@
 */
 package org.jflicks.rc;
 
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -35,6 +36,23 @@ public abstract class BaseRC extends BaseLog implements RC {
     private boolean keyboardControl;
     private boolean eventControl;
     private PropertyChangeSupport propertyChangeSupport;
+    private int upKeyEvent;
+    private int downKeyEvent;
+    private int leftKeyEvent;
+    private int rightKeyEvent;
+    private int enterKeyEvent;
+    private int escapeKeyEvent;
+    private int infoKeyEvent;
+    private int pauseKeyEvent;
+    private int pageUpKeyEvent;
+    private int pageDownKeyEvent;
+    private int rewindKeyEvent;
+    private int forwardKeyEvent;
+    private int skipBackwardKeyEvent;
+    private int skipForwardKeyEvent;
+    private int audiosyncPlusKeyEvent;
+    private int audiosyncMinusKeyEvent;
+    private int guideKeyEvent;
 
     /**
      * Simple constructor.
@@ -42,6 +60,23 @@ public abstract class BaseRC extends BaseLog implements RC {
     public BaseRC() {
 
         setPropertyChangeSupport(new PropertyChangeSupport(this));
+        setUpKeyEvent(getDefaultUpKeyEvent());
+        setDownKeyEvent(getDefaultDownKeyEvent());
+        setLeftKeyEvent(getDefaultLeftKeyEvent());
+        setRightKeyEvent(getDefaultRightKeyEvent());
+        setEnterKeyEvent(getDefaultEnterKeyEvent());
+        setEscapeKeyEvent(getDefaultEscapeKeyEvent());
+        setInfoKeyEvent(getDefaultInfoKeyEvent());
+        setPauseKeyEvent(getDefaultPauseKeyEvent());
+        setPageUpKeyEvent(getDefaultPageUpKeyEvent());
+        setPageDownKeyEvent(getDefaultPageDownKeyEvent());
+        setRewindKeyEvent(getDefaultRewindKeyEvent());
+        setForwardKeyEvent(getDefaultForwardKeyEvent());
+        setSkipBackwardKeyEvent(getDefaultSkipBackwardKeyEvent());
+        setSkipForwardKeyEvent(getDefaultSkipForwardKeyEvent());
+        setAudiosyncPlusKeyEvent(getDefaultAudiosyncPlusKeyEvent());
+        setAudiosyncMinusKeyEvent(getDefaultAudiosyncMinusKeyEvent());
+        setGuideKeyEvent(getDefaultGuideKeyEvent());
     }
 
     /**
@@ -112,6 +147,363 @@ public abstract class BaseRC extends BaseLog implements RC {
         boolean old = eventControl;
         eventControl = b;
         firePropertyChange("EventControl", old, eventControl);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultUpKeyEvent() {
+        return (KeyEvent.VK_UP);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultDownKeyEvent() {
+        return (KeyEvent.VK_DOWN);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultLeftKeyEvent() {
+        return (KeyEvent.VK_LEFT);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultRightKeyEvent() {
+        return (KeyEvent.VK_RIGHT);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultEnterKeyEvent() {
+        return (KeyEvent.VK_ENTER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultEscapeKeyEvent() {
+        return (KeyEvent.VK_ESCAPE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultInfoKeyEvent() {
+        return (KeyEvent.VK_P);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultPauseKeyEvent() {
+        return (KeyEvent.VK_I);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultPageUpKeyEvent() {
+        return (KeyEvent.VK_PAGE_UP);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultPageDownKeyEvent() {
+        return (KeyEvent.VK_PAGE_DOWN);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultRewindKeyEvent() {
+        return (KeyEvent.VK_R);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultForwardKeyEvent() {
+        return (KeyEvent.VK_F);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultSkipBackwardKeyEvent() {
+        return (KeyEvent.VK_Z);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultSkipForwardKeyEvent() {
+        return (KeyEvent.VK_X);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultAudiosyncPlusKeyEvent() {
+        return (KeyEvent.VK_PLUS);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultAudiosyncMinusKeyEvent() {
+        return (KeyEvent.VK_MINUS);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDefaultGuideKeyEvent() {
+        return (KeyEvent.VK_G);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getUpKeyEvent() {
+        return (upKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDownKeyEvent() {
+        return (downKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getLeftKeyEvent() {
+        return (leftKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getRightKeyEvent() {
+        return (rightKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getEnterKeyEvent() {
+        return (enterKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getEscapeKeyEvent() {
+        return (escapeKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getInfoKeyEvent() {
+        return (infoKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getPauseKeyEvent() {
+        return (pauseKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getPageUpKeyEvent() {
+        return (pageUpKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getPageDownKeyEvent() {
+        return (pageDownKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getRewindKeyEvent() {
+        return (rewindKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getForwardKeyEvent() {
+        return (forwardKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getSkipBackwardKeyEvent() {
+        return (skipBackwardKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getSkipForwardKeyEvent() {
+        return (skipForwardKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getAudiosyncPlusKeyEvent() {
+        return (audiosyncPlusKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getAudiosyncMinusKeyEvent() {
+        return (audiosyncMinusKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getGuideKeyEvent() {
+        return (guideKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setUpKeyEvent(int i) {
+        upKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setDownKeyEvent(int i) {
+        downKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLeftKeyEvent(int i) {
+        leftKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRightKeyEvent(int i) {
+        rightKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setEnterKeyEvent(int i) {
+        enterKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setEscapeKeyEvent(int i) {
+        escapeKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setInfoKeyEvent(int i) {
+        infoKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setPauseKeyEvent(int i) {
+        pauseKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setPageUpKeyEvent(int i) {
+        pageUpKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setPageDownKeyEvent(int i) {
+        pageDownKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRewindKeyEvent(int i) {
+        rewindKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setForwardKeyEvent(int i) {
+        forwardKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setSkipBackwardKeyEvent(int i) {
+        skipBackwardKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setSkipForwardKeyEvent(int i) {
+        skipForwardKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setAudiosyncPlusKeyEvent(int i) {
+        audiosyncPlusKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setAudiosyncMinusKeyEvent(int i) {
+        audiosyncMinusKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setGuideKeyEvent(int i) {
+        guideKeyEvent = i;
     }
 
     private PropertyChangeSupport getPropertyChangeSupport() {

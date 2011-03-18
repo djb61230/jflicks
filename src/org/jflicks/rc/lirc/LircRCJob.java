@@ -20,7 +20,6 @@ import java.awt.AWTException;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -300,171 +299,188 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
 
     private void keyboardMoveUp() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_UP);
-            r.keyRelease(KeyEvent.VK_UP);
+            r.keyPress(rc.getUpKeyEvent());
+            r.keyRelease(rc.getUpKeyEvent());
         }
     }
 
     private void keyboardMoveDown() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_DOWN);
-            r.keyRelease(KeyEvent.VK_DOWN);
+            r.keyPress(rc.getDownKeyEvent());
+            r.keyRelease(rc.getDownKeyEvent());
         }
     }
 
     private void keyboardMoveLeft() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_LEFT);
-            r.keyRelease(KeyEvent.VK_LEFT);
+            r.keyPress(rc.getLeftKeyEvent());
+            r.keyRelease(rc.getLeftKeyEvent());
         }
     }
 
     private void keyboardMoveRight() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_RIGHT);
-            r.keyRelease(KeyEvent.VK_RIGHT);
+            r.keyPress(rc.getRightKeyEvent());
+            r.keyRelease(rc.getRightKeyEvent());
         }
     }
 
     private void keyboardEnter() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_ENTER);
-            r.keyRelease(KeyEvent.VK_ENTER);
+            r.keyPress(rc.getEnterKeyEvent());
+            r.keyRelease(rc.getEnterKeyEvent());
         }
     }
 
     private void keyboardEscape() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_ESCAPE);
-            r.keyRelease(KeyEvent.VK_ESCAPE);
+            r.keyPress(rc.getEscapeKeyEvent());
+            r.keyRelease(rc.getEscapeKeyEvent());
         }
     }
 
     private void keyboardPause() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_P);
-            r.keyRelease(KeyEvent.VK_P);
+            r.keyPress(rc.getPauseKeyEvent());
+            r.keyRelease(rc.getPauseKeyEvent());
         }
     }
 
     private void keyboardInfo() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_I);
-            r.keyRelease(KeyEvent.VK_I);
+            r.keyPress(rc.getInfoKeyEvent());
+            r.keyRelease(rc.getInfoKeyEvent());
         }
     }
 
     private void keyboardGuide() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_G);
-            r.keyRelease(KeyEvent.VK_G);
+            r.keyPress(rc.getGuideKeyEvent());
+            r.keyRelease(rc.getGuideKeyEvent());
         }
     }
 
     private void keyboardPageUp() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_PAGE_UP);
-            r.keyRelease(KeyEvent.VK_PAGE_UP);
+            r.keyPress(rc.getPageUpKeyEvent());
+            r.keyRelease(rc.getPageUpKeyEvent());
         }
     }
 
     private void keyboardPageDown() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_PAGE_DOWN);
-            r.keyRelease(KeyEvent.VK_PAGE_DOWN);
+            r.keyPress(rc.getPageDownKeyEvent());
+            r.keyRelease(rc.getPageDownKeyEvent());
         }
     }
 
     private void keyboardRewind() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_R);
-            r.keyRelease(KeyEvent.VK_R);
+            r.keyPress(rc.getRewindKeyEvent());
+            r.keyRelease(rc.getRewindKeyEvent());
         }
     }
 
     private void keyboardForward() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_F);
-            r.keyRelease(KeyEvent.VK_F);
+            r.keyPress(rc.getForwardKeyEvent());
+            r.keyRelease(rc.getForwardKeyEvent());
         }
     }
 
     private void keyboardSkipBackward() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_Z);
-            r.keyRelease(KeyEvent.VK_Z);
+            r.keyPress(rc.getSkipBackwardKeyEvent());
+            r.keyRelease(rc.getSkipBackwardKeyEvent());
         }
     }
 
     private void keyboardSkipForward() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_X);
-            r.keyRelease(KeyEvent.VK_X);
+            r.keyPress(rc.getSkipForwardKeyEvent());
+            r.keyRelease(rc.getSkipForwardKeyEvent());
         }
     }
 
     private void keyboardAudiosyncPlus() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_PLUS);
-            r.keyRelease(KeyEvent.VK_PLUS);
+            r.keyPress(rc.getAudiosyncPlusKeyEvent());
+            r.keyRelease(rc.getAudiosyncPlusKeyEvent());
         }
     }
 
     private void keyboardAudiosyncMinus() {
 
+        LircRC rc = getLircRC();
         Robot r = getRobot();
-        if (r != null) {
+        if ((rc != null) && (r != null)) {
 
-            r.keyPress(KeyEvent.VK_MINUS);
-            r.keyRelease(KeyEvent.VK_MINUS);
+            r.keyPress(rc.getAudiosyncMinusKeyEvent());
+            r.keyRelease(rc.getAudiosyncMinusKeyEvent());
         }
     }
 

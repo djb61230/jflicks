@@ -71,7 +71,7 @@
 
         <exec executable="gcc">
 
-            <arg value="-march=i386"/>
+            <arg value="-march=native"/>
             <arg value="-shared"/>
             <arg value="-fpic"/>
             <arg value="-I"/>

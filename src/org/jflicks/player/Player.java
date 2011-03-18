@@ -54,6 +54,12 @@ public interface Player {
      * A player that can handle web video, most likely a browser.
      */
     String PLAYER_VIDEO_WEB = "VideoWeb";
+
+    /**
+     * A player that can handle web video, most likely a browser.
+     */
+    String PLAYER_APPLICATION = "Application";
+
     /**
      *
      * A player that can handle udp stream video.

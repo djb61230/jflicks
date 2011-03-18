@@ -183,9 +183,366 @@ public interface RC {
     void setEventControl(boolean b);
 
     /**
+     * The default key event for up.
+     *
+     * @return The up key event.
+     */
+    int getDefaultUpKeyEvent();
+
+    /**
+     * The default key event for down.
+     *
+     * @return The down key event.
+     */
+    int getDefaultDownKeyEvent();
+
+    /**
+     * The default key event for left.
+     *
+     * @return The left key event.
+     */
+    int getDefaultLeftKeyEvent();
+
+    /**
+     * The default key event for right.
+     *
+     * @return The right key event.
+     */
+    int getDefaultRightKeyEvent();
+
+    /**
+     * The default key event for enter.
+     *
+     * @return The enter key event.
+     */
+    int getDefaultEnterKeyEvent();
+
+    /**
+     * The default key event for escape.
+     *
+     * @return The escape key event.
+     */
+    int getDefaultEscapeKeyEvent();
+
+    /**
+     * The default key event for info.
+     *
+     * @return The info key event.
+     */
+    int getDefaultInfoKeyEvent();
+
+    /**
+     * The default key event for pause.
+     *
+     * @return The pause key event.
+     */
+    int getDefaultPauseKeyEvent();
+
+    /**
+     * The default key event for page up.
+     *
+     * @return The page up key event.
+     */
+    int getDefaultPageUpKeyEvent();
+
+    /**
+     * The default key event for page down.
+     *
+     * @return The page down key event.
+     */
+    int getDefaultPageDownKeyEvent();
+
+    /**
+     * The default key event for rewind.
+     *
+     * @return The rewind key event.
+     */
+    int getDefaultRewindKeyEvent();
+
+    /**
+     * The default key event for forward.
+     *
+     * @return The forward key event.
+     */
+    int getDefaultForwardKeyEvent();
+
+    /**
+     * The default key event for skip backward.
+     *
+     * @return The skip backward key event.
+     */
+    int getDefaultSkipBackwardKeyEvent();
+
+    /**
+     * The default key event for skip forward.
+     *
+     * @return The skip forward key event.
+     */
+    int getDefaultSkipForwardKeyEvent();
+
+    /**
+     * The default key event for audiosync plus.
+     *
+     * @return The audiosync plus key event.
+     */
+    int getDefaultAudiosyncPlusKeyEvent();
+
+    /**
+     * The default key event for audiosync minus.
+     *
+     * @return The audiosync minus key event.
+     */
+    int getDefaultAudiosyncMinusKeyEvent();
+
+    /**
+     * The default key event for guide.
+     *
+     * @return The guide key event.
+     */
+    int getDefaultGuideKeyEvent();
+
+    /**
+     * The current key event for up.
+     *
+     * @return The up key event.
+     */
+    int getUpKeyEvent();
+
+    /**
+     * The current key event for down.
+     *
+     * @return The down key event.
+     */
+    int getDownKeyEvent();
+
+    /**
+     * The current key event for left.
+     *
+     * @return The left key event.
+     */
+    int getLeftKeyEvent();
+
+    /**
+     * The current key event for right.
+     *
+     * @return The right key event.
+     */
+    int getRightKeyEvent();
+
+    /**
+     * The current key event for enter.
+     *
+     * @return The enter key event.
+     */
+    int getEnterKeyEvent();
+
+    /**
+     * The current key event for escape.
+     *
+     * @return The escape key event.
+     */
+    int getEscapeKeyEvent();
+
+    /**
+     * The current key event for info.
+     *
+     * @return The info key event.
+     */
+    int getInfoKeyEvent();
+
+    /**
+     * The current key event for pause.
+     *
+     * @return The pause key event.
+     */
+    int getPauseKeyEvent();
+
+    /**
+     * The current key event for page up.
+     *
+     * @return The page up key event.
+     */
+    int getPageUpKeyEvent();
+
+    /**
+     * The current key event for page down.
+     *
+     * @return The page down key event.
+     */
+    int getPageDownKeyEvent();
+
+    /**
+     * The current key event for rewind.
+     *
+     * @return The rewind key event.
+     */
+    int getRewindKeyEvent();
+
+    /**
+     * The current key event for forward.
+     *
+     * @return The forward key event.
+     */
+    int getForwardKeyEvent();
+
+    /**
+     * The current key event for skip backward.
+     *
+     * @return The skip backward key event.
+     */
+    int getSkipBackwardKeyEvent();
+
+    /**
+     * The current key event for skip forward.
+     *
+     * @return The skip forward key event.
+     */
+    int getSkipForwardKeyEvent();
+
+    /**
+     * The current key event for audiosync plus.
+     *
+     * @return The audiosync plus key event.
+     */
+    int getAudiosyncPlusKeyEvent();
+
+    /**
+     * The current key event for audiosync minus.
+     *
+     * @return The audiosync minus key event.
+     */
+    int getAudiosyncMinusKeyEvent();
+
+    /**
+     * The current key event for guide.
+     *
+     * @return The guide key event.
+     */
+    int getGuideKeyEvent();
+
+    /**
+     * The current key event for up.
+     *
+     * @param i The up key event.
+     */
+    void setUpKeyEvent(int i);
+
+    /**
+     * The current key event for down.
+     *
+     * @param i The down key event.
+     */
+    void setDownKeyEvent(int i);
+
+    /**
+     * The current key event for left.
+     *
+     * @param i The left key event.
+     */
+    void setLeftKeyEvent(int i);
+
+    /**
+     * The current key event for right.
+     *
+     * @param i The right key event.
+     */
+    void setRightKeyEvent(int i);
+
+    /**
+     * The current key event for enter.
+     *
+     * @param i The enter key event.
+     */
+    void setEnterKeyEvent(int i);
+
+    /**
+     * The current key event for escape.
+     *
+     * @param i The escape key event.
+     */
+    void setEscapeKeyEvent(int i);
+
+    /**
+     * The current key event for info.
+     *
+     * @param i The info key event.
+     */
+    void setInfoKeyEvent(int i);
+
+    /**
+     * The current key event for pause.
+     *
+     * @param i The pause key event.
+     */
+    void setPauseKeyEvent(int i);
+
+    /**
+     * The current key event for page up.
+     *
+     * @param i The page up key event.
+     */
+    void setPageUpKeyEvent(int i);
+
+    /**
+     * The current key event for page down.
+     *
+     * @param i The page down key event.
+     */
+    void setPageDownKeyEvent(int i);
+
+    /**
+     * The current key event for rewind.
+     *
+     * @param i The rewind key event.
+     */
+    void setRewindKeyEvent(int i);
+
+    /**
+     * The current key event for forward.
+     *
+     * @param i The forward key event.
+     */
+    void setForwardKeyEvent(int i);
+
+    /**
+     * The current key event for skip backward.
+     *
+     * @param i The skip backward key event.
+     */
+    void setSkipBackwardKeyEvent(int i);
+
+    /**
+     * The current key event for skip forward.
+     *
+     * @param i The skip forward key event.
+     */
+    void setSkipForwardKeyEvent(int i);
+
+    /**
+     * The current key event for audiosync plus.
+     *
+     * @param i The audiosync plus key event.
+     */
+    void setAudiosyncPlusKeyEvent(int i);
+
+    /**
+     * The current key event for audiosync minus.
+     *
+     * @param i The audiosync minus key event.
+     */
+    void setAudiosyncMinusKeyEvent(int i);
+
+    /**
+     * The current key event for guide.
+     *
+     * @param i The guide key event.
+     */
+    void setGuideKeyEvent(int i);
+
+    /**
      * An RC needs to keep track of property change listeners.  Here we
      * add a listener.
-     *
+
      * @param l The listener to add to our list.
      */
     void addPropertyChangeListener(PropertyChangeListener l);

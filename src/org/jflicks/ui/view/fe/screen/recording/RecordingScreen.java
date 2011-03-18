@@ -681,6 +681,31 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         return (result);
     }
 
+    private String computeRecordingPath(Recording r) {
+
+        String result = null;
+
+        if (r != null) {
+
+            result = r.getPath();
+            File tmp = new File(result + ".m2p");
+            if ((tmp.exists()) && (tmp.isFile())) {
+
+                result = result + ".m2p";
+
+            } else {
+
+                tmp = new File(result + ".mp4");
+                if ((tmp.exists()) && (tmp.isFile())) {
+
+                    result = result + ".mp4";
+                }
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * We listen for property change events from the panels that deal
      * with selecting a recording.
@@ -1101,7 +1126,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                     p.setFrame(Util.findFrame(this));
                     addBlankPanel();
-                    p.play(r.getPath());
+                    p.play(computeRecordingPath(r));
 
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
 
