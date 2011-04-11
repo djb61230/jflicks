@@ -10,7 +10,7 @@ Include-Resource:\
  ../sharedlib/libjunixsocket.so,\
  org/jflicks/input/lirc/LircJob.lircrc=../conf/LircJob.lircrc
 
-Bundle-NativeCode: libjunixsocket.so; osname=Linux; processor=x86
+Bundle-NativeCode: libjunixsocket.so; osname=Linux; processor=x86-64
 
 Bundle-ClassPath: ., jlirc.jar
 

@@ -19,6 +19,7 @@ package org.jflicks.player;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.beans.PropertyChangeListener;
+import javax.swing.JLayeredPane;
 
 /**
  * This interface defines the methods that allow for the creation of Media
@@ -96,6 +97,20 @@ public interface Player {
     String getType();
 
     /**
+     * Convenience method to see if the player type is PLAYER_AUDIO.
+     *
+     * @return True if this player works with audio.
+     */
+    boolean isAudioType();
+
+    /**
+     * Convenience method to see if the player type is PLAYER_SLIDESHOW.
+     *
+     * @return True if this player works with audio.
+     */
+    boolean isSlideshowType();
+
+    /**
      * Convenience method to see if the player type is PLAYER_VIDEO.
      *
      * @return True if this player works with video.
@@ -103,18 +118,33 @@ public interface Player {
     boolean isVideoType();
 
     /**
+     * Convenience method to see if the player type is PLAYER_VIDEO_DVD.
+     *
+     * @return True if this player works with video.
+     */
+    boolean isVideoDVDType();
+
+    /**
+     * Convenience method to see if the player type is PLAYER_VIDEO_STREAM_UDP.
+     *
+     * @return True if this player works with video.
+     */
+    boolean isVideoStreamUdpType();
+
+    /**
+     * Convenience method to see if the player type is
+     * PLAYER_VIDEO_TRANSPORT_STREAM.
+     *
+     * @return True if this player works with video.
+     */
+    boolean isVideoTransportStreamType();
+
+    /**
      * Convenience method to see if the player type is PLAYER_VIDEO_WEB.
      *
      * @return True if this player works with video from the web.
      */
     boolean isVideoWebType();
-
-    /**
-     * Convenience method to see if the player type is PLAYER_AUDIO.
-     *
-     * @return True if this player works with audio.
-     */
-    boolean isAudioType();
 
     /**
      * Play the supplied URL (or URLs).
@@ -354,6 +384,18 @@ public interface Player {
      * @param f A Frame instance.
      */
     void setFrame(Frame f);
+
+    /**
+     * The idea is that Players can display their content on any sort of
+     * component but we want them to lay it out onto a JLayeredPane.  We
+     * then may want to get that layered pane to display some "popup"
+     * information.  We realize that a Player may NOT have control of
+     * laying out of the screen component so it is quite legal to return
+     * a null value here if the Player does not actually use the layered pane.
+     *
+     * @return A JLayeredPane instance if it exists.
+     */
+    JLayeredPane getLayeredPane();
 
     /**
      * Add a listener.

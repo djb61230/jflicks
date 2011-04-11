@@ -30,6 +30,7 @@ import javax.swing.Timer;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
+import org.jflicks.util.AWTUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
@@ -149,6 +150,12 @@ public class ChannelInfoWindow extends JWindow implements ActionListener {
         add(p);
         Timer t = new Timer(1000, this);
         setTimer(t);
+
+        // See if we can be translucent...
+        if (AWTUtil.isTranslucentSupported()) {
+
+            AWTUtil.setWindowOpacity(this, alpha);
+        }
     }
 
     private JXPanel getPanel() {

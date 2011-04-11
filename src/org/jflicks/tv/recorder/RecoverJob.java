@@ -43,6 +43,8 @@ import org.jflicks.job.JobEvent;
 public abstract class RecoverJob extends BaseDeviceJob implements
     ActionListener {
 
+    private static final int MAX_BLOCK_COUNT = 20;
+
     private FileInputStream fileInputStream;
     private FileChannel fileChannel;
     private long currentRead;
@@ -98,10 +100,10 @@ public abstract class RecoverJob extends BaseDeviceJob implements
                 System.out.println("We are probably blocking...");
                 int bcount = getBlockCount();
                 bcount++;
+                setBlockCount(bcount);
                 System.out.println("Times we failed on a block: " + bcount);
-                if (bcount < 20) {
+                if (bcount < MAX_BLOCK_COUNT) {
 
-                    setBlockCount(bcount);
                     if (fileChannel != null) {
 
                         try {
@@ -175,10 +177,16 @@ public abstract class RecoverJob extends BaseDeviceJob implements
                     currentRead = 0L;
                     lastRead = 0L;
                     fileInputStream.close();
-                    fileInputStream = new FileInputStream(getDevice());
-                    fileChannel = fileInputStream.getChannel();
-                    timer = new Timer(2000, this);
-                    timer.start();
+
+                    // Only start a new read and timer if we haven't
+                    // reached our max retry count.
+                    if (getBlockCount() < MAX_BLOCK_COUNT) {
+
+                        fileInputStream = new FileInputStream(getDevice());
+                        fileChannel = fileInputStream.getChannel();
+                        timer = new Timer(2000, this);
+                        timer.start();
+                    }
                 }
 
                 if (count > 0) {

@@ -29,6 +29,7 @@ import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import org.jflicks.util.AWTUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
@@ -149,6 +150,12 @@ public class SimpleInfoWindow extends JWindow implements ActionListener {
         add(p);
         Timer t = new Timer(1000, this);
         setTimer(t);
+
+        // See if we can be translucent...
+        if (AWTUtil.isTranslucentSupported()) {
+
+            AWTUtil.setWindowOpacity(this, alpha);
+        }
     }
 
     private JXPanel getPanel() {

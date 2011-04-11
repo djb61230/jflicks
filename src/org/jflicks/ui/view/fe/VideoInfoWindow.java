@@ -33,6 +33,7 @@ import org.jflicks.imagecache.ImageCache;
 import org.jflicks.nms.Video;
 import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
+import org.jflicks.util.AWTUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
@@ -176,6 +177,12 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
 
         Timer t = new Timer(1000, this);
         setTimer(t);
+
+        // See if we can be translucent...
+        if (AWTUtil.isTranslucentSupported()) {
+
+            AWTUtil.setWindowOpacity(this, alpha);
+        }
     }
 
     private JXPanel getPanel() {

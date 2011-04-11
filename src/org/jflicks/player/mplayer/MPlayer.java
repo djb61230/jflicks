@@ -30,6 +30,7 @@ import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -387,8 +388,12 @@ public class MPlayer extends BasePlayer {
 
                 Canvas can = getCanvas();
                 JPanel pan = getKeyPanel();
-                pan.setBounds(x, y, width, height);
-                win.add(pan, BorderLayout.CENTER);
+                JLayeredPane lpane = new JLayeredPane();
+                setLayeredPane(lpane);
+                pan.setBounds(0, 0, width, height);
+
+                lpane.add(pan, Integer.valueOf(100));
+                win.add(lpane, BorderLayout.CENTER);
 
                 Cursor cursor = Util.getNoCursor();
                 if (cursor != null) {

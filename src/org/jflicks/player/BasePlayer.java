@@ -24,6 +24,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Hashtable;
 import javax.swing.AbstractAction;
+import javax.swing.JLayeredPane;
 
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
@@ -43,6 +44,7 @@ public abstract class BasePlayer extends BaseLog implements Player {
     private PropertyChangeSupport propertyChangeSupport;
 
     private Frame frame;
+    private JLayeredPane layeredPane;
     private String type;
     private String title;
     private boolean playing;
@@ -201,15 +203,12 @@ public abstract class BasePlayer extends BaseLog implements Player {
     /**
      * {@inheritDoc}
      */
-    public boolean isVideoType() {
-        return (Player.PLAYER_VIDEO.equals(getType()));
+    public JLayeredPane getLayeredPane() {
+        return (layeredPane);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isVideoWebType() {
-        return (Player.PLAYER_VIDEO_WEB.equals(getType()));
+    protected void setLayeredPane(JLayeredPane p) {
+        layeredPane = p;
     }
 
     /**
@@ -217,6 +216,48 @@ public abstract class BasePlayer extends BaseLog implements Player {
      */
     public boolean isAudioType() {
         return (Player.PLAYER_AUDIO.equals(getType()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSlideshowType() {
+        return (Player.PLAYER_SLIDESHOW.equals(getType()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVideoType() {
+        return (Player.PLAYER_VIDEO.equals(getType()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVideoDVDType() {
+        return (Player.PLAYER_VIDEO_DVD.equals(getType()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVideoStreamUdpType() {
+        return (Player.PLAYER_VIDEO_STREAM_UDP.equals(getType()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVideoTransportStreamType() {
+        return (Player.PLAYER_VIDEO_TRANSPORT_STREAM.equals(getType()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVideoWebType() {
+        return (Player.PLAYER_VIDEO_WEB.equals(getType()));
     }
 
     /**
