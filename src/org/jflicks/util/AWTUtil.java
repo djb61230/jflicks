@@ -16,19 +16,23 @@
 */
 package org.jflicks.util;
 
-import java.awt.Component;
-import java.awt.Shape;
 import java.awt.Window;
 
 import com.sun.awt.AWTUtilities;
 
 /**
- * A set of methods that help doing AWT stuff.
+ * A set of methods that help doing AWT transparency stuff.  At this point
+ * this just echoes to the com.sun.awt.AWTUtilities class.  Figure it
+ * can be one place that uses the private class and we can fix it for
+ * Java 7.
  *
  * @author Doug Barnum
  * @version 1.0
  */
 public final class AWTUtil {
+
+    private AWTUtil() {
+    }
 
     /**
      * See if even transparent top-level windows are supported.
@@ -41,11 +45,23 @@ public final class AWTUtil {
             AWTUtilities.Translucency.TRANSLUCENT));
     }
 
+    /**
+     * Set the window opaque property.
+     *
+     * @param w A given Window instance.
+     * @param b True or false.
+     */
     public static void setWindowOpaque(Window w, boolean b) {
 
         AWTUtilities.setWindowOpaque(w, b);
     }
 
+    /**
+     * Set the window opacity by supplying a float value.
+     *
+     * @param w A given Window instance.
+     * @param f The value of opacity (0.0 - 1.0)
+     */
     public static void setWindowOpacity(Window w, float f) {
 
         AWTUtilities.setWindowOpacity(w, f);
