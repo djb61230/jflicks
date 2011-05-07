@@ -51,7 +51,7 @@ public class FFmpegScreenshotWorker extends BaseWorker implements JobListener {
 
         if (r != null) {
 
-            FFmpegScreenshotJob job = new FFmpegScreenshotJob(r);
+            FFmpegScreenshotJob job = new FFmpegScreenshotJob(r, this);
             job.addJobListener(this);
             JobContainer jc = JobManager.getJobContainer(job);
             addJobContainer(jc);
@@ -66,15 +66,14 @@ public class FFmpegScreenshotWorker extends BaseWorker implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("FFmpegScreenshotWorker: completed");
+            log(INFO, "FFmpegScreenshotWorker: completed");
             FFmpegScreenshotJob job = (FFmpegScreenshotJob) event.getSource();
             removeJobContainer(job);
             fireWorkerEvent(WorkerEvent.COMPLETE, job.getRecording(), true);
 
         } else {
 
-            //System.out.println("FFmpegScreenshotWorker: "
-            //    + event.getMessage());
+            //log(DEBUG, "FFmpegScreenshotWorker: " + event.getMessage());
         }
     }
 

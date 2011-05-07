@@ -203,6 +203,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-tv-postproc-worker-comrat.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-tv-postproc-worker-mediainfo.bnd"
             output="${bundle}"
         />

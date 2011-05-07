@@ -25,6 +25,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Recording;
+import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
 
 /**
@@ -41,10 +42,11 @@ public class MediainfoJob extends BaseWorkerJob implements JobListener {
      * Constructor with one required argument.
      *
      * @param r A Recording to check for commercials.
+     * @param bw The Worker associated with this Job.
      */
-    public MediainfoJob(Recording r) {
+    public MediainfoJob(Recording r, BaseWorker bw) {
 
-        super(r);
+        super(r, bw);
 
         // Lets get 30 seconds of video out there before we check.
         //setSleepTime(30000);
@@ -76,7 +78,7 @@ public class MediainfoJob extends BaseWorkerJob implements JobListener {
             setSystemJob(job);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
-            System.out.println("started: " + job.getCommand());
+            log(BaseWorker.INFO, "started: " + job.getCommand());
             setTerminate(false);
 
         } else {
@@ -225,8 +227,8 @@ public class MediainfoJob extends BaseWorkerJob implements JobListener {
                     }
 
                     // Now check the audio...
-                    System.out.println("parsed format: <" + format + ">");
-                    System.out.println("parsed channels: <" + channels + ">");
+                    log(BaseWorker.INFO, "parsed format: <" + format + ">");
+                    log(BaseWorker.INFO, "parsed channels: <" + channels + ">");
                     if ((format != null) && (channels != null)) {
 
                         if (format.startsWith("AC-3")) {
@@ -242,16 +244,13 @@ public class MediainfoJob extends BaseWorkerJob implements JobListener {
                         } else {
 
                             // Not sure what to set here....
+                            log(BaseWorker.INFO, "Not setting sound...");
                         }
                     }
                 }
             }
 
             stop();
-
-        } else {
-
-            //System.out.println(event.getMessage());
         }
     }
 

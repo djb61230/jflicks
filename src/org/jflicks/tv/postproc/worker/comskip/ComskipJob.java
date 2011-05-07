@@ -25,6 +25,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
+import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
 import org.jflicks.util.Util;
 
@@ -41,9 +42,9 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
      *
      * @param r A Recording to check for commercials.
      */
-    public ComskipJob(Recording r) {
+    public ComskipJob(Recording r, BaseWorker bw) {
 
-        super(r);
+        super(r, bw);
     }
 
     /**
@@ -72,7 +73,7 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
             jc.start();
-            System.out.println("started: " + job.getCommand());
+            log(BaseWorker.INFO, "started: " + job.getCommand());
             setTerminate(false);
 
         } else {
@@ -125,31 +126,28 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
                     File file = new File(path + ".log");
                     boolean delresult = file.delete();
                     if (!delresult) {
-                        System.out.println(file.getPath() + " not found");
+                        log(BaseWorker.INFO, file.getPath() + " not found");
                     }
 
                     file = new File(path + ".logo.txt");
                     delresult = file.delete();
                     if (!delresult) {
-                        System.out.println(file.getPath() + " not found");
+                        log(BaseWorker.INFO, file.getPath() + " not found");
                     }
 
                     file = new File(path + ".txt");
                     delresult = file.delete();
                     if (!delresult) {
-                        System.out.println(file.getPath() + " not found");
+                        log(BaseWorker.INFO, file.getPath() + " not found");
                     }
 
                     file = new File(path + ".edl");
-                    System.out.println("setting commercials...");
+                    log(BaseWorker.INFO, "setting commercials...");
                     r.setCommercials(Commercial.fromEDL(file));
                 }
             }
 
             setTerminate(true);
-
-        } else {
-            //System.out.println(event.getMessage());
         }
     }
 

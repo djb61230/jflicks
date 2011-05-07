@@ -15,6 +15,7 @@ Import-Package:\
  org.jflicks.nms;version="1.0.0",\
  org.jflicks.tv;version="1.0.0",\
  org.jflicks.tv.postproc;version="1.0.0",\
+ org.jflicks.tv.postproc.worker;version="1.0.0",\
  org.jflicks.tv.recorder;version="1.0.0",\
  org.jflicks.tv.scheduler;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\

@@ -24,6 +24,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Recording;
+import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
 
 /**
@@ -38,10 +39,11 @@ public class ToMp4Job extends BaseWorkerJob implements JobListener {
      * Constructor with one required argument.
      *
      * @param r A Recording to check for commercials.
+     * @param bw The Worker associated with this job.
      */
-    public ToMp4Job(Recording r) {
+    public ToMp4Job(Recording r, BaseWorker bw) {
 
-        super(r);
+        super(r, bw);
     }
 
     private File computeFile(Recording r, boolean hidden) {
@@ -75,7 +77,7 @@ public class ToMp4Job extends BaseWorkerJob implements JobListener {
             File hidden = computeFile(r, true);
             if ((hidden != null) && (hidden.exists())) {
 
-                System.out.println("moving " + hidden.getPath() + " to "
+                log(BaseWorker.INFO, "moving " + hidden.getPath() + " to "
                     + computeFile(r, false));
                 hidden.renameTo(computeFile(r, false));
                 r.setIndexedExtension("mp4");
@@ -93,7 +95,7 @@ public class ToMp4Job extends BaseWorkerJob implements JobListener {
 
                 if (!hidden.delete()) {
 
-                    System.out.println("Failed to delete hidden file.");
+                    log(BaseWorker.INFO, "Failed to delete hidden file.");
                 }
             }
         }
@@ -116,7 +118,7 @@ public class ToMp4Job extends BaseWorkerJob implements JobListener {
             setSystemJob(job);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
-            System.out.println("started: " + job.getCommand());
+            log(BaseWorker.INFO, "started: " + job.getCommand());
             setTerminate(false);
 
         } else {
@@ -168,20 +170,14 @@ public class ToMp4Job extends BaseWorkerJob implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("@@@@@@@@@@: Finished the ffmpeg to mp4");
             SystemJob job = getSystemJob();
             if ((job != null) && (job.getExitValue() == 0)) {
-                System.out.println("@@@@@@@@@@: Attempting to move");
                 move();
             } else {
-                System.out.println("@@@@@@@@@@: Attempting to remove");
                 remove();
             }
 
             stop();
-
-        } else {
-            //System.out.println(event.getMessage());
         }
     }
 

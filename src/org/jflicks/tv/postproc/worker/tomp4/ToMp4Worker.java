@@ -53,7 +53,7 @@ public class ToMp4Worker extends BaseWorker implements JobListener {
 
         if (r != null) {
 
-            ToMp4Job job = new ToMp4Job(r);
+            ToMp4Job job = new ToMp4Job(r, this);
             job.addJobListener(this);
             JobContainer jc = JobManager.getJobContainer(job);
             addJobContainer(jc);
@@ -68,15 +68,14 @@ public class ToMp4Worker extends BaseWorker implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("ToMp4Worker: completed");
+            log(INFO, "ToMp4Worker: completed");
             ToMp4Job job = (ToMp4Job) event.getSource();
             removeJobContainer(job);
             fireWorkerEvent(WorkerEvent.COMPLETE, job.getRecording(), true);
 
         } else {
 
-            //System.out.println("ToMp4Worker: "
-            //    + event.getMessage());
+            //log(DEBUG, "ToMp4Worker: " + event.getMessage());
         }
     }
 

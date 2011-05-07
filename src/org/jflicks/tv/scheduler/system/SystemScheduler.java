@@ -30,7 +30,9 @@ import org.jflicks.tv.Recording;
 import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
+import org.jflicks.tv.Task;
 import org.jflicks.tv.postproc.PostProc;
+import org.jflicks.tv.postproc.worker.Worker;
 import org.jflicks.tv.scheduler.BaseScheduler;
 import org.jflicks.tv.scheduler.RecordedShow;
 
@@ -215,10 +217,174 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
 
                 result = os.toArray(new RecordingRule[os.size()]);
                 Arrays.sort(result);
+
+                // At this point we should reconcile the current
+                // workers with the Task definitions of the RecordingRule
+                // instances.  If something needs to change it should be
+                // written out to disk.  This *could* be bad for users if
+                // using workers or more often they add them.  This will
+                // dynamically find them without them having to fix it
+                // manually.
+                if (result != null) {
+
+                    for (int i = 0; i < result.length; i++) {
+                        reconcileRecordingRule(result[i]);
+                    }
+                }
             }
         }
 
         return (result);
+    }
+
+    private int contains(Task[] array, Task t) {
+
+        int result = -1;
+
+        if ((array != null) && (t != null)) {
+
+            String title = t.getTitle();
+            if (title != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    if (title.equals(array[i].getTitle())) {
+
+                        result = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private boolean hasTask(Worker[] array, Task t) {
+
+        boolean result = false;
+
+        if ((array != null) && (t != null)) {
+
+            String title = t.getTitle();
+            if (title != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    if (title.equals(array[i].getTitle())) {
+
+                        result = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private boolean hasWorker(Task[] array, Worker w) {
+
+        boolean result = false;
+
+        if ((array != null) && (w != null)) {
+
+            String title = w.getTitle();
+            if (title != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    if (title.equals(array[i].getTitle())) {
+
+                        result = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private void reconcileRecordingRule(RecordingRule rr) {
+
+        NMS n = getNMS();
+        if ((n != null) && (rr != null)) {
+
+            PostProc pp = n.getPostProc();
+            if (pp != null) {
+
+                Worker[] warray = pp.getWorkers();
+                Task[] tarray = rr.getTasks();
+                if ((warray != null) && (tarray != null)) {
+
+                    ArrayList<Worker> wmissing = new ArrayList<Worker>();
+                    for (int i = 0; i < warray.length; i++) {
+
+                        if (!hasWorker(tarray, warray[i])) {
+
+                            wmissing.add(warray[i]);
+                        }
+                    }
+
+                    ArrayList<Task> tmissing = new ArrayList<Task>();
+                    for (int i = 0; i < tarray.length; i++) {
+
+                        if (!hasTask(warray, tarray[i])) {
+
+                            tmissing.add(tarray[i]);
+                        }
+                    }
+
+                    // At this point we have lists that have the
+                    // "mis-matches".  If either has anything in it
+                    // then we need to create a new Task array and
+                    // make it coincide with the Worker array.
+                    if ((wmissing.size() > 0) || (tmissing.size() > 0)) {
+
+                        // A fresh set of Tasks at their default settings.
+                        // However we don't want to lose a setting the user
+                        // has changed so we want to pick and choose from
+                        // the old array and new array.  Only use new array
+                        // if it is new to us.
+                        ArrayList<Task> tasklist = new ArrayList<Task>();
+                        Task[] fresh = n.getTasks();
+                        if ((fresh != null) && (fresh.length > 0)) {
+
+                            for (int i = 0; i < fresh.length; i++) {
+
+                                int index = contains(tarray, fresh[i]);
+                                if (index != -1) {
+
+                                    tasklist.add(tarray[index]);
+
+                                } else {
+
+                                    tasklist.add(fresh[i]);
+                                }
+                            }
+                        }
+
+                        // Update the proper tasks.
+                        Task[] tasks = null;
+                        if (tasklist.size() > 0) {
+
+                            tasks = tasklist.toArray(new Task[tasklist.size()]);
+                        }
+
+                        if (tasks != null) {
+
+                            Arrays.sort(tasks);
+                        }
+
+                        log(INFO, "We need to update the RecordingRule since "
+                            + "the tasks have changed.");
+                        rr.setTasks(tasks);
+                        addRecordingRule(rr);
+                    }
+                }
+            }
+        }
     }
 
     private RecordingRule getRecordingRuleById(String id) {

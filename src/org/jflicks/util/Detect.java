@@ -365,7 +365,10 @@ public final class Detect {
             new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         crop.setRGB(0, 0, w, h, data, 0, w);
 
-        ImageIO.write(crop, "png", new File(fname + "-crop.png"));
+        if (verbose) {
+
+            ImageIO.write(crop, "png", new File(fname + "-crop.png"));
+        }
 
         // Not lets turn non-grayscale pixels to white.
         for (int i = 0; i < data.length; i++) {
@@ -413,7 +416,10 @@ public final class Detect {
             new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         white.setRGB(0, 0, w, h, data, 0, w);
 
-        ImageIO.write(white, "png", new File(fname + "-white.png"));
+        if (verbose) {
+
+            ImageIO.write(white, "png", new File(fname + "-white.png"));
+        }
 
         Line2D.Double[] lines = findLines(data, w, h, min);
         if (lines != null) {

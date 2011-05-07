@@ -53,7 +53,7 @@ public class ToMkvWorker extends BaseWorker implements JobListener {
 
         if (r != null) {
 
-            ToMkvJob job = new ToMkvJob(r);
+            ToMkvJob job = new ToMkvJob(r, this);
             job.addJobListener(this);
             JobContainer jc = JobManager.getJobContainer(job);
             addJobContainer(jc);
@@ -68,15 +68,14 @@ public class ToMkvWorker extends BaseWorker implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("ToMkvWorker: completed");
+            log(INFO, "ToMkvWorker: completed");
             ToMkvJob job = (ToMkvJob) event.getSource();
             removeJobContainer(job);
             fireWorkerEvent(WorkerEvent.COMPLETE, job.getRecording(), true);
 
         } else {
 
-            //System.out.println("ToMkvWorker: "
-            //    + event.getMessage());
+            //log(DEBUG, "ToMkvWorker: " + event.getMessage());
         }
     }
 

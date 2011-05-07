@@ -24,6 +24,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Recording;
+import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
 
 /**
@@ -34,16 +35,14 @@ import org.jflicks.tv.postproc.worker.BaseWorkerJob;
  */
 public class ToMkvJob extends BaseWorkerJob implements JobListener {
 
-    private long after;
-
     /**
      * Constructor with one required argument.
      *
      * @param r A Recording to check for commercials.
      */
-    public ToMkvJob(Recording r) {
+    public ToMkvJob(Recording r, BaseWorker bw) {
 
-        super(r);
+        super(r, bw);
     }
 
     private File computeFile(Recording r, boolean hidden) {
@@ -77,7 +76,7 @@ public class ToMkvJob extends BaseWorkerJob implements JobListener {
             File hidden = computeFile(r, true);
             if ((hidden != null) && (hidden.exists())) {
 
-                System.out.println("moving " + hidden.getPath() + " to "
+                log(BaseWorker.INFO, "moving " + hidden.getPath() + " to "
                     + computeFile(r, false));
                 hidden.renameTo(computeFile(r, false));
                 r.setIndexedExtension("mkv");
@@ -95,7 +94,7 @@ public class ToMkvJob extends BaseWorkerJob implements JobListener {
 
                 if (!hidden.delete()) {
 
-                    System.out.println("Failed to delete hidden file.");
+                    log(BaseWorker.INFO, "Failed to delete hidden file.");
                 }
             }
         }
@@ -121,7 +120,7 @@ public class ToMkvJob extends BaseWorkerJob implements JobListener {
             setSystemJob(job);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
-            System.out.println("started: " + job.getCommand());
+            log(BaseWorker.INFO, "started: " + job.getCommand());
             setTerminate(false);
 
         } else {
@@ -173,20 +172,14 @@ public class ToMkvJob extends BaseWorkerJob implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("@@@@@@@@@@: Finished the avidemux2_cli to mkv");
             SystemJob job = getSystemJob();
             if ((job != null) && (job.getExitValue() == 0)) {
-                System.out.println("@@@@@@@@@@: Attempting to move");
                 move();
             } else {
-                System.out.println("@@@@@@@@@@: Attempting to remove");
                 remove();
             }
 
             stop();
-
-        } else {
-            //System.out.println(event.getMessage());
         }
     }
 

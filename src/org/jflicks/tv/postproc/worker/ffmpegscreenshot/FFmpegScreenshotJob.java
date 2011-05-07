@@ -22,6 +22,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Recording;
+import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
 
 /**
@@ -38,10 +39,11 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
      * Constructor with one required argument.
      *
      * @param r A Recording to check for commercials.
+     * @param bw The Worker associated with this Job.
      */
-    public FFmpegScreenshotJob(Recording r) {
+    public FFmpegScreenshotJob(Recording r, BaseWorker bw) {
 
-        super(r);
+        super(r, bw);
 
         // Lets get 45 seconds of video out there before we check.
         //setSleepTime(45000);
@@ -76,7 +78,7 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
             setSystemJob(job);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
-            System.out.println("started: " + job.getCommand());
+            log(BaseWorker.INFO, "started: " + job.getCommand());
             setTerminate(false);
 
         } else {
@@ -137,9 +139,6 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
             // Recording.  Clients should still get notified and be able
             // to update their screenshot.
             stop();
-
-        } else {
-            //System.out.println(event.getMessage());
         }
     }
 

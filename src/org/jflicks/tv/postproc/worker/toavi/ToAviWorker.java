@@ -53,7 +53,7 @@ public class ToAviWorker extends BaseWorker implements JobListener {
 
         if (r != null) {
 
-            ToAviJob job = new ToAviJob(r);
+            ToAviJob job = new ToAviJob(r, this);
             job.addJobListener(this);
             JobContainer jc = JobManager.getJobContainer(job);
             addJobContainer(jc);
@@ -68,15 +68,14 @@ public class ToAviWorker extends BaseWorker implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("ToAviWorker: completed");
+            log(INFO, "ToAviWorker: completed");
             ToAviJob job = (ToAviJob) event.getSource();
             removeJobContainer(job);
             fireWorkerEvent(WorkerEvent.COMPLETE, job.getRecording(), true);
 
         } else {
 
-            //System.out.println("ToAviWorker: "
-            //    + event.getMessage());
+            //log(DEBUG, "ToAviWorker: " + event.getMessage());
         }
     }
 

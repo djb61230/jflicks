@@ -1,4 +1,4 @@
-module=org.jflicks.tv.postproc.worker.comskip
+module=org.jflicks.tv.postproc.worker.comrat
 custom=true
 
 Bundle-Version: 1.0.0

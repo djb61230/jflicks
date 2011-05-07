@@ -50,7 +50,7 @@ public class ComskipWorker extends BaseWorker implements JobListener {
 
         if (r != null) {
 
-            ComskipJob job = new ComskipJob(r);
+            ComskipJob job = new ComskipJob(r, this);
             job.addJobListener(this);
             JobContainer jc = JobManager.getJobContainer(job);
             addJobContainer(jc);
@@ -65,14 +65,14 @@ public class ComskipWorker extends BaseWorker implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("ComskipWorker: completed");
+            log(INFO, "ComskipWorker: completed");
             ComskipJob job = (ComskipJob) event.getSource();
             removeJobContainer(job);
             fireWorkerEvent(WorkerEvent.COMPLETE, job.getRecording(), true);
 
         } else {
 
-            //System.out.println("ComskipWorker: " + event.getMessage());
+            //log(DEBUG, "ComskipWorker: " + event.getMessage());
         }
     }
 

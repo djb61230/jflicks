@@ -32,15 +32,17 @@ public abstract class BaseWorkerJob extends AbstractJob {
     private Recording recording;
     private SystemJob systemJob;
     private JobContainer jobContainer;
+    private BaseWorker baseWorker;
 
     /**
      * Constructor with one required argument.
      *
      * @param r A Recording to process.
      */
-    public BaseWorkerJob(Recording r) {
+    public BaseWorkerJob(Recording r, BaseWorker bw) {
 
         setRecording(r);
+        setBaseWorker(bw);
     }
 
     /**
@@ -99,6 +101,41 @@ public abstract class BaseWorkerJob extends AbstractJob {
      */
     public void setJobContainer(JobContainer j) {
         jobContainer = j;
+    }
+
+    /**
+     * It's handy for the Job to be able to access the Worker that it is
+     * associated.
+     *
+     * @return A BaseWorker instance.
+     */
+    public BaseWorker getBaseWorker() {
+        return (baseWorker);
+    }
+
+    /**
+     * It's handy for the Job to be able to access the Worker that it is
+     * associated.
+     *
+     * @param bw A BaseWorker instance.
+     */
+    public void setBaseWorker(BaseWorker bw) {
+        baseWorker = bw;
+    }
+
+    /**
+     * Convenience method to log using the BaseWorker.
+     *
+     * @param level The log level.
+     * @param message The message to log.
+     */
+    public void log(int level, String message) {
+
+        BaseWorker bw = getBaseWorker();
+        if (bw != null) {
+
+            bw.log(level, message);
+        }
     }
 
 }
