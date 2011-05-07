@@ -181,6 +181,27 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
     /**
      * {@inheritDoc}
      */
+    public String getIndexerName() {
+
+        String result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(
+                NMSConstants.RECORDING_INDEXER_NAME);
+            if (nv != null) {
+
+                result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getExtension() {
         return (extension);
     }

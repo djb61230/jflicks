@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.postproc.worker.mediainfo;
+package org.jflicks.tv.postproc.worker.tomkv;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
@@ -25,22 +25,24 @@ import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.WorkerEvent;
 
 /**
- * Worker implementation that can flag a Recording using the comskip
- * program.
+ * Worker implementation that can convert a transport stream mpg file to
+ * an mkv indexed file.  This should improve playback especially for
+ * seeking.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class MediainfoWorker extends BaseWorker implements JobListener {
+public class ToMkvWorker extends BaseWorker implements JobListener {
 
     /**
      * Simple default constructor.
      */
-    public MediainfoWorker() {
+    public ToMkvWorker() {
 
-        setTitle("MediainfoWorker");
-        setDescription("Display video properties in 'Watch Recordings'");
+        setTitle("ToMkvWorker");
+        setDescription("Create an mkv file from an TS mpg file.");
         setHeavy(false);
+        setDefaultRun(false);
         setUserSelectable(false);
     }
 
@@ -51,7 +53,7 @@ public class MediainfoWorker extends BaseWorker implements JobListener {
 
         if (r != null) {
 
-            MediainfoJob job = new MediainfoJob(r);
+            ToMkvJob job = new ToMkvJob(r);
             job.addJobListener(this);
             JobContainer jc = JobManager.getJobContainer(job);
             addJobContainer(jc);
@@ -66,14 +68,15 @@ public class MediainfoWorker extends BaseWorker implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("MediainfoWorker: completed");
-            MediainfoJob job = (MediainfoJob) event.getSource();
+            System.out.println("ToMkvWorker: completed");
+            ToMkvJob job = (ToMkvJob) event.getSource();
             removeJobContainer(job);
             fireWorkerEvent(WorkerEvent.COMPLETE, job.getRecording(), true);
 
         } else {
 
-            //System.out.println("MediainfoWorker: " + event.getMessage());
+            //System.out.println("ToMkvWorker: "
+            //    + event.getMessage());
         }
     }
 

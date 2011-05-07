@@ -19,7 +19,6 @@ package org.jflicks.ui.view.fe.screen.recording;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
@@ -34,7 +33,6 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.KeyStroke;
-import javax.swing.Timer;
 
 import org.jflicks.imagecache.ImageCache;
 import org.jflicks.mvc.View;
@@ -51,6 +49,7 @@ import org.jflicks.ui.view.fe.RecordingInfoWindow;
 import org.jflicks.ui.view.fe.RecordingProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.ui.view.fe.screen.ScreenEvent;
+import org.jflicks.util.AWTUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.animation.timing.Animator;
@@ -82,6 +81,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     private Recording currentRecording;
     private boolean restoreState;
     private Animator screenShotAnimator;
+    private boolean playingVideo;
 
     /**
      * Simple empty constructor.
@@ -146,6 +146,26 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 log(DEBUG, "timeline: " + array[i].intValue());
             }
         }
+    }
+
+    @Override
+    public Player getPlayer() {
+
+        System.out.println("RecordingScreen.getPlayer()");
+        Player result = null;
+
+        if (isPlayingVideo()) {
+
+            System.out.println("RecordingScreen.getPlayer() - VIDEO");
+            result = getPlayer(Player.PLAYER_VIDEO);
+
+        } else {
+
+            System.out.println("RecordingScreen.getPlayer() - TS");
+            result = getPlayer(Player.PLAYER_VIDEO_TRANSPORT_STREAM);
+        }
+
+        return (result);
     }
 
     /**
@@ -488,6 +508,14 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         }
     }
 
+    private boolean isPlayingVideo() {
+        return (playingVideo);
+    }
+
+    private void setPlayingVideo(boolean b) {
+        playingVideo = b;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -550,9 +578,21 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             pane.add(ssp, Integer.valueOf(100));
 
             FrontEndView fev = (FrontEndView) getView();
-            setRecordingInfoWindow(new RecordingInfoWindow(fev.getPosition(), 8,
-                getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
-                getSmallFont(), getMediumFont()));
+            if (AWTUtil.isTranslucentSupported()) {
+
+                setRecordingInfoWindow(new RecordingInfoWindow(
+                    fev.getFrame(),
+                    fev.getPosition(), 8, getInfoColor(),
+                    getPanelColor(), (float) getPanelAlpha(),
+                    getSmallFont(), getMediumFont()));
+
+            } else {
+
+                setRecordingInfoWindow(new RecordingInfoWindow(
+                    fev.getPosition(), 8, getInfoColor(),
+                    getPanelColor(), (float) getPanelAlpha(),
+                    getSmallFont(), getMediumFont()));
+            }
 
             setDefaultBackgroundImage(
                 Util.resize(getDefaultBackgroundImage(), width, height));
@@ -685,20 +725,20 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         String result = null;
 
+        setPlayingVideo(false);
         if (r != null) {
 
+            // Default to the path property.
             result = r.getPath();
-            File tmp = new File(result + ".m2p");
-            if ((tmp.exists()) && (tmp.isFile())) {
 
-                result = result + ".m2p";
+            String iext = r.getIndexedExtension();
+            if (iext != null) {
 
-            } else {
-
-                tmp = new File(result + ".mp4");
+                File tmp = new File(result + "." + r.getIndexedExtension());
                 if ((tmp.exists()) && (tmp.isFile())) {
 
-                    result = result + ".mp4";
+                    result = tmp.getPath();
+                    setPlayingVideo(true);
                 }
             }
         }
@@ -978,33 +1018,6 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     updateLengthHint(cr, p);
                     int diff = next - current;
                     p.seek(diff);
-                    //p.seekPosition(next);
-
-                    // Now at this point we will be at the key frame
-                    // BEFORE where we really want to be.  Let's try an
-                    // offset seek to see if we get closer.
-                    final Player tp = p;
-                    final int tnext = next;
-                    ActionListener taskPerformer = new ActionListener() {
-                        public void actionPerformed(ActionEvent evt) {
-
-                            PlayState tps = tp.getPlayState();
-                            if (tps != null) {
-
-                                int tcurrent = (int) tps.getTime();
-                                int diff = tnext - tcurrent;
-                                log(DEBUG, "tcurrent: " + tcurrent);
-                                log(DEBUG, "tnext: " + tnext);
-                                log(DEBUG, "diff: " + diff);
-                                if (Math.abs(diff) > 4) {
-                                    tp.seek(diff);
-                                }
-                            }
-                        }
-                    };
-                    Timer skip = new Timer(1000, taskPerformer);
-                    skip.setRepeats(false);
-                    skip.start();
 
                 } else {
 
@@ -1097,6 +1110,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         if ((rllp != null) && (event.getSource() == getPlayButtonPanel())) {
 
             Recording r = rllp.getSelectedRecording();
+            String recpath = computeRecordingPath(r);
             Player p = getPlayer();
             if ((p != null) && (!p.isPlaying()) && (r != null)) {
 
@@ -1126,7 +1140,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                     p.setFrame(Util.findFrame(this));
                     addBlankPanel();
-                    p.play(computeRecordingPath(r));
+                    p.play(recpath);
 
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
 
@@ -1151,10 +1165,9 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     updateLengthHint(r, p);
 
                     Bookmark bm = getBookmark(r.getId());
-                    String rpath = r.getPath();
-                    if ((rpath != null) && (bm != null)) {
+                    if (bm != null) {
 
-                        if (rpath.endsWith(".mkv")) {
+                        if (isPlayingVideo()) {
 
                             bm.setPreferTime(true);
 
@@ -1166,7 +1179,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         controlKeyboard(false);
                         p.setFrame(Util.findFrame(this));
                         addBlankPanel();
-                        p.play(rpath, bm);
+                        p.play(recpath, bm);
                     }
 
                 } else if (DELETE.equals(pbp.getSelectedButton())) {
@@ -1393,6 +1406,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         }
                         if (isSelectedRecordingNow()) {
                             blist.add(STOP_RECORDING);
+                            blist.add(DELETE);
                         } else {
                             blist.add(DELETE);
                             blist.add(DELETE_ALLOW_RERECORDING);

@@ -102,22 +102,26 @@ public abstract class RecoverJob extends BaseDeviceJob implements
                 bcount++;
                 setBlockCount(bcount);
                 System.out.println("Times we failed on a block: " + bcount);
-                if (bcount < MAX_BLOCK_COUNT) {
 
-                    if (fileChannel != null) {
+                // We always want to close...
+                if (fileChannel != null) {
 
-                        try {
+                    try {
 
-                            fileChannel.close();
-                            fileChannel = null;
+                        fileChannel.close();
+                        fileChannel = null;
 
-                        } catch (IOException ex) {
+                    } catch (IOException ex) {
 
-                            System.out.println("exception on interupt close");
-                        }
+                        System.out.println("exception on interupt close");
                     }
 
                 } else {
+
+                    System.out.println("Can't close, fileChannel is null!");
+                }
+
+                if (bcount > MAX_BLOCK_COUNT) {
 
                     System.out.println("Time to give up!!");
                     stop();
@@ -143,6 +147,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
      */
     public void run() {
 
+        Timer timer = null;
         ByteBuffer bb = ByteBuffer.allocate(1024);
         byte[] buffer = bb.array();
 
@@ -153,7 +158,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
             fileChannel = fileInputStream.getChannel();
             currentRead = 0L;
             lastRead = 0L;
-            Timer timer = new Timer(2000, this);
+            timer = new Timer(2000, this);
             timer.start();
 
             while (!isTerminate()) {
@@ -162,16 +167,11 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                     currentRead = System.currentTimeMillis();
                     bb.rewind();
-
-                    // We only want to block on this read if in fact
-                    // we are not quitting because of some read error.
-                    if (!isTerminate()) {
-
-                        count = fileChannel.read(bb);
-                    }
+                    count = fileChannel.read(bb);
 
                 } catch (AsynchronousCloseException ex) {
 
+                    System.out.println("We have been interupted!");
                     timer.stop();
                     count = 0;
                     currentRead = 0L;
@@ -184,8 +184,15 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                         fileInputStream = new FileInputStream(getDevice());
                         fileChannel = fileInputStream.getChannel();
-                        timer = new Timer(2000, this);
-                        timer.start();
+
+                        // Let's up the delay by a second - perhaps
+                        // recovery will happen.
+                        timer.setDelay(timer.getDelay() + 1000);
+                        timer.restart();
+
+                    } else {
+
+                        timer.removeActionListener(this);
                     }
                 }
 
@@ -202,6 +209,8 @@ public abstract class RecoverJob extends BaseDeviceJob implements
         } catch (Exception ex) {
 
             System.out.println("RecoverJob: " + ex.getMessage());
+            timer.stop();
+            close();
         }
 
         fireJobEvent(JobEvent.COMPLETE);

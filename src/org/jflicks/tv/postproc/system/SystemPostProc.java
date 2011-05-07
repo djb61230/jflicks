@@ -208,6 +208,29 @@ public class SystemPostProc extends BasePostProc {
     /**
      * {@inheritDoc}
      */
+    public void addProcessing(String s, Recording r) {
+
+        if ((s != null) && (r != null)) {
+
+            Worker w = getWorkerByTitle(s);
+            if (w != null) {
+
+                log(INFO, "Time to queue up a worker...");
+                WorkerRecording wr = new WorkerRecording();
+                wr.setWorker(w);
+                wr.setRecording(r);
+                if (w.isHeavy()) {
+                    addHeavyWorkerRecording(wr);
+                } else {
+                    addLightWorkerRecording(wr);
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void workerUpdate(WorkerEvent event) {
 
         if (event.isUpdateRecording()) {

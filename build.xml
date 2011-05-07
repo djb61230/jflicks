@@ -221,6 +221,33 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-tv-postproc-worker-tomp4.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-postproc-worker-toavi.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-postproc-worker-tomkv.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-metadata-themoviedb.bnd"
             output="${bundle}"
         />
@@ -613,6 +640,15 @@
         />
 
         <bnd
+            classpath="${lib}/platform.jar"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-platform.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
             classpath="${lib}/swingx-1.6.jar"
             eclipse="false"
             failok="false"
@@ -882,6 +918,34 @@
             <arg value="/dev/video1"/>
             <arg value="-s"/>
             <arg value="60"/>
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-detect" depends="build">
+
+        <input message="path" addproperty="arg1"
+            defaultvalue="/home/djb/dtest/justified"/>
+        <input message="type: " addproperty="arg2" defaultvalue="0"/>
+        <input message="fudge: " addproperty="arg3" defaultvalue="10"/>
+        <input message="extension: " addproperty="arg4" defaultvalue="jpg"/>
+        <input message="verbose: " addproperty="arg5" defaultvalue="false"/>
+        <java classname="org.jflicks.util.Detect" fork="true">
+
+            <arg value="-path"/>
+            <arg value="${arg1}"/>
+            <arg value="-type"/>
+            <arg value="${arg2}"/>
+            <arg value="-fudge"/>
+            <arg value="${arg3}"/>
+            <arg value="-extension"/>
+            <arg value="${arg4}"/>
+            <arg value="-verbose"/>
+            <arg value="${arg5}"/>
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>

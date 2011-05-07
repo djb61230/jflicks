@@ -45,4 +45,5 @@ Import-Package:\
  javax.swing.border,\
  javax.swing.event,\
  javax.swing.text,\
- javax.imageio
+ javax.imageio,\
+ com.sun.jna.platform

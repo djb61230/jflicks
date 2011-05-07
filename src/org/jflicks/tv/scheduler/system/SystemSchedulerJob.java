@@ -262,6 +262,14 @@ public class SystemSchedulerJob extends AbstractJob
                     ss.updateRecording(rec);
                     removeRecording(r);
                     r.removePropertyChangeListener("Recording", this);
+
+                    // Now we want to do any indexing of the recording
+                    // if so configured.
+                    String iname = r.getIndexerName();
+                    if (iname != null) {
+
+                        ss.indexRecording(iname, rec);
+                    }
                 }
             }
         }

@@ -298,6 +298,14 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
                             NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME);
                         ccnv.setType(NameValue.STRING_TYPE);
                         bc.addNameValue(ccnv);
+
+                        // A recording indexer.
+                        NameValue rinv = new NameValue();
+                        rinv.setName(NMSConstants.RECORDING_INDEXER_NAME);
+                        rinv.setDescription(
+                            NMSConstants.RECORDING_INDEXER_NAME);
+                        rinv.setType(NameValue.STRING_TYPE);
+                        bc.addNameValue(rinv);
                         r.write(bc);
                     }
                 }

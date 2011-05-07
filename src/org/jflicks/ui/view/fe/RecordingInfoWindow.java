@@ -21,8 +21,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
@@ -43,6 +45,8 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
+
+import com.sun.jna.platform.WindowUtils;
 
 /**
  * This is our "banner" window showing the state of the currently running
@@ -79,6 +83,39 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
     /**
      * Simple constructor with our required arguments.
      *
+     * @param w The parent window.
+     * @param r The Rectangle defining the location of the main window.
+     * use the "poster" image without scaling it ugly.
+     * @param seconds the number of seconds to leave the banner visible.
+     * @param normal The text color to match the theme.
+     * @param backlight The background color to match the theme.
+     * @param alpha The translucent level for the window so the back image
+     * shows through.
+     * @param small A small font to use.
+     * @param large A large font to use.
+     */
+    public RecordingInfoWindow(Window w, Rectangle r, int seconds, Color normal,
+        Color backlight, float alpha, Font small, Font large) {
+
+        super(w, WindowUtils.getAlphaCompatibleGraphicsConfiguration());
+
+        initialize(r, seconds, normal, backlight, alpha, small, large);
+
+        // See if we can be translucent...
+        if (AWTUtil.isTranslucentSupported()) {
+
+            AWTUtil.setWindowOpaque(this, false);
+            AWTUtil.setWindowOpacity(this, alpha);
+
+            RoundRectangle2D.Double rr = new RoundRectangle2D.Double(0, 0,
+                getWidth(), getHeight(), 32, 32);
+            AWTUtil.setWindowShape(this, rr);
+        }
+    }
+
+    /**
+     * Simple constructor with our required arguments.
+     *
      * @param r The Rectangle defining the location of the main window.
      * use the "poster" image without scaling it ugly.
      * @param seconds the number of seconds to leave the banner visible.
@@ -90,6 +127,12 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
      * @param large A large font to use.
      */
     public RecordingInfoWindow(Rectangle r, int seconds, Color normal,
+        Color backlight, float alpha, Font small, Font large) {
+
+        initialize(r, seconds, normal, backlight, alpha, small, large);
+    }
+
+    private void initialize(Rectangle r, int seconds, Color normal,
         Color backlight, float alpha, Font small, Font large) {
 
         setCursor(Util.getNoCursor());
@@ -184,12 +227,6 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
         setTimer(t);
 
         setDateFormat(new SimpleDateFormat("EEE MMM d h:mm aaa"));
-
-        // See if we can be translucent...
-        if (AWTUtil.isTranslucentSupported()) {
-
-            AWTUtil.setWindowOpacity(this, alpha);
-        }
     }
 
     private JXPanel getPanel() {

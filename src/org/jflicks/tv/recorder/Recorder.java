@@ -52,6 +52,25 @@ public interface Recorder extends Config {
     String getDevice();
 
     /**
+     * The Recorder has a notion of the name of some task
+     * or process that can accomplish indexing of the raw
+     * transport stream video that this recorder can create.
+     * This is some sort of symbolic name, not something
+     * that is a script or anything concrete.  What actually
+     * happens is that the scheduler when being told that a
+     * recording has completed, it will use this symbolic
+     * name to try to find some post processing worker to
+     * accomplish the indexing of the raw mpg.  We don't want
+     * this work to be done by the recorder since it may be
+     * needed to record something else soon after finishing
+     * a recording - we need the system to handle this work
+     * instead.  If null then no indexing will be done.
+     *
+     * @return The indexer name as a String.
+     */
+    String getIndexerName();
+
+    /**
      * When the Recording was started.
      *
      * @return The time the recorder started recording it's most recent

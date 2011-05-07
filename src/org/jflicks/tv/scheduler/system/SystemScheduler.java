@@ -348,6 +348,25 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
     /**
      * {@inheritDoc}
      */
+    public void indexRecording(String s, Recording r) {
+
+        if ((s != null) && (r != null)) {
+
+            NMS n = getNMS();
+            if (n != null) {
+
+                PostProc pp = n.getPostProc();
+                if (pp != null) {
+
+                    pp.addProcessing(s, r);
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void addRecording(Recording r) {
 
         ObjectContainer oc = getRecordingObjectContainer();

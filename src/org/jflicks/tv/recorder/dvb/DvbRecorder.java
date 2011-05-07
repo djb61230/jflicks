@@ -45,7 +45,7 @@ public class DvbRecorder extends BaseRecorder {
     public DvbRecorder() {
 
         setTitle("DVB");
-        setExtension("mpg");
+        setExtension("ts");
         setQuickTunable(false);
     }
 

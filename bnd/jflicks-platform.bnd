@@ -1,0 +1,18 @@
+custom=true
+
+Bundle-Version: 1.0.0
+
+Include-Resource:\
+ ../lib/platform.jar
+
+Bundle-ClassPath:\
+ .,\
+ platform.jar
+
+Export-Package:\
+ com.sun.jna.platform;version="1.0.0"
+
+Import-Package:\
+ com.sun.jna.platform;version="1.0.0"
+
+DynamicImport-Package: *

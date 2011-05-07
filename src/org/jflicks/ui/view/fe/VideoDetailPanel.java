@@ -116,7 +116,7 @@ public class VideoDetailPanel extends BaseCustomizePanel {
             released.setBounds(0, (int) titleHeight, (int) halfWidth,
                 (int) releasedHeight);
             description.setBounds(0, (int) (titleHeight + releasedHeight),
-                (int) threeQuarterWidth, (int) descriptionHeight);
+                (int) width, (int) descriptionHeight);
             time.setBounds((int) threeQuarterWidth, 0, (int) oneQuarterWidth,
                 (int) titleHeight);
             aspect.setBounds((int) threeQuarterWidth, (int) titleHeight,

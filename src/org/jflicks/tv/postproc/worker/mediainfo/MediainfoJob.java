@@ -18,7 +18,6 @@ package org.jflicks.tv.postproc.worker.mediainfo;
 
 import java.util.StringTokenizer;
 
-import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
@@ -26,6 +25,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Recording;
+import org.jflicks.tv.postproc.worker.BaseWorkerJob;
 
 /**
  * This job starts a system job that runs mediainfo.
@@ -33,11 +33,8 @@ import org.jflicks.tv.Recording;
  * @author Doug Barnum
  * @version 1.0
  */
-public class MediainfoJob extends AbstractJob implements JobListener {
+public class MediainfoJob extends BaseWorkerJob implements JobListener {
 
-    private Recording recording;
-    private SystemJob systemJob;
-    private JobContainer jobContainer;
     private long after;
 
     /**
@@ -47,28 +44,10 @@ public class MediainfoJob extends AbstractJob implements JobListener {
      */
     public MediainfoJob(Recording r) {
 
-        setRecording(r);
+        super(r);
 
         // Lets get 30 seconds of video out there before we check.
         //setSleepTime(30000);
-    }
-
-    /**
-     * A mediainfo job acts upon a Recording.
-     *
-     * @return A Recording instance.
-     */
-    public Recording getRecording() {
-        return (recording);
-    }
-
-    /**
-     * A mediainfo job acts upon a Recording.
-     *
-     * @param r A Recording instance.
-     */
-    public void setRecording(Recording r) {
-        recording = r;
     }
 
     private long getAfter() {
@@ -77,22 +56,6 @@ public class MediainfoJob extends AbstractJob implements JobListener {
 
     private void setAfter(long l) {
         after = l;
-    }
-
-    private SystemJob getSystemJob() {
-        return (systemJob);
-    }
-
-    private void setSystemJob(SystemJob j) {
-        systemJob = j;
-    }
-
-    private JobContainer getJobContainer() {
-        return (jobContainer);
-    }
-
-    private void setJobContainer(JobContainer j) {
-        jobContainer = j;
     }
 
     /**

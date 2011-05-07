@@ -23,6 +23,7 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JLayeredPane;
 import javax.swing.JWindow;
@@ -155,6 +156,10 @@ public class SimpleInfoWindow extends JWindow implements ActionListener {
         if (AWTUtil.isTranslucentSupported()) {
 
             AWTUtil.setWindowOpacity(this, alpha);
+
+            RoundRectangle2D.Double rr = new RoundRectangle2D.Double(0, 0,
+                getWidth(), getHeight(), 32, 32);
+            AWTUtil.setWindowShape(this, rr);
         }
     }
 

@@ -16,6 +16,7 @@
 */
 package org.jflicks.util;
 
+import java.awt.Shape;
 import java.awt.Window;
 
 import com.sun.awt.AWTUtilities;
@@ -60,11 +61,22 @@ public final class AWTUtil {
      * Set the window opacity by supplying a float value.
      *
      * @param w A given Window instance.
-     * @param f The value of opacity (0.0 - 1.0)
+     * @param f The value of opacity (0.0 - 1.0).
      */
     public static void setWindowOpacity(Window w, float f) {
 
         AWTUtilities.setWindowOpacity(w, f);
+    }
+
+    /**
+     * Set the window shape by supplying a Shape object.
+     *
+     * @param w A given Window instance.
+     * @param s The Shape to use.
+     */
+    public static void setWindowShape(Window w, Shape s) {
+
+        AWTUtilities.setWindowShape(w, s);
     }
 
 }

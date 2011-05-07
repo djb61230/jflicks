@@ -16,10 +16,7 @@
 */
 package org.jflicks.tv.postproc.worker.comskip;
 
-import java.util.ArrayList;
-
 import org.jflicks.job.JobContainer;
-import org.jflicks.job.Job;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
@@ -36,8 +33,6 @@ import org.jflicks.tv.postproc.worker.WorkerEvent;
  */
 public class ComskipWorker extends BaseWorker implements JobListener {
 
-    private ArrayList<JobContainer> jobContainerList;
-
     /**
      * Simple default constructor.
      */
@@ -46,72 +41,6 @@ public class ComskipWorker extends BaseWorker implements JobListener {
         setTitle("ComskipWorker");
         setDescription("Commercial flagging using Comskip");
         setHeavy(true);
-
-        setJobContainerList(new ArrayList<JobContainer>());
-    }
-
-    private ArrayList<JobContainer> getJobContainerList() {
-        return (jobContainerList);
-    }
-
-    private void setJobContainerList(ArrayList<JobContainer> l) {
-        jobContainerList = l;
-    }
-
-    private void addJobContainer(JobContainer jc) {
-
-        ArrayList<JobContainer> l = getJobContainerList();
-        if ((jc != null) && (l != null)) {
-            l.add(jc);
-        }
-    }
-
-    private void removeJobContainer(Job j) {
-
-        ArrayList<JobContainer> l = getJobContainerList();
-        if ((j != null) && (l != null)) {
-
-            int index = -1;
-            for (int i = 0; i < l.size(); i++) {
-
-                if (l.get(i).getJob() == j) {
-
-                    index = i;
-                    break;
-                }
-            }
-
-            if (index != -1) {
-
-                l.remove(index);
-            }
-        }
-    }
-
-    private void removeJobContainer(Recording r) {
-
-        ArrayList<JobContainer> l = getJobContainerList();
-        if ((r != null) && (l != null)) {
-
-            int index = -1;
-            for (int i = 0; i < l.size(); i++) {
-
-                ComskipJob job = (ComskipJob) l.get(i).getJob();
-                Recording tmp = job.getRecording();
-                if (tmp.equals(r)) {
-
-                    index = i;
-                    break;
-                }
-            }
-
-            if (index != -1) {
-
-                JobContainer jc = l.get(index);
-                jc.stop();
-                l.remove(index);
-            }
-        }
     }
 
     /**
@@ -127,14 +56,6 @@ public class ComskipWorker extends BaseWorker implements JobListener {
             addJobContainer(jc);
             jc.start();
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void cancel(Recording r) {
-
-        removeJobContainer(r);
     }
 
     /**

@@ -38,6 +38,7 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
     private String subtitle;
     private String description;
     private String path;
+    private String indexedExtension;
     private Date date;
     private Date originalAirDate;
     private long duration;
@@ -106,6 +107,7 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
         setSubtitle(r.getSubtitle());
         setDescription(r.getDescription());
         setPath(r.getPath());
+        setIndexedExtension(r.getIndexedExtension());
         setDate(r.getDate());
         setOriginalAirDate(r.getOriginalAirDate());
         setDuration(r.getDuration());
@@ -254,6 +256,26 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
      */
     public void setPath(String s) {
         path = s;
+    }
+
+    /**
+     * If the Recording has been indexed, it will have a
+     * particular extension.
+     *
+     * @return The indexed recording file extension as a String instance.
+     */
+    public String getIndexedExtension() {
+        return (indexedExtension);
+    }
+
+    /**
+     * If the Recording has been indexed, it will have a
+     * particular extension.
+     *
+     * @param s The indexed recording file extension as a String instance.
+     */
+    public void setIndexedExtension(String s) {
+        indexedExtension = s;
     }
 
     /**

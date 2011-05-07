@@ -1186,10 +1186,11 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             if (path != null) {
 
                 final File file = new File(path);
+                final String iext = r.getIndexedExtension();
                 ActionListener taskPerformer = new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
 
-                        // Off course delete the file.
+                        // Of course delete the file.
                         if (!file.delete()) {
 
                             log(WARNING, file.getPath() + " delete fail");
@@ -1200,6 +1201,17 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                         if (!pngfile.delete()) {
 
                             log(WARNING, pngfile.getPath() + " del fail");
+                        }
+
+                        // The index file is "filename.iext".
+                        if (iext != null) {
+
+                            File iextfile =
+                                new File(file.getPath() + "." + iext);
+                            if (!iextfile.delete()) {
+
+                                log(WARNING, iextfile.getPath() + " del fail");
+                            }
                         }
 
                         // Other recorders or processes might add other files

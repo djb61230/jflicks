@@ -111,6 +111,16 @@ public interface Scheduler extends Config {
     void updateRecording(Recording r);
 
     /**
+     * Index the Recording.  Generally Recorders make transport stream
+     * mpg files so we may want a way to index them so a Player will
+     * handle playing them a bit better.
+     *
+     * @param s A given indexing task name to use.
+     * @param r A given Recording raw video to index.
+     */
+    void indexRecording(String s, Recording r);
+
+    /**
      * Add the given Recording.
      *
      * @param r A given Recording to add.

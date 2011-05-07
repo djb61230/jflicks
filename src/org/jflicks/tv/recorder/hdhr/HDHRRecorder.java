@@ -51,7 +51,7 @@ public class HDHRRecorder extends BaseRecorder {
     public HDHRRecorder() {
 
         setTitle("HDHomerun");
-        setExtension("mpg");
+        setExtension("ts");
         setQuickTunable(true);
     }
 

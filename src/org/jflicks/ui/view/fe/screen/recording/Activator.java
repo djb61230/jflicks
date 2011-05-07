@@ -73,14 +73,18 @@ public class Activator extends BaseActivator {
 
         try {
 
-            Filter filter = bc.createFilter("(Player-Handle="
-                + Player.PLAYER_VIDEO_TRANSPORT_STREAM + ")");
+            Filter filter = bc.createFilter("(|(Player-Handle="
+                + Player.PLAYER_VIDEO_TRANSPORT_STREAM + ")"
+                + "(Player-Handle=" + Player.PLAYER_VIDEO + "))");
+            System.out.println(filter);
             ServiceTracker st = new ServiceTracker(bc, filter, null);
             setServiceTracker(st);
             st.open();
             s.setPlayerServiceTracker(st);
 
         } catch (InvalidSyntaxException ex) {
+
+            System.out.println(ex.getMessage());
         }
 
         Hashtable<String, String> dict = new Hashtable<String, String>();

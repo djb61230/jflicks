@@ -18,7 +18,6 @@ package org.jflicks.tv.postproc.worker.comskip;
 
 import java.io.File;
 
-import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
@@ -26,6 +25,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
+import org.jflicks.tv.postproc.worker.BaseWorkerJob;
 import org.jflicks.util.Util;
 
 /**
@@ -34,11 +34,7 @@ import org.jflicks.util.Util;
  * @author Doug Barnum
  * @version 1.0
  */
-public class ComskipJob extends AbstractJob implements JobListener {
-
-    private Recording recording;
-    private SystemJob systemJob;
-    private JobContainer jobContainer;
+public class ComskipJob extends BaseWorkerJob implements JobListener {
 
     /**
      * Constructor with one required argument.
@@ -47,41 +43,7 @@ public class ComskipJob extends AbstractJob implements JobListener {
      */
     public ComskipJob(Recording r) {
 
-        setRecording(r);
-    }
-
-    /**
-     * A comskip job acts upon a Recording.
-     *
-     * @return A Recording instance.
-     */
-    public Recording getRecording() {
-        return (recording);
-    }
-
-    /**
-     * A comskip job acts upon a Recording.
-     *
-     * @param r A Recording instance.
-     */
-    public void setRecording(Recording r) {
-        recording = r;
-    }
-
-    private SystemJob getSystemJob() {
-        return (systemJob);
-    }
-
-    private void setSystemJob(SystemJob j) {
-        systemJob = j;
-    }
-
-    private JobContainer getJobContainer() {
-        return (jobContainer);
-    }
-
-    private void setJobContainer(JobContainer j) {
-        jobContainer = j;
+        super(r);
     }
 
     /**

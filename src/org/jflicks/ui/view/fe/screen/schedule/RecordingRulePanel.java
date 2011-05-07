@@ -762,6 +762,7 @@ public class RecordingRulePanel extends BaseCustomizePanel
             if (tasks != null) {
 
                 ArrayList<JComponent> list = new ArrayList<JComponent>();
+                ArrayList<Integer> ilist = new ArrayList<Integer>();
                 for (int i = 0; i < tasks.length; i++) {
 
                     if (tasks[i].isSelectable()) {
@@ -779,12 +780,14 @@ public class RecordingRulePanel extends BaseCustomizePanel
                         cb.addFocusListener(this);
                         cb.setFocusPainted(false);
                         list.add(cb);
+                        ilist.add(Integer.valueOf(i));
                     }
                 }
 
                 list.add(getAdvancedOkButton());
                 list.add(getAdvancedCancelButton());
                 JComponent[] cbuts = list.toArray(new JComponent[list.size()]);
+                Integer[] tindexes = ilist.toArray(new Integer[ilist.size()]);
 
                 setAdvancedAccept(false);
 
@@ -836,12 +839,13 @@ public class RecordingRulePanel extends BaseCustomizePanel
                 requestFocus();
                 if (isAdvancedAccept()) {
 
-                    for (int i = 0; i < tasks.length; i++) {
+                    for (int i = 0; i < cbuts.length; i++) {
 
                         if (cbuts[i] instanceof JCheckBox) {
 
+                            int tindex = tindexes[i].intValue();
                             JCheckBox cb = (JCheckBox) cbuts[i];
-                            tasks[i].setRun(cb.isSelected());
+                            tasks[tindex].setRun(cb.isSelected());
                         }
                     }
                 }

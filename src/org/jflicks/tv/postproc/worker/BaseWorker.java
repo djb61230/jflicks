@@ -18,6 +18,8 @@ package org.jflicks.tv.postproc.worker;
 
 import java.util.ArrayList;
 
+import org.jflicks.job.Job;
+import org.jflicks.job.JobContainer;
 import org.jflicks.tv.Recording;
 
 /**
@@ -30,6 +32,7 @@ public abstract class BaseWorker implements Worker {
 
     private ArrayList<WorkerListener> workerList =
         new ArrayList<WorkerListener>();
+    private ArrayList<JobContainer> jobContainerList;
 
     private String title;
     private String description;
@@ -45,6 +48,7 @@ public abstract class BaseWorker implements Worker {
         setHeavy(true);
         setDefaultRun(true);
         setUserSelectable(true);
+        setJobContainerList(new ArrayList<JobContainer>());
     }
 
     /**
@@ -180,6 +184,102 @@ public abstract class BaseWorker implements Worker {
 
                 WorkerListener l = workerList.get(i);
                 l.workerUpdate(event);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void cancel(Recording r) {
+
+        removeJobContainer(r);
+    }
+
+    /**
+     * We maintain a list of Jobs that are running or need to run.
+     *
+     * @return A List of JobContainer instances.
+     */
+    public ArrayList<JobContainer> getJobContainerList() {
+        return (jobContainerList);
+    }
+
+    /**
+     * We maintain a list of Jobs that are running or need to run.
+     *
+     * @param l A List of JobContainer instances.
+     */
+    public void setJobContainerList(ArrayList<JobContainer> l) {
+        jobContainerList = l;
+    }
+
+    /**
+     * Add a JobContainer to our list.
+     *
+     * @param jc A given JobContainer.
+     */
+    public void addJobContainer(JobContainer jc) {
+
+        ArrayList<JobContainer> l = getJobContainerList();
+        if ((jc != null) && (l != null)) {
+            l.add(jc);
+        }
+    }
+
+    /**
+     * Remove a JobContainer from our list using a Job instance.
+     *
+     * @param j A given Job.
+     */
+    public void removeJobContainer(Job j) {
+
+        ArrayList<JobContainer> l = getJobContainerList();
+        if ((j != null) && (l != null)) {
+
+            int index = -1;
+            for (int i = 0; i < l.size(); i++) {
+
+                if (l.get(i).getJob() == j) {
+
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index != -1) {
+
+                l.remove(index);
+            }
+        }
+    }
+
+    /**
+     * Remove a JobContainer from our list using a Recording instance.
+     *
+     * @param r A given Recording.
+     */
+    public void removeJobContainer(Recording r) {
+
+        ArrayList<JobContainer> l = getJobContainerList();
+        if ((r != null) && (l != null)) {
+
+            int index = -1;
+            for (int i = 0; i < l.size(); i++) {
+
+                BaseWorkerJob job = (BaseWorkerJob) l.get(i).getJob();
+                Recording tmp = job.getRecording();
+                if (tmp.equals(r)) {
+
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1) {
+
+                JobContainer jc = l.get(index);
+                jc.stop();
+                l.remove(index);
             }
         }
     }

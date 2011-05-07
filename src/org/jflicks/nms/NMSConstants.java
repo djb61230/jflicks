@@ -123,6 +123,12 @@ public final class NMSConstants {
         "Change Channel Script";
 
     /**
+     * The configuration recording indexer name for a Recorder service to
+     * perform a recording indexer.
+     */
+    public static final String RECORDING_INDEXER_NAME = "Recording Indexer";
+
+    /**
      * A Recorder can have a custom Channel list associated with it.  Using
      * this a user can say a particular Recorder only supports a subset
      * of Channels from a ProgramData listing.

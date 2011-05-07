@@ -14,7 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.postproc.worker.ffmpegscreenshot;
+package org.jflicks.tv.postproc.worker.tomp4;
+
+import java.io.File;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
@@ -30,29 +32,71 @@ import org.jflicks.tv.postproc.worker.BaseWorkerJob;
  * @author Doug Barnum
  * @version 1.0
  */
-public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
-
-    private long after;
+public class ToMp4Job extends BaseWorkerJob implements JobListener {
 
     /**
      * Constructor with one required argument.
      *
      * @param r A Recording to check for commercials.
      */
-    public FFmpegScreenshotJob(Recording r) {
+    public ToMp4Job(Recording r) {
 
         super(r);
-
-        // Lets get 45 seconds of video out there before we check.
-        //setSleepTime(45000);
     }
 
-    private long getAfter() {
-        return (after);
+    private File computeFile(Recording r, boolean hidden) {
+
+        File result = null;
+
+        if (r != null) {
+
+            result = new File(r.getPath());
+            if (result.exists()) {
+
+                String tname = null;
+                if (hidden) {
+                    tname = "." + result.getName() + ".mp4";
+                } else {
+                    tname = result.getName() + ".mp4";
+                }
+
+                result = new File(result.getParentFile(), tname);
+            }
+        }
+
+        return (result);
     }
 
-    private void setAfter(long l) {
-        after = l;
+    private void move() {
+
+        Recording r = getRecording();
+        if (r != null) {
+
+            File hidden = computeFile(r, true);
+            if ((hidden != null) && (hidden.exists())) {
+
+                System.out.println("moving " + hidden.getPath() + " to "
+                    + computeFile(r, false));
+                hidden.renameTo(computeFile(r, false));
+                r.setIndexedExtension("mp4");
+            }
+        }
+    }
+
+    private void remove() {
+
+        Recording r = getRecording();
+        if (r != null) {
+
+            File hidden = computeFile(r, true);
+            if ((hidden != null) && (hidden.exists())) {
+
+                if (!hidden.delete()) {
+
+                    System.out.println("Failed to delete hidden file.");
+                }
+            }
+        }
     }
 
     /**
@@ -64,13 +108,9 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
         if (r != null) {
 
             String path = r.getPath();
-            SystemJob job = SystemJob.getInstance("ffmpeg -itsoffset -00:00:45"
-                + " -y -i " + path + " -vcodec png -vframes 1 -an -f "
-                + "rawvideo -s 534x300 " + path + ".png");
-
-            // Don't run until this time because there won't be video to
-            // grab the screen shot!  We tack on 50 seconds just to be safe.
-            setAfter(r.getRealStart() + 50000);
+            File tmp = computeFile(r, true);
+            SystemJob job = SystemJob.getInstance("ffmpeg -y -i " + path
+                + " -vcodec copy -acodec copy " + tmp.getPath());
 
             job.addJobListener(this);
             setSystemJob(job);
@@ -94,17 +134,11 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
 
         while (!isTerminate()) {
 
-            long now = System.currentTimeMillis();
-            if (now > getAfter()) {
+            JobContainer jc = getJobContainer();
+            if ((!jobStarted) && (jc != null)) {
 
-                JobContainer jc = getJobContainer();
-                if ((!jobStarted) && (jc != null)) {
-
-                    // We might be done before it comes around again but lets
-                    // use a flag just to be safe...
-                    jobStarted = true;
-                    jc.start();
-                }
+                jobStarted = true;
+                jc.start();
             }
 
             JobManager.sleep(getSleepTime());
@@ -123,6 +157,7 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
 
             jc.stop();
         }
+
         setTerminate(true);
     }
 
@@ -133,9 +168,16 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            // Nothing to do since we don't change any properties of the
-            // Recording.  Clients should still get notified and be able
-            // to update their screenshot.
+            System.out.println("@@@@@@@@@@: Finished the ffmpeg to mp4");
+            SystemJob job = getSystemJob();
+            if ((job != null) && (job.getExitValue() == 0)) {
+                System.out.println("@@@@@@@@@@: Attempting to move");
+                move();
+            } else {
+                System.out.println("@@@@@@@@@@: Attempting to remove");
+                remove();
+            }
+
             stop();
 
         } else {

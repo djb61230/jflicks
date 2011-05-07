@@ -47,7 +47,7 @@ public class V4l2Recorder extends BaseRecorder {
     public V4l2Recorder() {
 
         setTitle("V4l2");
-        setExtension("mpg");
+        setExtension("ts");
         setQuickTunable(false);
     }
 
@@ -417,7 +417,8 @@ public class V4l2Recorder extends BaseRecorder {
                 && (!name.equals(NMSConstants.FREQUENCY_TABLE_NAME))
                 && (!name.equals(NMSConstants.CUSTOM_CHANNEL_LIST))
                 && (!name.equals(NMSConstants.CUSTOM_CHANNEL_LIST_TYPE))
-                && (!name.equals(NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME))) {
+                && (!name.equals(NMSConstants.CHANGE_CHANNEL_SCRIPT_NAME))
+                && (!name.equals(NMSConstants.RECORDING_INDEXER_NAME))) {
 
                 result = true;
             }

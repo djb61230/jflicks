@@ -43,7 +43,7 @@ import org.osgi.service.event.EventHandler;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * This class is a "titled component".
+ * This class is a basic screen class that others extend.
  *
  * @author Doug Barnum
  * @version 1.0
@@ -313,8 +313,11 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
     }
 
     /**
-     * Each screen could have a Player that they need to play media for the
-     * user.  It gets the player from the ServiceTracker property.
+     * Each screen could have a Player (or Players) that they need to play
+     * media for the user.  This method will get the "first" service reference
+     * found.  Most often a Screen will have just one and this method will
+     * return it.  If there are more than one use the other getPlayer method
+     * to get it by it's type.
      *
      * @return A Player instance if it exists.
      */
@@ -326,6 +329,40 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
         if (st != null) {
 
             result = (Player) st.getService();
+        }
+
+        return (result);
+    }
+
+    /**
+     * A Screen can have more than one Player and any one
+     * particular one can be acquired by supplying the type.
+     * Of course this makes it limited to one each kind of
+     * type but we do not believe this is limiting.
+     *
+     * @param type The type of Player we want.
+     * @return A Player instance if it exists.
+     */
+    public Player getPlayer(String type) {
+
+        Player result = null;
+
+        ServiceTracker st = getPlayerServiceTracker();
+        if ((st != null) && (type != null)) {
+
+            Object[] array = st.getServices();
+            if ((array != null) && (array.length > 0)) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    Player p = (Player) array[i];
+                    if (type.equals(p.getType())) {
+
+                        result = p;
+                        break;
+                    }
+                }
+            }
         }
 
         return (result);

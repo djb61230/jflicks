@@ -69,13 +69,22 @@ public interface PostProc extends Config {
     Worker[] getWorkers();
 
     /**
-     * Add the post workering work to be done by submitting a RecordingRule
+     * Add the post processing work to be done by submitting a RecordingRule
      * and a Recording.
      *
      * @param rr A given RecordingRule.
      * @param r A given Recording.
      */
     void addProcessing(RecordingRule rr, Recording r);
+
+    /**
+     * Add the post processing work to be done by submitting a Worker
+     * name and a Recording.
+     *
+     * @param s A given Worker name.
+     * @param r A given Recording.
+     */
+    void addProcessing(String s, Recording r);
 
     /**
      * There is a maximum number of jobs that can be run at one time.  This
