@@ -49,10 +49,56 @@ public final class Detect {
      */
     public static final int WHITE_TYPE = 1;
 
+    private int backup;
+    private int span;
+
     /**
      * Default empty constructor.
      */
     public Detect() {
+
+        setBackup(0);
+        setSpan(5);
+    }
+
+    /**
+     * The rating frame is usually put up a few seconds after the show has
+     * restarted, so the backup property allows a constant number of seconds
+     * to be offset to account for this time.
+     *
+     * @return An int value in seconds.
+     */
+    public int getBackup() {
+        return (backup);
+    }
+
+    /**
+     * The rating frame is usually put up a few seconds after the show has
+     * restarted, so the backup property allows a constant number of seconds
+     * to be offset to account for this time.
+     *
+     * @param i An int value in seconds.
+     */
+    public void setBackup(int i) {
+        backup = i;
+    }
+
+    /**
+     * The time between each frame.  Defaults to five.
+     *
+     * @return The span as an int value.
+     */
+    public int getSpan() {
+        return (span);
+    }
+
+    /**
+     * The time between each frame.  Defaults to five.
+     *
+     * @param i The span as an int value.
+     */
+    public void setSpan(int i) {
+        span = i;
     }
 
     private Line2D.Double[] findLines(int[] data, int w, int h, int min) {
@@ -543,7 +589,11 @@ public final class Detect {
             int start = name.indexOf("-") + 1;
             int end = name.lastIndexOf(".");
             result = Util.str2int(name.substring(start, end), result);
-            result *= 5;
+            result *= getSpan();
+            result -= getBackup();
+            if (result < 0) {
+                result = 0;
+            }
         }
 
         return (result);
@@ -586,6 +636,11 @@ public final class Detect {
                         timelist.add(Integer.valueOf(time));
                         System.out.println(all[i] + " is a rating frame <"
                             + time + ">");
+
+                        // Since we just found one, lets assume the next
+                        // 20 seconds or so we don't need to check.
+                        int fcount = (int) (20 / getSpan());
+                        i += fcount;
                     }
                 }
 
@@ -616,6 +671,8 @@ public final class Detect {
         boolean verbose = false;
         int fudge = 10;
         String extension = "jpg";
+        int backup = 0;
+        int span = 0;
 
         for (int i = 0; i < args.length; i += 2) {
 
@@ -629,12 +686,18 @@ public final class Detect {
                 verbose = Util.str2boolean(args[i + 1], verbose);
             } else if (args[i].equalsIgnoreCase("-extension")) {
                 extension = args[i + 1];
+            } else if (args[i].equalsIgnoreCase("-backup")) {
+                backup = Util.str2int(args[i + 1], backup);
+            } else if (args[i].equalsIgnoreCase("-span")) {
+                span = Util.str2int(args[i + 1], span);
             }
         }
 
         if (path != null) {
 
             Detect detect = new Detect();
+            detect.setBackup(backup);
+            detect.setSpan(span);
             File file = new File(path);
             if (file.isDirectory()) {
 

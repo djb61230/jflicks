@@ -137,14 +137,27 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     }
 
     private void setTimeline(Integer[] array) {
+
         timeline = array;
 
         if (array != null) {
 
-            for (int i = 0; i < array.length; i++) {
+            // The time line set here includes starts and stops of
+            // commercials.  We are going to only keep the commercial
+            // stops - in other words just when the show returns.
+            timeline = new Integer[array.length / 2];
+            int index = 0;
+            for (int i = 1; i < array.length; i++) {
 
-                log(DEBUG, "timeline: " + array[i].intValue());
+                if ((i % 2) == 1) {
+                    log(DEBUG, "timeline: " + array[i].intValue());
+                    timeline[index++] = array[i];
+                }
             }
+
+        } else {
+
+            timeline = null;
         }
     }
 

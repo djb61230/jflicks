@@ -478,8 +478,6 @@ public class MPlayer extends BasePlayer {
 
             command("seek " + seconds + "\n");
         }
-
-        command("set_property fullscreen 1\n");
     }
 
     /**

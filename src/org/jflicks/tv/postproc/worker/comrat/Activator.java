@@ -63,6 +63,8 @@ public class Activator extends BaseActivator {
                 cw.setDescription(p.getProperty("description_" + i));
                 cw.setType(Util.str2int(p.getProperty("type_" + i), 0));
                 cw.setFudge(Util.str2int(p.getProperty("fudge_" + i), 0));
+                cw.setBackup(Util.str2int(p.getProperty("backup_" + i), 0));
+                cw.setSpan(Util.str2int(p.getProperty("span_" + i), 5));
                 cw.setVerbose(Util.str2boolean(
                     p.getProperty("verbose_" + i), false));
 

@@ -41,6 +41,8 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
     private File directory;
     private int type;
     private int fudge;
+    private int backup;
+    private int span;
     private boolean verbose;
 
     /**
@@ -55,6 +57,7 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
         // Check the recording for completion every minute.
         setSleepTime(60000);
+        setSpan(5);
     }
 
     /**
@@ -93,6 +96,42 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
      */
     public void setFudge(int i) {
         fudge = i;
+    }
+
+    /**
+     * We want to actually adjust the break a few seconds.
+     *
+     * @return An int value in seconds.
+     */
+    public int getBackup() {
+        return (backup);
+    }
+
+    /**
+     * We want to actually adjust the break a few seconds.
+     *
+     * @param i An int value in seconds.
+     */
+    public void setBackup(int i) {
+        backup = i;
+    }
+
+    /**
+     * The time between each frame.  Defaults to five.
+     *
+     * @return The span as an int value.
+     */
+    public int getSpan() {
+        return (span);
+    }
+
+    /**
+     * The time between each frame.  Defaults to five.
+     *
+     * @param i The span as an int value.
+     */
+    public void setSpan(int i) {
+        span = i;
     }
 
     /**
@@ -136,6 +175,10 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
             if (dir.mkdir()) {
 
                 result = dir;
+
+            } else {
+
+                log(BaseWorker.INFO, "Failed to make " + dir.getPath());
             }
 
         } catch (IOException ex) {
@@ -159,14 +202,13 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
             if (dir != null) {
 
                 SystemJob job = SystemJob.getInstance("ffmpeg -i "
-                    + r.getPath() + " -r 1/5 -s hd480 "
-                    + dir.getPath() + File.separator + "frame-%4d.png");
+                    + r.getPath() + " -r 1/" + getSpan() + " -s hd480 "
+                    + dir.getPath() + File.separator + "frame-%4d.jpg");
 
                 job.addJobListener(this);
                 setSystemJob(job);
                 JobContainer jc = JobManager.getJobContainer(job);
                 setJobContainer(jc);
-                jc.start();
                 log(BaseWorker.INFO, "Will start: " + job.getCommand());
                 setTerminate(false);
 
@@ -210,7 +252,8 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
                 } else {
 
-                    log(BaseWorker.DEBUG, "Recording still seems to be on.");
+                    log(BaseWorker.INFO, "Recording still seems to be on. "
+                        + "Waiting until finished to grab frames.");
                 }
             }
         }
@@ -238,6 +281,7 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
+            log(BaseWorker.INFO, "Frame grab finished...");
             File dir = getDirectory();
             Recording r = getRecording();
             if ((dir != null) && (r != null)) {
@@ -247,10 +291,16 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                 try {
 
                     Detect detect = new Detect();
+                    detect.setBackup(getBackup());
+                    detect.setSpan(getSpan());
+                    log(BaseWorker.INFO, "Start processing of frames...");
                     int[] array = detect.processDirectory(dir, "jpg", getType(),
                         getFudge(), isVerbose());
+                    log(BaseWorker.INFO, "Finished processing of frames...");
                     if ((array != null) && (array.length > 0)) {
 
+                        log(BaseWorker.INFO, "Found " + array.length
+                            + " rating frames...setting commercials");
                         Commercial[] coms = new Commercial[array.length];
                         for (int i = 0; i < coms.length; i++) {
 
@@ -265,6 +315,10 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                         }
 
                         r.setCommercials(coms);
+
+                    } else {
+
+                        log(BaseWorker.INFO, "Didn't find any rating frames!");
                     }
 
                     // Now need to delete frames....

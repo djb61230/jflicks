@@ -17,8 +17,10 @@
 package org.jflicks.tv.scheduler.system;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.jflicks.db.DbWorker;
@@ -374,7 +376,7 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
 
                         if (tasks != null) {
 
-                            Arrays.sort(tasks);
+                            Arrays.sort(tasks, new TaskByDescription());
                         }
 
                         log(INFO, "We need to update the RecordingRule since "
@@ -891,6 +893,23 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
         }
 
         return (result);
+    }
+
+    static class TaskByDescription implements Comparator<Task>, Serializable {
+
+        public int compare(Task t0, Task t1) {
+
+            String desc0 = t0.getDescription();
+            if (desc0 == null) {
+                desc0 = "";
+            }
+            String desc1 = t1.getDescription();
+            if (desc1 == null) {
+                desc1 = "";
+            }
+
+            return (desc0.compareTo(desc1));
+        }
     }
 
 }

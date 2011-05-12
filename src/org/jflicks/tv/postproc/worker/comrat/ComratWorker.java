@@ -35,6 +35,8 @@ public class ComratWorker extends BaseWorker implements JobListener {
 
     private int type;
     private int fudge;
+    private int backup;
+    private int span;
     private boolean verbose;
 
     /**
@@ -43,6 +45,7 @@ public class ComratWorker extends BaseWorker implements JobListener {
     public ComratWorker() {
 
         setHeavy(true);
+        setDefaultRun(false);
     }
 
     /**
@@ -84,6 +87,42 @@ public class ComratWorker extends BaseWorker implements JobListener {
     }
 
     /**
+     * We want to actually adjust the break a few seconds.
+     *
+     * @return An int value in seconds.
+     */
+    public int getBackup() {
+        return (backup);
+    }
+
+    /**
+     * We want to actually adjust the break a few seconds.
+     *
+     * @param i An int value in seconds.
+     */
+    public void setBackup(int i) {
+        backup = i;
+    }
+
+    /**
+     * The time between each frame.  Defaults to five.
+     *
+     * @return The span as an int value.
+     */
+    public int getSpan() {
+        return (span);
+    }
+
+    /**
+     * The time between each frame.  Defaults to five.
+     *
+     * @param i The span as an int value.
+     */
+    public void setSpan(int i) {
+        span = i;
+    }
+
+    /**
      * Turning on verbose will send messages to the console and leave
      * working images on disk.  This is handy for debugging.
      *
@@ -113,6 +152,8 @@ public class ComratWorker extends BaseWorker implements JobListener {
             ComratJob job = new ComratJob(r, this);
             job.setType(getType());
             job.setFudge(getFudge());
+            job.setBackup(getBackup());
+            job.setSpan(getSpan());
             job.setVerbose(isVerbose());
             job.addJobListener(this);
             JobContainer jc = JobManager.getJobContainer(job);

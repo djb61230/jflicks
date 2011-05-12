@@ -26,6 +26,7 @@ import java.nio.channels.FileChannel;
 import javax.swing.Timer;
 
 import org.jflicks.job.JobEvent;
+import org.jflicks.job.JobManager;
 
 /**
  * This class has code to read from a file and have the notion of recovering
@@ -108,6 +109,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                     try {
 
+                        System.out.println("Attempting to close!");
                         fileChannel.close();
                         fileChannel = null;
 
@@ -173,10 +175,15 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                     System.out.println("We have been interupted!");
                     timer.stop();
+                    fileInputStream.close();
+
+                    System.out.println("Let's sleep for a few seconds to "
+                        + "try to let things calm down.");
+                    JobManager.sleep(4000);
+
                     count = 0;
                     currentRead = 0L;
                     lastRead = 0L;
-                    fileInputStream.close();
 
                     // Only start a new read and timer if we haven't
                     // reached our max retry count.
@@ -185,14 +192,24 @@ public abstract class RecoverJob extends BaseDeviceJob implements
                         fileInputStream = new FileInputStream(getDevice());
                         fileChannel = fileInputStream.getChannel();
 
-                        // Let's up the delay by a second - perhaps
-                        // recovery will happen.
-                        timer.setDelay(timer.getDelay() + 1000);
-                        timer.restart();
+                        if (fileChannel != null) {
+
+                            // Let's up the delay by a second - perhaps
+                            // recovery will happen.
+                            timer.setDelay(timer.getDelay() + 1000);
+                            timer.restart();
+
+                        } else {
+
+                            // We tried to get a channel, it failed giveup.
+                            timer.removeActionListener(this);
+                            setTerminate(true);
+                        }
 
                     } else {
 
                         timer.removeActionListener(this);
+                        setTerminate(true);
                     }
                 }
 
