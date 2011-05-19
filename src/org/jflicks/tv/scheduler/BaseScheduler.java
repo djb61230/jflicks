@@ -601,7 +601,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                                 if (!sa.isOver()) {
 
                                     sas = new ShowAiring[1];
-                                    sas[0] = rules[i].getShowAiring();
+                                    sas[0] = sa;
 
                                     // Even record if it's been done before.
                                     removeRecordedShow(
@@ -611,6 +611,10 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                                     removeRecordingRule(rules[i]);
                                 }
+
+                            } else {
+
+                                log(DEBUG, "We have a ONCE but no ShowAiring!");
                             }
 
                         } else if (type == RecordingRule.SERIES_TYPE) {
@@ -689,7 +693,17 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                                                 workList.add(pr);
                                             }
                                         }
+
+                                    } else {
+
+                                        log(DEBUG, "We have an Airing but "
+                                            + " the Date is NULL.");
                                     }
+
+                                } else {
+
+                                    log(DEBUG, "We have a ShowAiring but "
+                                        + " the Show or Airing is NULL.");
                                 }
                             }
                         }

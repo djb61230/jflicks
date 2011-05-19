@@ -91,6 +91,8 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
             if (s != null) {
 
                 com.db4o.config.Configuration config = s.newConfiguration();
+                config.objectClass(RecordingRule.class).cascadeOnActivate(true);
+                config.objectClass(RecordingRule.class).cascadeOnUpdate(true);
                 objectContainer = s.openFile(config, "db/sched.dat");
             }
         }
@@ -747,7 +749,21 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
 
                         addShow(s);
                         addAiring(a);
+
+                    } else {
+
+                        if (s == null) {
+                            log(DEBUG, "A ONCE recording doesnt have a Show");
+                        }
+
+                        if (a == null) {
+                            log(DEBUG, "A ONCE recording doesnt have a Airing");
+                        }
                     }
+
+                } else {
+
+                    log(DEBUG, "A ONCE recording does not have a ShowAiring");
                 }
 
             } else {
