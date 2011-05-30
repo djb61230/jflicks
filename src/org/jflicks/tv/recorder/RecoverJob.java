@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import javax.swing.Timer;
 
@@ -44,7 +45,8 @@ import org.jflicks.job.JobManager;
 public abstract class RecoverJob extends BaseDeviceJob implements
     ActionListener {
 
-    private static final int MAX_BLOCK_COUNT = 20;
+    private static final int MAX_BLOCK_COUNT = 40;
+    private static final int TIMER_MILLIS = 5000;
 
     private FileInputStream fileInputStream;
     private FileChannel fileChannel;
@@ -104,23 +106,27 @@ public abstract class RecoverJob extends BaseDeviceJob implements
                 setBlockCount(bcount);
                 System.out.println("Times we failed on a block: " + bcount);
 
-                // We always want to close...
-                if (fileChannel != null) {
+                synchronized (fileChannel) {
 
-                    try {
+                    // We always want to close...
+                    if (fileChannel != null) {
 
-                        System.out.println("Attempting to close!");
-                        fileChannel.close();
-                        fileChannel = null;
+                        try {
 
-                    } catch (IOException ex) {
+                            System.out.println("Attempting to close!");
+                            fileChannel.close();
+                            fileChannel = null;
 
-                        System.out.println("exception on interupt close");
+                        } catch (Exception ex) {
+
+                            System.out.println("exception on interupt close");
+                            fileChannel = null;
+                        }
+
+                    } else {
+
+                        System.out.println("Can't close, fileChannel is null!");
                     }
-
-                } else {
-
-                    System.out.println("Can't close, fileChannel is null!");
                 }
 
                 if (bcount > MAX_BLOCK_COUNT) {
@@ -134,6 +140,51 @@ public abstract class RecoverJob extends BaseDeviceJob implements
                 // All good reset our last read...
                 lastRead = currentRead;
             }
+        }
+    }
+
+    private void reset() {
+
+        System.out.println("We are trying to reset!");
+        System.out.println("Let's sleep for a few seconds to "
+            + "try to let things calm down.");
+        JobManager.sleep(4000);
+
+        try {
+
+            currentRead = 0L;
+            lastRead = 0L;
+
+            // Only start a new read and timer if we haven't
+            // reached our max retry count.
+            if (getBlockCount() < MAX_BLOCK_COUNT) {
+
+                System.out.println("Getting new fileChannel...");
+                fileInputStream = new FileInputStream(getDevice());
+                fileChannel = fileInputStream.getChannel();
+
+                if (fileChannel != null) {
+
+                    // Let's up the delay by a second - perhaps
+                    // recovery will happen.
+                    System.out.println("Got new fileChannel.");
+
+                } else {
+
+                    // We tried to get a channel, it failed giveup.
+                    System.out.println("Failed new fileChannel.");
+                    setTerminate(true);
+                }
+
+            } else {
+
+                System.out.println("Looks like time to quit.");
+                setTerminate(true);
+            }
+
+        } catch (IOException ex) {
+
+            System.out.println("Failed to re-open channel, perhaps next time.");
         }
     }
 
@@ -160,7 +211,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
             fileChannel = fileInputStream.getChannel();
             currentRead = 0L;
             lastRead = 0L;
-            timer = new Timer(2000, this);
+            timer = new Timer(TIMER_MILLIS, this);
             timer.start();
 
             while (!isTerminate()) {
@@ -174,43 +225,30 @@ public abstract class RecoverJob extends BaseDeviceJob implements
                 } catch (AsynchronousCloseException ex) {
 
                     System.out.println("We have been interupted!");
-                    timer.stop();
-                    fileInputStream.close();
+                    if (fileInputStream != null) {
 
-                    System.out.println("Let's sleep for a few seconds to "
-                        + "try to let things calm down.");
-                    JobManager.sleep(4000);
-
-                    count = 0;
-                    currentRead = 0L;
-                    lastRead = 0L;
-
-                    // Only start a new read and timer if we haven't
-                    // reached our max retry count.
-                    if (getBlockCount() < MAX_BLOCK_COUNT) {
-
-                        fileInputStream = new FileInputStream(getDevice());
-                        fileChannel = fileInputStream.getChannel();
-
-                        if (fileChannel != null) {
-
-                            // Let's up the delay by a second - perhaps
-                            // recovery will happen.
-                            timer.setDelay(timer.getDelay() + 1000);
-                            timer.restart();
-
-                        } else {
-
-                            // We tried to get a channel, it failed giveup.
-                            timer.removeActionListener(this);
-                            setTerminate(true);
-                        }
-
-                    } else {
-
-                        timer.removeActionListener(this);
-                        setTerminate(true);
+                        fileInputStream.close();
                     }
+
+                    timer.stop();
+                    count = 0;
+                    reset();
+                    timer.restart();
+
+                } catch (ClosedChannelException ex) {
+
+                    timer.stop();
+                    count = 0;
+                    reset();
+                    timer.restart();
+
+                } catch (Exception ex) {
+
+                    // Here is a catch-all.  Hopefully we can still reset.
+                    timer.stop();
+                    count = 0;
+                    reset();
+                    timer.restart();
                 }
 
                 if (count > 0) {
@@ -225,7 +263,9 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
         } catch (Exception ex) {
 
-            System.out.println("RecoverJob: " + ex.getMessage());
+            System.out.println("Exception RecoverJob: "
+                + ex.getClass().getName() + " " + ex.getMessage());
+            ex.printStackTrace();
             timer.stop();
             close();
         }

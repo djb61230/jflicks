@@ -163,6 +163,9 @@ public class RecordJob extends BaseDeviceJob {
         JobContainer jc = getJobContainer();
         if (jc != null) {
 
+            // First lets stop listening since we are stopping it ourselves.
+            CopyJob cj = (CopyJob) jc.getJob();
+            cj.removeJobListener(this);
             jc.stop();
             setJobContainer(null);
         }
@@ -175,14 +178,9 @@ public class RecordJob extends BaseDeviceJob {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            /*
-            SystemJob job = getSystemJob();
-            if (job != null) {
-
-                System.out.println("RecordJob: exit: " + job.getExitValue());
-                stop();
-            }
-            */
+            // If we got here, then the recording stopped early.  We need to
+            // stop too so at least the recording length will be correct.
+            setTerminate(true);
         }
     }
 
