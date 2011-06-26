@@ -999,7 +999,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                 Show show = array[i].getShow();
                 if ((show != null) && (!isPaidProgramming(show))) {
 
-                    String title = show.getTitle();
+                    //String title = show.getTitle();
+                    String title = Util.toSortableTitle(show.getTitle(), true);
                     if (title != null) {
 
                         String letter = title.substring(0, 1);

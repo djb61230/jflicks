@@ -17,7 +17,7 @@
 package org.jflicks.tv;
 
 import java.io.Serializable;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jflicks.util.RandomGUID;
@@ -34,6 +34,7 @@ public class ShowAiring implements Serializable, Comparable<ShowAiring> {
     private Show show;
     private Airing airing;
     private String hostPort;
+    private SimpleDateFormat simpleDateFormat;
 
     /**
      * Simple empty constructor.
@@ -41,6 +42,7 @@ public class ShowAiring implements Serializable, Comparable<ShowAiring> {
     public ShowAiring() {
 
         setId(RandomGUID.createGUID());
+        setSimpleDateFormat(new SimpleDateFormat("yyyy MM dd hh:mm a"));
     }
 
     /**
@@ -155,7 +157,16 @@ public class ShowAiring implements Serializable, Comparable<ShowAiring> {
         hostPort = s;
     }
 
+    private SimpleDateFormat getSimpleDateFormat() {
+        return (simpleDateFormat);
+    }
+
+    private void setSimpleDateFormat(SimpleDateFormat sdf) {
+        simpleDateFormat = sdf;
+    }
+
     /**
+     * Make a nice String suitable for sorting.
      *
      * @return A String.
      */
@@ -166,9 +177,8 @@ public class ShowAiring implements Serializable, Comparable<ShowAiring> {
         Airing a = getAiring();
         if (a != null) {
 
-            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT,
-                DateFormat.SHORT);
-            sb.append(df.format(a.getAirDate()));
+            SimpleDateFormat sdf = getSimpleDateFormat();
+            sb.append(sdf.format(a.getAirDate()));
         }
 
         Show s = getShow();
