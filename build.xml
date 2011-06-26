@@ -924,7 +924,27 @@
         <java classname="org.jflicks.tv.recorder.CopyJob" fork="true">
 
             <arg value="-i"/>
-            <arg value="/dev/video1"/>
+            <arg value="/dev/video2"/>
+            <arg value="-s"/>
+            <arg value="60"/>
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-stream-v4l2" depends="build">
+
+        <java classname="org.jflicks.tv.recorder.StreamJob" fork="true">
+
+            <arg value="-i"/>
+            <arg value="/dev/video2"/>
+            <arg value="-h"/>
+            <arg value="192.168.2.2"/>
+            <arg value="-p"/>
+            <arg value="1234"/>
             <arg value="-s"/>
             <arg value="60"/>
             <classpath>
@@ -938,23 +958,21 @@
     <target name="test-detect" depends="build">
 
         <input message="path" addproperty="arg1"
-            defaultvalue="/home/djb/dtest/justified"/>
-        <input message="type: " addproperty="arg2" defaultvalue="0"/>
-        <input message="fudge: " addproperty="arg3" defaultvalue="10"/>
-        <input message="extension: " addproperty="arg4" defaultvalue="jpg"/>
-        <input message="verbose: " addproperty="arg5" defaultvalue="false"/>
-        <java classname="org.jflicks.util.Detect" fork="true">
+            defaultvalue="/home/djb/dtest/gh"/>
+        <input message="type:value " addproperty="arg2"
+            defaultvalue="0:10,0:80,1:220,1:175"/>
+        <input message="extension: " addproperty="arg3" defaultvalue="jpg"/>
+        <input message="verbose: " addproperty="arg4" defaultvalue="false"/>
+        <java classname="org.jflicks.util.DetectRating" fork="true">
 
             <arg value="-path"/>
             <arg value="${arg1}"/>
-            <arg value="-type"/>
+            <arg value="-type:value"/>
             <arg value="${arg2}"/>
-            <arg value="-fudge"/>
-            <arg value="${arg3}"/>
             <arg value="-extension"/>
-            <arg value="${arg4}"/>
+            <arg value="${arg3}"/>
             <arg value="-verbose"/>
-            <arg value="${arg5}"/>
+            <arg value="${arg4}"/>
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>

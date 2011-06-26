@@ -256,7 +256,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
 
         if (v != null) {
 
-            removeVideoFromDisk(v);
+            //removeVideoFromDisk(v);
             removeVideoFromDB(v);
             videoScan();
         }

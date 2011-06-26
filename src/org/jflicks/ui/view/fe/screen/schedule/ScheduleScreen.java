@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,7 +96,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
     private static final String BY_TITLE = "By Title";
     private static final String BY_GUIDE = "Using Guide";
-    private static final String BY_RULES = "Recording Rules";
     private static final String UPCOMING_RECORDINGS = "Upcoming Recordings";
     private static final int ALL_UPCOMING = 1;
     private static final int RECORDING_UPCOMING = 2;
@@ -180,7 +180,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
             BY_TITLE,
             BY_GUIDE,
-            BY_RULES,
             UPCOMING_RECORDINGS
         };
 
@@ -323,12 +322,51 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         upcomingState = i;
     }
 
+    private Upcoming[] filterByRule(Upcoming[] array) {
+
+        Upcoming[] result = null;
+
+        RecordingRule rr = getSelectedRecordingRule();
+        if ((array != null) && (rr != null)) {
+
+            String name = rr.getName();
+            if (name.equals("All")) {
+
+                result = array;
+
+            } else {
+
+                String seriesId = rr.getSeriesId();
+                if (seriesId != null) {
+
+                    // The user has selected a particular rule.
+                    ArrayList<Upcoming> l = new ArrayList<Upcoming>();
+                    for (int i = 0; i < array.length; i++) {
+
+                        if (seriesId.equals(array[i].getSeriesId())) {
+
+                            l.add(array[i]);
+                        }
+                    }
+
+                    if (l.size() > 0) {
+
+                        result = l.toArray(new Upcoming[l.size()]);
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
     private void applyUpcoming() {
 
         Upcoming[] array = getUpcomings();
         UpcomingListPanel ulp = getUpcomingListPanel();
         if ((array != null) && (ulp != null)) {
 
+            array = filterByRule(array);
             ArrayList<Upcoming> list = new ArrayList<Upcoming>();
             int state = getUpcomingState();
             switch (state) {
@@ -337,15 +375,27 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             default:
 
                 ulp.setUpcomings(array);
+
+                if (array == null) {
+
+                    UpcomingDetailPanel dp = getUpcomingDetailPanel();
+                    if (dp != null) {
+
+                        dp.setUpcoming(null);
+                    }
+                }
                 break;
 
             case RECORDING_UPCOMING:
 
-                for (int i = 0; i < array.length; i++) {
+                if (array != null) {
 
-                    if (NMSConstants.READY.equals(array[i].getStatus())) {
+                    for (int i = 0; i < array.length; i++) {
 
-                        list.add(array[i]);
+                        if (NMSConstants.READY.equals(array[i].getStatus())) {
+
+                            list.add(array[i]);
+                        }
                     }
                 }
                 if (list.size() > 0) {
@@ -356,16 +406,25 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                 } else {
 
                     ulp.setUpcomings(null);
+
+                    UpcomingDetailPanel dp = getUpcomingDetailPanel();
+                    if (dp != null) {
+
+                        dp.setUpcoming(null);
+                    }
                 }
                 break;
 
             case NOT_RECORDING_UPCOMING:
 
-                for (int i = 0; i < array.length; i++) {
+                if (array != null) {
 
-                    if (!NMSConstants.READY.equals(array[i].getStatus())) {
+                    for (int i = 0; i < array.length; i++) {
 
-                        list.add(array[i]);
+                        if (!NMSConstants.READY.equals(array[i].getStatus())) {
+
+                            list.add(array[i]);
+                        }
                     }
                 }
                 if (list.size() > 0) {
@@ -376,6 +435,12 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                 } else {
 
                     ulp.setUpcomings(null);
+
+                    UpcomingDetailPanel dp = getUpcomingDetailPanel();
+                    if (dp != null) {
+
+                        dp.setUpcoming(null);
+                    }
                 }
                 break;
             }
@@ -449,10 +514,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
     private boolean isParameterByGuide() {
         return (BY_GUIDE.equals(getSelectedParameter()));
-    }
-
-    private boolean isParameterByRules() {
-        return (BY_RULES.equals(getSelectedParameter()));
     }
 
     private boolean isParameterUpcomingRecordings() {
@@ -736,7 +797,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     updateLayout(false);
                 }
 
-            } else if (isParameterByRules()) {
+            } else if (isParameterUpcomingRecordings()) {
 
                 NMS[] array = getNMS();
                 RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
@@ -759,8 +820,11 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                     if (rlist.size() > 0) {
 
+                        Collections.sort(rlist, new RecordingRuleSortByName());
+                        RecordingRule all = new RecordingRule();
+                        all.setName("All");
+                        rlist.add(0, all);
                         rules = rlist.toArray(new RecordingRule[rlist.size()]);
-                        Arrays.sort(rules, new RecordingRuleSortByName());
                         rrlp.setRecordingRules(rules);
                     }
 
@@ -789,6 +853,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
             int wspan = (int) (width * 0.03);
             int listwidth = (width - (2 * wspan));
+            int halflistwidth = (width - (3 * wspan)) / 2;
             int onethirdlistwidth = (width - (3 * wspan)) / 3;
             int twothirdlistwidth = onethirdlistwidth * 2;
 
@@ -831,7 +896,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             RecordingRuleListPanel rrlp = new RecordingRuleListPanel();
             rrlp.setControl(true);
             rrlp.addPropertyChangeListener("SelectedRecordingRule", this);
-            rrlp.setBounds(wspan, hspan, listwidth, listheight + detailheight);
             setRecordingRuleListPanel(rrlp);
 
             ShowDetailPanel sdp = new ShowDetailPanel();
@@ -840,10 +904,9 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             setShowDetailPanel(sdp);
 
             UpcomingListPanel ulp = new UpcomingListPanel();
+            ulp.setControl(false);
             ulp.setAlpha(alpha);
-
             ulp.addPropertyChangeListener("SelectedUpcoming", this);
-            ulp.setControl(true);
 
             setUpcomingListPanel(ulp);
 
@@ -853,13 +916,17 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
             JXLabel label = getUpcomingLabel();
             label.setFont(ulp.getLargeFont());
-            label.setForeground(ulp.getSelectedColor());
+            label.setForeground(ulp.getInfoColor());
             label.setHorizontalTextPosition(SwingConstants.CENTER);
             label.setHorizontalAlignment(SwingConstants.RIGHT);
             Dimension ldim = label.getPreferredSize();
-            label.setBounds(wspan, hspan, listwidth, (int) ldim.getHeight());
+            int labelHeight = (int) ldim.getHeight();
+            label.setBounds(wspan, hspan, listwidth, labelHeight);
 
-            ulp.setBounds(wspan, hspan, listwidth, listheight);
+            rrlp.setBounds(wspan, hspan + labelHeight, halflistwidth,
+                listheight - labelHeight);
+            ulp.setBounds(wspan + wspan + halflistwidth, hspan + labelHeight,
+                halflistwidth, listheight - labelHeight);
             dp.setBounds(wspan, hspan + hspan + listheight, detailwidth,
                 detailheight);
 
@@ -892,12 +959,9 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     pane.add(getShowAiringListPanel(), Integer.valueOf(100));
                     pane.add(getShowDetailPanel(), Integer.valueOf(100));
 
-                } else if (isParameterByRules()) {
-
-                    pane.add(getRecordingRuleListPanel(), Integer.valueOf(100));
-
                 } else if (isParameterUpcomingRecordings()) {
 
+                    pane.add(getRecordingRuleListPanel(), Integer.valueOf(100));
                     pane.add(getUpcomingListPanel(), Integer.valueOf(100));
                     pane.add(getUpcomingLabel(), Integer.valueOf(110));
                     pane.add(getUpcomingDetailPanel(), Integer.valueOf(100));
@@ -1303,6 +1367,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
             RecordingRule rr = (RecordingRule) event.getNewValue();
             setSelectedRecordingRule(rr);
+            applyUpcoming();
 
         } else if (event.getPropertyName().equals("SelectedUpcoming")) {
 
@@ -1367,34 +1432,17 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                 } else if (isParameterUpcomingRecordings()) {
 
-                    String text = null;
-                    int state = getUpcomingState();
-                    switch (state) {
+                    RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
+                    if (rrlp != null) {
 
-                    default:
-                    case ALL_UPCOMING:
-                        state = NOT_RECORDING_UPCOMING;
-                        text = NOT_RECORDING_UPCOMING_TEXT;
-                        break;
-
-                    case RECORDING_UPCOMING:
-                        state = ALL_UPCOMING;
-                        text = ALL_UPCOMING_TEXT;
-                        break;
-
-                    case NOT_RECORDING_UPCOMING:
-                        state = RECORDING_UPCOMING;
-                        text = RECORDING_UPCOMING_TEXT;
-                        break;
+                        rrlp.setControl(true);
                     }
 
-                    JXLabel l = getUpcomingLabel();
-                    if (l != null) {
+                    UpcomingListPanel ulp = getUpcomingListPanel();
+                    if (ulp != null) {
 
-                        l.setText(text);
+                        ulp.setControl(false);
                     }
-                    setUpcomingState(state);
-                    applyUpcoming();
                 }
             }
         }
@@ -1433,34 +1481,50 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                 } else if (isParameterUpcomingRecordings()) {
 
-                    String text = null;
-                    int state = getUpcomingState();
-                    switch (state) {
-
-                    default:
-                    case ALL_UPCOMING:
-                        state = RECORDING_UPCOMING;
-                        text = RECORDING_UPCOMING_TEXT;
-                        break;
-
-                    case RECORDING_UPCOMING:
-                        state = NOT_RECORDING_UPCOMING;
-                        text = NOT_RECORDING_UPCOMING_TEXT;
-                        break;
-
-                    case NOT_RECORDING_UPCOMING:
-                        state = ALL_UPCOMING;
-                        text = ALL_UPCOMING_TEXT;
-                        break;
+                    RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
+                    if (rrlp != null) {
+                        rrlp.setControl(false);
                     }
 
-                    JXLabel l = getUpcomingLabel();
-                    if (l != null) {
+                    UpcomingListPanel ulp = getUpcomingListPanel();
+                    if (ulp != null) {
 
-                        l.setText(text);
+                        if (!ulp.isControl()) {
+
+                            ulp.setControl(true);
+
+                        } else {
+
+                            String text = null;
+                            int state = getUpcomingState();
+                            switch (state) {
+
+                            default:
+                            case ALL_UPCOMING:
+                                state = RECORDING_UPCOMING;
+                                text = RECORDING_UPCOMING_TEXT;
+                                break;
+
+                            case RECORDING_UPCOMING:
+                                state = NOT_RECORDING_UPCOMING;
+                                text = NOT_RECORDING_UPCOMING_TEXT;
+                                break;
+
+                            case NOT_RECORDING_UPCOMING:
+                                state = ALL_UPCOMING;
+                                text = ALL_UPCOMING_TEXT;
+                                break;
+                            }
+
+                            JXLabel l = getUpcomingLabel();
+                            if (l != null) {
+
+                                l.setText(text);
+                            }
+                            setUpcomingState(state);
+                            applyUpcoming();
+                        }
                     }
-                    setUpcomingState(state);
-                    applyUpcoming();
                 }
             }
         }
@@ -1509,18 +1573,16 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                         }
                     }
 
-                } else if (isParameterByRules()) {
+                } else if (isParameterUpcomingRecordings()) {
 
                     RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
-                    if (rrlp != null) {
+                    if ((rrlp != null) && (rrlp.isControl())) {
 
                         rrlp.moveUp();
                     }
 
-                } else if (isParameterUpcomingRecordings()) {
-
                     UpcomingListPanel ulp = getUpcomingListPanel();
-                    if (ulp != null) {
+                    if ((ulp != null) && (ulp.isControl())) {
 
                         ulp.moveUp();
                     }
@@ -1572,18 +1634,16 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                         }
                     }
 
-                } else if (isParameterByRules()) {
+                } else if (isParameterUpcomingRecordings()) {
 
                     RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
-                    if (rrlp != null) {
+                    if ((rrlp != null) && (rrlp.isControl())) {
 
                         rrlp.moveDown();
                     }
 
-                } else if (isParameterUpcomingRecordings()) {
-
                     UpcomingListPanel ulp = getUpcomingListPanel();
-                    if (ulp != null) {
+                    if ((ulp != null) && (ulp.isControl())) {
 
                         ulp.moveDown();
                     }
@@ -1627,18 +1687,16 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                         }
                     }
 
-                } else if (isParameterByRules()) {
+                } else if (isParameterUpcomingRecordings()) {
 
                     RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
-                    if (rrlp != null) {
+                    if ((rrlp != null) && (rrlp.isControl())) {
 
                         rrlp.movePageUp();
                     }
 
-                } else if (isParameterUpcomingRecordings()) {
-
                     UpcomingListPanel ulp = getUpcomingListPanel();
-                    if (ulp != null) {
+                    if ((ulp != null) && (ulp.isControl())) {
 
                         ulp.movePageUp();
                     }
@@ -1682,18 +1740,16 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                         }
                     }
 
-                } else if (isParameterByRules()) {
+                } else if (isParameterUpcomingRecordings()) {
 
                     RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
-                    if (rrlp != null) {
+                    if ((rrlp != null) && (rrlp.isControl())) {
 
                         rrlp.movePageDown();
                     }
 
-                } else if (isParameterUpcomingRecordings()) {
-
                     UpcomingListPanel ulp = getUpcomingListPanel();
-                    if (ulp != null) {
+                    if ((ulp != null) && (ulp.isControl())) {
 
                         ulp.movePageDown();
                     }
@@ -1711,7 +1767,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
             if (event.getType() == JobEvent.COMPLETE) {
 
-                if (isParameterByRules()) {
+                if (isParameterUpcomingRecordings()) {
 
                     RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
                     NMS[] array = getNMS();
@@ -1786,15 +1842,23 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             RecordingRulePanel p = getRecordingRulePanel();
             if (p != null) {
 
-                if (isParameterByRules()) {
+                if (isParameterUpcomingRecordings()) {
 
-                    RecordingRule rr = getSelectedRecordingRule();
-                    if (rr != null) {
+                    UpcomingListPanel ulp = getUpcomingListPanel();
+                    if ((ulp != null) && (ulp.isControl())) {
 
-                        NMS n = NMSUtil.select(getNMS(), rr.getHostPort());
-                        if (n != null) {
+                        handleUpcoming();
 
-                            editRule(n, p, rr);
+                    } else {
+
+                        RecordingRule rr = getSelectedRecordingRule();
+                        if (rr != null) {
+
+                            NMS n = NMSUtil.select(getNMS(), rr.getHostPort());
+                            if (n != null) {
+
+                                editRule(n, p, rr);
+                            }
                         }
                     }
 
@@ -1832,10 +1896,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                             }
                         }
                     }
-
-                } else if (isParameterUpcomingRecordings()) {
-
-                    handleUpcoming();
                 }
             }
         }
@@ -1879,7 +1939,32 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         public int compare(RecordingRule rr0, RecordingRule rr1) {
 
             String s0 = rr0.getName();
+            if (s0 != null) {
+
+                if (s0.startsWith("The")) {
+
+                    s0 = s0.substring(3);
+                    s0 = s0.trim();
+                }
+
+            } else {
+
+                s0 = "";
+            }
+
             String s1 = rr1.getName();
+            if (s1 != null) {
+
+                if (s1.startsWith("The")) {
+
+                    s1 = s1.substring(3);
+                    s1 = s1.trim();
+                }
+
+            } else {
+
+                s1 = "";
+            }
 
             return (s0.compareTo(s1));
         }

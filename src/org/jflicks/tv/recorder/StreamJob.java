@@ -16,10 +16,18 @@
 */
 package org.jflicks.tv.recorder;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import javax.swing.Timer;
+
+import org.jflicks.job.JobContainer;
+import org.jflicks.job.JobEvent;
+import org.jflicks.job.JobManager;
+import org.jflicks.util.Util;
 
 /**
  * Read from a device and send the data via UDP packet.
@@ -140,6 +148,66 @@ public class StreamJob extends RecoverJob {
 
         datagramSocket = null;
         inetAddress = null;
+    }
+
+    /**
+     * Simple test main.
+     *
+     * @param args The arguments.
+     */
+    public static void main(String[] args) {
+
+        String src = "/dev/video0";
+        String host = "localhost";
+        int port = 1234;
+        int seconds = 60;
+
+        for (int i = 0; i < args.length; i += 2) {
+
+            if (args[i].equals("-i")) {
+
+                src = args[i + 1];
+
+            } else if (args[i].equals("-h")) {
+
+                host = args[i + 1];
+
+            } else if (args[i].equals("-p")) {
+
+                port = Util.str2int(args[i + 1], port);
+
+            } else if (args[i].equals("-s")) {
+
+                seconds = Util.str2int(args[i + 1], seconds);
+
+            } else {
+
+                System.out.println("Unknown arg <" + args[i] + ">");
+            }
+        }
+
+        System.out.println("input <" + src + ">");
+        System.out.println("host <" + host + ">");
+        System.out.println("port <" + port + ">");
+        System.out.println("seconds <" + seconds + ">");
+        StreamJob job = new StreamJob();
+        job.setDevice(src);
+        job.setHost(host);
+        job.setPort(port);
+        final JobContainer jc = JobManager.getJobContainer(job);
+        jc.start();
+
+        ActionListener taskPerformer = new ActionListener() {
+
+            public void actionPerformed(ActionEvent evt) {
+
+                jc.stop();
+            }
+        };
+
+        Timer wait = new Timer(seconds * 1000, taskPerformer);
+        wait.setRepeats(false);
+        wait.start();
     }
 
 }

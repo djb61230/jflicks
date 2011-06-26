@@ -504,6 +504,10 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
             } else {
                 i = 0;
             }
+
+        } else if (i < 0) {
+
+            i = 0;
         }
         int old = selectedIndex;
         setOldSelectedIndex(old);

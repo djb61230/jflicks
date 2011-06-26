@@ -49,6 +49,9 @@ public final class Detect {
      */
     public static final int WHITE_TYPE = 1;
 
+    public static final int DARK_GRAY_TYPE = 2;
+    public static final int LIGHT_GRAY_TYPE = 3;
+
     private int backup;
     private int span;
 
@@ -386,8 +389,8 @@ public final class Detect {
      * @return True if it is a "rating frame".
      * @throws IOException on an error.
      */
-    public boolean examine(File f, int type, int fudge, boolean verbose)
-        throws IOException {
+    public boolean examine(File f, int type, int range, int fudge,
+        boolean compare, boolean verbose) throws IOException {
 
         boolean result = false;
 
@@ -455,6 +458,33 @@ public final class Detect {
 
                     data[i] = 0x00ffffff;
                 }
+
+            } else if (type == DARK_GRAY_TYPE) {
+
+                if ((Math.min(r, fudge) == r)
+                    && (Math.min(g, fudge) == g)
+                    && (Math.min(b, fudge) == b)) {
+
+                    // Seems to be dark enough, but we want it not
+                    // to be too dark.
+                    int low = fudge - range;
+                    if ((Math.max(r, low) == r)
+                        && (Math.max(g, low) == r)
+                        && (Math.max(b, low) == r)) {
+
+                        data[i] = 0x00ffffff;
+
+                    } else {
+
+                        data[i] = 0x00000000;
+                    }
+
+                } else {
+
+                    data[i] = 0x00ffffff;
+                }
+
+            } else if (type == LIGHT_GRAY_TYPE) {
             }
         }
 
@@ -467,96 +497,114 @@ public final class Detect {
             ImageIO.write(white, "png", new File(fname + "-white.png"));
         }
 
-        Line2D.Double[] lines = findLines(data, w, h, min);
-        if (lines != null) {
+        if (compare) {
 
-            if (verbose) {
-                System.out.println("Found " + lines.length
-                    + " interesting lines.");
-            }
-            for (int i = 0; i < lines.length; i++) {
+            // We are going to do more of a brute force search for a
+            // logo in what is left of our search area of the frame.
+        } else {
 
-                int x1 = (int) lines[i].getX1();
-                int y1 = (int) lines[i].getY1();
-                int x2 = (int) lines[i].getX2();
-                int y2 = (int) lines[i].getY2();
+            // We are going to look for some sort of "box" by
+            // computing lines and such.  This works pretty well
+            // on mostbox-line rating symbols.
+            Line2D.Double[] lines = findLines(data, w, h, min);
+            if (lines != null) {
+
                 if (verbose) {
-
-                    System.out.print("(X1, Y1)-(X2, Y2): (" + x1 + ", " + y1
-                        + ")");
-                    System.out.print("-(" + x2 + ", " + y2 + ")");
-                    System.out.println(" length " + (y2 - y1));
+                    System.out.println("Found " + lines.length
+                        + " interesting lines.");
                 }
-            }
+                for (int i = 0; i < lines.length; i++) {
 
-            Point2D.Double toppt =
-                computeLeft(true, lines, data, w, h, verbose);
-            int toplength = computeLineLength(toppt, data, w, h);
-
-            Point2D.Double botpt =
-                computeLeft(false, lines, data, w, h, verbose);
-            int botlength = computeLineLength(botpt, data, w, h);
-
-            if (verbose) {
-
-                System.out.println("topleft could be: " + toppt);
-                System.out.println("top line length looks like: " + toplength);
-                System.out.println("botleft could be: " + botpt);
-                System.out.println("bottom line length looks like: "
-                    + botlength);
-            }
-
-            int mincol = Math.min(toplength, botlength) - 5;
-            mincol += (int) toppt.getX();
-            int maxcol = Math.max(toplength, botlength);
-            maxcol += (int) toppt.getX();
-            int toprow = (int) toppt.getY();
-            int botrow = (int) botpt.getY();
-
-            Line2D.Double rightline =
-                findLine(lines, toprow, botrow, mincol, maxcol, verbose);
-
-            if (rightline != null) {
-
-                int x1 = (int) rightline.getX1();
-                int y1 = (int) rightline.getY1();
-                int x2 = (int) rightline.getX2();
-                int y2 = (int) rightline.getY2();
-                if (verbose) {
-
-                    System.out.println("rightline");
-                    System.out.print("(X1, Y1)-(X2, Y2): (" + x1 + ", " + y1
-                        + ")");
-                    System.out.print("-(" + x2 + ", " + y2 + ")");
-                    System.out.println(" length " + (y2 - y1));
-                }
-
-                // At this point we think we have found the rectangle
-                // that is the "rating box".  We could have a false
-                // positive where we are looking at a blank screen or
-                // something.  Lets check the rectangle - it should have
-                // a high percentage of white pixels representing the
-                // text.
-                int rx = (int) toppt.getX();
-                int ry = (int) toppt.getY();
-                int rw = (int) (x1 - rx) + 1;
-                int rh = (botrow - toprow) + 1;
-
-                if ((rx > minx) && (ry > miny)) {
-
-                    Rectangle rect = new Rectangle(rx, ry, rw, rh);
-
-                    double percent = computeWhitespace(rect, data, w, h);
-                    result = (percent >= whitespace);
-
-                    if (result) {
-
-                        result = computeBorder(rect, data, w, h) > border;
-                    }
+                    int x1 = (int) lines[i].getX1();
+                    int y1 = (int) lines[i].getY1();
+                    int x2 = (int) lines[i].getX2();
+                    int y2 = (int) lines[i].getY2();
                     if (verbose) {
 
-                        System.out.println("Rectangle: " + rect);
-                        System.out.println("percent whitespace: " + percent);
+                        System.out.print("(X1, Y1)-(X2, Y2): (" + x1 + ", " + y1
+                            + ")");
+                        System.out.print("-(" + x2 + ", " + y2 + ")");
+                        System.out.println(" length " + (y2 - y1));
+                    }
+                }
+
+                Point2D.Double toppt =
+                    computeLeft(true, lines, data, w, h, verbose);
+                int toplength = computeLineLength(toppt, data, w, h);
+
+                Point2D.Double botpt =
+                    computeLeft(false, lines, data, w, h, verbose);
+                int botlength = computeLineLength(botpt, data, w, h);
+
+                if (verbose) {
+
+                    System.out.println("topleft could be: " + toppt);
+                    System.out.println("top line length looks like: "
+                        + toplength);
+                    System.out.println("botleft could be: " + botpt);
+                    System.out.println("bottom line length looks like: "
+                        + botlength);
+                }
+
+                int mincol = Math.min(toplength, botlength) - 5;
+                mincol += (int) toppt.getX();
+                int maxcol = Math.max(toplength, botlength);
+                maxcol += (int) toppt.getX();
+                int toprow = (int) toppt.getY();
+                int botrow = (int) botpt.getY();
+
+                Line2D.Double rightline =
+                    findLine(lines, toprow, botrow, mincol, maxcol, verbose);
+
+                if (rightline != null) {
+
+                    int x1 = (int) rightline.getX1();
+                    int y1 = (int) rightline.getY1();
+                    int x2 = (int) rightline.getX2();
+                    int y2 = (int) rightline.getY2();
+                    if (verbose) {
+
+                        System.out.println("rightline");
+                        System.out.print("(X1, Y1)-(X2, Y2): (" + x1 + ", " + y1
+                            + ")");
+                        System.out.print("-(" + x2 + ", " + y2 + ")");
+                        System.out.println(" length " + (y2 - y1));
+                    }
+
+                    // At this point we think we have found the rectangle
+                    // that is the "rating box".  We could have a false
+                    // positive where we are looking at a blank screen or
+                    // something.  Lets check the rectangle - it should have
+                    // a high percentage of white pixels representing the
+                    // text.
+                    int rx = (int) toppt.getX();
+                    int ry = (int) toppt.getY();
+                    int rw = (int) (x1 - rx) + 1;
+                    int rh = (botrow - toprow) + 1;
+
+                    if ((rx > minx) && (ry > miny)) {
+
+                        Rectangle rect = new Rectangle(rx, ry, rw, rh);
+
+                        double percent = computeWhitespace(rect, data, w, h);
+                        result = (percent >= whitespace);
+
+                        if (result) {
+
+                            result = computeBorder(rect, data, w, h) > border;
+                        }
+                        if (verbose) {
+
+                            System.out.println("Rectangle: " + rect);
+                            System.out.println("perc whitespace: " + percent);
+                        }
+                    }
+
+                } else {
+
+                    if (verbose) {
+
+                        System.out.println("Can't find right vertical line");
                     }
                 }
 
@@ -564,15 +612,8 @@ public final class Detect {
 
                 if (verbose) {
 
-                    System.out.println("Can't find right vertical line");
+                    System.out.println("Didn't find any interesting lines.");
                 }
-            }
-
-        } else {
-
-            if (verbose) {
-
-                System.out.println("Didn't find any interesting lines.");
             }
         }
 
@@ -614,7 +655,7 @@ public final class Detect {
      * @throws IOException on an error.
      */
     public int[] processDirectory(File dir, String ext, int type,
-        int fudge, boolean verbose) throws IOException {
+        int fudge, boolean compare, boolean verbose) throws IOException {
 
         int[] result = null;
 
@@ -630,7 +671,7 @@ public final class Detect {
                 Arrays.sort(all);
                 for (int i = 0; i < all.length; i++) {
 
-                    if (examine(all[i], type, fudge, verbose)) {
+                    if (examine(all[i], type, 24, fudge, compare, verbose)) {
 
                         int time = frameToSeconds(all[i]);
                         timelist.add(Integer.valueOf(time));
@@ -668,11 +709,12 @@ public final class Detect {
 
         String path = null;
         int type = BLACK_TYPE;
+        boolean compare = false;
         boolean verbose = false;
         int fudge = 10;
         String extension = "jpg";
         int backup = 0;
-        int span = 0;
+        int span = 5;
 
         for (int i = 0; i < args.length; i += 2) {
 
@@ -682,6 +724,8 @@ public final class Detect {
                 type = Util.str2int(args[i + 1], type);
             } else if (args[i].equalsIgnoreCase("-fudge")) {
                 fudge = Util.str2int(args[i + 1], fudge);
+            } else if (args[i].equalsIgnoreCase("-compare")) {
+                compare = Util.str2boolean(args[i + 1], compare);
             } else if (args[i].equalsIgnoreCase("-verbose")) {
                 verbose = Util.str2boolean(args[i + 1], verbose);
             } else if (args[i].equalsIgnoreCase("-extension")) {
@@ -702,11 +746,11 @@ public final class Detect {
             if (file.isDirectory()) {
 
                 int[] array = detect.processDirectory(file, extension, type,
-                    fudge, verbose);
+                    fudge, compare, verbose);
 
             } else {
 
-                detect.examine(file, type, fudge, verbose);
+                detect.examine(file, type, 24, fudge, compare, verbose);
             }
         }
     }

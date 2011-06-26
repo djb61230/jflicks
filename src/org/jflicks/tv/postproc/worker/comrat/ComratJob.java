@@ -28,7 +28,8 @@ import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
-import org.jflicks.util.Detect;
+import org.jflicks.util.DetectRating;
+import org.jflicks.util.DetectRatingPlan;
 
 /**
  * This job starts a system job that runs comskip.
@@ -39,11 +40,10 @@ import org.jflicks.util.Detect;
 public class ComratJob extends BaseWorkerJob implements JobListener {
 
     private File directory;
-    private int type;
-    private int fudge;
     private int backup;
     private int span;
     private boolean verbose;
+    private DetectRatingPlan[] detectRatingPlans;
 
     /**
      * Constructor with one required argument.
@@ -58,44 +58,6 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
         // Check the recording for completion every minute.
         setSleepTime(60000);
         setSpan(5);
-    }
-
-    /**
-     * This is the Detect type property, either BLACK or WHITE.
-     *
-     * @return The type as an int.
-     */
-    public int getType() {
-        return (type);
-    }
-
-    /**
-     * This is the Detect type property, either BLACK or WHITE.
-     *
-     * @param i The type as an int.
-     */
-    public void setType(int i) {
-        type = i;
-    }
-
-    /**
-     * This is an integer to tell the Detect program to mitigate the
-     * BLACK or WHITE value to shades of gray.
-     *
-     * @return An int value.
-     */
-    public int getFudge() {
-        return (fudge);
-    }
-
-    /**
-     * This is an integer to tell the Detect program to mitigate the
-     * BLACK or WHITE value to shades of gray.
-     *
-     * @param i An int value.
-     */
-    public void setFudge(int i) {
-        fudge = i;
     }
 
     /**
@@ -152,6 +114,24 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
      */
     public void setVerbose(boolean b) {
         verbose = b;
+    }
+
+    /**
+     * We have a set of plans to help us find the logos.
+     *
+     * @return An array of DetectRatingPlan instances.
+     */
+    public DetectRatingPlan[] getDetectRatingPlans() {
+        return (detectRatingPlans);
+    }
+
+    /**
+     * We have a set of plans to help us find the logos.
+     *
+     * @param array An array of DetectRatingPlan instances.
+     */
+    public void setDetectRatingPlans(DetectRatingPlan[] array) {
+        detectRatingPlans = array;
     }
 
     private File getDirectory() {
@@ -290,12 +270,13 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                 // frames.
                 try {
 
-                    Detect detect = new Detect();
-                    detect.setBackup(getBackup());
-                    detect.setSpan(getSpan());
+                    String ratingDir = "resources/rating";
+                    DetectRating dr = new DetectRating();
+                    dr.setBackup(getBackup());
+                    dr.setSpan(getSpan());
                     log(BaseWorker.INFO, "Start processing of frames...");
-                    int[] array = detect.processDirectory(dir, "jpg", getType(),
-                        getFudge(), isVerbose());
+                    int[] array = dr.processDirectory(ratingDir, dir, "jpg",
+                        getDetectRatingPlans(), isVerbose());
                     log(BaseWorker.INFO, "Finished processing of frames...");
                     if ((array != null) && (array.length > 0)) {
 

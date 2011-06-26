@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.Timer;
 
@@ -87,7 +88,9 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     private ArrayList<ProgramData> programDataList;
     private ArrayList<OnDemand> onDemandList;
     private ArrayList<Trailer> trailerList;
+    private ArrayList<Recording> removeRecordingList;
     private EventSender eventSender;
+    private HashMap<Channel, ArrayList<ShowAiring>> showAiringCacheMap;
 
     /**
      * Simple empty constructor.
@@ -98,6 +101,8 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         setProgramDataList(new ArrayList<ProgramData>());
         setOnDemandList(new ArrayList<OnDemand>());
         setTrailerList(new ArrayList<Trailer>());
+        setRemoveRecordingList(new ArrayList<Recording>());
+        setShowAiringCacheMap(new HashMap<Channel, ArrayList<ShowAiring>>());
     }
 
     /**
@@ -271,6 +276,56 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
     private void setTrailerList(ArrayList<Trailer> l) {
         trailerList = l;
+    }
+
+    public ArrayList<Recording> getRemoveRecordingList() {
+        return (removeRecordingList);
+    }
+
+    private void setRemoveRecordingList(ArrayList<Recording> l) {
+        removeRecordingList = l;
+    }
+
+    private HashMap<Channel, ArrayList<ShowAiring>> getShowAiringCacheMap() {
+        return (showAiringCacheMap);
+    }
+
+    private void setShowAiringCacheMap(
+        HashMap<Channel, ArrayList<ShowAiring>> m) {
+
+        showAiringCacheMap = m;
+    }
+
+    private void clearShowAiringCacheMap() {
+
+        HashMap<Channel, ArrayList<ShowAiring>> m = getShowAiringCacheMap();
+        if (m != null) {
+
+            m.clear();
+        }
+    }
+
+    private ArrayList<ShowAiring> getShowAiringListByChannel(Channel c) {
+
+        ArrayList<ShowAiring> result = null;
+
+        HashMap<Channel, ArrayList<ShowAiring>> m = getShowAiringCacheMap();
+        if ((c != null) && (m != null)) {
+
+            result = m.get(c);
+        }
+
+        return (result);
+    }
+
+    private void addShowAiringListByChannel(Channel c,
+        ArrayList<ShowAiring> l) {
+
+        HashMap<Channel, ArrayList<ShowAiring>> m = getShowAiringCacheMap();
+        if ((c != null) && (l != null) && (m != null)) {
+
+            m.put(c, l);
+        }
     }
 
     private ArrayList<OnDemand> getOnDemandList() {
@@ -835,48 +890,55 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
         ShowAiring[] result = null;
 
-        ProgramData[] array = getProgramData();
-        if ((array != null) && (c != null)) {
+        ArrayList<ShowAiring> list = getShowAiringListByChannel(c);
 
-            ArrayList<ShowAiring> list = new ArrayList<ShowAiring>();
-            for (int i = 0; i < array.length; i++) {
+        if (list == null) {
 
-                Airing[] airs = array[i].getAiringsByChannel(c);
-                if (airs != null) {
+            ProgramData[] array = getProgramData();
+            if ((array != null) && (c != null)) {
 
-                    String hp = getHost() + ":" + getPort();
-                    for (int j = 0; j < airs.length; j++) {
+                list = new ArrayList<ShowAiring>();
+                for (int i = 0; i < array.length; i++) {
 
-                        Show show = array[i].getShowByAiring(airs[j]);
-                        if (show != null) {
+                    Airing[] airs = array[i].getAiringsByChannel(c);
+                    if (airs != null) {
 
-                            ShowAiring sa = new ShowAiring(show, airs[j]);
-                            sa.setHostPort(hp);
-                            list.add(sa);
+                        String hp = getHost() + ":" + getPort();
+                        for (int j = 0; j < airs.length; j++) {
+
+                            Show show = array[i].getShowByAiring(airs[j]);
+                            if (show != null) {
+
+                                ShowAiring sa = new ShowAiring(show, airs[j]);
+                                sa.setHostPort(hp);
+                                list.add(sa);
+                            }
                         }
                     }
                 }
+
+                if (list.size() > 0) {
+
+                    addShowAiringListByChannel(c, list);
+                }
             }
+        }
 
-            if (list.size() > 0) {
+        if ((list != null) && (list.size() > 0)) {
 
-                Collections.sort(list);
-                long now = System.currentTimeMillis();
-                int count = 0;
-                for (int i = 0; i < list.size(); i++) {
+            Collections.sort(list);
+            long now = System.currentTimeMillis();
+            int count = 0;
+            for (int i = 0; i < list.size(); i++) {
 
-                    Airing a = list.get(i).getAiring();
-                    if (a != null) {
+                Airing a = list.get(i).getAiring();
+                if (a != null) {
 
-                        Date d = a.getAirDate();
-                        if (d != null) {
+                    Date d = a.getAirDate();
+                    if (d != null) {
 
-                            if (d.getTime() > now) {
-                                break;
-                            } else {
-                                count++;
-                            }
-
+                        if (d.getTime() > now) {
+                            break;
                         } else {
                             count++;
                         }
@@ -884,14 +946,17 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                     } else {
                         count++;
                     }
-                }
 
-                count--;
-                for (int i = 0; i < count; i++) {
-                    list.remove(0);
+                } else {
+                    count++;
                 }
-                result = list.toArray(new ShowAiring[list.size()]);
             }
+
+            count--;
+            for (int i = 0; i < count; i++) {
+                list.remove(0);
+            }
+            result = list.toArray(new ShowAiring[list.size()]);
         }
 
         return (result);
@@ -1161,6 +1226,68 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         return (result);
     }
 
+    public void performRemoval(Recording r) {
+
+        log(DEBUG, "Recording to physically remove: <" + r + ">");
+        if (r != null) {
+
+            String path = r.getPath();
+            if (path != null) {
+
+                File file = new File(path);
+                String iext = r.getIndexedExtension();
+
+                // Of course delete the file.
+                if (!file.delete()) {
+
+                    log(WARNING, file.getPath() + " delete fail");
+                }
+
+                // The screenshot is a "filename.png" file.
+                File pngfile = new File(file.getPath() + ".png");
+                if (!pngfile.delete()) {
+
+                    log(WARNING, pngfile.getPath() + " del fail");
+                }
+
+                // The index file is "filename.iext".
+                if (iext != null) {
+
+                    File iextfile = new File(file.getPath() + "." + iext);
+                    if (!iextfile.delete()) {
+
+                        log(WARNING, iextfile.getPath() + " del fail");
+                    }
+                }
+
+                // Other recorders or processes might add other files
+                // with the rule of a different extension.  Let's find
+                // them and delete them.
+                File parent = file.getParentFile();
+                String fname = file.getName();
+                if ((parent != null) && (fname != null)) {
+
+                    // This really should get everything as it
+                    // includes the show ID and time up to the
+                    // minute.
+                    fname = fname.substring(0, fname.lastIndexOf("_"));
+                    File[] array =
+                        parent.listFiles(new StartsWithFilter(fname));
+                    if (array != null) {
+
+                        for (int i = 0; i < array.length; i++) {
+
+                            if (!array[i].delete()) {
+
+                                log(WARNING, array[i].getPath() + " del fail");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -1182,6 +1309,17 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 s.requestRescheduling();
             }
 
+            ArrayList<Recording> l = getRemoveRecordingList();
+            if (l != null) {
+
+                synchronized (l) {
+
+                    log(DEBUG, "Adding Recording to remove when we are "
+                        + "not busy. <" + r + ">");
+                    l.add(r);
+                }
+            }
+            /*
             String path = r.getPath();
             if (path != null) {
 
@@ -1245,6 +1383,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 timer.setRepeats(false);
                 timer.start();
             }
+            */
 
             sendMessage(NMSConstants.MESSAGE_RECORDING_REMOVED);
         }
@@ -1505,6 +1644,10 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
      * {@inheritDoc}
      */
     public void dataUpdate(DataUpdateEvent event) {
+
+        // Let's clear out our cache of ShowAirings per Channel since
+        // we have fresh guide data.
+        clearShowAiringCacheMap();
 
         Scheduler s = getScheduler();
         if (s != null) {

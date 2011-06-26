@@ -53,6 +53,7 @@ public class Activator extends BaseActivator {
     private RemoteTracker remoteTracker;
     private SystemNMS systemNMS;
     private ServiceTracker logServiceTracker;
+    private JobContainer removalJobContainer;
 
     /**
      * {@inheritDoc}
@@ -63,6 +64,11 @@ public class Activator extends BaseActivator {
         SystemNMS s = new SystemNMS();
         setSystemNMS(s);
         s.setEventSender(EventSender.getInstance(bc));
+
+        RemoveRecordingJob rrj = new RemoveRecordingJob(s);
+        JobContainer rjc = JobManager.getJobContainer(rrj);
+        setRemovalJobContainer(rjc);
+        rjc.start();
 
         RecorderTracker tracker = new RecorderTracker(bc, s);
         setRecorderTracker(tracker);
@@ -136,6 +142,12 @@ public class Activator extends BaseActivator {
      */
     public void stop(BundleContext context) {
 
+        JobContainer rjc = getRemovalJobContainer();
+        if (rjc != null) {
+
+            rjc.stop();
+        }
+
         SystemNMS s = getSystemNMS();
         if (s != null) {
             s.close();
@@ -201,6 +213,14 @@ public class Activator extends BaseActivator {
             logServiceTracker.close();
             logServiceTracker = null;
         }
+    }
+
+    private JobContainer getRemovalJobContainer() {
+        return (removalJobContainer);
+    }
+
+    private void setRemovalJobContainer(JobContainer jc) {
+        removalJobContainer = jc;
     }
 
     private RecorderTracker getRecorderTracker() {

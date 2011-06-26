@@ -112,6 +112,9 @@ public abstract class BaseOnDemand extends BaseConfig implements OnDemand {
             log(DEBUG, "getRecorder: device <" + device + ">");
             result = n.getRecorderByDevice(device);
             log(DEBUG, "getRecorder: result <" + result + ">");
+            if (result != null) {
+                log(DEBUG, "getRecorder: result <" + result.getDevice() + ">");
+            }
         }
 
         return (result);

@@ -22,6 +22,7 @@ import java.util.Properties;
 import org.jflicks.job.JobContainer;
 import org.jflicks.tv.postproc.worker.Worker;
 import org.jflicks.util.BaseActivator;
+import org.jflicks.util.DetectRatingPlan;
 import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
@@ -54,19 +55,29 @@ public class Activator extends BaseActivator {
         Properties p = Util.findProperties("conf/comrat.properties");
         if (p != null) {
 
-            int count = Util.str2int(p.getProperty("count"), 0);
-            for (int i = 0; i < count; i++) {
+            ComratWorker cw = new ComratWorker();
+            cw.setLogServiceTracker(logServiceTracker);
+            cw.setTitle(p.getProperty("title"));
+            cw.setDescription(p.getProperty("description"));
+            cw.setBackup(Util.str2int(p.getProperty("backup"), 0));
+            cw.setSpan(Util.str2int(p.getProperty("span"), 5));
+            cw.setVerbose(Util.str2boolean(p.getProperty("verbose"), false));
 
-                ComratWorker cw = new ComratWorker();
-                cw.setLogServiceTracker(logServiceTracker);
-                cw.setTitle(p.getProperty("title_" + i));
-                cw.setDescription(p.getProperty("description_" + i));
-                cw.setType(Util.str2int(p.getProperty("type_" + i), 0));
-                cw.setFudge(Util.str2int(p.getProperty("fudge_" + i), 0));
-                cw.setBackup(Util.str2int(p.getProperty("backup_" + i), 0));
-                cw.setSpan(Util.str2int(p.getProperty("span_" + i), 5));
-                cw.setVerbose(Util.str2boolean(
-                    p.getProperty("verbose_" + i), false));
+            int count = Util.str2int(p.getProperty("count"), 0);
+            if (count > 0) {
+
+                // Ok we have some plans...
+                DetectRatingPlan[] plans = new DetectRatingPlan[count];
+                for (int i = 0; i < count; i++) {
+
+                    plans[i] = new DetectRatingPlan();
+                    plans[i].setType(
+                        Util.str2int(p.getProperty("type_" + i), 0));
+                    plans[i].setValue(
+                        Util.str2int(p.getProperty("value_" + i), 0));
+                }
+
+                cw.setDetectRatingPlans(plans);
 
                 Hashtable<String, String> dict =
                     new Hashtable<String, String>();

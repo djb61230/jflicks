@@ -146,9 +146,9 @@ public abstract class RecoverJob extends BaseDeviceJob implements
     private void reset() {
 
         System.out.println("We are trying to reset!");
-        System.out.println("Let's sleep for a few seconds to "
-            + "try to let things calm down.");
-        JobManager.sleep(4000);
+        //System.out.println("Let's sleep for a few seconds to "
+        //    + "try to let things calm down.");
+        //JobManager.sleep(4000);
 
         try {
 
@@ -218,8 +218,8 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                 try {
 
-                    currentRead = System.currentTimeMillis();
                     bb.rewind();
+                    currentRead = System.currentTimeMillis();
                     count = fileChannel.read(bb);
 
                 } catch (AsynchronousCloseException ex) {

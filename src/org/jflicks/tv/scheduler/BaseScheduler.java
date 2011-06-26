@@ -411,37 +411,64 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
         String[] array = getConfiguredRecordingDirecories();
         if ((array != null) && (array.length > 0)) {
 
-            // We keep a robinIndex to rotate around directories.
-            if (robinIndex >= array.length) {
+            File dir = null;
+            int checks = 0;
 
-                robinIndex = 0;
+            // Make sure the directory has at least 6-gig available...
+            while (checks < array.length) {
+
+                // We keep a robinIndex to rotate around directories.
+                if (robinIndex >= array.length) {
+
+                    robinIndex = 0;
+                }
+
+                // Use the current directory and then incr.
+                dir = new File(array[robinIndex++]);
+                if (dir.getUsableSpace() > 6442450944L) {
+
+                    // We are done.
+                    checks = array.length;
+
+                } else {
+
+                    log(INFO, "Skipping " + dir
+                        + " as there is not enough room.");
+                    checks++;
+                    dir = null;
+                }
             }
 
-            // Use the current directory and then incr.
-            File dir = new File(array[robinIndex++]);
-            StringBuffer sb = new StringBuffer();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
-            sdf.format(new Date(pr.getStart()), sb, new FieldPosition(0));
-            Recorder rec = pr.getRecorder();
-            if (rec != null) {
+            if (dir != null) {
 
-                String ext = rec.getExtension();
-                if (ext != null) {
+                StringBuffer sb = new StringBuffer();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
+                sdf.format(new Date(pr.getStart()), sb, new FieldPosition(0));
+                Recorder rec = pr.getRecorder();
+                if (rec != null) {
 
-                    sb.append("." + ext);
+                    String ext = rec.getExtension();
+                    if (ext != null) {
+
+                        sb.append("." + ext);
+
+                    } else {
+
+                        sb.append(".mpg");
+                    }
 
                 } else {
 
                     sb.append(".mpg");
                 }
+                sb.insert(0, pr.getShowId() + "_");
+
+                result = new File(dir, sb.toString());
 
             } else {
 
-                sb.append(".mpg");
+                log(WARNING, "No configured directories have space!");
             }
-            sb.insert(0, pr.getShowId() + "_");
-
-            result = new File(dir, sb.toString());
         }
 
         return (result);
