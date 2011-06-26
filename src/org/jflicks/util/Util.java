@@ -1428,6 +1428,36 @@ public final class Util {
     }
 
     /**
+     * We sort a lot of title Strings and sometimes the String you want
+     * to sort upon is not the exact given String.  This method will
+     * eliminate the word "The" from the beginning of the given String.
+     * There are probably more things that should be done as we will add
+     * code here to handle them as they come up.
+     *
+     * @param s A given title as a String.
+     * @return A String that will sort more appropriately.
+     */
+    public static String toSortableTitle(String s) {
+
+        String result = s;
+
+        if (result != null) {
+
+            if (result.startsWith("The")) {
+
+                result = result.substring(3);
+                result = result.trim();
+            }
+
+        } else {
+
+            result = "";
+        }
+
+        return (result);
+    }
+
+    /**
      * Simple main method that dumps the system properties to stdout.
      *
      * @param args Arguments that happen to be ignored.

@@ -1438,33 +1438,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         public int compare(Recording r0, Recording r1) {
 
-            String title0 = r0.getTitle();
-            if (title0 != null) {
-
-                if (title0.startsWith("The")) {
-
-                    title0 = title0.substring(3);
-                    title0 = title0.trim();
-                }
-
-            } else {
-
-                title0 = "";
-            }
-
-            String title1 = r1.getTitle();
-            if (title1 != null) {
-
-                if (title1.startsWith("The")) {
-
-                    title1 = title1.substring(3);
-                    title1 = title1.trim();
-                }
-
-            } else {
-
-                title1 = "";
-            }
+            String title0 = Util.toSortableTitle(r0.getTitle());
+            String title1 = Util.toSortableTitle(r1.getTitle());
 
             return (title0.compareTo(title1));
         }

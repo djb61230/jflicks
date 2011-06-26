@@ -1459,20 +1459,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
             stringBuilder.setLength(0);
 
-            String title = v.getTitle();
-            if (title != null) {
-
-                if (title.startsWith("The")) {
-
-                    title = title.substring(3);
-                    title = title.trim();
-                }
-
-            } else {
-
-                title = "";
-            }
-
+            String title = Util.toSortableTitle(v.getTitle());
             stringBuilder.append(title);
             if (v.isTV()) {
 

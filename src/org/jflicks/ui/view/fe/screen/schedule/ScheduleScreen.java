@@ -1938,33 +1938,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         public int compare(RecordingRule rr0, RecordingRule rr1) {
 
-            String s0 = rr0.getName();
-            if (s0 != null) {
-
-                if (s0.startsWith("The")) {
-
-                    s0 = s0.substring(3);
-                    s0 = s0.trim();
-                }
-
-            } else {
-
-                s0 = "";
-            }
-
-            String s1 = rr1.getName();
-            if (s1 != null) {
-
-                if (s1.startsWith("The")) {
-
-                    s1 = s1.substring(3);
-                    s1 = s1.trim();
-                }
-
-            } else {
-
-                s1 = "";
-            }
+            String s0 = Util.toSortableTitle(rr0.getName());
+            String s1 = Util.toSortableTitle(rr1.getName());
 
             return (s0.compareTo(s1));
         }
