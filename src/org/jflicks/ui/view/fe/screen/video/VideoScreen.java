@@ -1458,7 +1458,22 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         private String toCompareString(Video v) {
 
             stringBuilder.setLength(0);
-            stringBuilder.append(v.getTitle());
+
+            String title = v.getTitle();
+            if (title != null) {
+
+                if (title.startsWith("The")) {
+
+                    title = title.substring(3);
+                    title = title.trim();
+                }
+
+            } else {
+
+                title = "";
+            }
+
+            stringBuilder.append(title);
             if (v.isTV()) {
 
                 int season = v.getSeason();
