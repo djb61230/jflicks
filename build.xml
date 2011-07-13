@@ -946,7 +946,7 @@
             <arg value="-p"/>
             <arg value="1234"/>
             <arg value="-s"/>
-            <arg value="60"/>
+            <arg value="300"/>
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>

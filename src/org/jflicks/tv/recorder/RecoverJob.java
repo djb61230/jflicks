@@ -106,10 +106,10 @@ public abstract class RecoverJob extends BaseDeviceJob implements
                 setBlockCount(bcount);
                 System.out.println("Times we failed on a block: " + bcount);
 
-                synchronized (fileChannel) {
+                // We always want to close...
+                if (fileChannel != null) {
 
-                    // We always want to close...
-                    if (fileChannel != null) {
+                    synchronized (fileChannel) {
 
                         try {
 
@@ -122,11 +122,11 @@ public abstract class RecoverJob extends BaseDeviceJob implements
                             System.out.println("exception on interupt close");
                             fileChannel = null;
                         }
-
-                    } else {
-
-                        System.out.println("Can't close, fileChannel is null!");
                     }
+
+                } else {
+
+                    System.out.println("Can't close, fileChannel is null!");
                 }
 
                 if (bcount > MAX_BLOCK_COUNT) {
@@ -146,9 +146,6 @@ public abstract class RecoverJob extends BaseDeviceJob implements
     private void reset() {
 
         System.out.println("We are trying to reset!");
-        //System.out.println("Let's sleep for a few seconds to "
-        //    + "try to let things calm down.");
-        //JobManager.sleep(4000);
 
         try {
 

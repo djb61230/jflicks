@@ -225,6 +225,7 @@ public class GoogleTVScreen extends PlayerScreen implements ParameterProperty,
                     Player p = getPlayer();
                     if ((p != null) && (!p.isPlaying())) {
 
+                        p.setFrame(Util.findFrame(this));
                         p.addPropertyChangeListener("Completed", this);
                         p.play(url);
                     }

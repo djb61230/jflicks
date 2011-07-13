@@ -1438,6 +1438,21 @@ public final class Util {
      * @return A String that will sort more appropriately.
      */
     public static String toSortableTitle(String s) {
+        return (toSortableTitle(s, false));
+    }
+
+    /**
+     * We sort a lot of title Strings and sometimes the String you want
+     * to sort upon is not the exact given String.  This method will
+     * eliminate the word "The" from the beginning of the given String.
+     * There are probably more things that should be done as we will add
+     * code here to handle them as they come up.
+     *
+     * @param s A given title as a String.
+     * @param append Add the skipped text to the end of the String.
+     * @return A String that will sort more appropriately.
+     */
+    public static String toSortableTitle(String s, boolean append) {
 
         String result = s;
 
@@ -1447,6 +1462,10 @@ public final class Util {
 
                 result = result.substring(3);
                 result = result.trim();
+                if (append) {
+
+                    result = result + ", The";
+                }
             }
 
         } else {

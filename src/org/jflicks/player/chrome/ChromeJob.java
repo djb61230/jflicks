@@ -16,10 +16,6 @@
 */
 package org.jflicks.player.chrome;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
-
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
@@ -51,7 +47,7 @@ public class ChromeJob extends AbstractJob implements JobListener {
 
         setChrome(chrome);
         setURL(url);
-        setSleepTime(4500);
+        setSleepTime(2000);
     }
 
     private Chrome getChrome() {
@@ -119,7 +115,7 @@ public class ChromeJob extends AbstractJob implements JobListener {
         }
 
         SystemJob job = SystemJob.getInstance(prgname
-            + " --start-maximized " + getURL());
+            + " -kiosk " + getURL());
 
         log(Chrome.DEBUG, "started: " + job.getCommand());
         job.addJobListener(this);
@@ -135,27 +131,9 @@ public class ChromeJob extends AbstractJob implements JobListener {
      */
     public void run() {
 
-        boolean sentF11 = false;
         while (!isTerminate()) {
 
-            // We sleep first to ensure chrome is running...
             JobManager.sleep(getSleepTime());
-
-            if (!sentF11) {
-
-                try {
-
-                    Robot r = new Robot();
-                    r.keyPress(KeyEvent.VK_F11);
-                    r.keyRelease(KeyEvent.VK_F11);
-
-                } catch (AWTException ex) {
-
-                    log(Chrome.ERROR, "failed on sending F11 key");
-                }
-
-                sentF11 = true;
-            }
         }
     }
 

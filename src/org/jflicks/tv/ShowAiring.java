@@ -34,7 +34,6 @@ public class ShowAiring implements Serializable, Comparable<ShowAiring> {
     private Show show;
     private Airing airing;
     private String hostPort;
-    private SimpleDateFormat simpleDateFormat;
 
     /**
      * Simple empty constructor.
@@ -42,7 +41,6 @@ public class ShowAiring implements Serializable, Comparable<ShowAiring> {
     public ShowAiring() {
 
         setId(RandomGUID.createGUID());
-        setSimpleDateFormat(new SimpleDateFormat("yyyy MM dd hh:mm a"));
     }
 
     /**
@@ -157,6 +155,7 @@ public class ShowAiring implements Serializable, Comparable<ShowAiring> {
         hostPort = s;
     }
 
+    /*
     private SimpleDateFormat getSimpleDateFormat() {
         return (simpleDateFormat);
     }
@@ -164,6 +163,7 @@ public class ShowAiring implements Serializable, Comparable<ShowAiring> {
     private void setSimpleDateFormat(SimpleDateFormat sdf) {
         simpleDateFormat = sdf;
     }
+    */
 
     /**
      * Make a nice String suitable for sorting.
@@ -177,7 +177,7 @@ public class ShowAiring implements Serializable, Comparable<ShowAiring> {
         Airing a = getAiring();
         if (a != null) {
 
-            SimpleDateFormat sdf = getSimpleDateFormat();
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd hh:mm a");
             sb.append(sdf.format(a.getAirDate()));
         }
 

@@ -562,7 +562,12 @@ public class Vlcj extends BasePlayer {
         EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
         if (p != null) {
 
-            p.setAudioDelay((long) offset);
+            // Convert to microseconds...
+            offset *= 1000000;
+            long loffset = (long) offset;
+            long current = p.getAudioDelay();
+            p.setAudioDelay(loffset + current);
+            log(DEBUG, "set audiodelay to <" + (loffset + current) + ">");
         }
     }
 
