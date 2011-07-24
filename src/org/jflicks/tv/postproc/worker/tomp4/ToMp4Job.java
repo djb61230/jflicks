@@ -111,7 +111,8 @@ public class ToMp4Job extends BaseWorkerJob implements JobListener {
 
             String path = r.getPath();
             File tmp = computeFile(r, true);
-            SystemJob job = SystemJob.getInstance("ffmpeg -y -i " + path
+            SystemJob job = SystemJob.getInstance(
+                "ionice -c3 ffmpeg -y -i " + path
                 + " -vcodec copy -acodec copy " + tmp.getPath());
 
             job.addJobListener(this);

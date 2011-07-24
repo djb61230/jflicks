@@ -104,6 +104,18 @@ public class RokuOnDemand extends BaseOnDemand {
             case COMMAND_PAUSE:
                 rc.command("press pause\n");
                 break;
+
+            case COMMAND_INFO:
+                rc.command("press info\n");
+                break;
+
+            case COMMAND_REPLAY:
+                rc.command("press y\n");
+                break;
+
+            case COMMAND_GOBACK:
+                rc.command("press k\n");
+                break;
             }
         }
     }

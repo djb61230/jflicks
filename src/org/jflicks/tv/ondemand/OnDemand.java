@@ -75,6 +75,21 @@ public interface OnDemand extends Config {
     int COMMAND_PAUSE = 9;
 
     /**
+     * The info command.
+     */
+    int COMMAND_INFO = 10;
+
+    /**
+     * The info command.
+     */
+    int COMMAND_REPLAY = 11;
+
+    /**
+     * The info command.
+     */
+    int COMMAND_GOBACK = 12;
+
+    /**
      * The OnDemand interface needs a title property.
      */
     String TITLE_PROPERTY = "OnDemand-Title";

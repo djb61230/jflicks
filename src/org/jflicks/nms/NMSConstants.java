@@ -233,6 +233,12 @@ public final class NMSConstants {
     public static final String FEATURE_INTRO_43 = "Feature Intro 4:3";
 
     /**
+     * An NMS can be put in logical groups by giving an instance a
+     * group name.
+     */
+    public static final String GROUP_NAME = "Group Name";
+
+    /**
      * Category of Video called "Movie".
      */
     public static final String VIDEO_MOVIE = "Movie";

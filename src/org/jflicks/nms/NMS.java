@@ -494,6 +494,14 @@ public interface NMS extends Config {
     String getFeatureIntro43();
 
     /**
+     * An NMS has a group name assigned to it so clients can ignore any
+     * NMS that they want to ignore.  This is very helpful when testing new
+     * features so the "production" clients can be made to NOT see a server
+     * that might be in testing mode.
+     */
+    String getGroupName();
+
+    /**
      * Just get the names of the available OnDemand services running.
      *
      * @return An array of names.

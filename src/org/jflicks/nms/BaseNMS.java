@@ -77,6 +77,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
     private String title;
     private String host;
+    private String groupName;
     private int port;
     private int httpPort;
     private Scheduler scheduler;
@@ -663,6 +664,13 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
+    public String getGroupName() {
+        return (getConfiguredGroupName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Configuration getConfigurationBySource(String s) {
 
         Configuration result = null;
@@ -813,6 +821,28 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if (c != null) {
 
             NameValue nv = c.findNameValueByName(NMSConstants.FEATURE_INTRO_43);
+            if (nv != null) {
+
+                result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * Convenience method to get the configured value of GROUP_NAME.
+     *
+     * @return A String object.
+     */
+    public String getConfiguredGroupName() {
+
+        String result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(NMSConstants.GROUP_NAME);
             if (nv != null) {
 
                 result = nv.getValue();

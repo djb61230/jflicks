@@ -111,7 +111,8 @@ public class ToAviJob extends BaseWorkerJob implements JobListener {
 
             String path = r.getPath();
             File tmp = computeFile(r, true);
-            SystemJob job = SystemJob.getInstance("mencoder -really-quiet"
+            SystemJob job = SystemJob.getInstance(
+                "ionice -c3 mencoder -really-quiet"
                 + " -of avi -ovc copy -oac copy -o " + tmp.getPath()
                 + " " + path);
 

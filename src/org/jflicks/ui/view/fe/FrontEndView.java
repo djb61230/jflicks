@@ -363,6 +363,57 @@ public class FrontEndView extends JFlicksView implements ActionListener,
         }
     }
 
+    private NMS[] filterNMS(NMS[] array) {
+
+        // By default don't filter anything...
+        NMS[] result = array;
+
+        if (array != null) {
+
+            Properties p = getProperties();
+            if (p != null) {
+
+                String groups = p.getProperty("groups");
+                if (groups != null) {
+
+                    // We only filter if groups is set to something...
+                    String[] garray = groups.split(",");
+                    if ((garray != null) && (garray.length > 0)) {
+
+                        ArrayList<NMS> list = new ArrayList<NMS>();
+                        for (int i = 0; i < garray.length; i++) {
+
+                            for (int j = 0; j < array.length; j++) {
+
+                                String gn = array[j].getGroupName();
+                                System.out.println("gn: <" + gn + ">");
+                                System.out.println("garray[i]: <" + garray[i] + ">");
+                                if (garray[i].equals(gn)) {
+
+                                    if (!list.contains(array[j])) {
+
+                                        list.add(array[j]);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (list.size() > 0) {
+
+                            result = list.toArray(new NMS[list.size()]);
+
+                        } else {
+
+                            result = null;
+                        }
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -374,6 +425,8 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             if (name.equals("NMS")) {
 
                 NMS[] array = (NMS[]) event.getNewValue();
+
+                array = filterNMS(array);
                 setNMS(array);
             }
         }

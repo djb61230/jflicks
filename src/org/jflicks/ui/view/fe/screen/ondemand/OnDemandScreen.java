@@ -385,11 +385,23 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
      */
     public void info() {
 
+        StreamSession ss = getStreamSession();
+        if (ss != null) {
+
+            NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
+            if (n != null) {
+
+                log(DEBUG, "command info...");
+                n.command(ss, OnDemand.COMMAND_INFO);
+            }
+        }
+        /*
         SimpleInfoWindow w = getSimpleInfoWindow();
         if (w != null) {
 
             w.setVisible(!w.isVisible());
         }
+        */
     }
 
     /**
@@ -448,6 +460,17 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
      * {@inheritDoc}
      */
     public void rewind() {
+
+        StreamSession ss = getStreamSession();
+        if (ss != null) {
+
+            NMS n = NMSUtil.select(getNMS(), ss.getHostPort());
+            if (n != null) {
+
+                log(DEBUG, "command replay...");
+                n.command(ss, OnDemand.COMMAND_REPLAY);
+            }
+        }
     }
 
     /**
