@@ -11,10 +11,12 @@ Bundle-ClassPath:\
 
 Export-Package:\
  org.jdom;version="1.0.0",\
- org.jdom.input;version="1.0.0"
+ org.jdom.input;version="1.0.0",\
+ org.jdom.output;version="1.0.0"
 
 Import-Package:\
  org.jdom;version="1.0.0",\
- org.jdom.input;version="1.0.0"
+ org.jdom.input;version="1.0.0",\
+ org.jdom.output;version="1.0.0"
 
 DynamicImport-Package: *

@@ -16,6 +16,10 @@
 */
 package org.jflicks.tv.postproc.worker.ffmpegscreenshot;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
@@ -24,6 +28,7 @@ import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
+import org.jflicks.util.Util;
 
 /**
  * This job starts a system job that runs comskip.
@@ -134,6 +139,33 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
     public void jobUpdate(JobEvent event) {
 
         if (event.getType() == JobEvent.COMPLETE) {
+
+            // Let's make some roku images.
+            Recording r = getRecording();
+            if (r != null) {
+
+                String rpath = r.getPath();
+                if (rpath != null) {
+
+                    String path = rpath + ".png";
+                    try {
+
+                        BufferedImage bi = ImageIO.read(new File(path));
+                        BufferedImage hd = Util.scale(bi, 388);
+                        hd = hd.getSubimage(49, 0, 290, 218);
+                        ImageIO.write(hd, "PNG",
+                            new File(rpath + ".roku_hd.png"));
+
+                        BufferedImage sd = Util.scale(bi, 256);
+                        sd = sd.getSubimage(21, 0, 214, 144);
+                        ImageIO.write(sd, "PNG",
+                            new File(rpath + ".roku_sd.png"));
+
+                    } catch (Exception ex) {
+                        log(BaseWorker.INFO, ex.getMessage());
+                    }
+                }
+            }
 
             // Nothing to do since we don't change any properties of the
             // Recording.  Clients should still get notified and be able

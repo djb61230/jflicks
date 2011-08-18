@@ -19,12 +19,8 @@ package org.jflicks.stream.http;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
 
 /**
  * This is a servlet that will return an RSS feed of our recordings which
@@ -33,9 +29,15 @@ import org.osgi.service.http.NamespaceException;
  * @author Doug Barnum
  * @version 1.0
  */
-public class BoxeeFeed extends HttpServlet implements HttpServiceProperty {
+public class BoxeeFeed extends BaseFeed {
 
-    private HttpService httpService;
+    /**
+     * Default constructor.
+     */
+    public BoxeeFeed() {
+
+        super("boxeefeed");
+    }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
@@ -70,40 +72,6 @@ public class BoxeeFeed extends HttpServlet implements HttpServiceProperty {
         sb.append("</rss>\n");
 
         resp.getWriter().write(sb.toString());
-    }
-
-    /**
-     * A tracker updates us when the http service comes and goes.
-     *
-     * @return The OSGi HttpService instance.
-     */
-    public HttpService getHttpService() {
-        return (httpService);
-    }
-
-    /**
-     * A tracker updates us when the http service comes and goes.
-     *
-     * @param hs The OSGi HttpService instance.
-     */
-    public void setHttpService(HttpService hs) {
-
-        httpService = hs;
-        if (httpService != null) {
-
-            try {
-
-                httpService.registerServlet("/boxeefeed", this, null, null);
-
-            } catch (ServletException ex) {
-
-                System.out.println("BoxeeFeed: " + ex.getMessage());
-
-            } catch (NamespaceException ex) {
-
-                System.out.println("NamespaceException: " + ex.getMessage());
-            }
-        }
     }
 
 }

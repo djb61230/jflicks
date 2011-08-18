@@ -25,7 +25,6 @@ import java.net.InetAddress;
 import javax.swing.Timer;
 
 import org.jflicks.job.JobContainer;
-import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
 import org.jflicks.util.Util;
 

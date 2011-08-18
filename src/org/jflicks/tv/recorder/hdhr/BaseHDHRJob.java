@@ -33,6 +33,7 @@ public abstract class BaseHDHRJob extends AbstractJob implements JobListener {
     private JobContainer jobContainer;
     private String id;
     private int tuner;
+    private String frequencyType;
 
     /**
      * Simple no argument constructor.
@@ -76,6 +77,26 @@ public abstract class BaseHDHRJob extends AbstractJob implements JobListener {
      */
     public void setTuner(int i) {
         tuner = i;
+    }
+
+    /**
+     * Jobs may need the FrequencyType properties configured for an
+     * HDHomerun Recorder.
+     *
+     * @return The FrequencyType as a String.
+     */
+    public String getFrequencyType() {
+        return (frequencyType);
+    }
+
+    /**
+     * Jobs may need the FrequencyType properties configured for an
+     * HDHomerun Recorder.
+     *
+     * @param s The FrequencyType as a String.
+     */
+    public void setFrequencyType(String s) {
+        frequencyType = s;
     }
 
     /**

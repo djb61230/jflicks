@@ -18,16 +18,9 @@ package org.jflicks.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.awt.Rectangle;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import javax.imageio.ImageIO;
 
 /**
@@ -499,6 +492,17 @@ public final class DetectRating {
         return result;
     }
 
+    /**
+     * Process a directory of images.
+     *
+     * @param ratingDir The directory of rating symbols.
+     * @param dir The directory of images.
+     * @param ext The file extention to use.
+     * @param plans The palns to use.
+     * @param verbose More debugging when true.
+     * @throws IOException on an error.
+     * @return An array of int values.
+     */
     public int[] processDirectory(String ratingDir, File dir, String ext,
         DetectRatingPlan[] plans, boolean verbose) throws IOException {
 

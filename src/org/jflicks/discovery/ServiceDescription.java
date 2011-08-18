@@ -64,7 +64,16 @@ public class ServiceDescription implements Comparable<ServiceDescription> {
      * @return The address of this computer as a string.
      */
     public String getAddressAsString() {
-        return (getAddress().getHostAddress());
+
+        String result = "127.0.0.1";
+
+        InetAddress ia = getAddress();
+        if (ia != null) {
+
+            result = ia.getHostAddress();
+        }
+
+        return (result);
     }
 
     /**

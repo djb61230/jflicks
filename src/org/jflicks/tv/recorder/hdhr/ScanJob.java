@@ -53,6 +53,19 @@ public class ScanJob extends BaseHDHRJob {
         file = f;
     }
 
+    private boolean isChannelMap() {
+
+        boolean result = false;
+
+        String s = getFrequencyType();
+        if ((s != null) && (!s.equals("auto"))) {
+
+            result = true;
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -70,15 +83,34 @@ public class ScanJob extends BaseHDHRJob {
 
             File f = File.createTempFile("hdhrscan", ".log");
             setFile(f);
-            SystemJob job = SystemJob.getInstance("hdhomerun_config "
-                + getId() + " scan /tuner" + getTuner() + " " + f.getPath());
-            fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand()
-                + ">");
-            setSystemJob(job);
-            job.addJobListener(this);
-            JobContainer jc = JobManager.getJobContainer(job);
-            setJobContainer(jc);
-            jc.start();
+
+            SystemJob job = null;
+
+            if (isChannelMap()) {
+
+                job = SystemJob.getInstance("hdhomerun_config " + getId()
+                    + " set /tuner" + getTuner() + "/channelmap "
+                    + getFrequencyType());
+                fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand()
+                    + ">");
+                setSystemJob(job);
+
+            } else {
+
+                job = SystemJob.getInstance("hdhomerun_config " + getId()
+                    + " scan /tuner" + getTuner() + " " + f.getPath());
+                fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand()
+                    + ">");
+                setSystemJob(job);
+            }
+
+            if (job != null) {
+
+                job.addJobListener(this);
+                JobContainer jc = JobManager.getJobContainer(job);
+                setJobContainer(jc);
+                jc.start();
+            }
 
             while (!isTerminate()) {
 
@@ -112,7 +144,26 @@ public class ScanJob extends BaseHDHRJob {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            stop();
+            if (isChannelMap()) {
+
+                setFrequencyType(null);
+
+                File f = getFile();
+                SystemJob job = SystemJob.getInstance("hdhomerun_config "
+                    + getId() + " scan /tuner" + getTuner() + " "
+                    + f.getPath());
+                fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand()
+                    + ">");
+                setSystemJob(job);
+                job.addJobListener(this);
+                JobContainer jc = JobManager.getJobContainer(job);
+                setJobContainer(jc);
+                jc.start();
+
+            } else {
+
+                stop();
+            }
 
         } else if (event.getType() == JobEvent.UPDATE) {
 

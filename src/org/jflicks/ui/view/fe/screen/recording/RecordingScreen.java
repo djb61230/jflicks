@@ -747,7 +747,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             String iext = r.getIndexedExtension();
             if (iext != null) {
 
-                File tmp = new File(result + "." + r.getIndexedExtension());
+                File tmp = new File(result + "." + iext);
                 if ((tmp.exists()) && (tmp.isFile())) {
 
                     result = tmp.getPath();

@@ -136,6 +136,19 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private String getFrequencyType() {
+
+        String result = null;
+
+        HDHRRecorder r = getHDHRRecorder();
+        if (r != null) {
+
+            result = r.getConfiguredFrequencyType();
+        }
+
+        return (result);
+    }
+
     private void log(int status, String message) {
 
         HDHRRecorder r = getHDHRRecorder();
@@ -163,6 +176,7 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
         sj.addJobListener(this);
         sj.setId(getId());
         sj.setTuner(getTuner());
+        sj.setFrequencyType(getFrequencyType());
 
         log(HDHRRecorder.DEBUG, "starting scan job...");
         JobContainer jc = JobManager.getJobContainer(sj);

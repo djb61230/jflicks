@@ -49,8 +49,11 @@ public final class Detect {
      */
     public static final int WHITE_TYPE = 1;
 
+    /**
+     * The rating logo can be basically dark gray in color.  This is a "hint"
+     * that our code needs.
+     */
     public static final int DARK_GRAY_TYPE = 2;
-    public static final int LIGHT_GRAY_TYPE = 3;
 
     private int backup;
     private int span;
@@ -384,7 +387,9 @@ public final class Detect {
      *
      * @param f A File representing an image.
      * @param type Black or white symbol is expected.
+     * @param range The range to use.
      * @param fudge Wiggle room from full black or full white.
+     * @param compare True when one should do a compare.
      * @param verbose Print out messages if true.
      * @return True if it is a "rating frame".
      * @throws IOException on an error.
@@ -483,8 +488,6 @@ public final class Detect {
 
                     data[i] = 0x00ffffff;
                 }
-
-            } else if (type == LIGHT_GRAY_TYPE) {
             }
         }
 
@@ -649,6 +652,7 @@ public final class Detect {
      * @param type Do we look for black or white rating symbol.
      * @param fudge This gives us some wiggle room to handle not quite
      * black or white - shades of gray if you will.
+     * @param compare True when one should do a compare.
      * @param verbose Print out messages if true.
      * @return An array of ints that have "seconds" pointing to time a
      * rating frame happened.

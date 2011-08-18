@@ -425,7 +425,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                 // Use the current directory and then incr.
                 dir = new File(array[robinIndex++]);
-                if (dir.getUsableSpace() > 6442450944L) {
+                if (dir.getUsableSpace() > 16442450944L) {
 
                     // We are done.
                     checks = array.length;

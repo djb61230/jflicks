@@ -29,7 +29,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends BaseActivator {
 
     private HttpServiceTracker httpServiceTracker;
-    private HttpServiceTracker boxeeFeedHttpServiceTracker;
+    private HttpServiceTracker rokuFeedHttpServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -43,9 +43,10 @@ public class Activator extends BaseActivator {
         setHttpServiceTracker(tracker);
         tracker.open();
 
-        BoxeeFeed hw = new BoxeeFeed();
+        RokuFeed hw = new RokuFeed();
+        hw.setBundleContext(bc);
         tracker = new HttpServiceTracker(bc, hw);
-        setBoxeeFeedHttpServiceTracker(tracker);
+        setRokuFeedHttpServiceTracker(tracker);
         tracker.open();
     }
 
@@ -59,7 +60,7 @@ public class Activator extends BaseActivator {
             tracker.close();
         }
 
-        tracker = getBoxeeFeedHttpServiceTracker();
+        tracker = getRokuFeedHttpServiceTracker();
         if (tracker != null) {
             tracker.close();
         }
@@ -73,12 +74,12 @@ public class Activator extends BaseActivator {
         httpServiceTracker = t;
     }
 
-    private HttpServiceTracker getBoxeeFeedHttpServiceTracker() {
-        return (boxeeFeedHttpServiceTracker);
+    private HttpServiceTracker getRokuFeedHttpServiceTracker() {
+        return (rokuFeedHttpServiceTracker);
     }
 
-    private void setBoxeeFeedHttpServiceTracker(HttpServiceTracker t) {
-        boxeeFeedHttpServiceTracker = t;
+    private void setRokuFeedHttpServiceTracker(HttpServiceTracker t) {
+        rokuFeedHttpServiceTracker = t;
     }
 
 }

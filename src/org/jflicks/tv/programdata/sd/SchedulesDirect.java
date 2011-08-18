@@ -30,6 +30,8 @@ import net.sf.xtvdclient.xtvd.datatypes.Xtvd;
 import net.sf.xtvdclient.xtvd.parser.Parser;
 import net.sf.xtvdclient.xtvd.parser.ParserFactory;
 
+import org.jflicks.util.Util;
+
 /**
  * This class gets data from Schedules Direct.
  *
@@ -79,6 +81,27 @@ public class SchedulesDirect extends XTVDClient {
         outputFileName = f.getPath();
     }
 
+    private boolean isValidXtvdXml() {
+
+        boolean result = false;
+
+        File f = new File("conf/XTVD.xml");
+        if ((f.exists()) && (f.isFile())) {
+
+            byte[] data = Util.read(f);
+            if (data != null) {
+
+                String tmp = new String(data);
+                if (tmp.indexOf("EMAIL_ADDRESS") == -1) {
+
+                    result = true;
+                }
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * The major work method here will trigger a call to the web service
      * and parse the resulting data into the Xtvd object model.
@@ -89,25 +112,29 @@ public class SchedulesDirect extends XTVDClient {
 
         Xtvd result = null;
 
-        try {
+        if (isValidXtvdXml()) {
 
-            buildInterface();
-            getData();
+            try {
 
-            BufferedReader reader =
-                new BufferedReader(new InputStreamReader(
-                    new FileInputStream(getWorkingFile()), "UTF-8"));
+                buildInterface();
+                getData();
 
-            result = new Xtvd();
-            Parser parser = ParserFactory.getXtvdParser(reader, result);
-            parser.parseXTVD();
-            reader.close();
+                BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(
+                        new FileInputStream(getWorkingFile()), "UTF-8"));
 
-        } catch (DataDirectException ex) {
-        } catch (FileNotFoundException ex) {
-        } catch (UnsupportedEncodingException ex) {
-        } catch (IOException ex) {
-        } catch (Exception ex) {
+                result = new Xtvd();
+                Parser parser = ParserFactory.getXtvdParser(reader, result);
+                parser.parseXTVD();
+                reader.close();
+
+            } catch (DataDirectException ex) {
+            } catch (FileNotFoundException ex) {
+            } catch (UnsupportedEncodingException ex) {
+            } catch (IOException ex) {
+            } catch (Exception ex) {
+            }
+
         }
 
         return (result);

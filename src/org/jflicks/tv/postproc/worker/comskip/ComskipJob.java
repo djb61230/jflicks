@@ -41,6 +41,7 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
      * Constructor with one required argument.
      *
      * @param r A Recording to check for commercials.
+     * @param bw The Worker associated with this job.
      */
     public ComskipJob(Recording r, BaseWorker bw) {
 
@@ -144,6 +145,8 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
                     file = new File(path + ".edl");
                     log(BaseWorker.INFO, "setting commercials...");
                     r.setCommercials(Commercial.fromEDL(file));
+
+                    writeBIF();
                 }
             }
 

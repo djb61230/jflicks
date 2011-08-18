@@ -296,6 +296,7 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                         }
 
                         r.setCommercials(coms);
+                        writeBIF();
 
                     } else {
 

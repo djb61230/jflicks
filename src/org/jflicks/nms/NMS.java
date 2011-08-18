@@ -498,6 +498,8 @@ public interface NMS extends Config {
      * NMS that they want to ignore.  This is very helpful when testing new
      * features so the "production" clients can be made to NOT see a server
      * that might be in testing mode.
+     *
+     * @return A String instance.
      */
     String getGroupName();
 

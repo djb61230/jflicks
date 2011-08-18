@@ -305,6 +305,7 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
                         rinv.setDescription(
                             NMSConstants.RECORDING_INDEXER_NAME);
                         rinv.setType(NameValue.STRING_TYPE);
+                        rinv.setValue("RokuMp4Worker");
                         bc.addNameValue(rinv);
                         r.write(bc);
                     }

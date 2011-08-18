@@ -16,6 +16,8 @@
 */
 package org.jflicks.tv.programdata.sd;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -23,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.jflicks.configure.NameValue;
 import org.jflicks.db.DbWorker;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Airing;
@@ -45,6 +48,12 @@ import net.sf.xtvdclient.xtvd.datatypes.Schedule;
 import net.sf.xtvdclient.xtvd.datatypes.Station;
 import net.sf.xtvdclient.xtvd.datatypes.Xtvd;
 import net.sf.xtvdclient.xtvd.datatypes.XtvdDate;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 /**
  * This class is an implementation of the ProgramData interface using
@@ -83,6 +92,113 @@ public class SchedulesDirectProgramData extends BaseProgramData
      */
     public void setDb4oService(Db4oService s) {
         db4oService = s;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setConfiguration(org.jflicks.configure.Configuration c) {
+
+        super.setConfiguration(c);
+
+        if (c != null) {
+
+            // We overwrite the conf/XTVD.xml file so the next fetch has these
+            // configuration properties, which at this point are just
+            // user/password.
+            NameValue usernv = c.findNameValueByName("User Name");
+            NameValue passwordnv = c.findNameValueByName("Password");
+            if ((usernv != null) && (passwordnv != null)) {
+
+                String utext = usernv.getValue();
+                String ptext = passwordnv.getValue();
+                if ((utext != null) && (ptext != null)) {
+
+                    File conf = new File("conf");
+                    File xtvd = new File(conf, "XTVD.xml");
+                    if (needsUpdating(xtvd, utext, ptext)) {
+
+                        Element root = new Element("properties");
+                        Element userName = new Element("userName");
+                        userName.setText(utext);
+                        Element password = new Element("password");
+                        password.setText(ptext);
+                        Element numberOfDays = new Element("numberOfDays");
+                        numberOfDays.setText("14");
+                        Element webserviceURI = new Element("webserviceURI");
+                        webserviceURI.setText("http://webservices."
+                            + "schedulesdirect.tmsdatadirect.com/"
+                            + "schedulesdirect/tvlistings/xtvdService");
+
+                        root.addContent(userName);
+                        root.addContent(password);
+                        root.addContent(numberOfDays);
+                        root.addContent(webserviceURI);
+
+                        Document doc = new Document(root);
+                        Format f = Format.getPrettyFormat();
+                        f.setEncoding("ISO-8859-1");
+                        XMLOutputter out = new XMLOutputter(f);
+                        String text = out.outputString(doc);
+
+                        if (xtvd.exists()) {
+
+                            File old = new File(xtvd.getPath() + ".old");
+                            xtvd.renameTo(old);
+                        }
+
+                        try {
+
+                            Util.writeTextFile(xtvd, text);
+
+                        } catch (IOException ex) {
+
+                            log(WARNING, ex.getMessage());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean needsUpdating(File f, String user, String password) {
+
+        boolean result = true;
+
+        if ((f != null) && (f.exists()) && (user != null)
+            && (password != null)) {
+
+            SAXBuilder builder = new SAXBuilder();
+            builder.setValidation(false);
+            builder.setIgnoringElementContentWhitespace(true);
+            try {
+
+                Document doc = builder.build(f);
+                if (doc != null) {
+
+                    Element root = doc.getRootElement();
+                    if (root != null) {
+
+                        Element uelement = root.getChild("userName");
+                        if ((uelement != null)
+                            && (user.equals(uelement.getText()))) {
+
+                            Element pelement = root.getChild("password");
+                            if ((pelement != null)
+                                && (password.equals(pelement.getText()))) {
+
+                                result = false;
+                            }
+                        }
+                    }
+                }
+
+            } catch (JDOMException ex) {
+            } catch (IOException ex) {
+            }
+        }
+
+        return (result);
     }
 
     /**

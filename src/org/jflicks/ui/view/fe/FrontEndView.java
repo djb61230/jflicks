@@ -386,8 +386,6 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                             for (int j = 0; j < array.length; j++) {
 
                                 String gn = array[j].getGroupName();
-                                System.out.println("gn: <" + gn + ">");
-                                System.out.println("garray[i]: <" + garray[i] + ">");
                                 if (garray[i].equals(gn)) {
 
                                     if (!list.contains(array[j])) {

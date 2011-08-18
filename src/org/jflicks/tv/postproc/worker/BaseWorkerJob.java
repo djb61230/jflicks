@@ -16,10 +16,14 @@
 */
 package org.jflicks.tv.postproc.worker;
 
+import java.io.File;
+
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.SystemJob;
+import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
+import org.jflicks.util.Bif;
 
 /**
  * A base worker job class that workers can extend.
@@ -38,6 +42,7 @@ public abstract class BaseWorkerJob extends AbstractJob {
      * Constructor with one required argument.
      *
      * @param r A Recording to process.
+     * @param bw The Worker associated with this job.
      */
     public BaseWorkerJob(Recording r, BaseWorker bw) {
 
@@ -135,6 +140,29 @@ public abstract class BaseWorkerJob extends AbstractJob {
         if (bw != null) {
 
             bw.log(level, message);
+        }
+    }
+
+    public void writeBIF() {
+
+        Recording r = getRecording();
+        if (r != null) {
+
+            Commercial[] array = r.getCommercials();
+            if ((array != null) && (array.length > 0)) {
+
+                int[] seconds = new int[array.length + 1];
+                seconds[0] = 0;
+                for (int i = 0; i < array.length; i++) {
+
+                    seconds[i + 1] = array[i].getEnd();
+                }
+
+                File out = new File(r.getPath() + ".hd.bif");
+                Bif.write(out, seconds, true);
+                out = new File(r.getPath() + ".sd.bif");
+                Bif.write(out, seconds, false);
+            }
         }
     }
 

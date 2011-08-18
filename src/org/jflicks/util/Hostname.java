@@ -16,6 +16,7 @@
 */
 package org.jflicks.util;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -197,6 +198,54 @@ public final class Hostname {
             }
 
         } catch (UnknownHostException ex) {
+        }
+
+        if ((result == null) && (Util.isLinux())) {
+
+            result = checkLinux();
+        }
+
+        return (result);
+    }
+
+    public static InetAddress checkLinux() {
+
+        InetAddress result = null;
+
+        // If we have gotten here then the /etc/hosts is not set right.  So
+        // let's look for /etc/network/interfaces and try to get a static
+        // IP there.
+        String[] lines = Util.readTextFile(new File("/etc/network/interfaces"));
+        if (lines != null) {
+
+            boolean found = false;
+            for (int i = 0; i < lines.length; i++) {
+
+                String tmp = lines[i].trim();
+                if (!found) {
+
+                    if (tmp.startsWith("iface eth0 inet static")) {
+
+                        found = true;
+                    }
+
+                } else {
+
+                    if (tmp.startsWith("address")) {
+
+                        tmp = tmp.substring(tmp.indexOf(" "));
+                        tmp = tmp.trim();
+
+                        try {
+
+                            result = InetAddress.getByName(tmp);
+
+                        } catch (UnknownHostException ex) {
+                        }
+                        break;
+                    }
+                }
+            }
         }
 
         return (result);

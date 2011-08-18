@@ -16,8 +16,6 @@
 */
 package org.jflicks.nms;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -31,7 +29,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
-import javax.swing.Timer;
 
 import org.jflicks.configure.BaseConfig;
 import org.jflicks.configure.Configuration;
@@ -64,6 +61,7 @@ import org.jflicks.tv.scheduler.RecordedShow;
 import org.jflicks.tv.scheduler.Scheduler;
 import org.jflicks.util.EventSender;
 import org.jflicks.util.StartsWithFilter;
+import org.jflicks.util.Util;
 import org.jflicks.videomanager.VideoManager;
 
 /**
@@ -279,6 +277,11 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         trailerList = l;
     }
 
+    /**
+     * We have a current list of Recordings to be removed.
+     *
+     * @return A List of Recording instances.
+     */
     public ArrayList<Recording> getRemoveRecordingList() {
         return (removeRecordingList);
     }
@@ -1039,6 +1042,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 result = array[i].getShowAirings(pattern, searchType);
                 if (result != null) {
 
+                    result = substituteFromCache(result);
                     Arrays.sort(result);
 
                     String hp = getHost() + ":" + getPort();
@@ -1120,6 +1124,62 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 if (result != null) {
 
                     break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private ShowAiring[] substituteFromCache(ShowAiring[] array) {
+
+        ShowAiring[] result = array;
+
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<ShowAiring> l = new ArrayList<ShowAiring>();
+            for (int i = 0; i < result.length; i++) {
+
+                ShowAiring sa = substituteFromCache(array[i]);
+                if (sa != null) {
+
+                    l.add(sa);
+                }
+            }
+
+            if (l.size() > 0) {
+
+                result = l.toArray(new ShowAiring[l.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    private ShowAiring substituteFromCache(ShowAiring sa) {
+
+        ShowAiring result = null;
+
+        if (sa != null) {
+
+            Airing a = sa.getAiring();
+            if (a != null) {
+
+                Channel c = getChannelById(a.getChannelId(), a.getListingId());
+                if (c != null) {
+
+                    ShowAiring[] array = getShowAiringsByChannel(c);
+                    if (array != null) {
+
+                        for (int i = 0; i < array.length; i++) {
+
+                            if (a.equals(array[i].getAiring())) {
+
+                                result = array[i];
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1256,6 +1316,11 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         return (result);
     }
 
+    /**
+     * Really remove the recording files.
+     *
+     * @param r The Recording to remove.
+     */
     public void performRemoval(Recording r) {
 
         log(DEBUG, "Recording to physically remove: <" + r + ">");
@@ -1535,6 +1600,8 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             }
 
             String name = null;
+            String rokusdname = null;
+            String rokuhdname = null;
             switch (imageType) {
 
             default:
@@ -1544,6 +1611,8 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
             case NMSConstants.FANART_IMAGE_TYPE:
                 name = imageHome + "/" + id + "_fanart.jpg";
+                rokuhdname = imageHome + "/" + id + "_fanart_roku_hd.jpg";
+                rokusdname = imageHome + "/" + id + "_fanart_roku_sd.jpg";
                 break;
 
             case NMSConstants.POSTER_IMAGE_TYPE:
@@ -1558,6 +1627,17 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 if (bi != null) {
 
                     ImageIO.write(bi, "jpg", new File(name));
+
+                    if (rokuhdname != null) {
+
+                        BufferedImage hd = Util.scale(bi, 388);
+                        hd = hd.getSubimage(49, 0, 290, 218);
+                        ImageIO.write(hd, "JPG", new File(rokuhdname));
+
+                        BufferedImage sd = Util.scale(bi, 256);
+                        sd = sd.getSubimage(21, 0, 214, 144);
+                        ImageIO.write(sd, "JPG", new File(rokusdname));
+                    }
 
                 } else {
 
@@ -1584,6 +1664,8 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             }
 
             String name = null;
+            String rokusdname = null;
+            String rokuhdname = null;
             switch (imageType) {
 
             default:
@@ -1593,6 +1675,8 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
             case NMSConstants.FANART_IMAGE_TYPE:
                 name = imageHome + "/" + id + "_fanart.jpg";
+                rokuhdname = imageHome + "/" + id + "_fanart_roku_hd.jpg";
+                rokusdname = imageHome + "/" + id + "_fanart_roku_sd.jpg";
                 break;
 
             case NMSConstants.POSTER_IMAGE_TYPE:
@@ -1606,6 +1690,17 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 if (bi != null) {
 
                     ImageIO.write(bi, "jpg", new File(name));
+
+                    if (rokuhdname != null) {
+
+                        BufferedImage hd = Util.scale(bi, 388);
+                        hd = hd.getSubimage(49, 0, 290, 218);
+                        ImageIO.write(hd, "JPG", new File(rokuhdname));
+
+                        BufferedImage sd = Util.scale(bi, 256);
+                        sd = sd.getSubimage(21, 0, 214, 144);
+                        ImageIO.write(sd, "JPG", new File(rokusdname));
+                    }
 
                 } else {
 

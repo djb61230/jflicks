@@ -31,6 +31,14 @@ public class RatingImage {
     private int height;
     private int[] buffer;
 
+    /**
+     * Constructor with four required arguments.
+     *
+     * @param path The path to the file.
+     * @param array The array to use.
+     * @param w The width of the image.
+     * @param h the height of the image.
+     */
     public RatingImage(String path, int[] array, int w, int h) {
 
         setPath(path);
@@ -51,6 +59,11 @@ public class RatingImage {
         setBuffer(new int[array.length]);
     }
 
+    /**
+     * The path to the file.
+     *
+     * @return The path as a String.
+     */
     public String getPath() {
         return (path);
     }
@@ -59,6 +72,11 @@ public class RatingImage {
         path = s;
     }
 
+    /**
+     * The raw data.
+     *
+     * @return An array of int values.
+     */
     public int[] getData() {
         return (data);
     }
@@ -67,6 +85,11 @@ public class RatingImage {
         data = array;
     }
 
+    /**
+     * The alpha data.
+     *
+     * @return An array of int values.
+     */
     public int[] getAlphaData() {
         return (alphaData);
     }
@@ -75,6 +98,11 @@ public class RatingImage {
         alphaData = array;
     }
 
+    /**
+     * The width of the image.
+     *
+     * @return The width in pixels.
+     */
     public int getWidth() {
         return (width);
     }
@@ -83,6 +111,11 @@ public class RatingImage {
         width = i;
     }
 
+    /**
+     * The height of the image.
+     *
+     * @return The height in pixels.
+     */
     public int getHeight() {
         return (height);
     }
@@ -91,6 +124,12 @@ public class RatingImage {
         height = i;
     }
 
+    /**
+     * We keep a working buffer in memory so we don't have to reload
+     * all the time.
+     *
+     * @return An array of int values.
+     */
     public int[] getBuffer() {
         return (buffer);
     }

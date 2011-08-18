@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.postproc.worker.tomkv;
+package org.jflicks.tv.postproc.worker.rokump4;
 
 import java.io.File;
 
@@ -33,15 +33,15 @@ import org.jflicks.tv.postproc.worker.BaseWorkerJob;
  * @author Doug Barnum
  * @version 1.0
  */
-public class ToMkvJob extends BaseWorkerJob implements JobListener {
+public class RokuMp4Job extends BaseWorkerJob implements JobListener {
 
     /**
      * Constructor with one required argument.
      *
-     * @param r A Recording to check for commercials.
+     * @param r A Recording to transcode.
      * @param bw The Worker associated with this job.
      */
-    public ToMkvJob(Recording r, BaseWorker bw) {
+    public RokuMp4Job(Recording r, BaseWorker bw) {
 
         super(r, bw);
     }
@@ -57,9 +57,9 @@ public class ToMkvJob extends BaseWorkerJob implements JobListener {
 
                 String tname = null;
                 if (hidden) {
-                    tname = "." + result.getName() + ".mkv";
+                    tname = "." + result.getName() + ".mp4";
                 } else {
-                    tname = result.getName() + ".mkv";
+                    tname = result.getName() + ".mp4";
                 }
 
                 result = new File(result.getParentFile(), tname);
@@ -80,7 +80,7 @@ public class ToMkvJob extends BaseWorkerJob implements JobListener {
                 log(BaseWorker.INFO, "moving " + hidden.getPath() + " to "
                     + computeFile(r, false));
                 hidden.renameTo(computeFile(r, false));
-                r.setIndexedExtension("mkv");
+                r.setIndexedExtension("mp4");
             }
         }
     }
@@ -111,11 +111,19 @@ public class ToMkvJob extends BaseWorkerJob implements JobListener {
 
             String path = r.getPath();
             File tmp = computeFile(r, true);
-            SystemJob job = SystemJob.getInstance("avidemux2_cli"
-                + " --nogui --autoindex --load " + path
-                + " --video-codec copy --audio-codec copy"
-                + " --output-format MATROSKA --audio-delay -640"
-                + " --save " + tmp.getPath() + " --quit");
+            SystemJob job = SystemJob.getInstance(
+                "ionice -c3 HandBrakeCLI -e x264 -f mp4 -q 22.0 -r 29.97"
+                + " -a 1 -E faac -B 128 -6 stereo -R 48"
+                + " --decomb -4 -O"
+                + " -x ref=1:bframes=0:cabac=0:8x8dct=0:weightp=0:me=dia:subq=0:rc-lookahead=0:analyse=none:trellis=0:aq-mode=0:no-deblock=1:scenecut=0:mbtree=0 -i " + path
+                + " -o " + tmp.getPath());
+            /*
+                + " -w 1280 -l 720 --crop 0:0:0:0 --modulus 16"
+            SystemJob job = SystemJob.getInstance(
+                "ionice -c3 ffmpeg -i " + path + " -acodec libfaac -ab 128k"
+                + " -vcodec libx264 -vpre lossless_ultrafast -r 29.97"
+                + " -deinterlace -crf 22 -threads 0 -f mp4 " + tmp.getPath());
+            */
 
             job.addJobListener(this);
             setSystemJob(job);

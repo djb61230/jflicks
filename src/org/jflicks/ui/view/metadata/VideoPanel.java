@@ -164,6 +164,7 @@ public class VideoPanel extends BasePanel implements ActionListener,
         releasedPanel.add(releasedtf, BorderLayout.CENTER);
 
         JComboBox cb = new JComboBox();
+        cb.setEditable(true);
         cb.addItem(NMSConstants.VIDEO_MOVIE);
         cb.addItem(NMSConstants.VIDEO_TV);
         cb.addItem(NMSConstants.VIDEO_HOME);

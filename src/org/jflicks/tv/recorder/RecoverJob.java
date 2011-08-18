@@ -27,7 +27,6 @@ import java.nio.channels.FileChannel;
 import javax.swing.Timer;
 
 import org.jflicks.job.JobEvent;
-import org.jflicks.job.JobManager;
 
 /**
  * This class has code to read from a file and have the notion of recovering
