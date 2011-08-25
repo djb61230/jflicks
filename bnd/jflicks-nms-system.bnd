@@ -9,6 +9,7 @@ Include-Resource:\
  org/jflicks/nms/system/default.properties=../conf/nms.default.properties
 
 Import-Package:\
+ org.jflicks.autoart;version="1.0.0",\
  org.jflicks.db;version="1.0.0",\
  org.jflicks.configure;version="1.0.0",\
  org.jflicks.discovery;version="1.0.0",\

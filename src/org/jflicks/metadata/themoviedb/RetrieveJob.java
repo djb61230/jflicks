@@ -65,7 +65,7 @@ public class RetrieveJob extends AbstractJob {
         if (s != null) {
 
             TheMovieDB tmdb = TheMovieDB.getInstance();
-            movie = tmdb.retrieve(id);
+            movie = tmdb.retrieve(s);
         }
 
         fireJobEvent(JobEvent.COMPLETE, movie);

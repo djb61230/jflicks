@@ -176,6 +176,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-autoart-system.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-photomanager-digikam.bnd"
             output="${bundle}"
         />
@@ -690,6 +699,15 @@
             failok="false"
             exceptions="true"
             files="${bnd}/jflicks-thetvdbapi.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-themoviedbapi.bnd"
             output="${bundle}"
         />
 

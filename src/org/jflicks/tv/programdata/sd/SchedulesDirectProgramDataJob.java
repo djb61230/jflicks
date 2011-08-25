@@ -40,7 +40,7 @@ public class SchedulesDirectProgramDataJob extends AbstractJob {
     public SchedulesDirectProgramDataJob(SchedulesDirectProgramData d) {
 
         setSchedulesDirectProgramData(d);
-        setSleepTime(5 * 60000);
+        setSleepTime(2 * 60000);
     }
 
     private SchedulesDirectProgramData getSchedulesDirectProgramData() {

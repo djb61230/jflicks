@@ -191,6 +191,11 @@ public final class NMSConstants {
     public static final String VIDEO_MANAGER_NAME = "Video Manager";
 
     /**
+     * The configuration name for a "Auto Art" service.
+     */
+    public static final String AUTO_ART_NAME = "Auto Art";
+
+    /**
      * The NMS needs a configuration of a set of one or more
      * file system directories where videos can be found.
      */
@@ -534,6 +539,13 @@ public final class NMSConstants {
      * A constant for services that may need to define a port property.
      */
     public static final String PORT = "Port";
+
+    /**
+     * A constant for services that may need to do work every once in
+     * a while.
+     */
+    public static final String UPDATE_TIME_IN_MINUTES =
+        "Update Time In Minutes";
 
     private NMSConstants() {
     }

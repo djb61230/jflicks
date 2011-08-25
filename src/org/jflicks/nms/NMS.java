@@ -16,6 +16,7 @@
 */
 package org.jflicks.nms;
 
+import org.jflicks.autoart.AutoArt;
 import org.jflicks.configure.Config;
 import org.jflicks.configure.Configuration;
 import org.jflicks.photomanager.Photo;
@@ -135,6 +136,14 @@ public interface NMS extends Config {
      * @return A VideoManager instance.
      */
     VideoManager getVideoManager();
+
+    /**
+     * We have one and only one AutoArt service.  We track them normally so we
+     * will use the latest one we find.
+     *
+     * @return An AutoArt instance.
+     */
+    AutoArt getAutoArt();
 
     /**
      * We have one and only one PostProc.  We track them normally so we

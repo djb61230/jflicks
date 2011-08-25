@@ -3,6 +3,7 @@ custom=true
 Bundle-Version: 1.0.0
 
 Export-Package:\
+ org.jflicks.autoart;version="1.0.0",\
  org.jflicks.db;version="1.0.0",\
  org.jflicks.configure;version="1.0.0",\
  org.jflicks.discovery;version="1.0.0",\
@@ -30,6 +31,7 @@ Export-Package:\
  org.jflicks.wizard;version="1.0.0"
 
 Import-Package:\
+ org.jflicks.autoart;version="1.0.0",\
  org.jflicks.db;version="1.0.0",\
  org.jflicks.configure;version="1.0.0",\
  org.jflicks.discovery;version="1.0.0",\

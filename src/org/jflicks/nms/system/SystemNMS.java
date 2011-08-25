@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.jflicks.autoart.AutoArt;
 import org.jflicks.configure.BaseConfiguration;
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
@@ -274,6 +275,14 @@ public class SystemNMS extends BaseNMS {
                     if (vm != null) {
 
                         vm.setConfiguration(c);
+                    }
+
+                } else if (name.equals(NMSConstants.AUTO_ART_NAME)) {
+
+                    AutoArt aa = getAutoArt();
+                    if (aa != null) {
+
+                        aa.setConfiguration(c);
                     }
 
                 } else if (name.equals(NMSConstants.LIVE_NAME)) {

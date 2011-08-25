@@ -29,7 +29,9 @@ import org.jflicks.util.Hostname;
 import org.jflicks.util.Util;
 
 import ch.ethz.iks.r_osgi.RemoteOSGiService;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -46,6 +48,7 @@ public class Activator extends BaseActivator {
     private LiveTracker liveTracker;
     private PhotoManagerTracker photoManagerTracker;
     private VideoManagerTracker videoManagerTracker;
+    private AutoArtTracker autoArtTracker;
     private PostProcTracker postProcTracker;
     private ProgramDataTracker programDataTracker;
     private TrailerTracker trailerTracker;
@@ -89,6 +92,10 @@ public class Activator extends BaseActivator {
         VideoManagerTracker videotracker = new VideoManagerTracker(bc, s);
         setVideoManagerTracker(videotracker);
         videotracker.open();
+
+        AutoArtTracker autoarttracker = new AutoArtTracker(bc, s);
+        setAutoArtTracker(autoarttracker);
+        autoarttracker.open();
 
         PostProcTracker pptracker = new PostProcTracker(bc, s);
         setPostProcTracker(pptracker);
@@ -135,6 +142,11 @@ public class Activator extends BaseActivator {
         RemoteTracker rtracker = new RemoteTracker(bc, sd);
         setRemoteTracker(rtracker);
         rtracker.open();
+
+        // Add our shutdown hook so we close up cleanly.
+        Runtime runtime = Runtime.getRuntime();
+        Thread thread = new Thread(new ShutDownListener());
+        runtime.addShutdownHook(thread);
     }
 
     /**
@@ -176,6 +188,11 @@ public class Activator extends BaseActivator {
         VideoManagerTracker videotracker = getVideoManagerTracker();
         if (videotracker != null) {
             videotracker.close();
+        }
+
+        AutoArtTracker autoarttracker = getAutoArtTracker();
+        if (autoarttracker != null) {
+            autoarttracker.close();
         }
 
         PostProcTracker pptracker = getPostProcTracker();
@@ -263,6 +280,14 @@ public class Activator extends BaseActivator {
         videoManagerTracker = t;
     }
 
+    private AutoArtTracker getAutoArtTracker() {
+        return (autoArtTracker);
+    }
+
+    private void setAutoArtTracker(AutoArtTracker t) {
+        autoArtTracker = t;
+    }
+
     private PostProcTracker getPostProcTracker() {
         return (postProcTracker);
     }
@@ -309,6 +334,30 @@ public class Activator extends BaseActivator {
 
     private void setSystemNMS(SystemNMS s) {
         systemNMS = s;
+    }
+
+    class ShutDownListener implements Runnable {
+
+        public void run() {
+
+            SystemNMS s = getSystemNMS();
+            BundleContext bc = getBundleContext();
+            if ((s != null) && (bc != null)) {
+
+                s.log(s.INFO, "Shutting down via shutdown hook!");
+                Bundle b = bc.getBundle(0L);
+                if (b != null) {
+
+                    try {
+
+                        System.out.println("BundleContext: stop");
+                        b.stop();
+
+                    } catch (BundleException ex) {
+                    }
+                }
+            }
+        }
     }
 
 }

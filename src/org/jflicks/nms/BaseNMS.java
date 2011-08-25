@@ -16,6 +16,8 @@
 */
 package org.jflicks.nms;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -30,6 +32,7 @@ import java.util.Date;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 
+import org.jflicks.autoart.AutoArt;
 import org.jflicks.configure.BaseConfig;
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
@@ -83,6 +86,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     private Live live;
     private PhotoManager photoManager;
     private VideoManager videoManager;
+    private AutoArt autoArt;
     private ArrayList<Recorder> recorderList;
     private ArrayList<ProgramData> programDataList;
     private ArrayList<OnDemand> onDemandList;
@@ -197,6 +201,30 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             Configuration def = vm.getDefaultConfiguration();
             save(def, false);
             vm.setConfiguration(getConfigurationBySource(def.getSource()));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public AutoArt getAutoArt() {
+        return (autoArt);
+    }
+
+    /**
+     * Convenience method to set the AutoArt property.
+     *
+     * @param aa A given AutoArt instance.
+     */
+    public void setAutoArt(AutoArt aa) {
+
+        autoArt = aa;
+        if (aa != null) {
+
+            aa.setNMS(this);
+            Configuration def = aa.getDefaultConfiguration();
+            save(def, false);
+            aa.setConfiguration(getConfigurationBySource(def.getSource()));
         }
     }
 
@@ -1630,13 +1658,13 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                     if (rokuhdname != null) {
 
-                        BufferedImage hd = Util.scale(bi, 388);
+                        BufferedImage hd = createImage(bi, 388);
                         hd = hd.getSubimage(49, 0, 290, 218);
-                        ImageIO.write(hd, "JPG", new File(rokuhdname));
+                        ImageIO.write(hd, "jpg", new File(rokuhdname));
 
-                        BufferedImage sd = Util.scale(bi, 256);
+                        BufferedImage sd = createImage(bi, 256);
                         sd = sd.getSubimage(21, 0, 214, 144);
-                        ImageIO.write(sd, "JPG", new File(rokusdname));
+                        ImageIO.write(sd, "jpg", new File(rokusdname));
                     }
 
                 } else {
@@ -1693,13 +1721,13 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                     if (rokuhdname != null) {
 
-                        BufferedImage hd = Util.scale(bi, 388);
+                        BufferedImage hd = createImage(bi, 388);
                         hd = hd.getSubimage(49, 0, 290, 218);
-                        ImageIO.write(hd, "JPG", new File(rokuhdname));
+                        ImageIO.write(hd, "jpg", new File(rokuhdname));
 
-                        BufferedImage sd = Util.scale(bi, 256);
+                        BufferedImage sd = createImage(bi, 256);
                         sd = sd.getSubimage(21, 0, 214, 144);
-                        ImageIO.write(sd, "JPG", new File(rokusdname));
+                        ImageIO.write(sd, "jpg", new File(rokusdname));
                     }
 
                 } else {
@@ -1712,6 +1740,31 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 log(WARNING, "save image: " + ex.getMessage());
             }
         }
+    }
+
+    private BufferedImage createImage(BufferedImage bi, int scalex) {
+
+        BufferedImage result = null;
+
+        if (bi != null) {
+
+            Image scaled = bi.getScaledInstance(388, -1, Image.SCALE_DEFAULT);
+            if (scaled instanceof BufferedImage) {
+
+                log(INFO, "It's a BufferedImage already...");
+                result = (BufferedImage) scaled;
+
+            } else {
+
+                log(INFO, "Have to Make a BufferedImage!");
+                result = new BufferedImage(scaled.getWidth(null),
+                    scaled.getHeight(null), bi.getType());
+                Graphics2D g2d = result.createGraphics();
+                g2d.drawImage(scaled, 0, 0, null);
+            }
+        }
+
+        return (result);
     }
 
     /**

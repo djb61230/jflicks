@@ -1,0 +1,29 @@
+module=org.jflicks.autoart.system
+custom=true
+
+Bundle-Version: 1.0.0
+
+Bundle-Activator: ${module}.Activator
+
+Include-Resource:\
+ org/jflicks/autoart/system/default.properties=../conf/autoart.default.properties
+
+Import-Package:\
+ org.jflicks.autoart;version="1.0.0",\
+ org.jflicks.db;version="1.0.0",\
+ org.jflicks.job;version="1.0.0",\
+ org.jflicks.metadata.themoviedb;version="1.0.0",\
+ org.jflicks.nms;version="1.0.0",\
+ org.jflicks.util;version="1.0.0",\
+ org.osgi.framework;version="[1.3,2.0)",\
+ org.osgi.service.log;version="[1.0,4.0)",\
+ org.osgi.util.tracker;version="[1.3,2.0)",\
+ com.db4o,\
+ com.db4o.config,\
+ com.db4o.osgi,\
+ com.db4o.query,\
+ com.moviejukebox.thetvdb;version="1.0.0",\
+ com.moviejukebox.thetvdb.model;version="1.0.0"
+
+Export-Package:\
+ ${module}

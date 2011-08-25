@@ -40,6 +40,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.jflicks.nms.BaseNMS;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.Video;
@@ -128,6 +129,44 @@ public class RokuFeed extends BaseFeed {
             if (d != null) {
 
                 result = d.toString();
+            }
+        }
+
+        return (result);
+    }
+
+    private File getImageHome() {
+
+        File result = null;
+
+        NMS n = getNMS();
+        if (n instanceof BaseNMS) {
+
+            BaseNMS bn = (BaseNMS) n;
+            String path = bn.getConfiguredImageHome();
+            if (path != null) {
+
+                result = new File(path);
+            }
+        }
+
+        return (result);
+    }
+
+    private String getImageName(String s) {
+
+        String result = "no_image.jpg";
+
+        if (s != null) {
+
+            File f = getImageHome();
+            if (f != null) {
+
+                File iname = new File(f, s);
+                if ((iname.exists()) && (iname.isFile())) {
+
+                    result = s;
+                }
             }
         }
 
@@ -1126,10 +1165,10 @@ public class RokuFeed extends BaseFeed {
 
         if ((rr != null) && (urlbase != null)) {
 
-            result.setAttribute("sdImg", urlbase + "/images/" + rr.getSeriesId()
-                + "_fanart_roku_sd.jpg");
-            result.setAttribute("hdImg", urlbase + "/images/" + rr.getSeriesId()
-                + "_fanart_roku_hd.jpg");
+            result.setAttribute("sdImg", urlbase + "/images/"
+                + getImageName(rr.getSeriesId() + "_fanart_roku_sd.jpg"));
+            result.setAttribute("hdImg", urlbase + "/images/"
+                + getImageName(rr.getSeriesId() + "_fanart_roku_hd.jpg"));
 
             Element title = new Element("title");
             title.setText(rr.getName());
@@ -1270,10 +1309,10 @@ public class RokuFeed extends BaseFeed {
 
         if ((u != null) && (urlbase != null)) {
 
-            result.setAttribute("sdImg", urlbase + "/images/" + u.getSeriesId()
-                + "_fanart_roku_sd.jpg");
-            result.setAttribute("hdImg", urlbase + "/images/" + u.getSeriesId()
-                + "_fanart_roku_hd.jpg");
+            result.setAttribute("sdImg", urlbase + "/images/"
+                + getImageName(u.getSeriesId() + "_fanart_roku_sd.jpg"));
+            result.setAttribute("hdImg", urlbase + "/images/"
+                + getImageName(u.getSeriesId() + "_fanart_roku_hd.jpg"));
 
             String sub = u.getSubtitle();
             Element title = new Element("title");
@@ -1370,10 +1409,10 @@ public class RokuFeed extends BaseFeed {
             Show s = sa.getShow();
             Channel c = getChannelById(a);
 
-            result.setAttribute("sdImg", urlbase + "/images/" + s.getSeriesId()
-                + "_fanart_roku_sd.jpg");
-            result.setAttribute("hdImg", urlbase + "/images/" + s.getSeriesId()
-                + "_fanart_roku_hd.jpg");
+            result.setAttribute("sdImg", urlbase + "/images/"
+                + getImageName(s.getSeriesId() + "_fanart_roku_sd.jpg"));
+            result.setAttribute("hdImg", urlbase + "/images/"
+                + getImageName(s.getSeriesId() + "_fanart_roku_hd.jpg"));
 
             Element title = new Element("title");
             title.setText(s.getTitle());
@@ -1674,6 +1713,30 @@ public class RokuFeed extends BaseFeed {
 
                         root.addContent(item);
                     }
+                }
+
+                Document doc = new Document(root);
+
+                Format f = Format.getPrettyFormat();
+                f.setEncoding("ISO-8859-1");
+                XMLOutputter out = new XMLOutputter(f);
+                result = out.outputString(doc);
+
+            } else {
+
+                Element root = new Element("feed");
+                Element resultLength = new Element("resultLength");
+                resultLength.setText("1");
+                Element endIndex = new Element("endIndex");
+                endIndex.setText("1");
+
+                root.addContent(resultLength);
+                root.addContent(endIndex);
+
+                Element item = createFeedItem(urlbase);
+                if (item != null) {
+
+                    root.addContent(item);
                 }
 
                 Document doc = new Document(root);

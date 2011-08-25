@@ -22,6 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jflicks.db.DbWorker;
+import org.jflicks.nms.BaseNMS;
+import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.Video;
 import org.jflicks.util.FileFind;
@@ -170,9 +172,12 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                         String sid = result.getId();
                         if (sid != null) {
 
-                            result.setBannerURL(top + sid + "_banner.jpg");
-                            result.setPosterURL(top + sid + "_poster.jpg");
-                            result.setFanartURL(top + sid + "_fanart.jpg");
+                            result.setBannerURL(top
+                                + getImageName(sid + "_banner.jpg"));
+                            result.setPosterURL(top
+                                + getImageName(sid + "_poster.jpg"));
+                            result.setFanartURL(top
+                                + getImageName(sid + "_fanart.jpg"));
                         }
                         result.setHostPort(h + ":" + p);
                     }
@@ -232,12 +237,12 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
 
                             if (sid != null) {
 
-                                result[i].setBannerURL(top + sid
-                                    + "_banner.jpg");
-                                result[i].setPosterURL(top + sid
-                                    + "_poster.jpg");
-                                result[i].setFanartURL(top + sid
-                                    + "_fanart.jpg");
+                                result[i].setBannerURL(top
+                                    + getImageName(sid + "_banner.jpg"));
+                                result[i].setPosterURL(top
+                                    + getImageName(sid + "_poster.jpg"));
+                                result[i].setFanartURL(top
+                                    + getImageName(sid + "_fanart.jpg"));
                             }
                             result[i].setHostPort(hp);
                         }
@@ -519,6 +524,44 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                 String tmp = matcher.group();
                 tmp = tmp.substring(4);
                 result = Util.str2int(tmp, result);
+            }
+        }
+
+        return (result);
+    }
+
+    private File getImageHome() {
+
+        File result = null;
+
+        NMS n = getNMS();
+        if (n instanceof BaseNMS) {
+
+            BaseNMS bn = (BaseNMS) n;
+            String path = bn.getConfiguredImageHome();
+            if (path != null) {
+
+                result = new File(path);
+            }
+        }
+
+        return (result);
+    }
+
+    private String getImageName(String s) {
+
+        String result = "no_image.jpg";
+
+        if (s != null) {
+
+            File f = getImageHome();
+            if (f != null) {
+
+                File iname = new File(f, s);
+                if ((iname.exists()) && (iname.isFile())) {
+
+                    result = s;
+                }
             }
         }
 
