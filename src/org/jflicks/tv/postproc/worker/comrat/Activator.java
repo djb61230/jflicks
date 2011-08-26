@@ -57,6 +57,8 @@ public class Activator extends BaseActivator {
 
             ComratWorker cw = new ComratWorker();
             cw.setLogServiceTracker(logServiceTracker);
+            cw.setDefaultRun(Util.str2boolean(
+                p.getProperty("defaultrun"), false));
             cw.setTitle(p.getProperty("title"));
             cw.setDescription(p.getProperty("description"));
             cw.setBackup(Util.str2int(p.getProperty("backup"), 0));
