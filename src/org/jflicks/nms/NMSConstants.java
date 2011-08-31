@@ -547,6 +547,16 @@ public final class NMSConstants {
     public static final String UPDATE_TIME_IN_MINUTES =
         "Update Time In Minutes";
 
+    /**
+     * A constant for services that may need to define a user name property.
+     */
+    public static final String USER_NAME = "User Name";
+
+    /**
+     * A constant for services that may need to define a password property.
+     */
+    public static final String PASSWORD = "Password";
+
     private NMSConstants() {
     }
 

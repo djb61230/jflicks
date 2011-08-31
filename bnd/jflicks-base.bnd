@@ -2,6 +2,20 @@ custom=true
 
 Bundle-Version: 1.0.0
 
+Include-Resource:\
+ org/jflicks/util/char_0.png=../resources/char_0.png,\
+ org/jflicks/util/char_1.png=../resources/char_1.png,\
+ org/jflicks/util/char_2.png=../resources/char_2.png,\
+ org/jflicks/util/char_3.png=../resources/char_3.png,\
+ org/jflicks/util/char_4.png=../resources/char_4.png,\
+ org/jflicks/util/char_5.png=../resources/char_5.png,\
+ org/jflicks/util/char_6.png=../resources/char_6.png,\
+ org/jflicks/util/char_7.png=../resources/char_7.png,\
+ org/jflicks/util/char_8.png=../resources/char_8.png,\
+ org/jflicks/util/char_9.png=../resources/char_9.png,\
+ org/jflicks/util/char_colon.png=../resources/char_colon.png,\
+ org/jflicks/util/char_space.png=../resources/char_space.png
+
 Export-Package:\
  org.jflicks.autoart;version="1.0.0",\
  org.jflicks.db;version="1.0.0",\

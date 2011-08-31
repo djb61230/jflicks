@@ -65,7 +65,9 @@ public class SystemPostProcHeavyJob extends AbstractJob
     }
 
     private void setCount(int i) {
+
         count = i;
+        log(SystemPostProc.INFO, "Current Heavy Jobs now: " + count);
     }
 
     private int getMax() {
@@ -73,6 +75,7 @@ public class SystemPostProcHeavyJob extends AbstractJob
     }
 
     private void setMax(int i) {
+
         max = i;
     }
 

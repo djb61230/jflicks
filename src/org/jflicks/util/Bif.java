@@ -20,6 +20,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -40,8 +42,12 @@ public class Bif {
 
     private static final int HD_WIDTH = 290;
     private static final int HD_HEIGHT = 218;
+    private static final int HD_X = 49;
+    private static final int HD_Y = 87;
     private static final int SD_WIDTH = 214;
     private static final int SD_HEIGHT = 144;
+    private static final int SD_X = 11;
+    private static final int SD_Y = 50;
 
     private static byte[] magic = {
         (byte) 0x89, (byte) 0x42, (byte) 0x49, (byte) 0x46,
@@ -66,6 +72,42 @@ public class Bif {
         0x0, 0x0, 0x0, 0x0,
         0x0, 0x0, 0x0, 0x0
     };
+
+    private static BufferedImage CHAR_0 = null;
+    private static BufferedImage CHAR_1 = null;
+    private static BufferedImage CHAR_2 = null;
+    private static BufferedImage CHAR_3 = null;
+    private static BufferedImage CHAR_4 = null;
+    private static BufferedImage CHAR_5 = null;
+    private static BufferedImage CHAR_6 = null;
+    private static BufferedImage CHAR_7 = null;
+    private static BufferedImage CHAR_8 = null;
+    private static BufferedImage CHAR_9 = null;
+    private static BufferedImage CHAR_COLON = null;
+    private static BufferedImage CHAR_SPACE = null;
+
+    static {
+
+        try {
+
+            CHAR_0 = ImageIO.read(Bif.class.getResource("char_0.png"));
+            CHAR_1 = ImageIO.read(Bif.class.getResource("char_1.png"));
+            CHAR_2 = ImageIO.read(Bif.class.getResource("char_2.png"));
+            CHAR_3 = ImageIO.read(Bif.class.getResource("char_3.png"));
+            CHAR_4 = ImageIO.read(Bif.class.getResource("char_4.png"));
+            CHAR_5 = ImageIO.read(Bif.class.getResource("char_5.png"));
+            CHAR_6 = ImageIO.read(Bif.class.getResource("char_6.png"));
+            CHAR_7 = ImageIO.read(Bif.class.getResource("char_7.png"));
+            CHAR_8 = ImageIO.read(Bif.class.getResource("char_8.png"));
+            CHAR_9 = ImageIO.read(Bif.class.getResource("char_9.png"));
+            CHAR_COLON = ImageIO.read(Bif.class.getResource("char_colon.png"));
+            CHAR_SPACE = ImageIO.read(Bif.class.getResource("char_space.png"));
+
+        } catch (IOException ex) {
+
+            System.out.println("Bif bad: " + ex.getMessage());
+        }
+    }
 
     private Bif() {
     }
@@ -112,14 +154,14 @@ public class Bif {
         }
 
         sb.append(seconds);
-        while (sb.length() < 7) {
+        while (sb.length() < 8) {
             sb.insert(0, " ");
         }
 
         return (sb.toString());
     }
 
-    private static ByteArrayOutputStream[] getImages(int[] seconds,
+    private static ByteArrayOutputStream[] getImagesOLD(int[] seconds,
         boolean hd) {
 
         ByteArrayOutputStream[] result = null;
@@ -161,6 +203,102 @@ public class Bif {
                     ImageIO.write(bi, "GIF", result[i]);
 
                 } catch (IOException ex) {
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private static ByteArrayOutputStream[] getImages(int[] seconds,
+        boolean hd) {
+
+        ByteArrayOutputStream[] result = null;
+
+        if ((seconds != null) && (seconds.length > 0)) {
+
+            result = new ByteArrayOutputStream[seconds.length];
+            int w = HD_WIDTH;
+            int h = HD_HEIGHT;
+            int xindex = HD_X;
+            int yindex = HD_Y;
+            if (!hd) {
+
+                w = SD_WIDTH;
+                h = SD_HEIGHT;
+                xindex = SD_X;
+                yindex = SD_Y;
+            }
+
+            for (int i = 0; i < seconds.length; i++) {
+
+                int tmpx = xindex;
+                result[i] = new ByteArrayOutputStream();
+                String tmp = formatTime(seconds[i]);
+                if (tmp != null) {
+
+                    BufferedImage bi =
+                        new BufferedImage(w, h, CHAR_0.getType());
+                    char[] carray = tmp.toCharArray();
+                    if (carray != null) {
+
+                        Graphics2D g2d = bi.createGraphics();
+                        g2d.setColor(Color.BLACK);
+                        g2d.fill(new Rectangle(0, 0, w, h));
+                        for (int j = 0; j < carray.length; j++) {
+
+                            switch (carray[j]) {
+
+                            case '0':
+                                g2d.drawImage(CHAR_0, tmpx, yindex, null);
+                                break;
+                            case '1':
+                                g2d.drawImage(CHAR_1, tmpx, yindex, null);
+                                break;
+                            case '2':
+                                g2d.drawImage(CHAR_2, tmpx, yindex, null);
+                                break;
+                            case '3':
+                                g2d.drawImage(CHAR_3, tmpx, yindex, null);
+                                break;
+                            case '4':
+                                g2d.drawImage(CHAR_4, tmpx, yindex, null);
+                                break;
+                            case '5':
+                                g2d.drawImage(CHAR_5, tmpx, yindex, null);
+                                break;
+                            case '6':
+                                g2d.drawImage(CHAR_6, tmpx, yindex, null);
+                                break;
+                            case '7':
+                                g2d.drawImage(CHAR_7, tmpx, yindex, null);
+                                break;
+                            case '8':
+                                g2d.drawImage(CHAR_8, tmpx, yindex, null);
+                                break;
+                            case '9':
+                                g2d.drawImage(CHAR_9, tmpx, yindex, null);
+                                break;
+                            case ':':
+                                g2d.drawImage(CHAR_COLON, tmpx, yindex, null);
+                                break;
+                            case ' ':
+                                g2d.drawImage(CHAR_SPACE, tmpx, yindex, null);
+                                break;
+                            }
+
+                            tmpx += 24;
+                        }
+
+                        g2d.dispose();
+                    }
+
+                    try {
+
+                        ImageIO.write(bi, "GIF", result[i]);
+
+                    } catch (IOException ex) {
+                    }
                 }
             }
         }

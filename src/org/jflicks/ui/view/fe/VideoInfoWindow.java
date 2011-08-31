@@ -377,15 +377,19 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
 
         super.setVisible(b);
 
-        if (b) {
+        Timer t = getTimer();
+        if (t != null) {
 
-            Timer t = getTimer();
-            if (t != null) {
+            if (b) {
 
                 if (!t.isRunning()) {
 
                     t.restart();
                 }
+
+            } else {
+
+                t.stop();
             }
         }
     }

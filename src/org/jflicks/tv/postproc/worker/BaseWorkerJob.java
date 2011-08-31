@@ -146,9 +146,11 @@ public abstract class BaseWorkerJob extends AbstractJob {
     public void writeBIF() {
 
         Recording r = getRecording();
+        log(BaseWorker.INFO, "Attempting to write BIF file for " + r);
         if (r != null) {
 
             Commercial[] array = r.getCommercials();
+            log(BaseWorker.INFO, "Commercials " + array);
             if ((array != null) && (array.length > 0)) {
 
                 int[] seconds = new int[array.length + 1];
@@ -159,8 +161,10 @@ public abstract class BaseWorkerJob extends AbstractJob {
                 }
 
                 File out = new File(r.getPath() + ".hd.bif");
+                log(BaseWorker.INFO, "About to create: " + out);
                 Bif.write(out, seconds, true);
                 out = new File(r.getPath() + ".sd.bif");
+                log(BaseWorker.INFO, "About to create: " + out);
                 Bif.write(out, seconds, false);
             }
         }

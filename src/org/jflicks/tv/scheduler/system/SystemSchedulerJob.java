@@ -266,6 +266,7 @@ public class SystemSchedulerJob extends AbstractJob
                     // Now we want to do any indexing of the recording
                     // if so configured.
                     String iname = r.getIndexerName();
+                    log(SystemScheduler.INFO, "Indexing recording: " + iname);
                     if (iname != null) {
 
                         ss.indexRecording(iname, rec);

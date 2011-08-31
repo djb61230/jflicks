@@ -92,7 +92,7 @@ public class SchedulesDirect extends XTVDClient {
             if (data != null) {
 
                 String tmp = new String(data);
-                if (tmp.indexOf("EMAIL_ADDRESS") == -1) {
+                if (tmp.indexOf("USER_NAME_FOR_SD") == -1) {
 
                     result = true;
                 }

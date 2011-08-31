@@ -148,6 +148,20 @@
         <copy file="${bundle}/jflicks-ui-view-client.jar"
             todir="client/bundle"/>
 
+        <!-- Now do ez. -->
+        <copy file="${bundle}/jflicks-base.jar"
+            todir="ez/bundle"/>
+        <copy file="${bundle}/jflicks-swingx.jar"
+            todir="ez/bundle"/>
+        <copy file="${bundle}/jflicks-nms-remote.jar"
+            todir="ez/bundle"/>
+        <copy file="${bundle}/jflicks-ui.jar"
+            todir="ez/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view.jar"
+            todir="ez/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-ez.jar"
+            todir="ez/bundle"/>
+
         <!-- Now do scheduler side. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="scheduler/bundle"/>
@@ -265,6 +279,10 @@
 
         <delete>
             <fileset dir="client" includes="bundle/jflicks-*.jar"/>
+        </delete>
+
+        <delete>
+            <fileset dir="ez" includes="bundle/jflicks-*.jar"/>
         </delete>
 
         <delete>

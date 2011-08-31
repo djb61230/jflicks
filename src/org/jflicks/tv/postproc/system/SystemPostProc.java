@@ -62,6 +62,7 @@ public class SystemPostProc extends BasePostProc {
             synchronized (l) {
 
                 l.add(wr);
+                log(INFO, "Heavy queue size now: " + l.size());
             }
         }
     }
@@ -82,6 +83,7 @@ public class SystemPostProc extends BasePostProc {
             synchronized (l) {
 
                 l.add(0, wr);
+                log(INFO, "(Push) Heavy queue size now: " + l.size());
             }
         }
     }
@@ -103,6 +105,7 @@ public class SystemPostProc extends BasePostProc {
 
                 result = l.get(0);
                 l.remove(0);
+                log(INFO, "(Pop) Heavy queue size now: " + l.size());
             }
         }
 
@@ -125,6 +128,7 @@ public class SystemPostProc extends BasePostProc {
             synchronized (l) {
 
                 l.add(wr);
+                log(INFO, "Light queue size now: " + l.size());
             }
         }
     }
@@ -145,6 +149,7 @@ public class SystemPostProc extends BasePostProc {
             synchronized (l) {
 
                 l.add(0, wr);
+                log(INFO, "(Push) Light queue size now: " + l.size());
             }
         }
     }
@@ -166,6 +171,7 @@ public class SystemPostProc extends BasePostProc {
 
                 result = l.get(0);
                 l.remove(0);
+                log(INFO, "(Pop) Light queue size now: " + l.size());
             }
         }
 
@@ -189,13 +195,16 @@ public class SystemPostProc extends BasePostProc {
                         Worker w = getWorkerByTitle(array[i].getTitle());
                         if (w != null) {
 
-                            log(INFO, "Time to queue up a worker...");
                             WorkerRecording wr = new WorkerRecording();
                             wr.setWorker(w);
                             wr.setRecording(r);
                             if (w.isHeavy()) {
+                                log(INFO, "Time to queue up a heavy worker..."
+                                    + w.getTitle());
                                 addHeavyWorkerRecording(wr);
                             } else {
+                                log(INFO, "Time to queue up a light worker..."
+                                    + w.getTitle());
                                 addLightWorkerRecording(wr);
                             }
                         }
@@ -215,13 +224,16 @@ public class SystemPostProc extends BasePostProc {
             Worker w = getWorkerByTitle(s);
             if (w != null) {
 
-                log(INFO, "Time to queue up a worker...");
                 WorkerRecording wr = new WorkerRecording();
                 wr.setWorker(w);
                 wr.setRecording(r);
                 if (w.isHeavy()) {
+                    log(INFO, "Time to queue up a heavy worker..."
+                        + w.getTitle());
                     addHeavyWorkerRecording(wr);
                 } else {
+                    log(INFO, "Time to queue up a light worker..."
+                        + w.getTitle());
                     addLightWorkerRecording(wr);
                 }
             }

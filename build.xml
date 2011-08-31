@@ -464,6 +464,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-ui-view-ez.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-ui-view-scheduler.bnd"
             output="${bundle}"
         />
@@ -740,6 +749,12 @@
 
     </target>
 
+    <target name="check-felix-ez" unless="felix.ez.home">
+
+        <echo message="Felix ez home is not defined!"/>
+
+    </target>
+
     <target name="check-felix-scheduler" unless="felix.scheduler.home">
 
         <echo message="Felix scheduler home is not defined!"/>
@@ -758,7 +773,7 @@
 
     </target>
 
-    <target name="deploy" depends="build,check-felix-server,check-felix-aspirin,check-felix-client,check-felix-scheduler,check-felix-fe,check-felix-metadata"
+    <target name="deploy" depends="build,check-felix-server,check-felix-aspirin,check-felix-client,check-felix-ez,check-felix-scheduler,check-felix-fe,check-felix-metadata"
         description="Gotta do more than just compile!">
 
         <!-- First do server side. -->
@@ -774,6 +789,11 @@
         <!-- Now do client side. -->
         <copy todir="${felix.client.home}/bundle">
             <fileset dir="${bundle}" includes="${client.deploy}"/>
+        </copy>
+
+        <!-- Now do ez side. -->
+        <copy todir="${felix.ez.home}/bundle">
+            <fileset dir="${bundle}" includes="${ez.deploy}"/>
         </copy>
 
         <!-- Now do scheduler side. -->

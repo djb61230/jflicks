@@ -67,6 +67,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
     private ObjectContainer objectContainer;
     private Db4oService db4oService;
+    private boolean overrideTimeToUpdate;
 
     /**
      * Simple empty constructor.
@@ -92,6 +93,14 @@ public class SchedulesDirectProgramData extends BaseProgramData
      */
     public void setDb4oService(Db4oService s) {
         db4oService = s;
+    }
+
+    private boolean isOverrideTimeToUpdate() {
+        return (overrideTimeToUpdate);
+    }
+
+    private void setOverrideTimeToUpdate(boolean b) {
+        overrideTimeToUpdate = b;
     }
 
     /**
@@ -150,6 +159,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                         try {
 
                             Util.writeTextFile(xtvd, text);
+                            setOverrideTimeToUpdate(true);
 
                         } catch (IOException ex) {
 
@@ -987,22 +997,44 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
             Status status = null;
 
-            ObjectSet<Status> os = oc.queryByExample(Status.class);
-            if (os != null) {
+            if (isOverrideTimeToUpdate()) {
 
-                if (os.size() > 0) {
+                setOverrideTimeToUpdate(false);
+                status = new Status();
+                status.setNextUpdate(System.currentTimeMillis());
+                oc.store(status);
+                oc.commit();
+                log(INFO, "Time to update by override!");
+                result = true;
 
-                    status = os.next();
-                    long now = System.currentTimeMillis();
-                    long next = status.getNextUpdate();
-                    if (now > next) {
+            } else {
 
-                        result = true;
-                        log(INFO, "Time to update! Now is newer!");
+                ObjectSet<Status> os = oc.queryByExample(Status.class);
+                if (os != null) {
+
+                    if (os.size() > 0) {
+
+                        status = os.next();
+                        long now = System.currentTimeMillis();
+                        long next = status.getNextUpdate();
+                        if (now > next) {
+
+                            result = true;
+                            log(INFO, "Time to update! Now is newer!");
+
+                        } else {
+
+                            log(INFO, "Not time to update: " + new Date(next));
+                        }
 
                     } else {
 
-                        log(INFO, "Not time to update: " + new Date(next));
+                        status = new Status();
+                        status.setNextUpdate(System.currentTimeMillis());
+                        oc.store(status);
+                        oc.commit();
+                        log(INFO, "Time to update! No history...");
+                        result = true;
                     }
 
                 } else {
@@ -1014,15 +1046,6 @@ public class SchedulesDirectProgramData extends BaseProgramData
                     log(INFO, "Time to update! No history...");
                     result = true;
                 }
-
-            } else {
-
-                status = new Status();
-                status.setNextUpdate(System.currentTimeMillis());
-                oc.store(status);
-                oc.commit();
-                log(INFO, "Time to update! No history...");
-                result = true;
             }
         }
 
