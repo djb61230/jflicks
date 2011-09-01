@@ -154,9 +154,6 @@ public class Bif {
         }
 
         sb.append(seconds);
-        while (sb.length() < 8) {
-            sb.insert(0, " ");
-        }
 
         return (sb.toString());
     }
@@ -232,7 +229,6 @@ public class Bif {
 
             for (int i = 0; i < seconds.length; i++) {
 
-                int tmpx = xindex;
                 result[i] = new ByteArrayOutputStream();
                 String tmp = formatTime(seconds[i]);
                 if (tmp != null) {
@@ -242,6 +238,7 @@ public class Bif {
                     char[] carray = tmp.toCharArray();
                     if (carray != null) {
 
+                        int tmpx = xindex + (((8 - carray.length) / 2) * 24);
                         Graphics2D g2d = bi.createGraphics();
                         g2d.setColor(Color.BLACK);
                         g2d.fill(new Rectangle(0, 0, w, h));
