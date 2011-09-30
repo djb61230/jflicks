@@ -39,6 +39,7 @@ import org.jflicks.mvc.View;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
+import org.jflicks.transfer.Transfer;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 import org.jflicks.ui.view.fe.ButtonPanel;
@@ -82,6 +83,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     private boolean restoreState;
     private Animator screenShotAnimator;
     private boolean playingVideo;
+    private Transfer transfer;
 
     /**
      * Simple empty constructor.
@@ -132,6 +134,14 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         getActionMap().put("enter", enterAction);
     }
 
+    public Transfer getTransfer() {
+        return (transfer);
+    }
+
+    public void setTransfer(Transfer t) {
+        transfer = t;
+    }
+
     private Integer[] getTimeline() {
         return (timeline);
     }
@@ -164,17 +174,14 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     @Override
     public Player getPlayer() {
 
-        System.out.println("RecordingScreen.getPlayer()");
         Player result = null;
 
         if (isPlayingVideo()) {
 
-            System.out.println("RecordingScreen.getPlayer() - VIDEO");
             result = getPlayer(Player.PLAYER_VIDEO);
 
         } else {
 
-            System.out.println("RecordingScreen.getPlayer() - TS");
             result = getPlayer(Player.PLAYER_VIDEO_TRANSPORT_STREAM);
         }
 
@@ -717,17 +724,41 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         if ((ic != null) && (r != null)) {
 
             String path = r.getPath();
-            if (Util.isWindows()) {
+            File tmp = new File(path);
+            if ((tmp.exists()) && (tmp.isFile())) {
 
-                path = path.replace(":", "|");
-                path = "/" + path;
-            }
+                if (Util.isWindows()) {
 
-            result = ic.getImage("file://" + path + ".png", false);
-            if (result == null) {
+                    path = path.replace(":", "|");
+                    path = "/" + path;
+                }
 
-                path = path.substring(0, path.length() - 4);
                 result = ic.getImage("file://" + path + ".png", false);
+                if (result == null) {
+
+                    path = path.substring(0, path.length() - 4);
+                    result = ic.getImage("file://" + path + ".png", false);
+                }
+
+            } else {
+
+                // We have to build a URL from the StreamURL.  However the
+                // screen shot is based upon the raw video file name not
+                // from the "indexed" video version.  So we have to do some
+                // trickery here.
+                String surl = r.getStreamURL();
+                if (surl != null) {
+
+                    String iext = r.getIndexedExtension();
+                    if ((iext != null) && (surl.endsWith(iext))) {
+
+                        int ilength = iext.length() + 1;
+                        surl = surl.substring(0, surl.length() - ilength);
+                    }
+
+                    System.out.println("surl <" + surl + ">");
+                    result = ic.getImage(surl + ".png", false);
+                }
             }
         }
 
@@ -752,6 +783,41 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                     result = tmp.getPath();
                     setPlayingVideo(true);
+                }
+            }
+
+            String streamURL = r.getStreamURL();
+            if (streamURL != null) {
+
+                File tmp = new File(result);
+                if ((tmp.exists()) && (tmp.isFile())) {
+                } else {
+
+                    // We use the streamURL.  If we got here then we have to
+                    // recheck the ext type of the URL.
+                    result = streamURL;
+
+                    System.out.println("iext <" + iext + ">");
+                    System.out.println("streamURL <" + streamURL + ">");
+                    if (iext != null) {
+
+                        if (streamURL.endsWith(iext)) {
+                            System.out.println("saying video");
+                            setPlayingVideo(true);
+                        }
+                    }
+
+                    // If the Recording is done, then we are done, we just
+                    // use the streamURL.  But we don't want to use the
+                    // streamURL if the Recording is not done as it's
+                    // problematic.  Try to transfer the file and then play
+                    // our local copy.
+                    Transfer t = getTransfer();
+                    if ((t != null) && (r.isCurrentlyRecording())) {
+
+                        result = t.transfer(r);
+                        setPlayingVideo(false);
+                    }
                 }
             }
         }
@@ -984,6 +1050,11 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
             w.setVisible(false);
         }
+
+        Transfer t = getTransfer();
+        if (t != null) {
+            t.transfer(null);
+        }
     }
 
     /**
@@ -1123,13 +1194,14 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         if ((rllp != null) && (event.getSource() == getPlayButtonPanel())) {
 
             Recording r = rllp.getSelectedRecording();
-            String recpath = computeRecordingPath(r);
             Player p = getPlayer();
             if ((p != null) && (!p.isPlaying()) && (r != null)) {
 
                 ButtonPanel pbp = getPlayButtonPanel();
                 if (PLAY.equals(pbp.getSelectedButton())) {
 
+                    String recpath = computeRecordingPath(r);
+                    p = getPlayer();
                     View v = getView();
                     if (v instanceof FrontEndView) {
 
@@ -1157,6 +1229,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
 
+                    String recpath = computeRecordingPath(r);
+                    p = getPlayer();
                     View v = getView();
                     if (v instanceof FrontEndView) {
 

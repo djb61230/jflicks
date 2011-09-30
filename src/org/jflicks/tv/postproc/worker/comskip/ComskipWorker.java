@@ -41,6 +41,7 @@ public class ComskipWorker extends BaseWorker implements JobListener {
         setTitle("ComskipWorker");
         setDescription("Commercial flagging using Comskip");
         setHeavy(true);
+        setCommercialDetector(true);
     }
 
     /**

@@ -446,18 +446,29 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
     public void setVisible(boolean b) {
 
         setCurrentSeconds(0);
-        updateWindow();
 
         super.setVisible(b);
 
         if (b) {
 
+            updateWindow();
             Timer t = getTimer();
             if (t != null) {
 
                 if (!t.isRunning()) {
 
                     t.restart();
+                }
+            }
+
+        } else {
+
+            Timer t = getTimer();
+            if (t != null) {
+
+                if (t.isRunning()) {
+
+                    t.stop();
                 }
             }
         }

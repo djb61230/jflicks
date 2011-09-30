@@ -32,6 +32,8 @@ public class Task implements Serializable {
     private boolean defaultRun;
     private boolean run;
     private boolean selectable;
+    private boolean indexer;
+    private boolean commercialDetector;
 
     /**
      * Simple empty constructor.
@@ -53,6 +55,8 @@ public class Task implements Serializable {
             setDefaultRun(t.isDefaultRun());
             setRun(t.isRun());
             setSelectable(t.isSelectable());
+            setIndexer(t.isIndexer());
+            setCommercialDetector(t.isCommercialDetector());
         }
     }
 
@@ -144,6 +148,42 @@ public class Task implements Serializable {
      */
     public void setSelectable(boolean b) {
         selectable = b;
+    }
+
+    /**
+     * Can this Task index recordings?
+     *
+     * @return True if this Task does indexing.
+     */
+    public boolean isIndexer() {
+        return (indexer);
+    }
+
+    /**
+     * Can this Task index recordings?
+     *
+     * @param b True if this Task does indexing.
+     */
+    public void setIndexer(boolean b) {
+        indexer = b;
+    }
+
+    /**
+     * Can this Task detect commercials?
+     *
+     * @return True if this Task detects commercials.
+     */
+    public boolean isCommercialDetector() {
+        return (commercialDetector);
+    }
+
+    /**
+     * Can this Task detect commercials?
+     *
+     * @paran b True if this Task detects commercials.
+     */
+    public void setCommercialDetector(boolean b) {
+        commercialDetector = b;
     }
 
     /**

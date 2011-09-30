@@ -1,23 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <properties>
-  <!-- Set USERNAME to your username.  This is optional. -->
-  <userName>
-  %SDUSERNAME
-  </userName>
-
-  <!-- Set PASSWORD to your password.  This is optional. -->
-  <password>
-  %SDPASSWORD
-  </password>
-
-  <!-- 
-  Set NUMBER_OF_DAYS to number of days of data you wish to download 
-  -->
-  <numberOfDays>14</numberOfDays>
-
-  <!--
-  Modify the webservice URI if you need to access the service through
-  a tunnel.
-  -->
-  <webserviceURI>http://webservices.schedulesdirect.tmsdatadirect.com/schedulesdirect/tvlistings/xtvdService</webserviceURI>
+    <userName>EMAIL_ADDRESS</userName>
+    <password>PASSWORD_FOR_SD</password>
+    <numberOfDays>14</numberOfDays>
+    <webserviceURI>http://webservices.schedulesdirect.tmsdatadirect.com/schedulesdirect/tvlistings/xtvdService</webserviceURI>
 </properties>

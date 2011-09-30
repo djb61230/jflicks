@@ -658,6 +658,15 @@
         />
 
         <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-transfer-system.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
             classpath="${lib}/jdom.jar"
             eclipse="false"
             failok="false"
@@ -1084,6 +1093,18 @@
             <arg value="-channel"/>
             <arg value="${arg3}"/>
             <jvmarg value="-Djava.library.path=lib"/>
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-hdhr-parse" depends="build">
+
+        <java classname="org.jflicks.tv.recorder.hdhr.ParseScanFile" fork="true">
+
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>

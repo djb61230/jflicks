@@ -16,6 +16,11 @@
 */
 package org.jflicks.stream;
 
+import org.jflicks.nms.NMS;
+
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+
 /**
  * This class is a base implementation of the Stream interface.
  *
@@ -29,11 +34,37 @@ public abstract class BaseStream implements Stream {
     private String host;
     private int port;
     private boolean streaming;
+    private BundleContext bundleContext;
 
     /**
      * Simple empty constructor.
      */
     public BaseStream() {
+    }
+
+    public BundleContext getBundleContext() {
+        return (bundleContext);
+    }
+
+    public void setBundleContext(BundleContext bc) {
+        bundleContext = bc;
+    }
+
+    public NMS getNMS() {
+
+        NMS result = null;
+
+        BundleContext bc = getBundleContext();
+        if (bc != null) {
+
+            ServiceReference ref = bc.getServiceReference(NMS.class.getName());
+            if (ref != null) {
+
+                result = (NMS) bc.getService(ref);
+            }
+        }
+
+        return (result);
     }
 
     /**

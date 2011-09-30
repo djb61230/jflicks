@@ -44,6 +44,7 @@ public class ToMp4Worker extends BaseWorker implements JobListener {
         setHeavy(false);
         setDefaultRun(false);
         setUserSelectable(false);
+        setIndexer(true);
     }
 
     /**

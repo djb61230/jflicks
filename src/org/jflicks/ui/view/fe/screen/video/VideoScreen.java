@@ -1144,6 +1144,29 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         }
     }
 
+    private String computeVideoPath(Video v) {
+
+        String result = null;
+
+        if (v != null) {
+
+            result = v.getPath();
+
+            String streamURL = v.getStreamURL();
+            if (streamURL != null) {
+
+                File tmp = new File(result);
+                if ((tmp.exists()) && (tmp.isFile())) {
+                    result = streamURL;
+                } else {
+                    result = streamURL;
+                }
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * We listen for button clicks from our play button panel.
      *
@@ -1175,6 +1198,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
             if (v != null) {
 
+                String vidpath = computeVideoPath(v);
                 ButtonPanel pbp = getPlayButtonPanel();
                 if (PLAY.equals(pbp.getSelectedButton())) {
 
@@ -1202,14 +1226,14 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                             controlKeyboard(false);
                             p.setFrame(Util.findFrame(this));
                             addBlankPanel();
-                            p.play(intropath, v.getPath());
+                            p.play(intropath, vidpath);
 
                         } else {
 
                             controlKeyboard(false);
                             p.setFrame(Util.findFrame(this));
                             addBlankPanel();
-                            p.play(v.getPath());
+                            p.play(vidpath);
                         }
 
                     } else {
@@ -1217,7 +1241,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                         controlKeyboard(false);
                         p.setFrame(Util.findFrame(this));
                         addBlankPanel();
-                        p.play(v.getPath());
+                        p.play(vidpath);
                     }
 
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
@@ -1240,7 +1264,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     controlKeyboard(false);
                     p.setFrame(Util.findFrame(this));
                     addBlankPanel();
-                    p.play(v.getPath(), getBookmark(v.getId()));
+                    p.play(vidpath, getBookmark(v.getId()));
 
                 } else if (CANCEL.equals(pbp.getSelectedButton())) {
 

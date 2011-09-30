@@ -44,6 +44,7 @@ public class ToMkvWorker extends BaseWorker implements JobListener {
         setHeavy(false);
         setDefaultRun(false);
         setUserSelectable(false);
+        setIndexer(true);
     }
 
     /**

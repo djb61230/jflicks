@@ -116,7 +116,12 @@ public class ParseScanFile {
                                     if (freq != null) {
 
                                         // Put in HashMap...
-                                        hm.put(third, freq);
+                                        if (!third.equals("0")) {
+
+                                            hm.put(third, freq);
+                                            System.out.println("key: <" + third + ">");
+                                            System.out.println("val: <" + freq + ">");
+                                        }
                                     }
                                 }
                             }
@@ -185,6 +190,12 @@ public class ParseScanFile {
         }
 
         return (result);
+    }
+
+    public static void main(String[] args) {
+
+        File f = new File("/home/djb/marty.log");
+        ParseScanFile psf = new ParseScanFile(f);
     }
 
 }

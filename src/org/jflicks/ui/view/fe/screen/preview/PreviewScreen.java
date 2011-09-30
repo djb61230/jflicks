@@ -24,6 +24,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import javax.swing.JLayeredPane;
@@ -49,8 +50,6 @@ import org.jdesktop.swingx.painter.MattePainter;
 public class PreviewScreen extends PlayerScreen implements NMSProperty,
     PropertyChangeListener {
 
-    private String trailerPath;
-    private String previewPath;
     private NMS[] nms;
 
     /**
@@ -88,53 +87,6 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
         } else {
             nms = null;
         }
-
-        if ((nms != null) && (nms.length > 0)) {
-
-            for (int i = 0; i < nms.length; i++) {
-
-                String thome = nms[i].getTrailerHome();
-                String ppath = nms[i].getTrailerIntro();
-                if ((thome != null) && (ppath != null)) {
-
-                    FrontEndView fev = (FrontEndView) getView();
-                    if (fev != null) {
-
-                        thome = fev.transformPath(thome);
-                        ppath = fev.transformPath(ppath);
-
-                        log(DEBUG, "thome: " + thome);
-                        log(DEBUG, "ppath: " + ppath);
-                    }
-
-                    File fthome = new File(thome);
-                    File fppath = new File(ppath);
-                    if ((fthome.exists()) && (fppath.exists())) {
-
-                        // Just take the first config we find...
-                        setTrailerPath(thome);
-                        setPreviewPath(ppath);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    private String getTrailerPath() {
-        return (trailerPath);
-    }
-
-    private void setTrailerPath(String s) {
-        trailerPath = s;
-    }
-
-    private String getPreviewPath() {
-        return (previewPath);
-    }
-
-    private void setPreviewPath(String s) {
-        previewPath = s;
     }
 
     /**
@@ -154,6 +106,57 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
         }
     }
 
+    private String[] computeURLs() {
+
+        String[] result = null;
+
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<String> intros = new ArrayList<String>();
+            ArrayList<String> urls = new ArrayList<String>();
+            for (int i = 0; i < array.length; i++) {
+
+                String[] uarray = array[i].getTrailerURLs();
+                if ((uarray != null) && (uarray.length > 1)) {
+
+                    for (int j = 0; j < uarray.length; j++) {
+
+                        if (j == 0) {
+
+                            intros.add(uarray[j]);
+
+                        } else {
+
+                            urls.add(uarray[j]);
+                        }
+                    }
+                }
+            }
+
+            if (urls.size() > 0) {
+
+                // At this point we should have two lists, one with intros one
+                // with actual movie trailers.  We have to turn it into one
+                // list.
+                ArrayList<String> l = new ArrayList<String>();
+                if (intros.size() > 0) {
+
+                    l.add(intros.get(0));
+                }
+
+                for (int i = 0; i < urls.size(); i++) {
+
+                    l.add(urls.get(i));
+                }
+
+                result = l.toArray(new String[l.size()]);
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * Override so we can start up the player.
      *
@@ -164,38 +167,23 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
         super.setVisible(b);
         if (b) {
 
-            // Make a play list file.
-            String tpath = getTrailerPath();
-            String ppath = getPreviewPath();
-            if ((tpath != null) && (ppath != null)) {
+            String[] urls = computeURLs();
+            if ((urls != null) && (urls.length > 0)) {
 
-                File dir = new File(tpath);
-                File[] all = dir.listFiles();
-                if (all != null) {
+                Player p = getPlayer();
+                if (p != null) {
 
-                    boolean success = true;
-                    Arrays.sort(all, new FileSort());
-                    String[] urls = new String[all.length + 1];
-                    urls[0] = ppath;
-                    for (int i = 1; i < urls.length; i++) {
-                        urls[i] = all[i - 1].getPath();
+                    View v = getView();
+                    if (v instanceof FrontEndView) {
+
+                        FrontEndView fev = (FrontEndView) v;
+                        p.setRectangle(fev.getPosition());
                     }
 
-                    Player p = getPlayer();
-                    if (p != null) {
-
-                        View v = getView();
-                        if (v instanceof FrontEndView) {
-
-                            FrontEndView fev = (FrontEndView) v;
-                            p.setRectangle(fev.getPosition());
-                        }
-
-                        p.addPropertyChangeListener("Playing", this);
-                        controlKeyboard(false);
-                        p.setFrame(Util.findFrame(this));
-                        p.play(urls);
-                    }
+                    p.addPropertyChangeListener("Playing", this);
+                    controlKeyboard(false);
+                    p.setFrame(Util.findFrame(this));
+                    p.play(urls);
                 }
             }
         }
@@ -361,17 +349,6 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
      * @param event An ActionEvent instance.
      */
     public void actionPerformed(ActionEvent event) {
-    }
-
-    static class FileSort implements Comparator<File>, Serializable {
-
-        public int compare(File f0, File f1) {
-
-            Long l0 = Long.valueOf(f0.lastModified());
-            Long l1 = Long.valueOf(f1.lastModified());
-
-            return (l1.compareTo(l0));
-        }
     }
 
 }

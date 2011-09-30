@@ -245,6 +245,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                                     + getImageName(sid + "_fanart.jpg"));
                             }
                             result[i].setHostPort(hp);
+                            result[i].setStreamURL(computeStreamURL(result[i]));
                         }
                     }
                 }

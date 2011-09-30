@@ -38,6 +38,7 @@ public class Video implements Media, Serializable, Comparable<Video> {
     private String bannerURL;
     private String posterURL;
     private String fanartURL;
+    private String streamURL;
     private String released;
     private String aspectRatio;
     private long duration;
@@ -75,6 +76,7 @@ public class Video implements Media, Serializable, Comparable<Video> {
         setBannerURL(v.getBannerURL());
         setPosterURL(v.getPosterURL());
         setFanartURL(v.getFanartURL());
+        setStreamURL(v.getStreamURL());
         setReleased(v.getReleased());
         setDuration(v.getDuration());
         setSeason(v.getSeason());
@@ -272,6 +274,20 @@ public class Video implements Media, Serializable, Comparable<Video> {
      */
     public void setFanartURL(String s) {
         fanartURL = s;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getStreamURL() {
+        return (streamURL);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setStreamURL(String s) {
+        streamURL = s;
     }
 
     /**

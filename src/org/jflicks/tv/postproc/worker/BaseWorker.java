@@ -40,6 +40,8 @@ public abstract class BaseWorker extends BaseLog implements Worker {
     private boolean heavy;
     private boolean defaultRun;
     private boolean userSelectable;
+    private boolean indexer;
+    private boolean commercialDetector;
 
     /**
      * Simple empty constructor.
@@ -49,6 +51,8 @@ public abstract class BaseWorker extends BaseLog implements Worker {
         setHeavy(true);
         setDefaultRun(true);
         setUserSelectable(true);
+        setIndexer(false);
+        setCommercialDetector(false);
         setJobContainerList(new ArrayList<JobContainer>());
     }
 
@@ -130,6 +134,38 @@ public abstract class BaseWorker extends BaseLog implements Worker {
      */
     public void setUserSelectable(boolean b) {
         userSelectable = b;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isIndexer() {
+        return (indexer);
+    }
+
+    /**
+     * Convenience method to set this property.
+     *
+     * @param b The given boolean value.
+     */
+    public void setIndexer(boolean b) {
+        indexer = b;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isCommercialDetector() {
+        return (commercialDetector);
+    }
+
+    /**
+     * Convenience method to set this property.
+     *
+     * @param b The given boolean value.
+     */
+    public void setCommercialDetector(boolean b) {
+        commercialDetector = b;
     }
 
     /**

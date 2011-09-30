@@ -25,6 +25,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
@@ -52,7 +54,7 @@ public class PhotoShow extends BasePlayer implements ActionListener {
     private JDialog dialog;
     private JXPanel panel;
     private Timer timer;
-    private File[] photoFiles;
+    private URL[] photoURLs;
     private int currentIndex;
 
     /**
@@ -88,12 +90,12 @@ public class PhotoShow extends BasePlayer implements ActionListener {
         timer = t;
     }
 
-    private File[] getPhotoFiles() {
-        return (photoFiles);
+    private URL[] getPhotoURLs() {
+        return (photoURLs);
     }
 
-    private void setPhotoFiles(File[] array) {
-        photoFiles = array;
+    private void setPhotoURLs(URL[] array) {
+        photoURLs = array;
     }
 
     private int getCurrentIndex() {
@@ -151,7 +153,7 @@ public class PhotoShow extends BasePlayer implements ActionListener {
             String[] lines = Util.readTextFile(new File(url));
             if (lines != null) {
 
-                pathsToFiles(lines);
+                pathsToURLs(lines);
                 setCurrentIndex(0);
 
                 Rectangle r = null;
@@ -315,12 +317,12 @@ public class PhotoShow extends BasePlayer implements ActionListener {
 
             JDialog w = getDialog();
             JXPanel p = getPanel();
-            File file = getNextFile();
-            if ((w != null) && (p != null) && (file != null)) {
+            URL url = getNextURL();
+            if ((w != null) && (p != null) && (url != null)) {
 
                 try {
 
-                    BufferedImage bi = ImageIO.read(file);
+                    BufferedImage bi = ImageIO.read(url);
                     ImagePainter painter =
                         (ImagePainter) p.getBackgroundPainter();
                     if (painter != null) {
@@ -347,36 +349,45 @@ public class PhotoShow extends BasePlayer implements ActionListener {
         }
     }
 
-    private void pathsToFiles(String[] array) {
+    private void pathsToURLs(String[] array) {
 
         if ((array != null) && (array.length > 0)) {
 
-            File[] farray = new File[array.length];
+            URL[] uarray = new URL[array.length];
             for (int i = 0; i < array.length; i++) {
 
-                farray[i] = new File(array[i]);
+                try {
+
+                    if (array[i].startsWith("http")) {
+                        uarray[i] = new URL(array[i]);
+                    } else {
+                        uarray[i] = new URL("file://" + array[i]);
+                    }
+
+                } catch (MalformedURLException ex) {
+                }
             }
 
-            setPhotoFiles(farray);
+            setPhotoURLs(uarray);
         }
     }
 
-    private File getNextFile() {
+    private URL getNextURL() {
 
-        File result = null;
+        URL result = null;
 
-        File[] files = getPhotoFiles();
-        if ((files != null) && (files.length > 0)) {
+        URL[] urls = getPhotoURLs();
+        if ((urls != null) && (urls.length > 0)) {
 
             int index = getCurrentIndex();
-            if ((index >= 0) && (index < files.length)) {
+            if ((index >= 0) && (index < urls.length)) {
 
-                result = files[index];
+                result = urls[index];
 
             } else {
 
                 setCurrentIndex(0);
-                result = files[0];
+                result = urls[0];
             }
 
             setCurrentIndex(getCurrentIndex() + 1);

@@ -21,6 +21,7 @@ import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.nms.Video;
 
 /**
  * A base implementation of the VideoManager interface.
@@ -83,6 +84,24 @@ public abstract class BaseVideoManager extends BaseConfig
         if (n != null) {
 
             result = n.getHost();
+        }
+
+        return (result);
+    }
+
+    /**
+     * Convenience method to get the Stream Paths property from our NMS.
+     *
+     * @return A String array.
+     */
+    public String[] getStreamPaths() {
+
+        String[] result = null;
+
+        NMS n = getNMS();
+        if (n != null) {
+
+            result = n.getStreamPaths();
         }
 
         return (result);
@@ -165,6 +184,42 @@ public abstract class BaseVideoManager extends BaseConfig
             if (nv != null) {
 
                 result = nv.valueToArray();
+            }
+        }
+
+        return (result);
+    }
+
+    public String computeStreamURL(Video v) {
+
+        String result = null;
+
+        String h = getHost();
+        String[] array = getStreamPaths();
+        if ((h != null) && (array != null) && (v != null)) {
+
+            boolean found = false;
+            String path = v.getPath();
+            if (path != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    if (path.startsWith(array[i])) {
+
+                        path = path.substring(array[i].length());
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if ((found) && (path != null)) {
+
+                if (path.startsWith("/")) {
+                    result = "http://" + h + path;
+                } else {
+                    result = "http://" + h + "/" + path;
+                }
             }
         }
 

@@ -142,17 +142,23 @@ public class EZObject implements Serializable {
                     rnames[i].setName(recs[i].getSource());
                     NameValue inv = recs[i].findNameValueByName(
                         NMSConstants.RECORDING_INDEXER_NAME);
-                    rnames[i].setIndexer(inv.getValue());
+                    if (inv != null) {
+                        rnames[i].setIndexer(inv.getValue());
+                    }
                     rnames[i].setListingName(getListingName(array,
                         rnames[i].getName()));
 
                     inv = recs[i].findNameValueByName(
                         NMSConstants.CUSTOM_CHANNEL_LIST_TYPE);
-                    rnames[i].setListType(inv.getValue());
+                    if (inv != null) {
+                        rnames[i].setListType(inv.getValue());
+                    }
 
                     inv = recs[i].findNameValueByName(
                         NMSConstants.CUSTOM_CHANNEL_LIST);
-                    rnames[i].setChannelList(inv.valueToArray());
+                    if (inv != null) {
+                        rnames[i].setChannelList(inv.valueToArray());
+                    }
 
                     if (i == 0) {
                         recsource = rnames[i].getName();

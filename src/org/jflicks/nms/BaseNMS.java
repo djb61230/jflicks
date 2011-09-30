@@ -274,6 +274,9 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                     result[i].setDefaultRun(array[i].isDefaultRun());
                     result[i].setRun(array[i].isDefaultRun());
                     result[i].setSelectable(array[i].isUserSelectable());
+                    result[i].setIndexer(array[i].isIndexer());
+                    result[i].setCommercialDetector(
+                        array[i].isCommercialDetector());
                 }
             }
         }
@@ -660,6 +663,34 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
+    public String[] getTrailerURLs() {
+
+        String[] result = null;
+
+        String thome = getTrailerHome();
+        String tintro = getTrailerIntro();
+        if ((thome != null) && (tintro != null)) {
+
+            File dir = new File(thome);
+            File[] all = dir.listFiles();
+            if ((all != null) && (all.length > 0)) {
+
+                Arrays.sort(all, new FileSort());
+                result = new String[all.length + 1];
+                result[0] = computeStreamURL(tintro);
+                for (int i = 1; i < result.length; i++) {
+
+                    result[i] = computeStreamURL(all[i - 1].getPath());
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getTrailerHome() {
         return (getConfiguredTrailerHome());
     }
@@ -697,6 +728,20 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
      */
     public String getGroupName() {
         return (getConfiguredGroupName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String[] getStreamPaths() {
+        return (getConfiguredStreamPaths());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getDocumentRoot() {
+        return (getConfiguredDocumentRoot());
     }
 
     /**
@@ -877,6 +922,51 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             if (nv != null) {
 
                 result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * Convenience method to get the configured value of HTTP_DOCUMENT_ROOT.
+     *
+     * @return A String object.
+     */
+    public String getConfiguredDocumentRoot() {
+
+        String result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv =
+                c.findNameValueByName(NMSConstants.HTTP_DOCUMENT_ROOT);
+            if (nv != null) {
+
+                result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * Convenience method to get the configured value of STREAM_PATHS.
+     *
+     * @return A String array.
+     */
+    public String[] getConfiguredStreamPaths() {
+
+        String[] result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(NMSConstants.STREAM_PATHS);
+            if (nv != null) {
+
+                result = nv.valueToArray();
             }
         }
 
@@ -1336,6 +1426,131 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                             result[i].setFanartURL(top + sid + "_fanart.jpg");
                         }
                         result[i].setHostPort(hp);
+                        result[i].setStreamURL(computeStreamURL(result[i]));
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private String computeStreamURL(String s) {
+
+        String result = null;
+
+        String h = getHost();
+        String[] array = getConfiguredStreamPaths();
+        if ((h != null) && (array != null) && (s != null)) {
+
+            boolean found = false;
+            if (s != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    if (s.startsWith(array[i])) {
+
+                        s = s.substring(array[i].length());
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if ((found) && (s != null)) {
+
+                if (s.startsWith("/")) {
+                    result = "http://" + h + s;
+                } else {
+                    result = "http://" + h + "/" + s;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private String computeStreamURL(Photo p) {
+
+        String result = null;
+
+        String h = getHost();
+        String[] array = getConfiguredStreamPaths();
+        if ((h != null) && (array != null) && (p != null)) {
+
+            boolean found = false;
+            String path = p.getPath();
+            if (path != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    if (path.startsWith(array[i])) {
+
+                        path = path.substring(array[i].length());
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if ((found) && (path != null)) {
+
+                if (path.startsWith("/")) {
+                    result = "http://" + h + path;
+                } else {
+                    result = "http://" + h + "/" + path;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private String computeStreamURL(Recording r) {
+
+        String result = null;
+
+        String h = getHost();
+        if ((h != null) && (r != null)) {
+
+            // We have a recording that is finished, we will let
+            // apache serve it up.
+            String[] array = getConfiguredStreamPaths();
+            if (array != null) {
+
+                String path = r.getPath();
+                if (path != null) {
+
+                    String iext = r.getIndexedExtension();
+                    if ((iext != null) && (iext.length() > 0)) {
+
+                        File tmp = new File(path + "." + iext);
+                        if (tmp.exists()) {
+                            path = tmp.getPath();
+                        }
+                    }
+                }
+
+                boolean found = false;
+                if (path != null) {
+
+                    for (int i = 0; i < array.length; i++) {
+
+                        if (path.startsWith(array[i])) {
+
+                            path = path.substring(array[i].length());
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if ((found) && (path != null)) {
+
+                    if (path.startsWith("/")) {
+                        result = "http://" + h + path;
+                    } else {
+                        result = "http://" + h + "/" + path;
                     }
                 }
             }
@@ -2026,6 +2241,16 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if (pm != null) {
 
             result = pm.getPhotos();
+            if ((result != null) && (result.length > 0)) {
+
+                for (int i = 0; i < result.length; i++) {
+
+                    String url = computeStreamURL(result[i]);
+                    if (url != null) {
+                        result[i].setPath(url);
+                    }
+                }
+            }
         }
 
         return (result);
@@ -2218,6 +2443,17 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             String r0str = r0.getTitle() + " " + r0.getDevice();
             String r1str = r1.getTitle() + " " + r1.getDevice();
             return (r0str.compareTo(r1str));
+        }
+    }
+
+    static class FileSort implements Comparator<File>, Serializable {
+
+        public int compare(File f0, File f1) {
+
+            Long l0 = Long.valueOf(f0.lastModified());
+            Long l1 = Long.valueOf(f1.lastModified());
+
+            return (l1.compareTo(l0));
         }
     }
 

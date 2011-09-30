@@ -898,14 +898,20 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
                             // Three properties to set...
                             NameValue nv = c.findNameValueByName(
                                 NMSConstants.CUSTOM_CHANNEL_LIST_TYPE);
-                            nv.setValue(r.getListType());
+                            if (nv != null) {
+                                nv.setValue(r.getListType());
+                            }
                             nv = c.findNameValueByName(
                                 NMSConstants.CUSTOM_CHANNEL_LIST);
-                            nv.setValue(computeFromArray(
-                                r.getChannelList()));
+                            if (nv != null) {
+                                nv.setValue(computeFromArray(
+                                    r.getChannelList()));
+                            }
                             nv = c.findNameValueByName(
                                 NMSConstants.RECORDING_INDEXER_NAME);
-                            nv.setValue(r.getIndexer());
+                            if (nv != null) {
+                                nv.setValue(r.getIndexer());
+                            }
 
                             clist.add(c);
 

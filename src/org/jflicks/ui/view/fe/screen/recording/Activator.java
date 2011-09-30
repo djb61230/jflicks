@@ -42,6 +42,7 @@ public class Activator extends BaseActivator {
 
     private ServiceTracker serviceTracker;
     private RCTracker rcTracker;
+    private TransferTracker transferTracker;
     private ImageCacheTracker imageCacheTracker;
     private ServiceTracker logServiceTracker;
 
@@ -62,6 +63,10 @@ public class Activator extends BaseActivator {
         Hashtable<String, String[]> h = new Hashtable<String, String[]>();
         h.put(EventConstants.EVENT_TOPIC, topics);
         bc.registerService(EventHandler.class.getName(), s, h);
+
+        TransferTracker tt = new TransferTracker(bc, s);
+        setTransferTracker(tt);
+        tt.open();
 
         RCTracker rct = new RCTracker(bc, s);
         setRCTracker(rct);
@@ -113,6 +118,11 @@ public class Activator extends BaseActivator {
             rct.close();
         }
 
+        TransferTracker tt = getTransferTracker();
+        if (tt != null) {
+            tt.close();
+        }
+
         ImageCacheTracker ict = getImageCacheTracker();
         if (ict != null) {
             ict.close();
@@ -139,6 +149,14 @@ public class Activator extends BaseActivator {
 
     private void setRCTracker(RCTracker t) {
         rcTracker = t;
+    }
+
+    private TransferTracker getTransferTracker() {
+        return (transferTracker);
+    }
+
+    private void setTransferTracker(TransferTracker t) {
+        transferTracker = t;
     }
 
     private ImageCacheTracker getImageCacheTracker() {

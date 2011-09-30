@@ -69,6 +69,10 @@ public class MimeHttpContext implements HttpContext {
 
                 result = "video/mp4";
 
+            } else if (fileName.endsWith(".ts")) {
+
+                result = "video/MP2T";
+
             } else if (fileName.endsWith(".jpg")) {
 
                 result = "image/jpeg";

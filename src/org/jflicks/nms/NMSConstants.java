@@ -244,6 +244,20 @@ public final class NMSConstants {
     public static final String GROUP_NAME = "Group Name";
 
     /**
+     * The NMS needs to have an idea where it's local HTTP server has it's
+     * document root.  Since an NMS deals with real paths it needs to be
+     * told where it can find the HTTP server files are served.
+     */
+    public static final String HTTP_DOCUMENT_ROOT = "HTTP Document Root";
+
+    /**
+     * Real files reside on locations that may need translation from
+     * their real path to where the HTTP server "sees" them, this is
+     * usually via some link if the real path is on another drive.
+     */
+    public static final String STREAM_PATHS = "Stream Paths";
+
+    /**
      * Category of Video called "Movie".
      */
     public static final String VIDEO_MOVIE = "Movie";

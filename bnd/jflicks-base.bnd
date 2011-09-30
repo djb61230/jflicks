@@ -32,6 +32,7 @@ Export-Package:\
  org.jflicks.rc;version="1.0.0",\
  org.jflicks.stream;version="1.0.0",\
  org.jflicks.trailer;version="1.0.0",\
+ org.jflicks.transfer;version="1.0.0",\
  org.jflicks.tv;version="1.0.0",\
  org.jflicks.tv.live;version="1.0.0",\
  org.jflicks.tv.ondemand;version="1.0.0",\
@@ -60,6 +61,7 @@ Import-Package:\
  org.jflicks.rc;version="1.0.0",\
  org.jflicks.stream;version="1.0.0",\
  org.jflicks.trailer;version="1.0.0",\
+ org.jflicks.transfer;version="1.0.0",\
  org.jflicks.tv;version="1.0.0",\
  org.jflicks.tv.live;version="1.0.0",\
  org.jflicks.tv.ondemand;version="1.0.0",\

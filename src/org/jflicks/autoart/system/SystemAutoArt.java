@@ -57,7 +57,6 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
     public SystemAutoArt() {
 
         setTitle("SystemAutoArt");
-        setTheTVDB(new TheTVDB(KEY));
     }
 
     /**
@@ -231,6 +230,12 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
 
         // First let's try the TV database.
         TheTVDB tvdb = getTheTVDB();
+        if (tvdb == null) {
+
+            setTheTVDB(new TheTVDB(KEY));
+            tvdb = getTheTVDB();
+        }
+
         boolean checkMovie = true;
         if ((si != null) && (tvdb != null)) {
 

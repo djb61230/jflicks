@@ -468,6 +468,15 @@ public interface NMS extends Config {
     void photoScan();
 
     /**
+     * The current set of Trailers as a streamable set of URLs with the
+     * first item being an intro and the rest being video files, most recent
+     * listed first.
+     *
+     * @return An array of URLs as String instances.
+     */
+    String[] getTrailerURLs();
+
+    /**
      * The path where movie trailers are located.
      *
      * @return A String instance.
@@ -511,6 +520,21 @@ public interface NMS extends Config {
      * @return A String instance.
      */
     String getGroupName();
+
+    /**
+     * An NMS needs to know the how to transform file paths to Stream URLs.
+     * This property helps the NMS convert a real path to a stream URL.
+     *
+     * @return A String path.
+     */
+    String[] getStreamPaths();
+
+    /**
+     * An NMS needs to know the document root of the local HTTP server.
+     *
+     * @return A String path.
+     */
+    String getDocumentRoot();
 
     /**
      * Just get the names of the available OnDemand services running.

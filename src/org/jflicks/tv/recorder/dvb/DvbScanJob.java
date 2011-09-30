@@ -125,7 +125,7 @@ public class DvbScanJob extends AbstractJob implements JobListener {
         setTerminate(false);
 
         String[] args = {
-            "w_scan", "-c", "US", "-A", "1", "-o", "7", "-f", "a", "-X",
+            "w_scan", "-c", "US", "-A", "3", "-o", "7", "-f", "a", "-X",
             "-O", "0"
         };
         ScanJob sj = new ScanJob(args);
@@ -261,6 +261,15 @@ public class DvbScanJob extends AbstractJob implements JobListener {
                 if ((array != null) && (array.length > 0)) {
 
                     String text = getScanJob().getFileText();
+                    File booby = new File("/tmp/booby.txt");
+
+                    try {
+
+                        Util.writeTextFile(booby, text);
+
+                    } catch (IOException ex) {
+                    }
+
                     String[] lines = text.split("\n");
                     Arrays.sort(array);
                     StringBuilder sb = new StringBuilder();

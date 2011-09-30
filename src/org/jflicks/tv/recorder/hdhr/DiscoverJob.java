@@ -156,6 +156,7 @@ public class DiscoverJob extends BaseHDHRJob {
 
                          for (int i = 0; i < array.length; i++) {
 
+                             System.out.println("output line <" + array[i] + ">");
                              StringTokenizer st = new StringTokenizer(array[i]);
                              if (st.countTokens() > 3) {
 

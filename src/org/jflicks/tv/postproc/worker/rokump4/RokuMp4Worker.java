@@ -44,6 +44,7 @@ public class RokuMp4Worker extends BaseWorker implements JobListener {
         setHeavy(true);
         setDefaultRun(false);
         setUserSelectable(false);
+        setIndexer(true);
     }
 
     /**

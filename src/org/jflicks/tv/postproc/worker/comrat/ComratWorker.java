@@ -46,6 +46,7 @@ public class ComratWorker extends BaseWorker implements JobListener {
 
         setHeavy(true);
         setDefaultRun(false);
+        setCommercialDetector(true);
     }
 
     /**

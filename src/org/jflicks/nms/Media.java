@@ -124,6 +124,20 @@ public interface Media {
     void setFanartURL(String s);
 
     /**
+     * URL as a String where the media can be streamed.
+     *
+     * @return A String instance.
+     */
+    String getStreamURL();
+
+    /**
+     * URL as a String where the media can be streamed.
+     *
+     * @param s A String instance.
+     */
+    void setStreamURL(String s);
+
+    /**
      * The length of the media in seconds.
      *
      * @return A long value representing the number of seconds of the media.

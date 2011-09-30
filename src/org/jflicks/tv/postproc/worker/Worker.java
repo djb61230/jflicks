@@ -87,5 +87,22 @@ public interface Worker extends Workerable {
      * @return True if the Worker is run always.
      */
     boolean isUserSelectable();
+
+    /**
+     * An Indexer Worker is one that processes a recording to make an
+     * "indexed" version.  These can be transcoders or just a Worker
+     * that that may wrap a transport stream properly.
+     *
+     * @return True if the Worker indexes Recordings.
+     */
+    boolean isIndexer();
+
+    /**
+     * A CommercialDetector Worker is one that processes a recording to
+     * find where commercials are located.
+     *
+     * @return True if the Worker detects commercials.
+     */
+    boolean isCommercialDetector();
 }
 

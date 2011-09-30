@@ -17,12 +17,15 @@
 package org.jflicks.stream.http;
 
 import java.io.File;
+import javax.servlet.ServletException;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
+import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.stream.BaseStream;
+import org.jflicks.tv.scheduler.Scheduler;
 
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
@@ -96,11 +99,44 @@ public class HttpStream extends BaseStream implements JobListener,
                 httpService.registerResources("/"
                     + NMSConstants.HTTP_IMAGES_NAME, web.getAbsolutePath(),
                     getMimeHttpContext());
+                /*
+                String[] dirs = getRecordingDirectories();
+                System.out.println("Recording dirs: " + dirs);
+                if (dirs != null) {
 
+                    for (int i = 0; i < dirs.length; i++) {
+
+                        System.out.println("registerResources: " + dirs[i]);
+                        httpService.registerResources(dirs[i], dirs[i],
+                            getMimeHttpContext());
+                    }
+                    StreamServlet ss = new StreamServlet();
+                    httpService.registerServlet("/streamer", ss, null, null);
+                }
+
+            } catch (ServletException ex) {
+                */
             } catch (NamespaceException ex) {
                 System.out.println("NamespaceException: " + ex.getMessage());
             }
         }
+    }
+
+    private String[] getRecordingDirectories() {
+
+        String[] result = null;
+
+        NMS nms = getNMS();
+        if (nms != null) {
+
+            Scheduler s = nms.getScheduler();
+            if (s != null) {
+
+                result = s.getConfiguredRecordingDirecories();
+            }
+        }
+
+        return (result);
     }
 
     /**

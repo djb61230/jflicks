@@ -48,6 +48,7 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
     private String bannerURL;
     private String posterURL;
     private String fanartURL;
+    private String streamURL;
     private boolean currentlyRecording;
     private int audioFormat;
     private int videoFormat;
@@ -116,6 +117,7 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
         setBannerURL(r.getBannerURL());
         setPosterURL(r.getPosterURL());
         setFanartURL(r.getFanartURL());
+        setStreamURL(r.getStreamURL());
         setSeriesId(r.getSeriesId());
         setCurrentlyRecording(r.isCurrentlyRecording());
         setAudioFormat(r.getAudioFormat());
@@ -543,6 +545,20 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
      */
     public void setFanartURL(String s) {
         fanartURL = s;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getStreamURL() {
+        return (streamURL);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setStreamURL(String s) {
+        streamURL = s;
     }
 
     /**

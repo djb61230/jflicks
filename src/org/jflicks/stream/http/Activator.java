@@ -38,6 +38,7 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
         HttpStream hs = new HttpStream();
+        hs.setBundleContext(bc);
 
         HttpServiceTracker tracker = new HttpServiceTracker(bc, hs);
         setHttpServiceTracker(tracker);
