@@ -9,6 +9,7 @@
     <property name="dist" location="dist"/>
     <property name="lib" location="lib"/>
     <property name="bundle" location="../bundle"/>
+    <property name="resources" location="../resources"/>
     <property name="topdist" location="../dist"/>
 
     <!--
@@ -121,6 +122,10 @@
             todir="server/bundle"/>
         <copy file="${dist}/jflicks-install.jar" todir="server/bin"/>
         <copy file="${topdist}/directvweb.jar" todir="server/bin"/>
+        <mkdir dir="server/resources/rating"/>
+        <copy todir="server/resources/rating">
+            <fileset dir="${resources}/rating"/>
+        </copy>
 
         <!-- Now do aspirin side. -->
         <copy file="${bundle}/jflicks-base.jar"
@@ -209,6 +214,8 @@
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-timingframework.jar"
             todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-transfer-system.jar"
+            todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-nms-remote.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui.jar"
@@ -283,6 +290,7 @@
             <fileset dir="server" includes="bin/jflicks-*.jar"/>
             <fileset dir="server" includes="bundle/jflicks-*.jar"/>
         </delete>
+        <delete dir="server/resources"/>
 
         <delete>
             <fileset dir="fe" includes="bin/jflicks-*.jar"/>
