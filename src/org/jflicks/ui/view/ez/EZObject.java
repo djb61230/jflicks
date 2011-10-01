@@ -24,6 +24,7 @@ import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.tv.Task;
 import org.jflicks.util.Util;
 
 /**
@@ -41,6 +42,7 @@ public class EZObject implements Serializable {
     private String password;
     private String[] listingNames;
     private EZRecorder[] recorders;
+    private EZIndexer[] indexers;
 
     /**
      * Constructor using an EZObject instance to copy.
@@ -79,6 +81,18 @@ public class EZObject implements Serializable {
 
                 setRecorders(nrecs);
             }
+
+            EZIndexer[] inds = eobj.getIndexers();
+            if (inds != null) {
+
+                EZIndexer[] ninds = new EZIndexer[inds.length];
+                for (int i = 0; i < ninds.length; i++) {
+
+                    ninds[i] = new EZIndexer(inds[i]);
+                }
+
+                setIndexers(ninds);
+            }
         }
     }
 
@@ -86,8 +100,36 @@ public class EZObject implements Serializable {
      * Constructor using Configuration instances to initialize.
      *
      * @param array An array of Configuration instances.
+     * @param tarray An array of Task instances.
      */
-    public EZObject(Configuration[] array) {
+    public EZObject(Configuration[] array, Task[] tarray) {
+
+        if (tarray != null) {
+
+            ArrayList<EZIndexer> elist = new ArrayList<EZIndexer>();
+
+            // Make a dummy one since one does not need to be set.
+            EZIndexer ind = new EZIndexer();
+            ind.setTitle("");
+            ind.setDescription("");
+            elist.add(ind);
+            for (int i = 0; i < tarray.length; i++) {
+
+                System.out.println("poop: " + tarray[i].isIndexer());
+                if (tarray[i].isIndexer()) {
+
+                    ind = new EZIndexer();
+                    ind.setTitle(tarray[i].getTitle());
+                    ind.setDescription(tarray[i].getDescription());
+                    elist.add(ind);
+                }
+            }
+
+            if (elist.size() > 0) {
+
+                setIndexers(elist.toArray(new EZIndexer[elist.size()]));
+            }
+        }
 
         if (array != null) {
 
@@ -143,7 +185,7 @@ public class EZObject implements Serializable {
                     NameValue inv = recs[i].findNameValueByName(
                         NMSConstants.RECORDING_INDEXER_NAME);
                     if (inv != null) {
-                        rnames[i].setIndexer(inv.getValue());
+                        rnames[i].setIndexer(getIndexerByTitle(inv.getValue()));
                     }
                     rnames[i].setListingName(getListingName(array,
                         rnames[i].getName()));
@@ -216,12 +258,40 @@ public class EZObject implements Serializable {
         recorders = array;
     }
 
+    public EZIndexer[] getIndexers() {
+        return (indexers);
+    }
+
+    public void setIndexers(EZIndexer[] array) {
+        indexers = array;
+    }
+
     public String[] getListingNames() {
         return (listingNames);
     }
 
     public void setListingNames(String[] array) {
         listingNames = array;
+    }
+
+    private EZIndexer getIndexerByTitle(String s) {
+
+        EZIndexer result = null;
+
+        EZIndexer[] array = getIndexers();
+        if ((s != null) && (array != null)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                if (s.equals(array[i].getTitle())) {
+
+                    result = array[i];
+                    break;
+                }
+            }
+        }
+
+        return (result);
     }
 
     private Configuration findConfigurationBySource(Configuration[] array,

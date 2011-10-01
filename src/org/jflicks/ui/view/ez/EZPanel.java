@@ -50,6 +50,7 @@ import org.jflicks.configure.ListTypePanel;
 import org.jflicks.configure.NameValue;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.tv.Task;
 import org.jflicks.util.MessagePanel;
 import org.jflicks.util.PromptPanel;
 import org.jflicks.util.Util;
@@ -128,7 +129,14 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
     private void setConfigurations(Configuration[] array) {
         configurations = array;
 
-        EZObject eobj = new EZObject(array);
+        Task[] tarray = null;
+        NMS n = getNMS();
+        if (n != null) {
+
+            tarray = n.getTasks();
+        }
+
+        EZObject eobj = new EZObject(array, tarray);
         setOriginalObject(new EZObject(eobj));
         setObject(eobj);
         updateState();
@@ -199,7 +207,12 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
 
             if (r != null) {
 
-                itf.setText(r.getIndexer());
+                EZIndexer ind = r.getIndexer();
+                if (ind != null) {
+                    itf.setText(ind.getDescription());
+                } else {
+                    itf.setText("");
+                }
                 ltf.setText(r.getListingName());
 
             } else {
@@ -449,20 +462,16 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
             + "There are many ways to process a recording so<br/>"
             + "it can be watched nicely on devices like the<br/>"
             + "Roku.  Usually have to trade time for quality.<br/>"
-            + "Here you can make that choice eventually as<br/>"
-            + "right now we just have \"High quality, faster results\""
             + "</html>");
-        setIndexerTextField(indexerTextField);
         indexerTextField.setEditable(false);
         indexerTextField.setBorder(null);
+        setIndexerTextField(indexerTextField);
         JXPanel indexerPanel = new JXPanel(new BorderLayout(4, 4));
         indexerPanel.add(indexerTextField, BorderLayout.CENTER);
         indexerPanel.setToolTipText("<html>"
             + "There are many ways to process a recording so<br/>"
             + "it can be watched nicely on devices like the<br/>"
             + "Roku.  Usually have to trade time for quality.<br/>"
-            + "Here you can make that choice eventually as<br/>"
-            + "right now we just have \"High quality, faster results\""
             + "</html>");
 
         EditIndexerAction editIndexerAction = new EditIndexerAction();
@@ -470,7 +479,7 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
         setEditIndexerButton(ibutton);
         indexerPanel.add(ibutton, BorderLayout.EAST);
         indexerPanel.setBorder(BorderFactory.createTitledBorder(
-            "Viewable Processed Recording"));
+            "Recording Processor"));
 
         JTextField sdlistingTextField = new JTextField();
         setListingTextField(sdlistingTextField);
@@ -909,8 +918,9 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
                             }
                             nv = c.findNameValueByName(
                                 NMSConstants.RECORDING_INDEXER_NAME);
-                            if (nv != null) {
-                                nv.setValue(r.getIndexer());
+                            EZIndexer ind = r.getIndexer();
+                            if ((nv != null) && (ind != null)) {
+                                nv.setValue(ind.getTitle());
                             }
 
                             clist.add(c);
@@ -992,8 +1002,39 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
         }
 
         public void actionPerformed(ActionEvent e) {
-        }
 
+            EZObject eobj = getObject();
+            EZRecorder r = getSelectedRecorder();
+            if ((eobj != null) && (r != null)) {
+
+                String[] prompts = {
+                    "Indexer(s)"
+                };
+
+                JComboBox cb = new JComboBox();
+                EZIndexer[] inds = eobj.getIndexers();
+                if (inds != null) {
+
+                    for (int i = 0; i < inds.length; i++) {
+
+                        cb.addItem(inds[i]);
+                    }
+                }
+
+                cb.setSelectedItem(r.getIndexer());
+                JComponent[] comps = {
+                    cb
+                };
+
+                PromptPanel pp = new PromptPanel(prompts, comps);
+                if (Util.showDialog(getFrame(), "Recorder Indexer", pp)) {
+
+                    r.setIndexer((EZIndexer) cb.getSelectedItem());
+                    setSelectedRecorder(r);
+                    updateState();
+                }
+            }
+        }
     }
 
     class EditListingAction extends AbstractAction {

@@ -1741,6 +1741,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             // look it up by Id.
             r = getRecordingById(r.getId());
 
+            boolean found = false;
             Recorder[] array = s.getConfiguredRecorders();
             if ((array != null) && (r != null)) {
 
@@ -1750,9 +1751,20 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                         log(DEBUG, "Stopping <" + array[i] + ">");
                         array[i].stopRecording();
+                        found = true;
                         break;
                     }
                 }
+            }
+
+            // Now if we didn't find the Recorder, we may be in a funky
+            // mode.  So let's be trustful and flag the recording as stopped.
+            if (!found) {
+
+                r.setCurrentlyRecording(false);
+                long now = System.currentTimeMillis();
+                r.setDuration((now - r.getRealStart()) / 1000L);
+                s.updateRecording(r);
             }
         }
     }

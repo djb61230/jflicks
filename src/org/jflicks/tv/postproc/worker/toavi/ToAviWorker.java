@@ -40,7 +40,7 @@ public class ToAviWorker extends BaseWorker implements JobListener {
     public ToAviWorker() {
 
         setTitle("ToAviWorker");
-        setDescription("Create an avi file from an TS mpg file.");
+        setDescription("Fast avi file with same quality as source.");
         setHeavy(false);
         setDefaultRun(false);
         setUserSelectable(false);

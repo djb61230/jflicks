@@ -40,7 +40,7 @@ public class ToMp4Worker extends BaseWorker implements JobListener {
     public ToMp4Worker() {
 
         setTitle("ToMp4Worker");
-        setDescription("Create an mp4 file from an TS mpg file.");
+        setDescription("Fast mp4 file with same quality as source.");
         setHeavy(false);
         setDefaultRun(false);
         setUserSelectable(false);

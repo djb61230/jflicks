@@ -71,8 +71,6 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-worker-toavi.jar"
             todir="server/bundle"/>
-        <copy file="${bundle}/jflicks-tv-postproc-worker-tomkv.jar"
-            todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-worker-tomp4.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-programdata-sd.jar"
@@ -203,8 +201,6 @@
         <copy file="${bundle}/jflicks-ui-view-fe-screen-googletv.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-livetv.jar"
-            todir="fe/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-fe-screen-ondemand.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-photo.jar"
             todir="fe/bundle"/>

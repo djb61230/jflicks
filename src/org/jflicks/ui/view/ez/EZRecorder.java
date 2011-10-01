@@ -33,7 +33,7 @@ import org.jflicks.util.Util;
 public class EZRecorder implements Serializable, Comparable<EZRecorder> {
 
     private String name;
-    private String indexer;
+    private EZIndexer indexer;
     private String listingName;
     private String listType;
     private String[] channelList;
@@ -75,12 +75,12 @@ public class EZRecorder implements Serializable, Comparable<EZRecorder> {
         name = s;
     }
 
-    public String getIndexer() {
+    public EZIndexer getIndexer() {
         return (indexer);
     }
 
-    public void setIndexer(String s) {
-        indexer = s;
+    public void setIndexer(EZIndexer i) {
+        indexer = i;
     }
 
     public String getListingName() {
@@ -118,8 +118,11 @@ public class EZRecorder implements Serializable, Comparable<EZRecorder> {
      */
     public int hashCode() {
 
-        String tmp = getName() + getIndexer() + getListingName()
-            + getListType();
+        String istr = "";
+        if (getIndexer() != null) {
+            istr = getIndexer().toString();
+        }
+        String tmp = getName() + istr + getListingName() + getListType();
         return (tmp.hashCode());
     }
 
@@ -156,7 +159,7 @@ public class EZRecorder implements Serializable, Comparable<EZRecorder> {
 
             if (result) {
 
-                String indexer = getIndexer();
+                EZIndexer indexer = getIndexer();
                 if (indexer != null) {
 
                     result = indexer.equals(r.getIndexer());

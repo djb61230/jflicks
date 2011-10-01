@@ -40,7 +40,7 @@ public class RokuMp4Worker extends BaseWorker implements JobListener {
     public RokuMp4Worker() {
 
         setTitle("RokuMp4Worker");
-        setDescription("Create an mp4 file from an TS mpg file.");
+        setDescription("Roku high quality mp4 at medium speed.");
         setHeavy(true);
         setDefaultRun(false);
         setUserSelectable(false);
