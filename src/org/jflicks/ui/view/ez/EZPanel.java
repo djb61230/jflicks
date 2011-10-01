@@ -22,6 +22,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -50,6 +51,7 @@ import org.jflicks.configure.ListTypePanel;
 import org.jflicks.configure.NameValue;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.tv.Channel;
 import org.jflicks.tv.Task;
 import org.jflicks.util.MessagePanel;
 import org.jflicks.util.PromptPanel;
@@ -958,6 +960,77 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
         return (result);
     }
 
+    private Channel[] getChannels(boolean inclusive, String listing,
+        String[] cnumbers) {
+
+        Channel[] result = null;
+
+        // First get the Channels from the NMS for this listing.
+        NMS n = getNMS();
+        if ((listing != null) && (n != null)) {
+
+            Channel[] chans = n.getChannelsByListingName(listing);
+            if (chans != null) {
+
+                // Next see if the cnumbers is valid.
+                if ((cnumbers != null) && (cnumbers.length > 0)) {
+
+                    ArrayList<Integer> indexlist = new ArrayList<Integer>();
+                    ArrayList<Channel> clist = new ArrayList<Channel>();
+                    for (int i = 0; i < cnumbers.length; i++) {
+
+                        String snumber = cnumbers[i];
+                        if (snumber != null) {
+
+                            for (int j = 0; j < chans.length; j++) {
+
+                                if (snumber.equals(chans[j].getNumber())) {
+
+                                    clist.add(chans[j]);
+                                    indexlist.add(Integer.valueOf(j));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // OK at this point the clist have the Channel instances
+                    // matching our argument channel number String array.
+                    // So we either want to return these channels or the
+                    // channels that are NOT these.  We kept the locations
+                    // so we don't have to research for them.
+                    if (inclusive) {
+
+                        result = clist.toArray(new Channel[clist.size()]);
+
+                    } else {
+
+                        ArrayList<Channel> notlist = new ArrayList<Channel>();
+                        for (int i = 0; i < chans.length; i++) {
+
+                            if (!indexlist.contains(Integer.valueOf(i))) {
+                                notlist.add(chans[i]);
+                            }
+                        }
+
+                        result = notlist.toArray(new Channel[notlist.size()]);
+                    }
+
+                    Arrays.sort(result);
+
+                } else {
+
+                    // Ahh bach.  We either send back nothing or all of them.
+                    if (inclusive) {
+                        result = chans;
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
     class SetUserPasswordAction extends AbstractAction {
 
         public SetUserPasswordAction() {
@@ -1119,22 +1192,34 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
                 };
 
                 FromChoiceTypePanel fctp = new FromChoiceTypePanel(tnv);
-                ListTypePanel ltp = new ListTypePanel(lnv);
+
+                Channel[] wanted =
+                   getChannels(true, r.getListingName(), r.getChannelList());
+                Channel[] rest =
+                   getChannels(false, r.getListingName(), r.getChannelList());
+                EZChannelSelect cs = new EZChannelSelect(wanted, rest);
 
                 JComponent[] comps = {
                     fctp,
-                    ltp
+                    cs
                 };
 
                 PromptPanel pp = new PromptPanel(prompts, comps);
                 if (Util.showDialog(getFrame(), "Recorder Channels", pp)) {
 
                     r.setListType(fctp.getEditedValue());
-                    String tmp = ltp.getEditedValue();
-                    System.out.println(tmp);
-                    if (tmp != null) {
+                    Channel[] chans = cs.getLeftChannels();
+                    if (chans != null) {
 
-                        r.setChannelList(tmp.split("\\|"));
+                        String[] carray = new String[chans.length];
+                        for (int i = 0; i < carray.length; i++) {
+                            carray[i] = chans[i].getNumber();
+                        }
+                        r.setChannelList(carray);
+
+                    } else {
+
+                        r.setChannelList(null);
                     }
                     setSelectedRecorder(r);
                     updateState();
