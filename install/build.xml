@@ -1,4 +1,4 @@
-<project name="jflicks-install" default="build" basedir=".">
+<project name="jflicks-install" default="deploy" basedir=".">
 
     <!--
         Setup all properties that are needed.
@@ -34,36 +34,9 @@
     </target>
 
     <!--
-        The main build target.  It calls the generated code builds, then
-        does an init and build iota proper and places compiled classes
-        into one jar file.
-    -->
-    <target name="build" depends="init" description="Build everything and jar">
-
-        <javac srcdir="${src}" destdir="${build}" classpathref="build.classpath"
-            debug="on" includes="**/*.java" includeantruntime="false">
-
-            <compilerarg value="-Xlint:unchecked"/>
-
-        </javac>
-
-        <jar destfile="${dist}/jflicks-install.jar" basedir="${build}">
-
-            <manifest>
-
-                <attribute name="Main-Class" value="org.jflicks.install.Install"/>
-
-            </manifest>
-
-        </jar>
-
-    </target>
-
-    <!--
         The main build target.
     -->
-    <target name="deploy" depends="build"
-        description="Gotta do more than just compile!">
+    <target name="deploy" description="Gotta do more than just compile!">
 
         <!-- First do server side. -->
         <copy file="${bundle}/jflicks-autoart-system.jar"
@@ -120,7 +93,6 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-sqlitejdbc.jar"
             todir="server/bundle"/>
-        <copy file="${dist}/jflicks-install.jar" todir="server/bin"/>
         <copy file="${topdist}/directvweb.jar" todir="server/bin"/>
         <mkdir dir="server/resources/rating"/>
         <copy todir="server/resources/rating">
@@ -252,7 +224,6 @@
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-imagecache-system.jar"
             todir="fe/bundle"/>
-        <copy file="${dist}/jflicks-install.jar" todir="fe/bin"/>
 
         <!-- Now do metadata side. -->
         <copy file="${bundle}/jflicks-base.jar"
