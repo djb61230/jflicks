@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.postproc.worker.toavi;
+package org.jflicks.tv.postproc.worker.indexer;
 
 import java.io.File;
 
@@ -28,22 +28,44 @@ import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
 
 /**
- * This job starts a system job to process a ts file and makes it an avi.
+ * This job starts a system job that runs comskip.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class ToAviJob extends BaseWorkerJob implements JobListener {
+public class IndexerJob extends BaseWorkerJob implements JobListener {
+
+    private String commandLine;
+    private String extension;
 
     /**
      * Constructor with one required argument.
      *
-     * @param r A Recording to process.
+     * @param r A Recording to transcode.
      * @param bw The Worker associated with this job.
+     * @param s The command line to run.
      */
-    public ToAviJob(Recording r, BaseWorker bw) {
+    public IndexerJob(Recording r, BaseWorker bw, String s, String ext) {
 
         super(r, bw);
+        setCommandLine(s);
+        setExtension(ext);
+    }
+
+    public String getCommandLine() {
+        return (commandLine);
+    }
+
+    private void setCommandLine(String s) {
+        commandLine = s;
+    }
+
+    public String getExtension() {
+        return (extension);
+    }
+
+    private void setExtension(String s) {
+        extension = s;
     }
 
     private File computeFile(Recording r, boolean hidden) {
@@ -57,9 +79,9 @@ public class ToAviJob extends BaseWorkerJob implements JobListener {
 
                 String tname = null;
                 if (hidden) {
-                    tname = "." + result.getName() + ".avi";
+                    tname = "." + result.getName() + "." + getExtension();
                 } else {
-                    tname = result.getName() + ".avi";
+                    tname = result.getName() + "." + getExtension();
                 }
 
                 result = new File(result.getParentFile(), tname);
@@ -80,7 +102,7 @@ public class ToAviJob extends BaseWorkerJob implements JobListener {
                 log(BaseWorker.INFO, "moving " + hidden.getPath() + " to "
                     + computeFile(r, false));
                 hidden.renameTo(computeFile(r, false));
-                r.setIndexedExtension("avi");
+                r.setIndexedExtension(getExtension());
             }
         }
     }
@@ -111,17 +133,20 @@ public class ToAviJob extends BaseWorkerJob implements JobListener {
 
             String path = r.getPath();
             File tmp = computeFile(r, true);
-            SystemJob job = SystemJob.getInstance(
-                "ionice -c3 mencoder -really-quiet"
-                + " -of avi -ovc copy -oac copy -o " + tmp.getPath()
-                + " " + path);
+            String cl = getCommandLine();
+            if (cl != null) {
 
-            job.addJobListener(this);
-            setSystemJob(job);
-            JobContainer jc = JobManager.getJobContainer(job);
-            setJobContainer(jc);
-            log(BaseWorker.INFO, "started: " + job.getCommand());
-            setTerminate(false);
+                cl = cl.replaceFirst("INPUT_PATH", path);
+                cl = cl.replaceFirst("OUTPUT_PATH", tmp.getPath());
+                SystemJob job = SystemJob.getInstance(cl);
+
+                job.addJobListener(this);
+                setSystemJob(job);
+                JobContainer jc = JobManager.getJobContainer(job);
+                setJobContainer(jc);
+                log(BaseWorker.INFO, "started: " + job.getCommand());
+                setTerminate(false);
+            }
 
         } else {
 

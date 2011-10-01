@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.postproc.worker.toavi;
+package org.jflicks.tv.postproc.worker.indexer;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
@@ -25,26 +25,43 @@ import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.WorkerEvent;
 
 /**
- * Worker implementation that can convert a transport stream mpg file to
- * an avi indexed file.  This should improve playback especially for
- * seeking.
+ * A generic indexer that just runs a command line program.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class ToAviWorker extends BaseWorker implements JobListener {
+public class IndexerWorker extends BaseWorker implements JobListener {
+
+    private String commandLine;
+    private String extension;
 
     /**
      * Simple default constructor.
      */
-    public ToAviWorker() {
+    public IndexerWorker() {
 
-        setTitle("ToAviWorker");
-        setDescription("Fast avi file with same quality as source.");
-        setHeavy(false);
+        setTitle("IndexerWorker");
+        setDescription("IndexerWorker");
+        setHeavy(true);
         setDefaultRun(false);
         setUserSelectable(false);
         setIndexer(true);
+    }
+
+    public String getCommandLine() {
+        return (commandLine);
+    }
+
+    public void setCommandLine(String s) {
+        commandLine = s;
+    }
+
+    public String getExtension() {
+        return (extension);
+    }
+
+    public void setExtension(String s) {
+        extension = s;
     }
 
     /**
@@ -54,7 +71,8 @@ public class ToAviWorker extends BaseWorker implements JobListener {
 
         if (r != null) {
 
-            ToAviJob job = new ToAviJob(r, this);
+            IndexerJob job =
+                new IndexerJob(r, this, getCommandLine(), getExtension());
             job.addJobListener(this);
             JobContainer jc = JobManager.getJobContainer(job);
             addJobContainer(jc);
@@ -69,14 +87,14 @@ public class ToAviWorker extends BaseWorker implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            log(INFO, "ToAviWorker: completed");
-            ToAviJob job = (ToAviJob) event.getSource();
+            log(INFO, "IndexerWorker: completed");
+            IndexerJob job = (IndexerJob) event.getSource();
             removeJobContainer(job);
             fireWorkerEvent(WorkerEvent.COMPLETE, job.getRecording(), true);
 
         } else {
 
-            //log(DEBUG, "ToAviWorker: " + event.getMessage());
+            //log(DEBUG, "IndexerWorker: " + event.getMessage());
         }
     }
 

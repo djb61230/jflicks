@@ -15,9 +15,7 @@
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * The ToMp4 worker will run the ffmpeg program on a Recording
- * and create an mp4 version of the file.  This is done because seeking
- * on it will be much more accurate or even possible using the players
- * we have.  We also hope this fixes audio sync issues and the like.
+ * The Indexer worker will run the programs defined in
+ * conf/indexer.properties.
  */
-package org.jflicks.tv.postproc.worker.tomp4;
+package org.jflicks.tv.postproc.worker.indexer;
