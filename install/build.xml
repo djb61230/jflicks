@@ -67,11 +67,7 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-worker-mediainfo.jar"
             todir="server/bundle"/>
-        <copy file="${bundle}/jflicks-tv-postproc-worker-rokump4.jar"
-            todir="server/bundle"/>
-        <copy file="${bundle}/jflicks-tv-postproc-worker-toavi.jar"
-            todir="server/bundle"/>
-        <copy file="${bundle}/jflicks-tv-postproc-worker-tomp4.jar"
+        <copy file="${bundle}/jflicks-tv-postproc-worker-indexer.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-programdata-sd.jar"
             todir="server/bundle"/>
