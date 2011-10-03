@@ -14,30 +14,29 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.autoart.system;
+package org.jflicks.tv.postproc.worker.projectx;
 
-import java.util.Hashtable;
+import java.io.File;
 
-import org.jflicks.autoart.AutoArt;
-import org.jflicks.db.Db4oServiceTracker;
 import org.jflicks.job.JobContainer;
-import org.jflicks.job.JobManager;
+import org.jflicks.tv.postproc.worker.Worker;
 import org.jflicks.util.BaseActivator;
+import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
+import java.util.Hashtable;
+
 /**
- * Simple activator for the system video manager.
+ * Simple activator for the projectx indexer worker.
  *
  * @author Doug Barnum
  * @version 1.0
  */
 public class Activator extends BaseActivator {
 
-    private Db4oServiceTracker db4oServiceTracker;
-    private SystemAutoArt systemAutoArt;
     private ServiceTracker logServiceTracker;
 
     /**
@@ -46,27 +45,18 @@ public class Activator extends BaseActivator {
     public void start(BundleContext bc) {
 
         setBundleContext(bc);
-        SystemAutoArt saa = new SystemAutoArt();
-        setSystemAutoArt(saa);
 
         logServiceTracker =
             new ServiceTracker(bc, LogService.class.getName(), null);
-        saa.setLogServiceTracker(logServiceTracker);
         logServiceTracker.open();
 
-        Db4oServiceTracker t = new Db4oServiceTracker(bc, saa);
-        setDb4oServiceTracker(t);
-        t.open();
-
-        SystemAutoArtJob job = new SystemAutoArtJob(saa);
-        JobContainer jc = JobManager.getJobContainer(job);
-        setJobContainer(jc);
-        jc.start();
+        ProjectxWorker w = new ProjectxWorker();
+        w.setLogServiceTracker(logServiceTracker);
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
-        dict.put(AutoArt.TITLE_PROPERTY, saa.getTitle());
+        dict.put(Worker.TITLE_PROPERTY, w.getTitle());
 
-        bc.registerService(AutoArt.class.getName(), saa, dict);
+        bc.registerService(Worker.class.getName(), w, dict);
     }
 
     /**
@@ -79,37 +69,11 @@ public class Activator extends BaseActivator {
             jc.stop();
         }
 
-        Db4oServiceTracker t = getDb4oServiceTracker();
-        if (t != null) {
-            t.close();
-        }
-
         if (logServiceTracker != null) {
 
             logServiceTracker.close();
             logServiceTracker = null;
         }
-
-        SystemAutoArt aa = getSystemAutoArt();
-        if (aa != null) {
-            aa.close();
-        }
-    }
-
-    private SystemAutoArt getSystemAutoArt() {
-        return (systemAutoArt);
-    }
-
-    private void setSystemAutoArt(SystemAutoArt aa) {
-        systemAutoArt = aa;
-    }
-
-    private Db4oServiceTracker getDb4oServiceTracker() {
-        return (db4oServiceTracker);
-    }
-
-    private void setDb4oServiceTracker(Db4oServiceTracker t) {
-        db4oServiceTracker = t;
     }
 
 }

@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.postproc.worker.indexer;
+package org.jflicks.tv.postproc.worker.projectx;
 
 import java.io.File;
 
@@ -33,30 +33,49 @@ import org.jflicks.tv.postproc.worker.BaseWorkerJob;
  * @author Doug Barnum
  * @version 1.0
  */
-public class IndexerJob extends BaseWorkerJob implements JobListener {
+public class MkvmergeJob extends BaseWorkerJob implements JobListener {
 
     private String commandLine;
+    private File videoFile;
+    private File audioFile;
 
     /**
      * Constructor with one required argument.
      *
      * @param r A Recording to transcode.
      * @param bw The Worker associated with this job.
-     * @param s The command line to run.
      */
-    public IndexerJob(Recording r, BaseWorker bw, String s, String ext) {
+    public MkvmergeJob(Recording r, BaseWorker bw, File vfile, File afile) {
 
         super(r, bw);
-        setCommandLine(s);
-        setExtension(ext);
+        setExtension("mkv");
+        setCommandLine("mkvmerge -o OUTPUT_PATH INPUT_VPATH INPUT_APATH");
+        setVideoFile(vfile);
+        setAudioFile(afile);
     }
 
-    public String getCommandLine() {
+    private String getCommandLine() {
         return (commandLine);
     }
 
     private void setCommandLine(String s) {
         commandLine = s;
+    }
+
+    public File getVideoFile() {
+        return (videoFile);
+    }
+
+    private void setVideoFile(File f) {
+        videoFile = f;
+    }
+
+    public File getAudioFile() {
+        return (audioFile);
+    }
+
+    private void setAudioFile(File f) {
+        audioFile = f;
     }
 
     /**
@@ -65,15 +84,18 @@ public class IndexerJob extends BaseWorkerJob implements JobListener {
     public void start() {
 
         Recording r = getRecording();
-        if (r != null) {
+        File vfile = getVideoFile();
+        File afile = getAudioFile();
+        if ((r != null) && (vfile != null) && (afile != null)) {
 
             String path = r.getPath();
             File tmp = computeFile(r, true);
             String cl = getCommandLine();
             if (cl != null) {
 
-                cl = cl.replaceFirst("INPUT_PATH", path);
                 cl = cl.replaceFirst("OUTPUT_PATH", tmp.getPath());
+                cl = cl.replaceFirst("INPUT_VPATH", vfile.getPath());
+                cl = cl.replaceFirst("INPUT_APATH", afile.getPath());
                 SystemJob job = SystemJob.getInstance("ionice -c3 " + cl);
 
                 job.addJobListener(this);

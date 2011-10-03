@@ -37,6 +37,7 @@ public abstract class BaseWorkerJob extends AbstractJob {
     private SystemJob systemJob;
     private JobContainer jobContainer;
     private BaseWorker baseWorker;
+    private String extension;
 
     /**
      * Constructor with one required argument.
@@ -128,6 +129,14 @@ public abstract class BaseWorkerJob extends AbstractJob {
         baseWorker = bw;
     }
 
+    public String getExtension() {
+        return (extension);
+    }
+
+    public void setExtension(String s) {
+        extension = s;
+    }
+
     /**
      * Convenience method to log using the BaseWorker.
      *
@@ -166,6 +175,61 @@ public abstract class BaseWorkerJob extends AbstractJob {
                 out = new File(r.getPath() + ".sd.bif");
                 log(BaseWorker.INFO, "About to create: " + out);
                 Bif.write(out, seconds, false);
+            }
+        }
+    }
+
+    public File computeFile(Recording r, boolean hidden) {
+
+        File result = null;
+
+        if (r != null) {
+
+            result = new File(r.getPath());
+            if (result.exists()) {
+
+                String tname = null;
+                if (hidden) {
+                    tname = "." + result.getName() + "." + getExtension();
+                } else {
+                    tname = result.getName() + "." + getExtension();
+                }
+
+                result = new File(result.getParentFile(), tname);
+            }
+        }
+
+        return (result);
+    }
+
+    public void move() {
+
+        Recording r = getRecording();
+        if (r != null) {
+
+            File hidden = computeFile(r, true);
+            if ((hidden != null) && (hidden.exists())) {
+
+                log(BaseWorker.INFO, "moving " + hidden.getPath() + " to "
+                    + computeFile(r, false));
+                hidden.renameTo(computeFile(r, false));
+                r.setIndexedExtension(getExtension());
+            }
+        }
+    }
+
+    public void remove() {
+
+        Recording r = getRecording();
+        if (r != null) {
+
+            File hidden = computeFile(r, true);
+            if ((hidden != null) && (hidden.exists())) {
+
+                if (!hidden.delete()) {
+
+                    log(BaseWorker.INFO, "Failed to delete hidden file.");
+                }
             }
         }
     }

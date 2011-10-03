@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.postproc.worker.indexer;
+package org.jflicks.tv.postproc.worker.projectx;
 
 import java.io.File;
 
@@ -33,25 +33,27 @@ import org.jflicks.tv.postproc.worker.BaseWorkerJob;
  * @author Doug Barnum
  * @version 1.0
  */
-public class IndexerJob extends BaseWorkerJob implements JobListener {
+public class ProjectxJob extends BaseWorkerJob implements JobListener {
 
     private String commandLine;
+    private File videoFile;
+    private File audioFile;
+    private File logFile;
+    private boolean demuxDone;
 
     /**
      * Constructor with one required argument.
      *
      * @param r A Recording to transcode.
      * @param bw The Worker associated with this job.
-     * @param s The command line to run.
      */
-    public IndexerJob(Recording r, BaseWorker bw, String s, String ext) {
+    public ProjectxJob(Recording r, BaseWorker bw) {
 
         super(r, bw);
-        setCommandLine(s);
-        setExtension(ext);
+        setCommandLine("java -jar bin/ProjectX.jar INPUT_PATH");
     }
 
-    public String getCommandLine() {
+    private String getCommandLine() {
         return (commandLine);
     }
 
@@ -59,21 +61,58 @@ public class IndexerJob extends BaseWorkerJob implements JobListener {
         commandLine = s;
     }
 
+    private File getVideoFile() {
+        return (videoFile);
+    }
+
+    private void setVideoFile(File f) {
+        videoFile = f;
+    }
+
+    private File getAudioFile() {
+        return (audioFile);
+    }
+
+    private void setAudioFile(File f) {
+        audioFile = f;
+    }
+
+    private File getLogFile() {
+        return (logFile);
+    }
+
+    private void setLogFile(File f) {
+        logFile = f;
+    }
+
+    private boolean isDemuxDone() {
+        return (demuxDone);
+    }
+
+    private void setDemuxDone(boolean b) {
+        demuxDone = b;
+    }
+
     /**
      * {@inheritDoc}
      */
     public void start() {
 
+        setDemuxDone(false);
         Recording r = getRecording();
         if (r != null) {
 
             String path = r.getPath();
-            File tmp = computeFile(r, true);
             String cl = getCommandLine();
-            if (cl != null) {
+            if ((path != null) && (cl != null)) {
+
+                // First build out our resulting files...
+                String pre = path.substring(0, path.lastIndexOf("."));
+                setVideoFile(new File(pre + ".m2v"));
+                setAudioFile(new File(pre + ".ac3"));
+                setLogFile(new File(pre + "_log.txt"));
 
                 cl = cl.replaceFirst("INPUT_PATH", path);
-                cl = cl.replaceFirst("OUTPUT_PATH", tmp.getPath());
                 SystemJob job = SystemJob.getInstance("ionice -c3 " + cl);
 
                 job.addJobListener(this);
@@ -133,14 +172,44 @@ public class IndexerJob extends BaseWorkerJob implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            SystemJob job = getSystemJob();
-            if ((job != null) && (job.getExitValue() == 0)) {
-                move();
-            } else {
-                remove();
-            }
+            if (!isDemuxDone()) {
 
-            stop();
+                setDemuxDone(true);
+                MkvmergeJob job = new MkvmergeJob(getRecording(),
+                    getBaseWorker(), getVideoFile(), getAudioFile());
+                job.addJobListener(this);
+                JobContainer jc = JobManager.getJobContainer(job);
+                setJobContainer(jc);
+                jc.start();
+
+            } else {
+
+                File f = getVideoFile();
+                if ((f != null) && (f.exists()) && (f.isFile())) {
+
+                    if (!f.delete()) {
+                        log(BaseWorker.INFO, "delete failure: " + f.getPath());
+                    }
+                }
+
+                f = getAudioFile();
+                if ((f != null) && (f.exists()) && (f.isFile())) {
+
+                    if (!f.delete()) {
+                        log(BaseWorker.INFO, "delete failure: " + f.getPath());
+                    }
+                }
+
+                f = getLogFile();
+                if ((f != null) && (f.exists()) && (f.isFile())) {
+
+                    if (!f.delete()) {
+                        log(BaseWorker.INFO, "delete failure: " + f.getPath());
+                    }
+                }
+
+                stop();
+            }
         }
     }
 
