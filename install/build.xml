@@ -69,6 +69,8 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-worker-indexer.jar"
             todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-projectx.jar"
+            todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-programdata-sd.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-recorder-dvb.jar"
@@ -92,6 +94,15 @@
         <copy todir="server/resources/rating">
             <fileset dir="${resources}/rating"/>
         </copy>
+        <copy file="${resources}/roku_recordings.png" todir="server/www"/>
+        <copy file="${resources}/roku_rules.png" todir="server/www"/>
+        <copy file="${resources}/roku_schedule_channel.png" todir="server/www"/>
+        <copy file="${resources}/roku_schedule_search.png" todir="server/www"/>
+        <copy file="${resources}/roku_settings.png" todir="server/www"/>
+        <copy file="${resources}/roku_upcomings.png" todir="server/www"/>
+        <copy file="${resources}/roku_video_Home.png" todir="server/www"/>
+        <copy file="${resources}/roku_video_Movie.png" todir="server/www"/>
+        <copy file="${resources}/roku_video_TV.png" todir="server/www"/>
 
         <!-- Now do aspirin side. -->
         <copy file="${bundle}/jflicks-base.jar"
