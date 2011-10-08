@@ -31,11 +31,7 @@ import org.jflicks.tv.postproc.worker.WorkerListener;
  * @author Doug Barnum
  * @version 1.0
  */
-public class SystemPostProcLightJob extends AbstractJob
-    implements WorkerListener {
-
-    private SystemPostProc systemPostProc;
-    private int count;
+public class SystemPostProcLightJob extends SystemPostProcJob {
 
     /**
      * This job supports the SystemScheduler plugin.
@@ -44,43 +40,7 @@ public class SystemPostProcLightJob extends AbstractJob
      */
     public SystemPostProcLightJob(SystemPostProc s) {
 
-        setSystemPostProc(s);
-
-        setCount(0);
-        setSleepTime(10000);
-    }
-
-    private SystemPostProc getSystemPostProc() {
-        return (systemPostProc);
-    }
-
-    private void setSystemPostProc(SystemPostProc s) {
-        systemPostProc = s;
-    }
-
-    private int getCount() {
-        return (count);
-    }
-
-    private void setCount(int i) {
-        count = i;
-    }
-
-    private void log(int status, String message) {
-
-        SystemPostProc spp = getSystemPostProc();
-        if (spp != null) {
-
-            spp.log(status, message);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void start() {
-
-        setTerminate(false);
+        super(s);
     }
 
     /**
@@ -110,6 +70,7 @@ public class SystemPostProcLightJob extends AbstractJob
                                 if (file.exists()) {
 
                                     log(SystemPostProc.INFO, "We have work!!");
+                                    setLastWorkerRecording(null);
                                     w.addWorkerListener(this);
                                     setCount(1);
                                     w.work(r);
@@ -119,7 +80,25 @@ public class SystemPostProcLightJob extends AbstractJob
                                     // We probably got here before the
                                     // recording  started.  Let's push
                                     // and get it next time.
-                                    spp.pushLightWorkerRecording(wr);
+                                    if (getLastWorkerRecording() == null) {
+
+                                        setRetryCount(1);
+                                        setLastWorkerRecording(wr);
+                                        spp.pushLightWorkerRecording(wr);
+
+                                    } else {
+
+                                        setRetryCount(getRetryCount() + 1);
+                                        if (getRetryCount() >= MAX_RETRIES) {
+
+                                            setRetryCount(0);
+                                            setLastWorkerRecording(null);
+
+                                        } else {
+
+                                            spp.pushLightWorkerRecording(wr);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -133,23 +112,12 @@ public class SystemPostProcLightJob extends AbstractJob
     /**
      * {@inheritDoc}
      */
-    public void stop() {
-
-        setTerminate(true);
-    }
-
-    private boolean isReady() {
-        return (getCount() < 1);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void workerUpdate(WorkerEvent event) {
 
         if (event.getType() == WorkerEvent.COMPLETE) {
 
             setCount(0);
+            setLastWorkerRecording(null);
             Worker w = (Worker) event.getSource();
             w.removeWorkerListener(this);
         }

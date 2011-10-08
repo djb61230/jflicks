@@ -83,7 +83,14 @@ public class SystemPostProc extends BasePostProc {
             synchronized (l) {
 
                 l.add(0, wr);
-                log(INFO, "(Push) Heavy queue size now: " + l.size());
+                String title = "unknown";
+                Worker w = wr.getWorker();
+                if (w != null) {
+                    title = w.getTitle();
+                }
+
+                log(INFO, "(Push) Heavy " + title + " queue size now: "
+                    + l.size());
             }
         }
     }
@@ -149,7 +156,13 @@ public class SystemPostProc extends BasePostProc {
             synchronized (l) {
 
                 l.add(0, wr);
-                log(INFO, "(Push) Light queue size now: " + l.size());
+                String title = "unknown";
+                Worker w = wr.getWorker();
+                if (w != null) {
+                    title = w.getTitle();
+                }
+                log(INFO, "(Push) Light " + title + " queue size now: "
+                    + l.size());
             }
         }
     }

@@ -31,12 +31,9 @@ import org.jflicks.tv.postproc.worker.WorkerListener;
  * @author Doug Barnum
  * @version 1.0
  */
-public class SystemPostProcHeavyJob extends AbstractJob
-    implements WorkerListener {
+public class SystemPostProcHeavyJob extends SystemPostProcJob {
 
-    private SystemPostProc systemPostProc;
     private int max;
-    private int count;
 
     /**
      * This job supports the SystemScheduler plugin.
@@ -45,29 +42,8 @@ public class SystemPostProcHeavyJob extends AbstractJob
      */
     public SystemPostProcHeavyJob(SystemPostProc s) {
 
-        setSystemPostProc(s);
-
+        super(s);
         setMax(1);
-        setCount(0);
-        setSleepTime(10000);
-    }
-
-    private SystemPostProc getSystemPostProc() {
-        return (systemPostProc);
-    }
-
-    private void setSystemPostProc(SystemPostProc s) {
-        systemPostProc = s;
-    }
-
-    private int getCount() {
-        return (count);
-    }
-
-    private void setCount(int i) {
-
-        count = i;
-        log(SystemPostProc.INFO, "Current Heavy Jobs now: " + count);
     }
 
     private int getMax() {
@@ -77,23 +53,6 @@ public class SystemPostProcHeavyJob extends AbstractJob
     private void setMax(int i) {
 
         max = i;
-    }
-
-    private void log(int status, String message) {
-
-        SystemPostProc spp = getSystemPostProc();
-        if (spp != null) {
-
-            spp.log(status, message);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void start() {
-
-        setTerminate(false);
     }
 
     /**
@@ -142,18 +101,6 @@ public class SystemPostProcHeavyJob extends AbstractJob
             }
         }
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void stop() {
-
-        setTerminate(true);
-    }
-
-    private boolean isReady() {
-        return (getCount() < getMax());
     }
 
     /**
