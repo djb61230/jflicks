@@ -19,6 +19,7 @@ package org.jflicks.tv.recorder.dvb;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Date;
 import javax.swing.Timer;
 
 import org.jflicks.job.AbstractJob;
@@ -255,7 +256,16 @@ public class DvbRecorderJob extends AbstractJob implements JobListener {
      */
     public void jobUpdate(JobEvent event) {
 
-        if (event.getType() == JobEvent.UPDATE) {
+        if (event.getType() == JobEvent.COMPLETE) {
+
+            if (event.getSource() == getRecordJob()) {
+
+                log(DvbRecorder.INFO, "recording done at "
+                    + new Date(System.currentTimeMillis()));
+                stop();
+            }
+
+        } else if (event.getType() == JobEvent.UPDATE) {
 
             log(DvbRecorder.DEBUG, event.getMessage());
         }
