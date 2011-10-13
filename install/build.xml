@@ -250,6 +250,28 @@
         <copy file="${bundle}/jflicks-thetvdbapi.jar"
             todir="metadata/bundle"/>
 
+        <!-- Now do vm app. -->
+        <copy file="${bundle}/jflicks-base.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-swingx.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-nms-remote.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-metadata-themoviedb.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-metadata-thetvdb.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-ui.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-vm.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-jdom.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-thetvdbapi.jar"
+            todir="vm/bundle"/>
+
     </target>
 
     <!--
