@@ -224,7 +224,7 @@ public class CurlTransferJob extends AbstractJob implements JobListener {
                 if (getRangeFailureCount() < MAX_RANGE_FAILURE_COUNT) {
 
                     // Let's sleep a few seconds and try to get more data.
-                    JobManager.sleep(5000);
+                    JobManager.sleep(20000);
 
                     job = SystemJob.getInstance("curl --limit-rate "
                         + getMaxRate() + " -C -" + " -o " + f.getPath() + " "

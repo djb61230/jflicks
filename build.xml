@@ -473,6 +473,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-ui-view-vm.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-ui-view-fe.bnd"
             output="${bundle}"
         />
@@ -764,7 +773,13 @@
 
     </target>
 
-    <target name="deploy" depends="build,check-felix-server,check-felix-aspirin,check-felix-client,check-felix-ez,check-felix-scheduler,check-felix-fe,check-felix-metadata"
+    <target name="check-felix-vm" unless="felix.vm.home">
+
+        <echo message="Felix vm home is not defined!"/>
+
+    </target>
+
+    <target name="deploy" depends="build,check-felix-server,check-felix-aspirin,check-felix-client,check-felix-ez,check-felix-scheduler,check-felix-fe,check-felix-metadata,check-felix-vm"
         description="Gotta do more than just compile!">
 
         <!-- First do server side. -->
@@ -800,6 +815,11 @@
         <!-- Now do metadata side. -->
         <copy todir="${felix.metadata.home}/bundle">
             <fileset dir="${bundle}" includes="${metadata.deploy}"/>
+        </copy>
+
+        <!-- Now do vm side. -->
+        <copy todir="${felix.vm.home}/bundle">
+            <fileset dir="${bundle}" includes="${vm.deploy}"/>
         </copy>
 
     </target>
