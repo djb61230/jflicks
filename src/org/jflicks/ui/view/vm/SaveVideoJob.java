@@ -96,6 +96,8 @@ public class SaveVideoJob extends AbstractJob {
                 id = v.getId();
             }
             String url = v.getBannerURL();
+            System.out.println("url: " + url);
+            System.out.println("id: " + id);
             if ((url != null) && (id != null)) {
 
                 if (url.indexOf(id) == -1) {
@@ -113,10 +115,15 @@ public class SaveVideoJob extends AbstractJob {
                     } else {
                         n.save(NMSConstants.BANNER_IMAGE_TYPE, url, id);
                     }
+
+                } else {
+                    n.save(NMSConstants.BANNER_IMAGE_TYPE, url, id);
                 }
             }
 
             url = v.getFanartURL();
+            System.out.println("url: " + url);
+            System.out.println("id: " + id);
             if ((url != null) && (id != null)) {
 
                 if (url.indexOf(id) == -1) {
@@ -136,10 +143,14 @@ public class SaveVideoJob extends AbstractJob {
                     } else {
                         n.save(NMSConstants.FANART_IMAGE_TYPE, url, id);
                     }
+                } else {
+                    n.save(NMSConstants.FANART_IMAGE_TYPE, url, id);
                 }
             }
 
             url = v.getPosterURL();
+            System.out.println("url: " + url);
+            System.out.println("id: " + id);
             if ((url != null) && (id != null)) {
 
                 if (url.indexOf(id) == -1) {
@@ -159,6 +170,10 @@ public class SaveVideoJob extends AbstractJob {
 
                         n.save(NMSConstants.POSTER_IMAGE_TYPE, url, id);
                     }
+
+                } else {
+
+                    n.save(NMSConstants.POSTER_IMAGE_TYPE, url, id);
                 }
             }
 

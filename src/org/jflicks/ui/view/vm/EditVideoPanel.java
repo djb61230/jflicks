@@ -463,7 +463,8 @@ public class EditVideoPanel extends BasePanel implements ActionListener,
 
             if (video.isTV()) {
 
-                video.setSubcategory(null);
+                video.setSubcategory(video.getTitle() + " Season "
+                    + video.getSeason());
                 Integer iobj = (Integer) getSeasonSpinner().getValue();
                 if (iobj != null) {
                     video.setSeason(iobj.intValue());
@@ -676,15 +677,14 @@ public class EditVideoPanel extends BasePanel implements ActionListener,
 
                 // Extract and update.
                 Hit h = event.getHit();
-                Video v = getVideo();
-                if ((v != null) && (h != null)) {
+                if ((video != null) && (h != null)) {
 
-                    v.setTitle(h.getTitle());
-                    v.setDescription(h.getDescription());
-                    v.setReleased(h.getReleased());
-                    v.setPosterURL(h.getPosterURL());
-                    v.setFanartURL(h.getFanartURL());
-                    updateState(v);
+                    video.setTitle(h.getTitle());
+                    video.setDescription(h.getDescription());
+                    video.setReleased(h.getReleased());
+                    video.setPosterURL(h.getPosterURL());
+                    video.setFanartURL(h.getFanartURL());
+                    updateState(video);
                 }
             }
         }

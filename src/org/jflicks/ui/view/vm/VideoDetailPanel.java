@@ -264,8 +264,8 @@ public class VideoDetailPanel extends JPanel {
 
             if (v.isTV()) {
 
-                getSubcategoryTextField().setText("Season "
-                    + v.getSeason() + " Episode " + v.getEpisode());
+                getSubcategoryTextField().setText(v.getTitle() + " Season "
+                    + v.getSeason());
 
             } else {
 

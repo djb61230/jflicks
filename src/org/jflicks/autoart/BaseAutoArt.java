@@ -428,6 +428,9 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
                 SearchItem si = new SearchItem();
                 si.setId(getVideoArtId(vids[i]));
                 si.setTitle(vids[i].getTitle());
+                si.setVideoId(vids[i].getId());
+                si.setSeason(vids[i].getSeason());
+                si.setEpisode(vids[i].getEpisode());
                 si.setNeedBanner(!hasBannerArt(vids[i]));
                 si.setNeedPoster(!hasPosterArt(vids[i]));
                 si.setNeedFanart(!hasFanArt(vids[i]));
@@ -465,6 +468,45 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
                 url = si.getFanartURL();
                 if ((url != null) && (si.isNeedFanart())) {
                     n.save(NMSConstants.FANART_IMAGE_TYPE, url, id);
+                }
+
+                String vid = si.getVideoId();
+                if (vid != null) {
+
+                    // We looked up some metadata so let's see if we
+                    // have some and should update it.
+                    Video video = n.getVideoById(vid);
+                    if (video != null) {
+
+                        boolean update = false;
+
+                        String overview = video.getDescription();
+                        if (overview == null) {
+
+                            overview = si.getOverview();
+                            if (overview != null) {
+
+                                update = true;
+                                video.setDescription(overview);
+                            }
+                        }
+
+                        String released = video.getReleased();
+                        if (released == null) {
+
+                            released = si.getReleased();
+                            if (released != null) {
+
+                                update = true;
+                                video.setReleased(released);
+                            }
+                        }
+
+                        if (update) {
+
+                            n.save(video);
+                        }
+                    }
                 }
             }
         }

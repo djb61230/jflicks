@@ -35,6 +35,7 @@ import com.db4o.query.Predicate;
 import com.moviejukebox.thetvdb.TheTVDB;
 import com.moviejukebox.thetvdb.model.Banner;
 import com.moviejukebox.thetvdb.model.Banners;
+import com.moviejukebox.thetvdb.model.Episode;
 import com.moviejukebox.thetvdb.model.Series;
 
 /**
@@ -244,6 +245,19 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
             if ((list != null) && (list.size() > 0)) {
 
                 log(DEBUG, "Series list.size(): " + list.size());
+                int season = si.getSeason();
+                int episode = si.getEpisode();
+                if ((season > 0) && (episode > 0)) {
+
+                    Episode epi = tvdb.getEpisode(list.get(0).getId(),
+                        season, episode, "en");
+                    if (epi != null) {
+
+                        si.setOverview("\"" + epi.getEpisodeName() + "\" "
+                            + epi.getOverview());
+                        si.setReleased(epi.getFirstAired());
+                    }
+                }
                 Banners banners = tvdb.getBanners(list.get(0).getId());
                 if (banners != null) {
 
@@ -292,6 +306,9 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
                         Movie[] array = search.getMovies();
                         if ((array != null) && (array.length > 0)) {
 
+                            // Set the overview and released info....
+                            si.setOverview(array[0].getOverview());
+                            si.setReleased(array[0].getReleased());
                             Image[] iarray = array[0].getImages();
                             if ((iarray != null) && (iarray.length > 0)) {
 

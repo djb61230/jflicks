@@ -32,6 +32,11 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
     private String bannerURL;
     private String posterURL;
     private String fanartURL;
+    private String videoId;
+    private int season;
+    private int episode;
+    private String overview;
+    private String released;
     private boolean needBanner;
     private boolean needPoster;
     private boolean needFanart;
@@ -55,6 +60,11 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
             setNeedBanner(si.isNeedBanner());
             setNeedPoster(si.isNeedPoster());
             setNeedFanart(si.isNeedFanart());
+            setVideoId(si.getVideoId());
+            setSeason(si.getSeason());
+            setEpisode(si.getEpisode());
+            setOverview(si.getOverview());
+            setReleased(si.getReleased());
             setLastCheck(si.getLastCheck());
         }
     }
@@ -171,6 +181,78 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
 
     public void setNeedFanart(boolean b) {
         needFanart = b;
+    }
+
+    /**
+     * A video ID is used to backfill some metadata.  We only do this for
+     * Video items.
+     *
+     * @return An ID value as a String.
+     */
+    public String getVideoId() {
+        return (videoId);
+    }
+
+    /**
+     * A video ID is used to backfill some metadata.  We only do this for
+     * Video items.
+     *
+     * @param s An ID value as a String.
+     */
+    public void setVideoId(String s) {
+        videoId = s;
+    }
+
+    public int getSeason() {
+        return (season);
+    }
+
+    public void setSeason(int i) {
+        season = i;
+    }
+
+    public int getEpisode() {
+        return (episode);
+    }
+
+    public void setEpisode(int i) {
+        episode = i;
+    }
+
+    /**
+     * There is a Overview property.
+     *
+     * @return The Overview text.
+     */
+    public String getOverview() {
+        return (overview);
+    }
+
+    /**
+     * There is a Overview property.
+     *
+     * @param s The Overview text.
+     */
+    public void setOverview(String s) {
+        overview = s;
+    }
+
+    /**
+     * There is a Released property.
+     *
+     * @return The Released value.
+     */
+    public String getReleased() {
+        return (released);
+    }
+
+    /**
+     * There is a Released property.
+     *
+     * @param s The Released value.
+     */
+    public void setReleased(String s) {
+        released = s;
     }
 
     /**
