@@ -27,6 +27,7 @@ import org.jflicks.metadata.themoviedb.Image;
 import org.jflicks.metadata.themoviedb.Movie;
 import org.jflicks.metadata.themoviedb.Search;
 import org.jflicks.metadata.themoviedb.TheMovieDB;
+import org.jflicks.nms.NMS;
 
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
@@ -381,6 +382,13 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
      * {@inheritDoc}
      */
     public void performUpdate() {
+
+        // First thing to do is a video scan...
+        NMS n = getNMS();
+        if (n != null) {
+
+            n.videoScan();
+        }
 
         SearchItem[] array = getSearchItems();
         if ((array != null) && (array.length > 0)) {

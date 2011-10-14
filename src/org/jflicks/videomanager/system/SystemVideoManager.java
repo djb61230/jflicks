@@ -17,6 +17,7 @@
 package org.jflicks.videomanager.system;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -202,6 +203,25 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
             if (os != null) {
 
                 result = os.toArray(new Video[os.size()]);
+
+                /*
+                if ((result != null) && (result.length > 0)) {
+
+                    ArrayList<Video> vlist = new ArrayList<Video>();
+                    for (int i = 0; i < result.length; i++) {
+
+                        if (!result[i].isHidden()) {
+
+                            vlist.add(result[i]);
+                        }
+                    }
+
+                    if (vlist.size() > 0) {
+
+                        result = vlist.toArray(new Video[vlist.size()]);
+                    }
+                }
+                */
 
                 // We should update the image URLs for the client.  Persisting
                 // the URLs is not a good idea because the URL could change.
@@ -412,13 +432,16 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                                 v.setFilename(name);
                                 v.setTitle(guessVideoTitle(title, v.isTV()));
                                 v.setPath(path);
+                                v.setHidden(false);
                                 addVideo(v);
 
                             } else if (path != null) {
 
-                                if (!path.equals(v.getPath())) {
+                                if ((!path.equals(v.getPath()))
+                                    || (v.isHidden())) {
 
                                     v.setPath(path);
+                                    v.setHidden(false);
                                     addVideo(v);
                                 }
                             }
@@ -445,9 +468,10 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                     File f = new File(path);
                     if (!f.exists()) {
 
-                        log(INFO, "Should remove <" + title
+                        log(INFO, "Will hide <" + title
                             + "> with path <" + path + ">");
-                        removeVideo(array[i]);
+                        array[i].setHidden(true);
+                        addVideo(array[i]);
                     }
                 }
             }

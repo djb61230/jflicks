@@ -2319,6 +2319,29 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if (vm != null) {
 
             result = vm.getVideos();
+
+            // Let's eliminate the hidden.
+            if ((result != null) && (result.length > 0)) {
+
+                boolean found = false;
+                ArrayList<Video> list = new ArrayList<Video>();
+                for (int i = 0; i < result.length; i++) {
+
+                    if (!result[i].isHidden()) {
+
+                        list.add(result[i]);
+
+                    } else {
+
+                        found = true;
+                    }
+                }
+
+                if (found) {
+
+                    result = list.toArray(new Video[list.size()]);
+                }
+            }
         }
 
         return (result);
