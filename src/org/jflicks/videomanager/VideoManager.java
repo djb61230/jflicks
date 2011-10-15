@@ -89,4 +89,15 @@ public interface VideoManager extends Config {
      * be done from some third party video management system.
      */
     void videoScan();
+
+    /**
+     * Not every video has available artwork from the Internet and of
+     * course HomeVideo certainly won't.  Here we can have artwork generated
+     * by grabbing frames from the actual video.  The user can give a specific
+     * offset in seconds in case they have an idea where they want to grab.
+     *
+     * @param v A given Video instance.
+     * @param seconds The number of seconds into the Video.
+     */
+    void generateArtwork(Video v, int seconds);
 }

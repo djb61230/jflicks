@@ -2374,6 +2374,18 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
+    public void generateArtwork(Video v, int seconds) {
+
+        VideoManager vm = getVideoManager();
+        if (vm != null) {
+
+            vm.generateArtwork(v, seconds);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean performChannelScan(String recorderSource) {
 
         boolean result = false;

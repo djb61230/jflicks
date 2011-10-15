@@ -135,6 +135,12 @@ public class YAMJVideoManager extends BaseVideoManager {
     /**
      * {@inheritDoc}
      */
+    public void generateArtwork(Video v, int seconds) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public synchronized void videoScan() {
 
         log(INFO, "Time to scan for video files...");

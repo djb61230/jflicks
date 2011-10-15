@@ -88,7 +88,7 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
      */
     public int getConfiguredUpdateTimeInMinutes() {
 
-        int result = 2;
+        int result = 1;
 
         Configuration c = getConfiguration();
         if (c != null) {

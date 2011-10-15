@@ -10,6 +10,7 @@ Include-Resource:\
 
 Import-Package:\
  org.jflicks.db;version="1.0.0",\
+ org.jflicks.job;version="1.0.0",\
  org.jflicks.nms;version="1.0.0",\
  org.jflicks.videomanager;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\

@@ -23,6 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jflicks.db.DbWorker;
+import org.jflicks.job.JobContainer;
+import org.jflicks.job.JobManager;
 import org.jflicks.nms.BaseNMS;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
@@ -395,6 +397,50 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
     /**
      * {@inheritDoc}
      */
+    public void generateArtwork(Video v, int seconds) {
+    }
+
+    private long computeDuration(Video v) {
+
+        long result = 0L;
+
+        if (v != null) {
+
+            MediainfoJob job = new MediainfoJob(v);
+            JobContainer jc = JobManager.getJobContainer(job);
+            jc.start();
+
+            boolean done = false;
+            int count = 0;
+            while (!done) {
+
+                if (!jc.isAlive()) {
+
+                    done = true;
+
+                } else {
+
+                    count += 100;
+                    if (count > 2900) {
+
+                        done = true;
+
+                    } else {
+
+                        JobManager.sleep(100);
+                    }
+                }
+            }
+
+            result = (long) job.getSeconds();
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public synchronized void videoScan() {
 
         log(INFO, "Time to scan for video files...");
@@ -440,6 +486,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                                     v.setSubcategory(
                                         NMSConstants.UNKNOWN_GENRE);
                                 }
+                                v.setDuration(computeDuration(v));
                                 addVideo(v);
 
                             } else if (path != null) {
