@@ -20,7 +20,8 @@ Import-Package:\
  com.db4o,\
  com.db4o.config,\
  com.db4o.osgi,\
- com.db4o.query
+ com.db4o.query,\
+ javax.imageio
 
 Export-Package:\
  ${module}

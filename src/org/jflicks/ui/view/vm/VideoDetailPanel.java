@@ -134,7 +134,21 @@ public class VideoDetailPanel extends JPanel {
             tp
         };
 
-        PromptPanel pp = new PromptPanel(prompts, comps);
+        double[] weights = {
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        };
+
+        PromptPanel pp = new PromptPanel(prompts, comps, weights);
         add(pp);
     }
 

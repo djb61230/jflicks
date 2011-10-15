@@ -28,6 +28,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -54,6 +55,7 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
     private JList videoDisplayList;
     private VideoDetailPanel videoDetailPanel;
     private EditAction editAction;
+    private GenerateAction generateAction;
     private ArrayList<Video> videoList;
 
     /**
@@ -78,6 +80,11 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
 
         setVideoDetailPanel(new VideoDetailPanel());
 
+        GenerateAction ga = new GenerateAction();
+        ga.setEnabled(false);
+        setGenerateAction(ga);
+        JButton genb = new JButton(ga);
+
         EditAction ea = new EditAction();
         ea.setEnabled(false);
         setEditAction(ea);
@@ -101,18 +108,31 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.gridwidth = 1;
+        gbc.gridwidth = 2;
         gbc.gridheight = 1;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.weightx = 0.5;
-        gbc.weighty = 0.0;
+        gbc.weighty = 1.0;
         gbc.insets = new Insets(4, 4, 4, 4);
 
         add(getVideoDetailPanel(), gbc);
 
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.weightx = 0.5;
+        gbc.weighty = 0.0;
+        gbc.insets = new Insets(4, 4, 4, 4);
+
+        add(genb, gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
@@ -178,6 +198,14 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
         videoDetailPanel = p;
     }
 
+    private GenerateAction getGenerateAction() {
+        return (generateAction);
+    }
+
+    private void setGenerateAction(GenerateAction a) {
+        generateAction = a;
+    }
+
     private EditAction getEditAction() {
         return (editAction);
     }
@@ -231,11 +259,13 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
                     if (index != -1) {
 
                         Video v = (Video) l.getSelectedValue();
+                        getGenerateAction().setEnabled(true);
                         getEditAction().setEnabled(true);
                         p.setVideo(v);
 
                     } else {
 
+                        getGenerateAction().setEnabled(false);
                         getEditAction().setEnabled(false);
                         p.setVideo(null);
                     }
@@ -260,6 +290,65 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
                 }
             }
         }
+    }
+
+    class GenerateAction extends AbstractAction implements JobListener {
+
+        private Integer last = Integer.valueOf(60);
+        private Integer[] choices;
+
+        public GenerateAction() {
+
+            ImageIcon sm = new ImageIcon(getClass().getResource("view16.png"));
+            ImageIcon lge = new ImageIcon(getClass().getResource("view32.png"));
+            putValue(NAME, "Generate Artwork");
+            putValue(SHORT_DESCRIPTION, "Generate artwork from file");
+            putValue(SMALL_ICON, sm);
+            putValue(LARGE_ICON_KEY, lge);
+            putValue(MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_G));
+
+            choices = new Integer[50];
+            for (int i = 0; i < choices.length; i++) {
+
+                choices[i] = Integer.valueOf((i + 1) * 10);
+            }
+
+        }
+
+        public void jobUpdate(JobEvent event) {
+
+            if (event.getType() == JobEvent.COMPLETE) {
+                nmsAction();
+            }
+        }
+
+        public void actionPerformed(ActionEvent event) {
+
+            NMS n = getNMS();
+            Video v = getSelectedVideo();
+            if ((n != null) && (v != null)) {
+
+                String message = "This will overwrite the current artwork."
+                    + "  Select the number of seek seconds into the video.";
+                String title = "Generate Artwork for \"" + v.getTitle() + "\"";
+                Object result = JOptionPane.showInputDialog(getFrame(),
+                    message, title, JOptionPane.QUESTION_MESSAGE,
+                    null, choices, last);
+
+                if (result != null) {
+
+                    // The user wants to generate!!
+                    last = (Integer) result;
+                    GenerateArtworkJob gaj =
+                        new GenerateArtworkJob(n, v,last.intValue());
+                    ProgressBar pbar =
+                        new ProgressBar(getPanel(), "Generating...", gaj);
+                    pbar.addJobListener(this);
+                    pbar.execute();
+                }
+            }
+        }
+
     }
 
     class EditAction extends AbstractAction implements JobListener {

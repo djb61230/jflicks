@@ -16,11 +16,14 @@
 */
 package org.jflicks.videomanager.system;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.imageio.ImageIO;
 
 import org.jflicks.db.DbWorker;
 import org.jflicks.job.JobContainer;
@@ -206,25 +209,6 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
 
                 result = os.toArray(new Video[os.size()]);
 
-                /*
-                if ((result != null) && (result.length > 0)) {
-
-                    ArrayList<Video> vlist = new ArrayList<Video>();
-                    for (int i = 0; i < result.length; i++) {
-
-                        if (!result[i].isHidden()) {
-
-                            vlist.add(result[i]);
-                        }
-                    }
-
-                    if (vlist.size() > 0) {
-
-                        result = vlist.toArray(new Video[vlist.size()]);
-                    }
-                }
-                */
-
                 // We should update the image URLs for the client.  Persisting
                 // the URLs is not a good idea because the URL could change.
                 // Either by config the port changes or less likely the IP
@@ -398,6 +382,104 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
      * {@inheritDoc}
      */
     public void generateArtwork(Video v, int seconds) {
+
+        NMS n = getNMS();
+        if ((v != null) && (n != null)) {
+
+            if (seconds <= 0) {
+                seconds = 60;
+            }
+
+            try {
+
+                File tmp = File.createTempFile("generate", ".png");
+                ThumbnailerJob job =
+                    new ThumbnailerJob(v.getPath(), tmp.getPath(), seconds);
+                JobContainer jc = JobManager.getJobContainer(job);
+                jc.start();
+
+                boolean done = false;
+                int count = 0;
+                while (!done) {
+
+                    if (!jc.isAlive()) {
+
+                        done = true;
+
+                    } else {
+
+                        count += 100;
+                        if (count > 9900) {
+
+                            done = true;
+
+                        } else {
+
+                            JobManager.sleep(100);
+                        }
+                    }
+                }
+
+                // We should be done at this point...
+                if ((tmp.exists()) && (tmp.isFile())) {
+
+                    BufferedImage bi = ImageIO.read(tmp);
+                    if (bi != null) {
+
+                        log(DEBUG, "width: " + bi.getWidth());
+                        log(DEBUG, "height: " + bi.getHeight());
+                        if (bi.getWidth() < 1280) {
+
+                            // We have a source video that is 4x3.  We need to
+                            // cut off the bottom.
+                            bi = Util.scale(bi, 1280);
+
+                        } else if ((bi.getWidth() == 1440)
+                            && (bi.getHeight() == 1080)) {
+
+                            // We have a 1440x1080 image that needs to be
+                            // resized.
+                            bi = Util.resize(bi, 1280, 720);
+                        }
+
+                        int height = bi.getHeight();
+
+                        String sid = null;
+                        if (v.isTV()) {
+
+                            sid = v.getSubcategory();
+                            if (sid != null) {
+
+                                sid = sid.replaceAll(" ", "_");
+                                sid = sid.replaceAll("'", "_");
+                                sid = sid.replaceAll(",", "_");
+                            }
+
+                        } else {
+                            sid = v.getId();
+                        }
+
+                        // At this point our image should be 1280x720 which
+                        // will be our fanart.  Next we make a poster by
+                        // doing a center cut.
+                        BufferedImage pbi = bi.getSubimage(360, 0, 495, height);
+                        File fanart = File.createTempFile("fanart", ".png");
+                        ImageIO.write(bi, "PNG", fanart);
+
+                        File poster = File.createTempFile("poster", ".png");
+                        ImageIO.write(pbi, "PNG", poster);
+
+                        String uri = fanart.toURI().toString();
+                        n.save(NMSConstants.FANART_IMAGE_TYPE, uri, sid);
+
+                        uri = poster.toURI().toString();
+                        n.save(NMSConstants.POSTER_IMAGE_TYPE, uri, sid);
+                    }
+                }
+
+            } catch (IOException ex) {
+            }
+        }
     }
 
     private long computeDuration(Video v) {
