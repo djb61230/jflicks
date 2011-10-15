@@ -437,7 +437,8 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                                     v.setSubcategory(v.getTitle() + " Season "
                                         + v.getSeason());
                                 } else {
-                                    v.setSubcategory("Unknown");
+                                    v.setSubcategory(
+                                        NMSConstants.UNKNOWN_GENRE);
                                 }
                                 addVideo(v);
 

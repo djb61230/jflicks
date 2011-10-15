@@ -20,7 +20,10 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 /**
  * This is a base object that all objects from themoviedb.org will
@@ -152,5 +155,14 @@ public abstract class BaseObject implements Serializable {
         return (result);
     }
 
+    public void dump(Document doc) {
+
+        System.out.println("----------------------------");
+        Format f = Format.getPrettyFormat();
+        f.setEncoding("ISO-8859-1");
+        XMLOutputter out = new XMLOutputter(f);
+        System.out.println(out.outputString(doc));
+        System.out.println("----------------------------");
+    }
 }
 

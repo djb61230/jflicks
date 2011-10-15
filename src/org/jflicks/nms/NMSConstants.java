@@ -395,6 +395,11 @@ public final class NMSConstants {
     public static final String WESTERN_GENRE = "Western";
 
     /**
+     * Defined Movie Genre "Western".
+     */
+    public static final String UNKNOWN_GENRE = "Unknown";
+
+    /**
      * Aspect Ratio 16x9.
      */
     public static final String ASPECT_RATIO_16X9 = "16x9";

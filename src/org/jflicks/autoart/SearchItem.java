@@ -38,6 +38,8 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
     private int episode;
     private String overview;
     private String released;
+    private String genre;
+    private int runtime;
     private boolean needBanner;
     private boolean needPoster;
     private boolean needFanart;
@@ -69,6 +71,8 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
             setEpisode(si.getEpisode());
             setOverview(si.getOverview());
             setReleased(si.getReleased());
+            setGenre(si.getGenre());
+            setRuntime(si.getRuntime());
             setLastCheck(si.getLastCheck());
         }
     }
@@ -239,6 +243,14 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
         episode = i;
     }
 
+    public int getRuntime() {
+        return (runtime);
+    }
+
+    public void setRuntime(int i) {
+        runtime = i;
+    }
+
     /**
      * There is a Overview property.
      *
@@ -273,6 +285,24 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
      */
     public void setReleased(String s) {
         released = s;
+    }
+
+    /**
+     * There is a Genre property if we have a Video that is a Movie.
+     *
+     * @return The Genre value.
+     */
+    public String getGenre() {
+        return (genre);
+    }
+
+    /**
+     * There is a Genre property if we have a Video that is a Movie.
+     *
+     * @param s The Genre value.
+     */
+    public void setGenre(String s) {
+        genre = s;
     }
 
     /**

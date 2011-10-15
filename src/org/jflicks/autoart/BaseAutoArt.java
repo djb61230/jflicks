@@ -88,7 +88,7 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
      */
     public int getConfiguredUpdateTimeInMinutes() {
 
-        int result = 5;
+        int result = 2;
 
         Configuration c = getConfiguration();
         if (c != null) {
@@ -512,6 +512,32 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
 
                                 update = true;
                                 video.setReleased(released);
+                            }
+                        }
+
+                        if (!video.isTV()) {
+
+                            String subcat = video.getSubcategory();
+                            if ((subcat == null)
+                               || (subcat.equals(NMSConstants.UNKNOWN_GENRE))) {
+
+                                subcat = si.getGenre();
+                                if (subcat != null) {
+
+                                    update = true;
+                                    video.setSubcategory(subcat);
+                                }
+                            }
+                        }
+
+                        int runtime = (int) video.getDuration();
+                        if (runtime == 0) {
+
+                            runtime = si.getRuntime();
+                            if (runtime > 0) {
+
+                                update = true;
+                                video.setDuration((long) runtime);
                             }
                         }
 

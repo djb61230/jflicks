@@ -310,44 +310,58 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
                         Movie[] array = search.getMovies();
                         if ((array != null) && (array.length > 0)) {
 
-                            // Set the overview and released info....
-                            si.setOverview(array[0].getOverview());
-                            si.setReleased(array[0].getReleased());
-                            Image[] iarray = array[0].getImages();
-                            if ((iarray != null) && (iarray.length > 0)) {
+                            Movie m = tmdb.retrieve(array[0].getId());
 
-                                String url = null;
+                            if (m == null) {
 
-                                // First find the first poster.
-                                for (int i = 0; i < iarray.length; i++) {
+                                // Better than nothing...
+                                m = array[0];
+                            }
 
-                                    if (iarray[i].isPosterType()) {
+                            if (m != null) {
 
-                                        url = findMovieImageURL(array[0],
-                                            iarray[i]);
-                                        break;
+                                // Set the overview and released info....
+                                si.setOverview(m.getOverview());
+                                si.setReleased(m.getReleased());
+                                si.setGenre(m.getGenre());
+                                si.setRuntime(m.getRuntime() * 60);
+
+                                Image[] iarray = m.getImages();
+                                if ((iarray != null) && (iarray.length > 0)) {
+
+                                    String url = null;
+
+                                    // First find the first poster.
+                                    for (int i = 0; i < iarray.length; i++) {
+
+                                        if (iarray[i].isPosterType()) {
+
+                                            url = findMovieImageURL(m,
+                                                iarray[i]);
+                                            break;
+                                        }
                                     }
-                                }
 
-                                if (url != null) {
-                                    si.setPosterURL(url);
-                                }
-
-                                url = null;
-
-                                // Next find the first fanart.
-                                for (int i = 0; i < iarray.length; i++) {
-
-                                    if (iarray[i].isBackdropType()) {
-
-                                        url = findMovieImageURL(array[0],
-                                            iarray[i]);
-                                        break;
+                                    if (url != null) {
+                                        si.setPosterURL(url);
                                     }
-                                }
 
-                                if (url != null) {
-                                    si.setFanartURL(url);
+                                    url = null;
+
+                                    // Next find the first fanart.
+                                    for (int i = 0; i < iarray.length; i++) {
+
+                                        if (iarray[i].isBackdropType()) {
+
+                                            url = findMovieImageURL(m,
+                                                iarray[i]);
+                                            break;
+                                        }
+                                    }
+
+                                    if (url != null) {
+                                        si.setFanartURL(url);
+                                    }
                                 }
                             }
                         }

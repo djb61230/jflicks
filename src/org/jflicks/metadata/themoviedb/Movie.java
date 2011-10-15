@@ -42,6 +42,8 @@ public class Movie extends BaseObject {
     private double rating;
     private String overview;
     private String released;
+    private String genre;
+    private int runtime;
     private ArrayList<Image> imageList;
 
     /**
@@ -197,6 +199,35 @@ public class Movie extends BaseObject {
         released = s;
     }
 
+    /**
+     * A movie has a genre property.  The web site has a notion of
+     * categories and we will stick the first one we find that is a genre
+     * in this property.  The problem is movies can be in multiple genres.
+     *
+     * @return The genre as a String value.
+     */
+    public String getGenre() {
+        return (genre);
+    }
+
+    private void setGenre(String s) {
+        genre = s;
+    }
+
+    /**
+     * A movie has a runtime property.  This is the number of minutes the
+     * movie runs.
+     *
+     * @return The runtime as an int value.
+     */
+    public int getRuntime() {
+        return (runtime);
+    }
+
+    private void setRuntime(int i) {
+        runtime = i;
+    }
+
     private ArrayList<Image> getImageList() {
         return (imageList);
     }
@@ -316,6 +347,22 @@ public class Movie extends BaseObject {
         setScore(Util.str2double(expectElement(getElement(), "rating"), 0.0));
         setOverview(expectElement(getElement(), "overview"));
         setReleased(expectElement(getElement(), "released"));
+
+        Element[] cats = expectElements(getElement(), "categories", "category");
+        if ((cats != null) && (cats.length > 0)) {
+
+            for (int i = 0; i < cats.length; i++) {
+
+                String ctype = cats[i].getAttributeValue("type");
+                if ((ctype != null) && (ctype.equalsIgnoreCase("genre"))) {
+
+                    setGenre(cats[i].getAttributeValue("name"));
+                    break;
+                }
+            }
+        }
+
+        setRuntime(Util.str2int(expectElement(getElement(), "runtime"), 0));
 
         setImageList(new ArrayList<Image>());
 

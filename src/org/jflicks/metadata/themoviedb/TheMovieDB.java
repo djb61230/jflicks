@@ -101,6 +101,7 @@ public final class TheMovieDB {
                 + LANGUAGE + "/" + TYPE + "/" + KEY + "/" + terms;
             Document doc = create(url);
             if (doc != null) {
+
                 result = new Search(doc.getRootElement());
             }
         }
