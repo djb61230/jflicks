@@ -250,6 +250,17 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
         return (result);
     }
 
+    public boolean hasMetadata(Video v) {
+
+        boolean result = false;
+
+        if (v != null) {
+            result = v.getDescription() != null;
+        }
+
+        return (result);
+    }
+
     public boolean hasBannerArt(RecordingRule rr) {
 
         boolean result = false;
@@ -365,7 +376,8 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
                         // We look for a complete set, otherwise we add it
                         // to our list.
                         if ((!hasPosterArt(array[i]))
-                            || (!hasFanArt(array[i]))) {
+                            || (!hasFanArt(array[i]))
+                            || (!hasMetadata(array[i]))) {
 
                             l.add(array[i]);
                         }
