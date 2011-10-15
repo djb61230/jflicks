@@ -28,6 +28,7 @@ import java.io.Serializable;
 public class SearchItem implements Serializable, Comparable<SearchItem> {
 
     private String id;
+    private String fileId;
     private String title;
     private String bannerURL;
     private String posterURL;
@@ -40,6 +41,7 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
     private boolean needBanner;
     private boolean needPoster;
     private boolean needFanart;
+    private boolean needMetadata;
     private long lastCheck;
 
     /**
@@ -53,6 +55,7 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
         if (si != null) {
 
             setId(si.getId());
+            setFileId(si.getFileId());
             setTitle(si.getTitle());
             setBannerURL(si.getBannerURL());
             setPosterURL(si.getPosterURL());
@@ -60,6 +63,7 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
             setNeedBanner(si.isNeedBanner());
             setNeedPoster(si.isNeedPoster());
             setNeedFanart(si.isNeedFanart());
+            setNeedMetadata(si.isNeedMetadata());
             setVideoId(si.getVideoId());
             setSeason(si.getSeason());
             setEpisode(si.getEpisode());
@@ -85,6 +89,14 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
      */
     public void setId(String s) {
         id = s;
+    }
+
+    public String getFileId() {
+        return (fileId);
+    }
+
+    public void setFileId(String s) {
+        fileId = s;
     }
 
     /**
@@ -181,6 +193,14 @@ public class SearchItem implements Serializable, Comparable<SearchItem> {
 
     public void setNeedFanart(boolean b) {
         needFanart = b;
+    }
+
+    public boolean isNeedMetadata() {
+        return (needMetadata);
+    }
+
+    public void setNeedMetadata(boolean b) {
+        needMetadata = b;
     }
 
     /**

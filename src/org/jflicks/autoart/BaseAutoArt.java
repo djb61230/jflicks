@@ -395,6 +395,7 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
 
                 SearchItem si = new SearchItem();
                 si.setId(recs[i].getSeriesId());
+                si.setFileId(recs[i].getSeriesId());
                 si.setTitle(recs[i].getTitle());
                 si.setNeedBanner(!hasBannerArt(recs[i]));
                 si.setNeedPoster(!hasPosterArt(recs[i]));
@@ -411,6 +412,7 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
 
                 SearchItem si = new SearchItem();
                 si.setId(getRecordingRuleArtId(rules[i]));
+                si.setFileId(getRecordingRuleArtId(rules[i]));
                 si.setTitle(rules[i].getName());
                 si.setNeedBanner(!hasBannerArt(rules[i]));
                 si.setNeedPoster(!hasPosterArt(rules[i]));
@@ -426,7 +428,8 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
             for (int i = 0; i < vids.length; i++) {
 
                 SearchItem si = new SearchItem();
-                si.setId(getVideoArtId(vids[i]));
+                si.setId(vids[i].getId());
+                si.setFileId(getVideoArtId(vids[i]));
                 si.setTitle(vids[i].getTitle());
                 si.setVideoId(vids[i].getId());
                 si.setSeason(vids[i].getSeason());
@@ -434,6 +437,7 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
                 si.setNeedBanner(!hasBannerArt(vids[i]));
                 si.setNeedPoster(!hasPosterArt(vids[i]));
                 si.setNeedFanart(!hasFanArt(vids[i]));
+                si.setNeedMetadata(vids[i].getDescription() == null);
 
                 l.add(si);
             }
@@ -452,25 +456,34 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
         NMS n = getNMS();
         if ((n != null) && (si != null)) {
 
-            String id = si.getId();
+            log(INFO, "save title: " + si.getTitle());
+            String id = si.getFileId();
+            log(INFO, "id: " + id);
             if (id != null) {
 
                 String url = si.getBannerURL();
+                log(INFO, "url: " + url);
+                log(INFO, "need: " + si.isNeedBanner());
                 if ((url != null) && (si.isNeedBanner())) {
                     n.save(NMSConstants.BANNER_IMAGE_TYPE, url, id);
                 }
 
                 url = si.getPosterURL();
+                log(INFO, "url: " + url);
+                log(INFO, "need: " + si.isNeedPoster());
                 if ((url != null) && (si.isNeedPoster())) {
                     n.save(NMSConstants.POSTER_IMAGE_TYPE, url, id);
                 }
 
                 url = si.getFanartURL();
+                log(INFO, "url: " + url);
+                log(INFO, "need: " + si.isNeedFanart());
                 if ((url != null) && (si.isNeedFanart())) {
                     n.save(NMSConstants.FANART_IMAGE_TYPE, url, id);
                 }
 
                 String vid = si.getVideoId();
+                log(INFO, "vid: " + vid);
                 if (vid != null) {
 
                     // We looked up some metadata so let's see if we

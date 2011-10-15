@@ -241,6 +241,7 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
         boolean checkMovie = true;
         if ((si != null) && (tvdb != null)) {
 
+            log(DEBUG, "Searching for: " + si.getTitle());
             List<Series> list = tvdb.searchSeries(si.getTitle(), "en");
             log(DEBUG, "Series list: " + list);
             if ((list != null) && (list.size() > 0)) {
@@ -248,10 +249,12 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
                 log(DEBUG, "Series list.size(): " + list.size());
                 int season = si.getSeason();
                 int episode = si.getEpisode();
+                log(DEBUG, "season <" + season + "> episode <" + episode + ">");
                 if ((season > 0) && (episode > 0)) {
 
                     Episode epi = tvdb.getEpisode(list.get(0).getId(),
                         season, episode, "en");
+                    log(DEBUG, "Episode: " + epi);
                     if (epi != null) {
 
                         si.setOverview("\"" + epi.getEpisodeName() + "\" "

@@ -433,6 +433,12 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                                 v.setTitle(guessVideoTitle(title, v.isTV()));
                                 v.setPath(path);
                                 v.setHidden(false);
+                                if (v.isTV()) {
+                                    v.setSubcategory(v.getTitle() + " Season "
+                                        + v.getSeason());
+                                } else {
+                                    v.setSubcategory("Unknown");
+                                }
                                 addVideo(v);
 
                             } else if (path != null) {
