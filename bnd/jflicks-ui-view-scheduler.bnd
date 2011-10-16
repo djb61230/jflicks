@@ -8,6 +8,8 @@ Bundle-Activator: ${module}.Activator
 Include-Resource:\
  org/jflicks/ui/view/scheduler/about16.png=../resources/about16.png,\
  org/jflicks/ui/view/scheduler/about32.png=../resources/about32.png,\
+ org/jflicks/ui/view/scheduler/delete16.png=../resources/delete16.png,\
+ org/jflicks/ui/view/scheduler/delete32.png=../resources/delete32.png,\
  org/jflicks/ui/view/scheduler/exit16.png=../resources/exit16.png,\
  org/jflicks/ui/view/scheduler/exit32.png=../resources/exit32.png,\
  org/jflicks/ui/view/scheduler/help16.png=../resources/help16.png,\
@@ -20,6 +22,8 @@ Include-Resource:\
  org/jflicks/ui/view/scheduler/record32.png=../resources/record32.png,\
  org/jflicks/ui/view/scheduler/save16.png=../resources/save16.png,\
  org/jflicks/ui/view/scheduler/save32.png=../resources/save32.png,\
+ org/jflicks/ui/view/scheduler/stop16.png=../resources/stop16.png,\
+ org/jflicks/ui/view/scheduler/stop32.png=../resources/stop32.png,\
  org/jflicks/ui/view/scheduler/aboutbg.png=../resources/aboutbg.png,\
  org/jflicks/ui/view/scheduler/icon.png=../resources/scheduler_icon.png
 

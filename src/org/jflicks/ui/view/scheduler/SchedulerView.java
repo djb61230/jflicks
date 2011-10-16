@@ -49,6 +49,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.nms.NMSUtil;
 import org.jflicks.tv.Airing;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.Recording;
@@ -109,6 +110,18 @@ public class SchedulerView extends JFlicksView implements ActionListener {
 
     private void setNMS(NMS[] array) {
         nms = array;
+    }
+
+    public NMS getNMSByHostPort(String s) {
+
+        NMS result = null;
+
+        if (s != null) {
+
+            result = NMSUtil.select(getNMS(), s);
+        }
+
+        return (result);
     }
 
     /**
@@ -252,7 +265,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
             viewMenu.add(upAction);
             setUpcomingAction(upAction);
 
-            RecordingAction recAction = new RecordingAction();
+            RecordingAction recAction = new RecordingAction(this);
             viewMenu.add(recAction);
             setRecordingAction(recAction);
 
@@ -902,8 +915,11 @@ public class SchedulerView extends JFlicksView implements ActionListener {
     class RecordingAction extends AbstractAction implements JobListener {
 
         private boolean showIt;
+        private SchedulerView schedulerView;
 
-        public RecordingAction() {
+        public RecordingAction(SchedulerView v) {
+
+            schedulerView = v;
 
             ImageIcon sm = new ImageIcon(getClass().getResource("info16.png"));
             ImageIcon lge = new ImageIcon(getClass().getResource("info32.png"));
@@ -943,7 +959,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
                         if (f == null) {
 
                             DisplayRecordingPanel drp =
-                                new DisplayRecordingPanel();
+                                new DisplayRecordingPanel(schedulerView);
                             drp.setRecordings(array);
                             setDisplayRecordingPanel(drp);
                             f = new JXFrame();
