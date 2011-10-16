@@ -54,6 +54,7 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
     private VideoManagerView videoManagerView;
     private JList videoDisplayList;
     private VideoDetailPanel videoDetailPanel;
+    private RefreshAction refreshAction;
     private EditAction editAction;
     private GenerateAction generateAction;
     private ArrayList<Video> videoList;
@@ -79,6 +80,10 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         setVideoDetailPanel(new VideoDetailPanel());
+
+        RefreshAction ra = new RefreshAction();
+        setRefreshAction(ra);
+        JButton refreshb = new JButton(ra);
 
         GenerateAction ga = new GenerateAction();
         ga.setEnabled(false);
@@ -108,7 +113,7 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.gridheight = 1;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -129,10 +134,23 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
         gbc.weighty = 0.0;
         gbc.insets = new Insets(4, 4, 4, 4);
 
-        add(genb, gbc);
+        add(refreshb, gbc);
 
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        gbc.insets = new Insets(4, 4, 4, 4);
+
+        add(genb, gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
@@ -196,6 +214,14 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
 
     private void setVideoDetailPanel(VideoDetailPanel p) {
         videoDetailPanel = p;
+    }
+
+    private RefreshAction getRefreshAction() {
+        return (refreshAction);
+    }
+
+    private void setRefreshAction(RefreshAction a) {
+        refreshAction = a;
     }
 
     private GenerateAction getGenerateAction() {
@@ -290,6 +316,28 @@ public class VideoPanel extends BasePanel implements ListSelectionListener {
                 }
             }
         }
+    }
+
+    class RefreshAction extends AbstractAction {
+
+        public RefreshAction() {
+
+            ImageIcon sm =
+                new ImageIcon(getClass().getResource("refresh16.png"));
+            ImageIcon lge =
+                new ImageIcon(getClass().getResource("refresh32.png"));
+            putValue(NAME, "Refresh List");
+            putValue(SHORT_DESCRIPTION, "Refresh List of Videos");
+            putValue(SMALL_ICON, sm);
+            putValue(LARGE_ICON_KEY, lge);
+            putValue(MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_R));
+        }
+
+        public void actionPerformed(ActionEvent event) {
+
+            nmsAction();
+        }
+
     }
 
     class GenerateAction extends AbstractAction implements JobListener {

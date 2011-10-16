@@ -18,6 +18,8 @@ Include-Resource:\
  org/jflicks/ui/view/vm/movie32.png=../resources/movie32.png,\
  org/jflicks/ui/view/vm/record16.png=../resources/record16.png,\
  org/jflicks/ui/view/vm/record32.png=../resources/record32.png,\
+ org/jflicks/ui/view/vm/refresh16.png=../resources/refresh16.png,\
+ org/jflicks/ui/view/vm/refresh32.png=../resources/refresh32.png,\
  org/jflicks/ui/view/vm/save16.png=../resources/save16.png,\
  org/jflicks/ui/view/vm/save32.png=../resources/save32.png,\
  org/jflicks/ui/view/vm/search16.png=../resources/search16.png,\
