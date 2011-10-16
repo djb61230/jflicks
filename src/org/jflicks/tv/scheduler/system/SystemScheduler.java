@@ -491,23 +491,28 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
     public void updateRecording(Recording r) {
 
         ObjectContainer oc = getRecordingObjectContainer();
-        if ((r != null) && (oc != null)) {
+        NMS n = getNMS();
+        if ((r != null) && (n != null) && (oc != null)) {
 
-            removeRecording(r);
+            Recording old = n.getRecordingById(r.getId());
 
-            // Before we continue, lets make sure the recording is on disk.
-            // There is a chance that the user has deleted it underneath us
-            // and we are putting a bogus object.
-            File ondisk = new File(r.getPath());
-            if ((ondisk.exists()) && (ondisk.isFile())) {
+            // Make sure the old one still exists...it may have gotten
+            // deleted.
+            if (old != null) {
 
-                oc.store(new Recording(r));
-                oc.commit();
+                removeRecording(r);
 
-                // Tell clients via the NMS.
-                NMS n = getNMS();
-                if (n != null) {
+                // Before we continue, lets make sure the recording is on disk.
+                // There is a chance that the user has deleted it underneath us
+                // and we are putting a bogus object.  This is less likely but
+                // still a good check.
+                File ondisk = new File(r.getPath());
+                if ((ondisk.exists()) && (ondisk.isFile())) {
 
+                    oc.store(new Recording(r));
+                    oc.commit();
+
+                    // Tell clients via the NMS.
                     n.sendMessage(NMSConstants.MESSAGE_RECORDING_UPDATE
                         + " : " + r.getId());
                 }
