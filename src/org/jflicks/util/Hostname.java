@@ -18,7 +18,12 @@ package org.jflicks.util;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.List;
 
 import org.jflicks.job.SystemJob;
 import org.jflicks.job.JobContainer;
@@ -82,6 +87,92 @@ public final class Hostname {
         return (result);
     }
 
+    public static InetAddress getInetAddressViaNetworkInterface() {
+
+        InetAddress result = null;
+
+        try {
+
+            Enumeration<NetworkInterface> e =
+                NetworkInterface.getNetworkInterfaces();
+            if (e != null) {
+
+                boolean done = false;
+                while ((e.hasMoreElements()) && (!done)) {
+
+                    NetworkInterface ni = e.nextElement();
+
+                    if ((!ni.isLoopback()) && (ni.isUp())) {
+
+                        List<InterfaceAddress> elist =
+                            ni.getInterfaceAddresses();
+                        if (elist != null) {
+
+                            for (int i = 0; i < elist.size(); i++) {
+
+                                InterfaceAddress addr = elist.get(i);
+                                if (addr.getBroadcast() != null) {
+
+                                    InetAddress inet = addr.getAddress();
+                                    if (!isLoopback(inet.getHostAddress())) {
+
+                                        result = inet;
+                                        done = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (SocketException ex) {
+        }
+
+        return (result);
+    }
+
+    public static String getHostAddressViaNetworkInterface() {
+
+        String result = null;
+
+        try {
+
+            Enumeration<NetworkInterface> e =
+                NetworkInterface.getNetworkInterfaces();
+            if (e != null) {
+
+                boolean done = false;
+                while ((e.hasMoreElements()) && (!done)) {
+
+                    NetworkInterface ni = e.nextElement();
+
+                    if ((!ni.isLoopback()) && (ni.isUp())) {
+
+                        Enumeration<InetAddress> einet = ni.getInetAddresses();
+                        if (einet != null) {
+
+                            while ((einet.hasMoreElements()) && (!done)) {
+
+                                InetAddress inet = einet.nextElement();
+                                String tmp = inet.getHostAddress();
+                                if (!isLoopback(tmp)) {
+
+                                    result = tmp;
+                                    done = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (SocketException ex) {
+        }
+
+        return (result);
+    }
+
     /**
      * Find the local machine IP address.  First we lookup using the java
      * InetAddress object for localhost.  Sometimes this will return a
@@ -103,28 +194,41 @@ public final class Hostname {
 
                 if (isLoopback(result)) {
 
-                    // We got the loopback - lets try the hostname route...
-                    String hname = getHostname();
-                    if (hname != null) {
+                    // Next lets look at the NetworkInterfaces route...
+                    result = getHostAddressViaNetworkInterface();
 
-                        // Get all that we have.
-                        InetAddress[] addrs = InetAddress.getAllByName(hname);
-                        if ((addrs != null) && (addrs.length > 0)) {
+                    if (isLoopback(result)) {
 
-                            for (int i = 0; i < addrs.length; i++) {
+                        // We got the loopback - lets try the hostname route...
+                        String hname = getHostname();
+                        if (hname != null) {
 
-                                result = addrs[i].getHostAddress();
-                                if (!isLoopback(result)) {
+                            // Get all that we have.
+                            InetAddress[] addrs =
+                                InetAddress.getAllByName(hname);
+                            if ((addrs != null) && (addrs.length > 0)) {
 
-                                    // We take the first non-loopback....
-                                    break;
+                                for (int i = 0; i < addrs.length; i++) {
+
+                                    result = addrs[i].getHostAddress();
+                                    if (!isLoopback(result)) {
+
+                                        // We take the first non-loopback....
+                                        break;
+                                    }
                                 }
+
+                            } else {
+
+                                // Give up and return loopback...
+                                result = "127.0.0.1";
                             }
 
                         } else {
 
                             // Give up and return loopback...
                             result = "127.0.0.1";
+
                         }
 
                     } else {
@@ -170,22 +274,29 @@ public final class Hostname {
 
                 if (isLoopback(ip)) {
 
-                    // We got the loopback - lets try the hostname route...
-                    String hname = getHostname();
-                    if (hname != null) {
+                    // Next lets look at the NetworkInterfaces route...
+                    result = getInetAddressViaNetworkInterface();
 
-                        // Get all that we have.
-                        InetAddress[] addrs = InetAddress.getAllByName(hname);
-                        if ((addrs != null) && (addrs.length > 0)) {
+                    if (isLoopback(result)) {
 
-                            for (int i = 0; i < addrs.length; i++) {
+                        // We got the loopback - lets try the hostname route...
+                        String hname = getHostname();
+                        if (hname != null) {
 
-                                ip = addrs[i].getHostAddress();
-                                if (!isLoopback(ip)) {
+                            // Get all that we have.
+                            InetAddress[] addrs =
+                                InetAddress.getAllByName(hname);
+                            if ((addrs != null) && (addrs.length > 0)) {
 
-                                    // We take the first non-loopback....
-                                    result = addrs[i];
-                                    break;
+                                for (int i = 0; i < addrs.length; i++) {
+
+                                    ip = addrs[i].getHostAddress();
+                                    if (!isLoopback(ip)) {
+
+                                        // We take the first non-loopback....
+                                        result = addrs[i];
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -267,6 +378,23 @@ public final class Hostname {
             if ((s.startsWith("127")) || (s.startsWith("0:0:0:0"))) {
 
                 result = true;
+            }
+        }
+
+        return (result);
+    }
+
+    public static boolean isLoopback(InetAddress inet) {
+
+        boolean result = true;
+
+        if (inet != null) {
+
+            try {
+
+                result = isLoopback(inet.getLocalHost().getHostAddress());
+
+            } catch (UnknownHostException ex) {
             }
         }
 
