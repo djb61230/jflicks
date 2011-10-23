@@ -227,5 +227,14 @@ public interface Scheduler extends Config {
      * @return A Listing name if it exists.
      */
     String getListingNameByRecorder(Recorder r);
+
+    /**
+     * Not all channels necessarily are configured to be recorded at
+     * the current time. Use this method just to get the channels that
+     * actually could be recorded.
+     *
+     * @return The Channel instances that could be recorded.
+     */
+    Channel[] getRecordableChannels();
 }
 

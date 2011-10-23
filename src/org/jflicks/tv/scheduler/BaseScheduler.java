@@ -211,6 +211,42 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
     /**
      * {@inheritDoc}
      */
+    public Channel[] getRecordableChannels() {
+
+        Channel[] result = null;
+
+        Recorder[] rarray = getConfiguredRecorders();
+        if ((rarray != null) && (rarray.length > 0)) {
+
+            ArrayList<Channel> clist = new ArrayList<Channel>();
+            for (int i = 0; i < rarray.length; i++) {
+
+                Channel[] carray = getChannelsByRecorder(rarray[i]);
+                if ((carray != null) && (carray.length > 0)) {
+
+                    for (int j = 0; j < carray.length; j++) {
+
+                        if (!clist.contains(carray[j])) {
+
+                            clist.add(carray[j]);
+                        }
+                    }
+                }
+            }
+
+            if (clist.size() > 0) {
+
+                result = clist.toArray(new Channel[clist.size()]);
+                Arrays.sort(result);
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getListingNameByRecorder(Recorder r) {
 
         String result = null;

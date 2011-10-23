@@ -981,54 +981,9 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         Channel[] result = null;
 
         Scheduler s = getScheduler();
-        ProgramData[] pds = getProgramData();
-        if ((s != null) && (pds != null)) {
+        if (s != null) {
 
-            String[] array = s.getConfiguredListingNames();
-            if (array != null) {
-
-                ArrayList<Channel> list = new ArrayList<Channel>();
-
-                // Probably have just one program data...
-                for (int i = 0; i < pds.length; i++) {
-
-                    Listing[] listings = pds[i].getListings();
-                    if (listings != null) {
-
-                        for (int j = 0; j < listings.length; j++) {
-
-                            String name = listings[j].getName();
-                            if (name != null) {
-
-                                for (int k = 0; k < array.length; k++) {
-
-                                    if (name.equals(array[k])) {
-
-                                        // Got one!
-                                        Channel[] chans =
-                                            pds[i].getChannelsByListing(
-                                                listings[j]);
-                                        if (chans != null) {
-
-                                            for (int l = 0; l < chans.length;
-                                                l++) {
-
-                                                list.add(chans[l]);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (list.size() > 0) {
-
-                    result = list.toArray(new Channel[list.size()]);
-                    Arrays.sort(result);
-                }
-            }
+            result = s.getRecordableChannels();
         }
 
         return (result);
