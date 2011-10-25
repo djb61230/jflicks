@@ -274,9 +274,19 @@ public class RokuFeed extends BaseFeed {
 
         if ((r != null) && (urlbase != null)) {
 
-            String url = computeURL(urlbase, r.getPath());
-            result.setAttribute("sdImg", url + ".roku_sd.png");
-            result.setAttribute("hdImg", url + ".roku_hd.png");
+            String url = r.getStreamURL();
+            if (url != null) {
+
+                if (url.endsWith(r.getIndexedExtension())) {
+                    url = url.substring(0, url.lastIndexOf("."));
+                }
+                result.setAttribute("sdImg", url + ".roku_sd.png");
+                result.setAttribute("hdImg", url + ".roku_hd.png");
+
+            } else {
+
+                url = "";
+            }
 
             String sub = r.getSubtitle();
             Element title = new Element("title");
@@ -506,7 +516,6 @@ public class RokuFeed extends BaseFeed {
             streamBitrate.setText("2048");
 
             Element streamUrl = new Element("streamUrl");
-            String url = computeURL(urlbase, v.getPath());
             streamUrl.setText(v.getStreamURL());
 
             media.addContent(streamFormat);
