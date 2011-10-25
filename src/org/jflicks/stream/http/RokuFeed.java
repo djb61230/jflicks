@@ -321,7 +321,7 @@ public class RokuFeed extends BaseFeed {
             streamBitrate.setText("2048");
 
             Element streamUrl = new Element("streamUrl");
-            streamUrl.setText(url + "." + r.getIndexedExtension());
+            streamUrl.setText(r.getStreamURL());
 
             media.addContent(streamFormat);
             media.addContent(streamQuality);
@@ -507,7 +507,7 @@ public class RokuFeed extends BaseFeed {
 
             Element streamUrl = new Element("streamUrl");
             String url = computeURL(urlbase, v.getPath());
-            streamUrl.setText(url);
+            streamUrl.setText(v.getStreamURL());
 
             media.addContent(streamFormat);
             media.addContent(streamQuality);
