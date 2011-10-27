@@ -128,6 +128,8 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
                 // Now we want to block until we have a file with some
                 // data.
                 boolean done = false;
+                int maxwaits = 10;
+                int waits = 0;
                 while (!done) {
 
                     if ((local.exists()) && (local.isFile())
@@ -137,7 +139,13 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
 
                     } else {
 
-                        JobManager.sleep(1000);
+                        waits++;
+                        if (waits < maxwaits) {
+                            JobManager.sleep(1000);
+                        } else {
+                            done = true;
+                            result = null;
+                        }
                     }
                 }
             }
