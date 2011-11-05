@@ -5,6 +5,13 @@ Bundle-Version: 1.0.0
 
 Bundle-Activator: ${module}.Activator
 
+Include-Resource:\
+ ../lib/gson-1.7.1.jar
+
+Bundle-ClassPath:\
+ .,\
+ gson-1.7.1.jar
+
 Export-Package:\
  org.jflicks.stream.http;version="1.0.0"
 

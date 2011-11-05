@@ -592,6 +592,15 @@ public interface NMS extends Config {
     void closeSession(StreamSession ss);
 
     /**
+     * We want to be able to allow users to find out what the current
+     * state of an NMS is like.  The State class will represent this
+     * information.
+     *
+     * @return A State instance.
+     */
+    State getState();
+
+    /**
      * Of course all services are optional so this method can be used to
      * see if Live TV is supported.
      *

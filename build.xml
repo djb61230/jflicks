@@ -67,6 +67,10 @@
             excludes="org.jflicks/**/test/*.class">
         </jar>
 
+        <jar destfile="${dist}/jflicks-4android.jar" basedir="${build}"
+            includes="org/jflicks/tv/*.class,org/jflicks/nms/*.class,org/jflicks/util/*.class,org/jflicks/configure/*.class">
+        </jar>
+
         <jar destfile="${dist}/jflicks-test.jar" basedir="${build}">
         </jar>
 

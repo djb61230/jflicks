@@ -167,7 +167,15 @@ public class SystemSchedulerJob extends AbstractJob
                         Recorder recorder = array[index].getRecorder();
                         if (!recorder.isRecording()) {
 
+                            // Reassign a file name because disk space may
+                            // have changed at this point and we should make
+                            // sure we have space.
+                            File justintime = ss.createFile(array[index]);
+                            array[index].setFile(justintime);
+
                             Recording crec = array[index].getRecording();
+                            crec.setPath(justintime.getPath());
+
                             addRecording(recorder, crec);
                             recorder.addPropertyChangeListener("Recording",
                                 this);
@@ -179,6 +187,7 @@ public class SystemSchedulerJob extends AbstractJob
                             dur -= ((now - array[index].getStart()) / 1000);
                             log(SystemScheduler.INFO, "adjust length: " + dur);
                             crec.setRealStart(now);
+
                             recorder.startRecording(array[index].getChannel(),
                                 dur, array[index].getFile(), false);
                             index++;

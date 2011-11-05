@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.jflicks.nms.BaseNMS;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.nms.NMSUtil;
+import org.jflicks.nms.State;
 import org.jflicks.nms.Video;
 import org.jflicks.tv.Airing;
 import org.jflicks.tv.Channel;
@@ -67,11 +69,14 @@ public abstract class BaseFeed extends HttpServlet
     private SimpleDateFormat originalDateFormat;
     private SimpleDateFormat upcomingDateFormat;
     private boolean requireMp4;
+    private ArrayList<NMS> nmsList;
 
     /**
      * Default constructor.
      */
     public BaseFeed() {
+
+        setNMSList(new ArrayList<NMS>());
     }
 
     /**
@@ -81,6 +86,7 @@ public abstract class BaseFeed extends HttpServlet
      */
     public BaseFeed(String s) {
 
+        this();
         setAlias(s);
     }
 
@@ -168,6 +174,56 @@ public abstract class BaseFeed extends HttpServlet
         }
     }
 
+    private ArrayList<NMS> getNMSList() {
+        return (nmsList);
+    }
+
+    private void setNMSList(ArrayList<NMS> l) {
+        nmsList = l;
+    }
+
+    public NMS[] getNMS() {
+
+        NMS[] result = null;
+
+        ArrayList<NMS> l = getNMSList();
+        if ((l != null) && (l.size() > 0)) {
+
+            result = l.toArray(new NMS[l.size()]);
+        }
+
+        return (result);
+    }
+
+    public void setNMS(NMS[] array) {
+
+        ArrayList<NMS> l = getNMSList();
+        if (l != null) {
+
+            NMS[] oldArray = null;
+            if (l.size() > 0) {
+
+                oldArray = l.toArray(new NMS[l.size()]);
+            }
+
+            l.clear();
+            if ((array != null) && (array.length > 0)) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    l.add(array[i]);
+                }
+            }
+
+            NMS[] newArray = null;
+            if (l.size() > 0) {
+
+                newArray = l.toArray(new NMS[l.size()]);
+            }
+        }
+    }
+
+/*
     public NMS getNMS() {
 
         NMS result = null;
@@ -184,6 +240,7 @@ public abstract class BaseFeed extends HttpServlet
 
         return (result);
     }
+*/
 
     public String getBaseURL(HttpServletRequest req) {
 
@@ -250,10 +307,11 @@ public abstract class BaseFeed extends HttpServlet
 
         File result = null;
 
-        NMS n = getNMS();
-        if (n instanceof BaseNMS) {
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)
+            && (array[0] instanceof BaseNMS)) {
 
-            BaseNMS bn = (BaseNMS) n;
+            BaseNMS bn = (BaseNMS) array[0];
             String path = bn.getConfiguredImageHome();
             if (path != null) {
 
@@ -284,11 +342,59 @@ public abstract class BaseFeed extends HttpServlet
         return (result);
     }
 
+    public State getState() {
+
+        State result = null;
+
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            result = array[0].getState();
+            if (result != null) {
+
+                for (int i = 1; i < array.length; i++) {
+
+                    result = result.merge(array[i].getState());
+                }
+            }
+        }
+
+        return (result);
+    }
+
     public Recording[] getRecordings() {
 
         Recording[] result = null;
 
-        NMS n = getNMS();
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<Recording> rlist = new ArrayList<Recording>();
+            for (int i = 0; i < array.length; i++) {
+
+                Recording[] rarray = getRecordings(array[i]);
+                if ((rarray != null) && (rarray.length > 0)) {
+
+                    for (int j = 0; j < rarray.length; j++) {
+
+                        rlist.add(rarray[j]);
+                    }
+                }
+            }
+
+            if (rlist.size() > 0) {
+
+                result = rlist.toArray(new Recording[rlist.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    public Recording[] getRecordings(NMS n) {
+
+        Recording[] result = null;
+
         System.out.println("nms: " + n);
         if (n != null) {
 
@@ -298,29 +404,22 @@ public abstract class BaseFeed extends HttpServlet
                 ArrayList<Recording> l = new ArrayList<Recording>();
                 for (int i = 0; i < array.length; i++) {
 
-                    String path = array[i].getPath();
+                    String surl = array[i].getStreamURL();
                     String iext = array[i].getIndexedExtension();
                     if (isRequireMp4()) {
 
-                        if ((path != null) && (iext != null)
-                            && (iext.equals("mp4"))) {
+                        if ((surl != null) && (iext != null)
+                            && (iext.equals("mp4"))
+                            && (surl.endsWith(iext))) {
 
-                            File tmp = new File(path + "." + iext);
-                            if ((tmp.exists()) && (tmp.isFile())) {
-
-                                l.add(array[i]);
-                            }
+                            l.add(array[i]);
                         }
 
                     } else {
 
-                        if ((path != null) && (iext != null)) {
+                        if (surl != null) {
 
-                            File tmp = new File(path + "." + iext);
-                            if ((tmp.exists()) && (tmp.isFile())) {
-
-                                l.add(array[i]);
-                            }
+                            l.add(array[i]);
                         }
                     }
                 }
@@ -339,7 +438,35 @@ public abstract class BaseFeed extends HttpServlet
 
         Upcoming[] result = null;
 
-        NMS n = getNMS();
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<Upcoming> ulist = new ArrayList<Upcoming>();
+            for (int i = 0; i < array.length; i++) {
+
+                Upcoming[] uarray = getUpcomings(array[i]);
+                if ((uarray != null) && (uarray.length > 0)) {
+
+                    for (int j = 0; j < uarray.length; j++) {
+
+                        ulist.add(uarray[j]);
+                    }
+                }
+            }
+
+            if (ulist.size() > 0) {
+
+                result = ulist.toArray(new Upcoming[ulist.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    public Upcoming[] getUpcomings(NMS n) {
+
+        Upcoming[] result = null;
+
         System.out.println("nms: " + n);
         if (n != null) {
 
@@ -353,7 +480,35 @@ public abstract class BaseFeed extends HttpServlet
 
         Video[] result = null;
 
-        NMS n = getNMS();
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<Video> vlist = new ArrayList<Video>();
+            for (int i = 0; i < array.length; i++) {
+
+                Video[] varray = getVideos(array[i]);
+                if ((varray != null) && (varray.length > 0)) {
+
+                    for (int j = 0; j < varray.length; j++) {
+
+                        vlist.add(varray[j]);
+                    }
+                }
+            }
+
+            if (vlist.size() > 0) {
+
+                result = vlist.toArray(new Video[vlist.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    public Video[] getVideos(NMS n) {
+
+        Video[] result = null;
+
         if (n != null) {
 
             result = n.getVideos();
@@ -366,7 +521,35 @@ public abstract class BaseFeed extends HttpServlet
 
         Channel[] result = null;
 
-        NMS n = getNMS();
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<Channel> clist = new ArrayList<Channel>();
+            for (int i = 0; i < array.length; i++) {
+
+                Channel[] carray = getChannels(array[i]);
+                if ((carray != null) && (carray.length > 0)) {
+
+                    for (int j = 0; j < carray.length; j++) {
+
+                        clist.add(carray[j]);
+                    }
+                }
+            }
+
+            if (clist.size() > 0) {
+
+                result = clist.toArray(new Channel[clist.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    public Channel[] getChannels(NMS n) {
+
+        Channel[] result = null;
+
         if (n != null) {
 
             result = n.getRecordableChannels();
@@ -379,7 +562,35 @@ public abstract class BaseFeed extends HttpServlet
 
         RecordingRule[] result = null;
 
-        NMS n = getNMS();
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<RecordingRule> rlist = new ArrayList<RecordingRule>();
+            for (int i = 0; i < array.length; i++) {
+
+                RecordingRule[] rarray = getRecordingRules(array[i]);
+                if ((rarray != null) && (rarray.length > 0)) {
+
+                    for (int j = 0; j < rarray.length; j++) {
+
+                        rlist.add(rarray[j]);
+                    }
+                }
+            }
+
+            if (rlist.size() > 0) {
+
+                result = rlist.toArray(new RecordingRule[rlist.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    public RecordingRule[] getRecordingRules(NMS n) {
+
+        RecordingRule[] result = null;
+
         if (n != null) {
 
             result = n.getRecordingRules();
@@ -392,7 +603,35 @@ public abstract class BaseFeed extends HttpServlet
 
         Task[] result = null;
 
-        NMS n = getNMS();
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<Task> tlist = new ArrayList<Task>();
+            for (int i = 0; i < array.length; i++) {
+
+                Task[] tarray = getTasks(array[i]);
+                if ((tarray != null) && (tarray.length > 0)) {
+
+                    for (int j = 0; j < tarray.length; j++) {
+
+                        tlist.add(tarray[j]);
+                    }
+                }
+            }
+
+            if (tlist.size() > 0) {
+
+                result = tlist.toArray(new Task[tlist.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    public Task[] getTasks(NMS n) {
+
+        Task[] result = null;
+
         if (n != null) {
 
             result = n.getTasks();
@@ -417,10 +656,16 @@ public abstract class BaseFeed extends HttpServlet
 
         Channel result = null;
 
-        NMS n = getNMS();
-        if ((n != null) && (listingId != null)) {
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0) && (listingId != null)) {
 
-            result = n.getChannelById(cid, listingId);
+            for (int i = 0; i < array.length; i++) {
+
+                result = array[i].getChannelById(cid, listingId);
+                if (result != null) {
+                    break;
+                }
+            }
         }
 
         return (result);
@@ -430,15 +675,25 @@ public abstract class BaseFeed extends HttpServlet
 
         ShowAiring[] result = null;
 
-        NMS n = getNMS();
-        if ((n != null) && (channelListing != null)) {
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0) && (channelListing != null)) {
 
             String[] parts = channelListing.split("_");
             if ((parts != null) && (parts.length == 2)) {
 
                 int id = Util.str2int(parts[0], 0);
-                Channel c = n.getChannelById(id, parts[1]);
-                if (c != null) {
+                Channel c = null;
+                NMS n = null;
+                for (int i = 0; i < array.length; i++) {
+
+                    c = array[i].getChannelById(id, parts[1]);
+                    if (c != null) {
+
+                        n = array[i];
+                        break;
+                    }
+                }
+                if ((n != null) && (c != null)) {
 
                     result = n.getShowAiringsByChannel(c);
                 }
@@ -452,7 +707,26 @@ public abstract class BaseFeed extends HttpServlet
 
         ShowAiring result = null;
 
-        NMS n = getNMS();
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                result = getShowAiringByChannel(array[i], c, showAiringId);
+                if (result != null) {
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    public ShowAiring getShowAiringByChannel(NMS n, Channel c,
+        String showAiringId) {
+
+        ShowAiring result = null;
+
         if ((n != null) && (c != null) && (showAiringId != null)) {
 
             ShowAiring[] array = n.getShowAiringsByChannel(c);
@@ -474,10 +748,12 @@ public abstract class BaseFeed extends HttpServlet
 
     public void schedule(RecordingRule rr) {
 
-        NMS n = getNMS();
-        if ((n != null) && (rr != null)) {
+        if (rr != null) {
 
-            n.schedule(rr);
+            NMS n = NMSUtil.select(getNMS(), rr.getHostPort());
+            if (n != null) {
+                n.schedule(rr);
+            }
         }
     }
 
@@ -926,7 +1202,35 @@ public abstract class BaseFeed extends HttpServlet
 
         ShowAiring[] result = null;
 
-        NMS n = getNMS();
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<ShowAiring> slist = new ArrayList<ShowAiring>();
+            for (int i = 0; i < array.length; i++) {
+
+                ShowAiring[] sarray = getShowAirings(array[i], term);
+                if ((sarray != null) && (sarray.length > 0)) {
+
+                    for (int j = 0; j < sarray.length; j++) {
+
+                        slist.add(sarray[j]);
+                    }
+                }
+            }
+
+            if (slist.size() > 0) {
+
+                result = slist.toArray(new ShowAiring[slist.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    public ShowAiring[] getShowAirings(NMS n, String term) {
+
+        ShowAiring[] result = null;
+
         if ((term != null) && (n != null)) {
 
             result = n.getShowAirings(term, NMSConstants.SEARCH_TITLE);
@@ -943,10 +1247,25 @@ public abstract class BaseFeed extends HttpServlet
 
         String result = "\n";
 
-        NMS n = getNMS();
-        if ((id != null) && (n != null)) {
+        NMS[] array = getNMS();
+        if ((id != null) && (array != null) && (array.length > 0)) {
 
-            n.removeRecording(n.getRecordingById(id), b);
+            NMS n = null;
+            Recording r = null;
+            for (int i = 0; i < array.length; i++) {
+
+                r = array[i].getRecordingById(id);
+                if (r != null) {
+
+                    n = array[i];
+                    break;
+                }
+            }
+
+            if ((n != null) && (r != null)) {
+
+                n.removeRecording(r, b);
+            }
         }
 
         return (result);
@@ -954,42 +1273,14 @@ public abstract class BaseFeed extends HttpServlet
 
     public void overrideUpcoming(Upcoming u) {
 
-        NMS n = getNMS();
-        if (n != null) {
+        if (u != null) {
 
-            n.overrideUpcoming(u);
-        }
-    }
+            NMS n = NMSUtil.select(getNMS(), u.getHostPort());
+            if (n != null) {
 
-    public String getDocumentRoot() {
-
-        String result = "/var/www";
-
-        NMS n = getNMS();
-        if (n != null) {
-
-            result = n.getDocumentRoot();
-        }
-
-        return (result);
-    }
-
-    public String computeURL(String urlbase, String path) {
-
-        String result = urlbase;
-
-        String root = getDocumentRoot();
-        if ((root != null) && (path != null)) {
-
-            result = result.substring(0, result.lastIndexOf(":"));
-            int index = path.indexOf(root);
-            if (index != -1) {
-
-                result = result + path.substring(index + root.length());
+                n.overrideUpcoming(u);
             }
         }
-
-        return (result);
     }
 
 }

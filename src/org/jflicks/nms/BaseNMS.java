@@ -2394,6 +2394,13 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
+    public State getState() {
+        return (new State(this));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean supportsLiveTV() {
         return (getLive() != null);
     }

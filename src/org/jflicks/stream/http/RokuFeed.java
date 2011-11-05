@@ -277,7 +277,8 @@ public class RokuFeed extends BaseFeed {
             String url = r.getStreamURL();
             if (url != null) {
 
-                if (url.endsWith(r.getIndexedExtension())) {
+                String iext = r.getIndexedExtension();
+                if ((iext != null) && (url.endsWith(iext))) {
                     url = url.substring(0, url.lastIndexOf("."));
                 }
                 result.setAttribute("sdImg", url + ".roku_sd.png");
