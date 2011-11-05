@@ -48,6 +48,7 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
     private int startIndex;
     private Animator[] animators;
     private Object selectedObject;
+    private Object pageModeSelectedObject;
     private String propertyName;
     private boolean pageMode;
 
@@ -93,7 +94,11 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
 
         Object old = selectedObject;
         selectedObject = o;
-        firePropertyChange(getPropertyName(), old, selectedObject);
+        if (!isPageMode()) {
+            firePropertyChange(getPropertyName(), old, selectedObject);
+        } else {
+            pageModeSelectedObject = old;
+        }
     }
 
     protected String getPropertyName() {
@@ -109,7 +114,12 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
     }
 
     private void setPageMode(boolean b) {
+
         pageMode = b;
+        if (!pageMode) {
+            firePropertyChange(getPropertyName(), pageModeSelectedObject,
+                selectedObject);
+        }
     }
 
     private int getCount() {
@@ -623,34 +633,31 @@ public abstract class BaseListPanel extends BaseCustomizePanel {
      */
     protected void update() {
 
-        if (!isPageMode()) {
+        Object[] array = getObjects();
+        JXLabel[] labs = getLabels();
+        if ((array != null) && (labs != null)) {
 
-            Object[] array = getObjects();
-            JXLabel[] labs = getLabels();
-            if ((array != null) && (labs != null)) {
+            int index = getStartIndex();
+            for (int i = 0; i < labs.length; i++) {
 
-                int index = getStartIndex();
-                for (int i = 0; i < labs.length; i++) {
+                if (index < array.length) {
 
-                    if (index < array.length) {
+                    labs[i].setText(array[index].toString());
 
-                        labs[i].setText(array[index].toString());
-
-                    } else {
-                        labs[i].setText("");
-                    }
-
-                    index++;
+                } else {
+                    labs[i].setText("");
                 }
 
-                applyColor();
-                int sindex = getSelectedIndex() + getStartIndex();
-                if (array.length > sindex) {
-                    setSelectedObject(array[sindex]);
-                }
-
-                animate();
+                index++;
             }
+
+            applyColor();
+            int sindex = getSelectedIndex() + getStartIndex();
+            if (array.length > sindex) {
+                setSelectedObject(array[sindex]);
+            }
+
+            animate();
         }
     }
 

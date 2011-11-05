@@ -474,38 +474,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         } else {
             recordingRules = null;
         }
-
-        applyRecordingRule();
-    }
-
-    private void applyRecordingRule() {
-
-        RecordingRule[] array = getRecordingRules();
-        RecordingRuleListPanel lp = getRecordingRuleListPanel();
-        if ((array != null) && (lp != null)) {
-
-            int start = lp.getStartIndex();
-            int vis = lp.getVisibleCount();
-            Arrays.sort(array, new RecordingRuleSortByName());
-            lp.setRecordingRules(array);
-            log(DEBUG, "start: " + start);
-            log(DEBUG, "vis: " + vis);
-            log(DEBUG, "array.length: " + array.length);
-            if ((start + vis) <= array.length) {
-
-                // Safe to reset the start index.
-                lp.setStartIndex(start);
-
-            } else {
-
-                start--;
-                if ((start > 0) && ((start + vis) <= array.length)) {
-
-                    // Safe again to reset to start index minus one.
-                    lp.setStartIndex(start);
-                }
-            }
-        }
     }
 
     private boolean isParameterByTitle() {
@@ -825,7 +793,11 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                         all.setName("All");
                         rlist.add(0, all);
                         rules = rlist.toArray(new RecordingRule[rlist.size()]);
+                        int sindex = rrlp.getStartIndex();
+                        int selindex = rrlp.getSelectedIndex();
                         rrlp.setRecordingRules(rules);
+                        rrlp.setStartIndex(sindex);
+                        rrlp.setSelectedIndex(selindex);
                     }
 
                     updateLayout(false);
@@ -1770,19 +1742,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                 if (isParameterUpcomingRecordings()) {
 
-                    RecordingRuleListPanel rrlp = getRecordingRuleListPanel();
-                    NMS[] array = getNMS();
-                    if ((rrlp != null) && (array != null)
-                        && (array.length > 0)) {
-
-                        RecordingRule[] rules = array[0].getRecordingRules();
-                        if (rules != null) {
-
-                            Arrays.sort(rules, new RecordingRuleSortByName());
-                        }
-
-                        rrlp.setRecordingRules(rules);
-                    }
+                    setVisible(true);
                 }
             }
         }
