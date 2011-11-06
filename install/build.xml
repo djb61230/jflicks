@@ -47,6 +47,8 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-nms-system.jar"
             todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-nms-remote.jar"
+            todir="server/bundle"/>
         <copy file="${bundle}/jflicks-photomanager-digikam.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-stream-http.jar"
