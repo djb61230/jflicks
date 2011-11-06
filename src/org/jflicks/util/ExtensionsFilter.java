@@ -83,7 +83,7 @@ public class ExtensionsFilter implements FilenameFilter {
         boolean result = false;
 
         String[] array = getExtensions();
-        if ((name != null) && (array != null)) {
+        if ((name != null) && (array != null) && (!name.startsWith("."))) {
 
             for (int i = 0; i < array.length; i++) {
 
