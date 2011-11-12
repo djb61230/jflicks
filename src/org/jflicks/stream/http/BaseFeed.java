@@ -1125,6 +1125,7 @@ public abstract class BaseFeed extends HttpServlet
 
                                 // We have to make a new one.
                                 rr = new RecordingRule();
+                                rr.setHostPort(sa.getHostPort());
                             }
 
                             rr.setShowAiring(sa);
@@ -1154,6 +1155,7 @@ public abstract class BaseFeed extends HttpServlet
 
                                 // We have to make a new one.
                                 rr = new RecordingRule();
+                                rr.setHostPort(sa.getHostPort());
                             }
 
                             // Lots to set for a series rule.

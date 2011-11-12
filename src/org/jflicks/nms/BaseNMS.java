@@ -1108,14 +1108,16 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         ShowAiring[] result = null;
 
         ProgramData[] array = getProgramData();
-        if (array != null) {
+        Channel[] chans = getRecordableChannels();
+        if ((array != null) && (chans != null)) {
 
+            Arrays.sort(chans);
             for (int i = 0; i < array.length; i++) {
 
                 result = array[i].getShowAirings(pattern, searchType);
                 if (result != null) {
 
-                    result = substituteFromCache(result);
+                    result = substituteFromCache(result, chans);
                     Arrays.sort(result);
 
                     String hp = getHost() + ":" + getPort();
@@ -1204,7 +1206,8 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         return (result);
     }
 
-    private ShowAiring[] substituteFromCache(ShowAiring[] array) {
+    private ShowAiring[] substituteFromCache(ShowAiring[] array,
+        Channel[] chans) {
 
         ShowAiring[] result = array;
 
@@ -1213,7 +1216,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             ArrayList<ShowAiring> l = new ArrayList<ShowAiring>();
             for (int i = 0; i < result.length; i++) {
 
-                ShowAiring sa = substituteFromCache(array[i]);
+                ShowAiring sa = substituteFromCache(array[i], chans);
                 if (sa != null) {
 
                     l.add(sa);
@@ -1229,17 +1232,17 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         return (result);
     }
 
-    private ShowAiring substituteFromCache(ShowAiring sa) {
+    private ShowAiring substituteFromCache(ShowAiring sa, Channel[] chans) {
 
         ShowAiring result = null;
 
-        if (sa != null) {
+        if ((sa != null) && (chans != null)) {
 
             Airing a = sa.getAiring();
             if (a != null) {
 
                 Channel c = getChannelById(a.getChannelId(), a.getListingId());
-                if (c != null) {
+                if ((c != null) && (Arrays.binarySearch(chans, c) >= 0)) {
 
                     ShowAiring[] array = getShowAiringsByChannel(c);
                     if (array != null) {
