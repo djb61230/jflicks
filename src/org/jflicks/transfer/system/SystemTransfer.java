@@ -37,7 +37,7 @@ import org.jflicks.transfer.BaseTransfer;
 public class SystemTransfer extends BaseTransfer implements JobListener,
     ActionListener {
 
-    private CurlTransferJob curlTransferJob;
+    private WgetTransferJob wgetTransferJob;
     private JobContainer jobContainer;
     private Timer timer;
     private String maxRate;
@@ -62,12 +62,12 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
         maxRate = s;
     }
 
-    private CurlTransferJob getCurlTransferJob() {
-        return (curlTransferJob);
+    private WgetTransferJob getWgetTransferJob() {
+        return (wgetTransferJob);
     }
 
-    private void setCurlTransferJob(CurlTransferJob j) {
-        curlTransferJob = j;
+    private void setWgetTransferJob(WgetTransferJob j) {
+        wgetTransferJob = j;
     }
 
     private JobContainer getJobContainer() {
@@ -102,13 +102,13 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
         if (r != null) {
 
             // First thing we do is stop the last one if it exists.
-            CurlTransferJob job = getCurlTransferJob();
+            WgetTransferJob job = getWgetTransferJob();
             JobContainer jc = getJobContainer();
             if ((job != null) && (jc != null)) {
 
                 job.setRecording(null);
                 jc.stop();
-                setCurlTransferJob(null);
+                setWgetTransferJob(null);
                 setJobContainer(null);
             }
 
@@ -118,10 +118,10 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
 
                 result = local.getPath();
 
-                job = new CurlTransferJob(r, local, getMaxRate());
+                job = new WgetTransferJob(r, local, getMaxRate());
                 job.addJobListener(this);
                 jc = JobManager.getJobContainer(job);
-                setCurlTransferJob(job);
+                setWgetTransferJob(job);
                 setJobContainer(jc);
                 jc.start();
 
@@ -219,7 +219,7 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            setCurlTransferJob(null);
+            setWgetTransferJob(null);
             setJobContainer(null);
             log(DEBUG, "curl job done!!");
 
