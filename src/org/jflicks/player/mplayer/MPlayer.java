@@ -29,9 +29,9 @@ import java.util.Arrays;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JWindow;
 import javax.swing.Timer;
 
 import com.sun.jna.Native;
@@ -52,7 +52,7 @@ import org.jflicks.util.Util;
  */
 public class MPlayer extends BasePlayer {
 
-    private JDialog dialog;
+    private JWindow window;
     private JPanel keyPanel;
     private Canvas canvas;
     private MPlayerJob mplayerJob;
@@ -181,12 +181,12 @@ public class MPlayer extends BasePlayer {
         }
     }
 
-    private JDialog getDialog() {
-        return (dialog);
+    private JWindow getWindow() {
+        return (window);
     }
 
-    private void setDialog(JDialog d) {
-        dialog = d;
+    private void setWindow(JWindow w) {
+        window = w;
     }
 
     private JPanel getKeyPanel() {
@@ -380,11 +380,10 @@ public class MPlayer extends BasePlayer {
                 int width = (int) r.getWidth();
                 int height = (int) r.getHeight();
 
-                JDialog win = new JDialog(getFrame());
-                win.setUndecorated(true);
+                JWindow win = new JWindow(getFrame());
                 win.setBounds(x, y, width, height);
                 win.setBackground(Color.BLACK);
-                setDialog(win);
+                setWindow(win);
 
                 Canvas can = getCanvas();
                 JPanel pan = getKeyPanel();
@@ -410,20 +409,6 @@ public class MPlayer extends BasePlayer {
                 job = new MPlayerJob(this, wid, getArgs(), position, time, url,
                     isAutoSkip());
                 setMPlayerJob(job);
-
-                if (Util.isLinux()) {
-
-                    final JPanel fpan = pan;
-                    ActionListener focusPerformer = new ActionListener() {
-                        public void actionPerformed(ActionEvent evt) {
-
-                            fpan.requestFocus();
-                        }
-                    };
-                    Timer focusTimer = new Timer(5000, focusPerformer);
-                    focusTimer.setRepeats(false);
-                    focusTimer.start();
-                }
             }
 
             boolean preferTime = true;
@@ -562,12 +547,12 @@ public class MPlayer extends BasePlayer {
      */
     public void dispose() {
 
-        JDialog w = getDialog();
+        JWindow w = getWindow();
         if (w != null) {
 
             w.setVisible(false);
             w.dispose();
-            setDialog(null);
+            setWindow(null);
         }
     }
 

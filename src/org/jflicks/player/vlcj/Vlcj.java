@@ -353,17 +353,6 @@ public class Vlcj extends BasePlayer {
                 float ftmp = (float) b.getPosition();
                 mediaPlayer.setPosition(ftmp / 1000.0f);
             }
-
-            final JPanel fpan = pan;
-            ActionListener focusPerformer = new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-
-                    fpan.requestFocus();
-                }
-            };
-            Timer focusTimer = new Timer(5000, focusPerformer);
-            focusTimer.setRepeats(false);
-            focusTimer.start();
         }
     }
 
