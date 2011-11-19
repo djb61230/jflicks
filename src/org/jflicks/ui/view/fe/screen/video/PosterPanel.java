@@ -27,11 +27,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JLayeredPane;
 
-import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.TimingTargetAdapter;
-import org.jdesktop.animation.timing.interpolation.PropertySetter;
+import org.jdesktop.core.animation.timing.Animator;
+import org.jdesktop.core.animation.timing.TimingTarget;
+import org.jdesktop.core.animation.timing.TimingTargetAdapter;
+import org.jdesktop.core.animation.timing.PropertySetter;
 import org.jdesktop.swingx.painter.MattePainter;
 
 import org.jflicks.nms.Video;
@@ -93,9 +95,12 @@ public class PosterPanel extends BaseCustomizePanel {
         setVideoList(new ArrayList<Video>());
         setBufferedImageList(new ArrayList<BufferedImage>());
 
-        PropertySetter ps = new PropertySetter(this, "glowAlpha", 0.0f, 1.0f);
-        Animator animator = new Animator(600, Animator.INFINITE,
-            Animator.RepeatBehavior.REVERSE, ps);
+        TimingTarget tt = PropertySetter.getTarget(this, "glowAlpha",
+            Float.valueOf(0.0f), Float.valueOf(1.0f));
+        Animator animator =
+            new Animator.Builder().setDuration(250,
+                TimeUnit.MILLISECONDS).setRepeatCount(
+                    Animator.INFINITE).addTarget(tt).build();
         setGlowAnimator(animator);
     }
 
@@ -366,8 +371,8 @@ public class PosterPanel extends BaseCustomizePanel {
                 }
 
                 itts[i] = new ImageTimingTarget(start, left, right, parray[i]);
-                anis[i] = new Animator(180, itts[i]);
-                anis[i].setResolution(10);
+                anis[i] = new Animator.Builder().setDuration(180,
+                    TimeUnit.MILLISECONDS).addTarget(itts[i]).build();
             }
 
             setImageTimingTargets(itts);
@@ -530,12 +535,6 @@ public class PosterPanel extends BaseCustomizePanel {
 
                 array[i].stop();
             }
-        }
-
-        Animator glow = getGlowAnimator();
-        if (glow != null) {
-
-            glow.stop();
         }
     }
 
@@ -783,7 +782,7 @@ public class PosterPanel extends BaseCustomizePanel {
             current = p;
         }
 
-        public void end() {
+        public void end(Animator source) {
 
             current.x = start.x;
             current.y = start.y;
@@ -796,7 +795,7 @@ public class PosterPanel extends BaseCustomizePanel {
             }
         }
 
-        public void timingEvent(float fraction) {
+        public void timingEvent(Animator source, double fraction) {
 
             if (isGoLeft()) {
 

@@ -19,6 +19,7 @@ package org.jflicks.ui.view.fe;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
@@ -37,8 +39,10 @@ import javax.swing.JLayeredPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
-import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.interpolation.PropertySetter;
+import org.jdesktop.core.animation.timing.Animator;
+import org.jdesktop.core.animation.timing.KeyFrames;
+import org.jdesktop.core.animation.timing.PropertySetter;
+import org.jdesktop.core.animation.timing.TimingTarget;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.painter.ImagePainter;
@@ -491,15 +495,22 @@ public class TextImagePanel extends BaseCustomizePanel
 
                 JXLabel[] labs = list.toArray(new JXLabel[list.size()]);
 
-                FontEvaluator feval = new FontEvaluator(getMediumFont(),
-                    getLargeFont(), getMediumFontSize(), getLargeFontSize());
+                FontEvaluator feval = new FontEvaluator(
+                    getMediumFont(), getLargeFont(), getMediumFontSize(),
+                    getLargeFontSize());
+
+                KeyFrames.Builder<Font> kfb = new KeyFrames.Builder<Font>();
+                kfb.addFrames(feval.getFonts());
+                kfb.setEvaluator(feval);
+                KeyFrames<Font> fontFrames = kfb.build();
                 Animator[] anis = new Animator[tarray.length];
                 for (int i = 0; i < labs.length; i++) {
 
-                    anis[i] = PropertySetter.createAnimator(ATIME, labs[i],
-                        "font", feval, getMediumFont(), getLargeFont());
-                    anis[i].setEndBehavior(Animator.EndBehavior.HOLD);
-                    anis[i].setResolution(RESOLUTION);
+                    TimingTarget tt =
+                        PropertySetter.getTarget(labs[i], "font", fontFrames);
+                    anis[i] = new Animator.Builder().setDuration(ATIME,
+                        TimeUnit.MILLISECONDS).setEndBehavior(
+                        Animator.EndBehavior.HOLD).addTarget(tt).build();
                 }
 
                 setLabels(labs);
@@ -531,9 +542,6 @@ public class TextImagePanel extends BaseCustomizePanel
                     }
                 }
             }
-
-            //labelMaxWidth += 8;
-            //labelMaxHeight += 4;
 
             // We also have to take into account all the submenu items
             // to make sure the Label won't be too big for the popup panel.
@@ -634,10 +642,13 @@ public class TextImagePanel extends BaseCustomizePanel
                         (int) popupPanelWidth,
                         (int) ((kids.length * popupLabelHeight)
                         + ((kids.length + 1) * 4)));
+
+                    TimingTarget tt = PropertySetter.getTarget(popup, "alpha",
+                        Float.valueOf(0.0f),
+                        Float.valueOf((float) getPanelAlpha()));
                     Animator popupAnimator =
-                        PropertySetter.createAnimator(ATIME,
-                        popup, "alpha", 0.0f, (float) getPanelAlpha());
-                    popupAnimator.setResolution(RESOLUTION);
+                        new Animator.Builder().setDuration(ATIME,
+                            TimeUnit.MILLISECONDS).addTarget(tt).build();
                     addAnimator(popup, popupAnimator);
 
                     JXLabel[] kidlabels = new JXLabel[kids.length];
@@ -699,9 +710,11 @@ public class TextImagePanel extends BaseCustomizePanel
             backPanel.setBounds(0, 0, (int) width, (int) height);
             pane.add(backPanel, Integer.valueOf(100));
 
-            Animator backAnimator = PropertySetter.createAnimator(ATIME,
-                backPanel, "alpha", 0.0f, 1.0f);
-            backAnimator.setResolution(RESOLUTION);
+            TimingTarget tt = PropertySetter.getTarget(backPanel, "alpha",
+                Float.valueOf(0.0f), Float.valueOf(1.0f));
+            Animator backAnimator =
+                new Animator.Builder().setDuration(ATIME,
+                    TimeUnit.MILLISECONDS).addTarget(tt).build();
             setBackgroundAnimator(backAnimator);
 
             // Start at the first item.
@@ -767,9 +780,7 @@ public class TextImagePanel extends BaseCustomizePanel
                 }
 
                 array[old].setForeground(getUnselectedColor());
-                anis[old].setStartDirection(Animator.Direction.BACKWARD);
-                anis[old].setStartFraction(1.0f);
-                anis[old].start();
+                anis[old].startReverse();
             }
 
             if ((current >= 0) && (current < array.length)) {
@@ -779,8 +790,6 @@ public class TextImagePanel extends BaseCustomizePanel
                 }
 
                 array[current].setForeground(getSelectedColor());
-                anis[current].setStartDirection(Animator.Direction.FORWARD);
-                anis[current].setStartFraction(0.0f);
                 anis[current].start();
 
                 TextImage currentTextImage = getCurrentTextImage(current);
@@ -961,8 +970,6 @@ public class TextImagePanel extends BaseCustomizePanel
                         a.stop();
                     }
 
-                    a.setStartDirection(Animator.Direction.FORWARD);
-                    a.setStartFraction(0.0f);
                     a.start();
                 }
             }
@@ -989,9 +996,7 @@ public class TextImagePanel extends BaseCustomizePanel
                         a.stop();
                     }
 
-                    a.setStartDirection(Animator.Direction.BACKWARD);
-                    a.setStartFraction((float) getPanelAlpha());
-                    a.start();
+                    a.startReverse();
                 }
             }
         }

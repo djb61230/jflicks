@@ -17,6 +17,7 @@
 package org.jflicks.ui.view.fe;
 
 import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
 
 import org.jflicks.mvc.Controller;
 import org.jflicks.mvc.View;
@@ -24,6 +25,10 @@ import org.jflicks.rc.RCTracker;
 import org.jflicks.ui.view.fe.screen.ScreenTracker;
 import org.jflicks.util.BaseActivator;
 import org.jflicks.util.EventSender;
+
+import org.jdesktop.core.animation.timing.Animator;
+import org.jdesktop.core.animation.timing.TimingSource;
+import org.jdesktop.swing.animation.timing.sources.SwingTimerTimingSource;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventConstants;
@@ -44,6 +49,7 @@ public class Activator extends BaseActivator {
     private RCTracker rcTracker;
     private ScreenTracker screenTracker;
     private ServiceTracker logServiceTracker;
+    private TimingSource timingSource;
 
     /**
      * {@inheritDoc}
@@ -51,6 +57,10 @@ public class Activator extends BaseActivator {
     public void start(BundleContext bc) {
 
         setBundleContext(bc);
+
+        timingSource = new SwingTimerTimingSource(10, TimeUnit.MILLISECONDS);
+        Animator.setDefaultTimingSource(timingSource);
+        timingSource.init();
 
         FrontEndView v = new FrontEndView();
         v.setBundleContext(bc);
@@ -92,6 +102,10 @@ public class Activator extends BaseActivator {
      * {@inheritDoc}
      */
     public void stop(BundleContext context) {
+
+        if (timingSource != null) {
+            timingSource.dispose();
+        }
 
         ServiceTracker cst = getControllerServiceTracker();
         if (cst != null) {

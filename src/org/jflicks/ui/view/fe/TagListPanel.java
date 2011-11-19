@@ -18,6 +18,7 @@ package org.jflicks.ui.view.fe;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -32,8 +34,10 @@ import javax.swing.JLayeredPane;
 
 import org.jflicks.photomanager.Tag;
 
-import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.interpolation.PropertySetter;
+import org.jdesktop.core.animation.timing.Animator;
+import org.jdesktop.core.animation.timing.KeyFrames;
+import org.jdesktop.core.animation.timing.PropertySetter;
+import org.jdesktop.core.animation.timing.TimingTarget;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.painter.MattePainter;
 
@@ -535,6 +539,10 @@ public class TagListPanel extends BaseCustomizePanel {
 
             FontEvaluator feval = new FontEvaluator(getSmallFont(),
                 getLargeFont(), getSmallFontSize(), getLargeFontSize());
+            KeyFrames.Builder<Font> kfb = new KeyFrames.Builder<Font>();
+            kfb.addFrames(feval.getFonts());
+            kfb.setEvaluator(feval);
+            KeyFrames<Font> fontFrames = kfb.build();
             Animator[] anis = new Animator[array.length];
             double center = (realHeight - (vcount * labelMaxHeight)) / 2.0;
             double top = vgap + center;
@@ -545,8 +553,11 @@ public class TagListPanel extends BaseCustomizePanel {
                     (int) labelMaxHeight);
                 pane.add(array[i], Integer.valueOf(110));
                 top += labelMaxHeight;
-                anis[i] = PropertySetter.createAnimator(250, array[i],
-                    "font", feval, getSmallFont(), getLargeFont());
+
+                TimingTarget tt =
+                    PropertySetter.getTarget(array[i], "font", fontFrames);
+                anis[i] = new Animator.Builder().setDuration(250,
+                    TimeUnit.MILLISECONDS).addTarget(tt).build();
             }
 
             setAnimators(anis);
@@ -1038,16 +1049,12 @@ public class TagListPanel extends BaseCustomizePanel {
             // Animate the old selected so it goes small...
             if ((old >= 0) && (old < array.length) && (old != current)) {
 
-                anis[old].setStartDirection(Animator.Direction.BACKWARD);
-                anis[old].setStartFraction(1.0f);
-                anis[old].start();
+                anis[old].startReverse();
             }
 
             // Animate the new selected so it goes large...
             if ((current >= 0) && (current < array.length)) {
 
-                anis[current].setStartDirection(Animator.Direction.FORWARD);
-                anis[current].setStartFraction(0.0f);
                 anis[current].start();
             }
         }

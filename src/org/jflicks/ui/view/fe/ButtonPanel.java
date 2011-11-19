@@ -23,14 +23,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.KeyStroke;
 
-import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.interpolation.PropertySetter;
+import org.jdesktop.core.animation.timing.Animator;
+import org.jdesktop.core.animation.timing.PropertySetter;
+import org.jdesktop.core.animation.timing.TimingTarget;
 import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
 import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.CompoundPainter;
@@ -206,8 +208,12 @@ public class ButtonPanel extends BaseCustomizePanel {
                 p.setBounds(x, y, pwidth, pheight);
                 pane.add(p, Integer.valueOf(100));
 
-                Animator fadein = PropertySetter.createAnimator(300,
-                    this, "alpha", 0.0f, (float) getPanelAlpha());
+                TimingTarget tt = PropertySetter.getTarget(this, "alpha",
+                    Float.valueOf(0.0f),
+                    Float.valueOf((float) getPanelAlpha()));
+                Animator fadein =
+                    new Animator.Builder().setDuration(300,
+                        TimeUnit.MILLISECONDS).addTarget(tt).build();
                 fadein.start();
             }
         }

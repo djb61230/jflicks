@@ -21,14 +21,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
-import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.interpolation.PropertySetter;
+import org.jdesktop.core.animation.timing.Animator;
+import org.jdesktop.core.animation.timing.PropertySetter;
+import org.jdesktop.core.animation.timing.TimingTarget;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -410,8 +412,11 @@ public class LabelPanel extends BaseCustomizePanel {
                         (int) labwidth, (int) labheight);
                     pane.add(labelPanel, Integer.valueOf(100));
 
-                    anis[i] = PropertySetter.createAnimator(750, labelPanel,
-                        "alpha", 0.0f, getAlpha());
+                    TimingTarget tt = PropertySetter.getTarget(labelPanel,
+                        "alpha", Float.valueOf(0.0f),
+                        Float.valueOf((float) getPanelAlpha()));
+                    anis[i] = new Animator.Builder().setDuration(750,
+                        TimeUnit.MILLISECONDS).addTarget(tt).build();
                 }
                 setAnimators(anis);
 
@@ -473,8 +478,11 @@ public class LabelPanel extends BaseCustomizePanel {
                         (int) labwidth, (int) labheight);
                     pane.add(labelPanel, Integer.valueOf(100));
 
-                    anis[i] = PropertySetter.createAnimator(750, labelPanel,
-                        "alpha", 0.0f, getAlpha());
+                    TimingTarget tt = PropertySetter.getTarget(labelPanel,
+                        "alpha", Float.valueOf(0.0f),
+                        Float.valueOf((float) getPanelAlpha()));
+                    anis[i] = new Animator.Builder().setDuration(750,
+                        TimeUnit.MILLISECONDS).addTarget(tt).build();
                 }
                 setAnimators(anis);
 

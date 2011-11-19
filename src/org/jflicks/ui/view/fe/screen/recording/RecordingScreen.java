@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.TimeUnit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.AbstractAction;
@@ -53,8 +54,9 @@ import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.util.AWTUtil;
 import org.jflicks.util.Util;
 
-import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.interpolation.PropertySetter;
+import org.jdesktop.core.animation.timing.Animator;
+import org.jdesktop.core.animation.timing.PropertySetter;
+import org.jdesktop.core.animation.timing.TimingTarget;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -580,8 +582,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
             JXPanel ssp = new JXPanel();
             setScreenShotPanel(ssp);
-            Animator sani = PropertySetter.createAnimator(250,
-                ssp, "alpha", 0.0f, 1.0f);
+
+            TimingTarget tt = PropertySetter.getTarget(ssp, "alpha",
+                Float.valueOf(0.0f), Float.valueOf(1.0f));
+            Animator sani =
+                new Animator.Builder().setDuration(250,
+                    TimeUnit.MILLISECONDS).addTarget(tt).build();
             setScreenShotAnimator(sani);
 
             gllp.setBounds(wspan, hspan, listwidth, listheight);

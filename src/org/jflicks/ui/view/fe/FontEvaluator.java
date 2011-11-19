@@ -18,7 +18,7 @@ package org.jflicks.ui.view.fe;
 
 import java.awt.Font;
 
-import org.jdesktop.animation.timing.interpolation.Evaluator;
+import org.jdesktop.core.animation.timing.Evaluator;
 
 /**
  * An evaluator that can interpolate for the Font property.
@@ -26,7 +26,7 @@ import org.jdesktop.animation.timing.interpolation.Evaluator;
  * @author Doug Barnum
  * @version 1.0
  */
-public class FontEvaluator extends Evaluator {
+public class FontEvaluator implements Evaluator<Font> {
 
     private Font[] fonts;
 
@@ -62,25 +62,34 @@ public class FontEvaluator extends Evaluator {
      * @param fraction The place in the animation.
      * @return The determined Font.
      */
-    public Font evaluate(Object one, Object two, float fraction) {
+    public Font evaluate(Font f0, Font f1, double fraction) {
 
         Font result = null;
 
-        if ((one instanceof Font) && (two instanceof Font)) {
+        if ((f0 != null) && (f1 != null)) {
 
-            Font f0 = (Font) one;
-            Font f1 = (Font) two;
-
-            int factor = f1.getSize() - f0.getSize();
-            float ffraction = fraction * factor;
-            int ifraction = (int) ffraction;
-            if (ifraction > fonts.length) {
-                ifraction = fonts.length;
+            double v0 = f0.getSize();
+            double v1 = f1.getSize();
+            double v = v0 + (v1 - v0) * fraction;
+            int ivalue = (int) v;
+            ivalue -= fonts[0].getSize();
+            if (ivalue < 0) {
+                ivalue = 0;
+            } else if (ivalue >= fonts.length) {
+                ivalue = fonts.length - 1;
             }
-            result = fonts[ifraction];
+            result = fonts[ivalue];
         }
 
         return (result);
+    }
+
+    public Class<Font> getEvaluatorClass() {
+        return (Font.class);
+    }
+
+    public Font[] getFonts() {
+        return (fonts);
     }
 
 }

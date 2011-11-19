@@ -18,7 +18,8 @@ Export-Package:\
  org.jdesktop.swingx;version="1.0.0",\
  org.jdesktop.swingx.graphics;version="1.0.0",\
  org.jdesktop.swingx.icon;version="1.0.0",\
- org.jdesktop.swingx.painter;version="1.0.0"
+ org.jdesktop.swingx.painter;version="1.0.0",\
+ org.jdesktop.swingx.painter.effects;version="1.0.0"
 
 Import-Package:\
  org.jdesktop.beans;version="1.0.0",\
@@ -26,6 +27,7 @@ Import-Package:\
  org.jdesktop.swingx.graphics;version="1.0.0",\
  org.jdesktop.swingx.icon;version="1.0.0",\
  org.jdesktop.swingx.painter;version="1.0.0",\
+ org.jdesktop.swingx.painter.effects;version="1.0.0",\
  javax.swing,\
  javax.imageio
 

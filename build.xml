@@ -698,7 +698,7 @@
         />
 
         <bnd
-            classpath="${lib}/TimingFramework-1.0.jar"
+            classpath="${lib}/timingframework-swing-4.1.jar"
             eclipse="false"
             failok="false"
             exceptions="true"
