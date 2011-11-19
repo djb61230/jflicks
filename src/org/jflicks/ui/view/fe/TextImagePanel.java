@@ -19,6 +19,7 @@ package org.jflicks.ui.view.fe;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,6 +59,8 @@ public class TextImagePanel extends BaseCustomizePanel
 
     private static final double HGAP = 0.02;
     private static final double VGAP = 0.02;
+    private static final int ATIME = 250;
+    private static final int RESOLUTION = 10;
 
     private ArrayList<ActionListener> actionList =
         new ArrayList<ActionListener>();
@@ -493,10 +496,10 @@ public class TextImagePanel extends BaseCustomizePanel
                 Animator[] anis = new Animator[tarray.length];
                 for (int i = 0; i < labs.length; i++) {
 
-                    anis[i] = PropertySetter.createAnimator(250, labs[i],
+                    anis[i] = PropertySetter.createAnimator(ATIME, labs[i],
                         "font", feval, getMediumFont(), getLargeFont());
                     anis[i].setEndBehavior(Animator.EndBehavior.HOLD);
-                    anis[i].setResolution(10);
+                    anis[i].setResolution(RESOLUTION);
                 }
 
                 setLabels(labs);
@@ -528,6 +531,9 @@ public class TextImagePanel extends BaseCustomizePanel
                     }
                 }
             }
+
+            //labelMaxWidth += 8;
+            //labelMaxHeight += 4;
 
             // We also have to take into account all the submenu items
             // to make sure the Label won't be too big for the popup panel.
@@ -629,9 +635,9 @@ public class TextImagePanel extends BaseCustomizePanel
                         (int) ((kids.length * popupLabelHeight)
                         + ((kids.length + 1) * 4)));
                     Animator popupAnimator =
-                        PropertySetter.createAnimator(300,
+                        PropertySetter.createAnimator(ATIME,
                         popup, "alpha", 0.0f, (float) getPanelAlpha());
-                    popupAnimator.setResolution(10);
+                    popupAnimator.setResolution(RESOLUTION);
                     addAnimator(popup, popupAnimator);
 
                     JXLabel[] kidlabels = new JXLabel[kids.length];
@@ -693,9 +699,9 @@ public class TextImagePanel extends BaseCustomizePanel
             backPanel.setBounds(0, 0, (int) width, (int) height);
             pane.add(backPanel, Integer.valueOf(100));
 
-            Animator backAnimator = PropertySetter.createAnimator(300,
+            Animator backAnimator = PropertySetter.createAnimator(ATIME,
                 backPanel, "alpha", 0.0f, 1.0f);
-            backAnimator.setResolution(10);
+            backAnimator.setResolution(RESOLUTION);
             setBackgroundAnimator(backAnimator);
 
             // Start at the first item.
@@ -786,6 +792,7 @@ public class TextImagePanel extends BaseCustomizePanel
                         JXPanel backPanel = getBackgroundPanel();
                         if (backPanel != null) {
 
+                            backPanel.setAlpha(0.0f);
                             ImagePainter p =
                                 (ImagePainter) backPanel.getBackgroundPainter();
                             if (p != null) {
