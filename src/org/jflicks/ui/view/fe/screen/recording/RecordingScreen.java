@@ -51,7 +51,6 @@ import org.jflicks.ui.view.fe.RecordingInfoWindow;
 import org.jflicks.ui.view.fe.RecordingProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.ui.view.fe.screen.ScreenEvent;
-import org.jflicks.util.AWTUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.core.animation.timing.Animator;
@@ -604,21 +603,10 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             pane.add(ssp, Integer.valueOf(100));
 
             FrontEndView fev = (FrontEndView) getView();
-            if (AWTUtil.isTranslucentSupported()) {
-
-                setRecordingInfoWindow(new RecordingInfoWindow(
-                    fev.getFrame(),
-                    fev.getPosition(), 8, getInfoColor(),
-                    getPanelColor(), (float) getPanelAlpha(),
-                    getSmallFont(), getMediumFont()));
-
-            } else {
-
-                setRecordingInfoWindow(new RecordingInfoWindow(
-                    fev.getPosition(), 8, getInfoColor(),
-                    getPanelColor(), (float) getPanelAlpha(),
-                    getSmallFont(), getMediumFont()));
-            }
+            setRecordingInfoWindow(new RecordingInfoWindow(
+                fev.getPosition(), 8, getInfoColor(),
+                getPanelColor(), (float) getPanelAlpha(),
+                getSmallFont(), getMediumFont()));
 
             setDefaultBackgroundImage(
                 Util.resize(getDefaultBackgroundImage(), width, height));

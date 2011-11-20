@@ -59,8 +59,6 @@ import javax.swing.JDialog;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
-//import com.sun.awt.AWTUtilities;
-
 /**
  * Some very basic methods that capture some common tasks.  Implemented here
  * so other classes can reduce duplicated code.
@@ -1328,12 +1326,6 @@ public final class Util {
 
         return (result);
     }
-
-//    public static boolean isTranslucencySupported() {
-
-//        return (AWTUtilities.isTranslucencySupported(
-//            AWTUtilities.Translucency.TRANSLUCENT));
-//    }
 
     /**
      * Write out the system property values to stdout.

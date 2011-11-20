@@ -85,5 +85,4 @@ Import-Package:\
  javax.swing,\
  javax.swing.border,\
  javax.swing.event,\
- javax.swing.text,\
- com.sun.awt
+ javax.swing.text

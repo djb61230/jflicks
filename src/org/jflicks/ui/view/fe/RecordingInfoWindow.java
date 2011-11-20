@@ -29,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JLayeredPane;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
@@ -38,15 +39,17 @@ import org.jflicks.imagecache.ImageCache;
 import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
 import org.jflicks.tv.Recording;
-import org.jflicks.util.AWTUtil;
 import org.jflicks.util.Util;
 
+import org.jdesktop.core.animation.timing.Animator;
+import org.jdesktop.core.animation.timing.KeyFrames;
+import org.jdesktop.core.animation.timing.PropertySetter;
+import org.jdesktop.core.animation.timing.TimingTarget;
+import org.jdesktop.core.animation.timing.TimingTargetAdapter;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
-
-import com.sun.jna.platform.WindowUtils;
 
 /**
  * This is our "banner" window showing the state of the currently running
@@ -79,6 +82,8 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
     private Timer timer;
     private int currentSeconds;
     private SimpleDateFormat dateFormat;
+    private Animator windowAnimator;
+    private boolean forward;
 
     /**
      * Simple constructor with our required arguments.
@@ -97,20 +102,9 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
     public RecordingInfoWindow(Window w, Rectangle r, int seconds, Color normal,
         Color backlight, float alpha, Font small, Font large) {
 
-        super(w, WindowUtils.getAlphaCompatibleGraphicsConfiguration());
+        super(w);
 
         initialize(r, seconds, normal, backlight, alpha, small, large);
-
-        // See if we can be translucent...
-        if (AWTUtil.isTranslucentSupported()) {
-
-            AWTUtil.setWindowOpaque(this, false);
-            AWTUtil.setWindowOpacity(this, alpha);
-
-            RoundRectangle2D.Double rr = new RoundRectangle2D.Double(0, 0,
-                getWidth(), getHeight(), 32, 32);
-            AWTUtil.setWindowShape(this, rr);
-        }
     }
 
     /**
@@ -144,6 +138,19 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
         int height = (int) (width / 5.4);
 
         setBounds(loffset + r.x, toffset + r.y, width, height);
+        RectangleEvaluator re = new RectangleEvaluator(getBounds());
+        //setBounds(loffset + r.x, -height, width, height);
+
+        KeyFrames.Builder<Rectangle> kfb = new KeyFrames.Builder<Rectangle>();
+        kfb.addFrames(re.getRectangles());
+        kfb.setEvaluator(re);
+        KeyFrames<Rectangle> rectFrames = kfb.build();
+        TimingTarget tt = PropertySetter.getTarget(this, "bounds", rectFrames);
+        Animator animator = new Animator.Builder().setDuration(180,
+            TimeUnit.MILLISECONDS).setEndBehavior(
+            Animator.EndBehavior.HOLD).addTarget(tt).build();
+        animator.addTarget(new WindowTimingTarget());
+        //setWindowAnimator(animator);
 
         double hgap = width * HGAP;
         double vgap = height * VGAP;
@@ -275,6 +282,22 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
 
     private void setSeconds(int i) {
         seconds = i;
+    }
+
+    private Animator getWindowAnimator() {
+        return (windowAnimator);
+    }
+
+    private void setWindowAnimator(Animator a) {
+        windowAnimator = a;
+    }
+
+    private boolean isForward() {
+        return (forward);
+    }
+
+    private void setForward(boolean b) {
+        forward = b;
     }
 
     private SimpleDateFormat getDateFormat() {
@@ -447,10 +470,22 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
 
         setCurrentSeconds(0);
 
-        super.setVisible(b);
+        setForward(b);
+        Animator a = getWindowAnimator();
+        if (a != null) {
+
+            if (b) {
+                a.start();
+            } else {
+                a.startReverse();
+            }
+        } else {
+            super.setVisible(b);
+        }
 
         if (b) {
 
+            super.setVisible(b);
             updateWindow();
             Timer t = getTimer();
             if (t != null) {
@@ -472,6 +507,10 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
                 }
             }
         }
+    }
+
+    private void hideMe() {
+        super.setVisible(false);
     }
 
     private void updateWindow() {
@@ -539,6 +578,24 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
             setCurrentSeconds(current);
             updateWindow();
         }
+    }
+
+    class WindowTimingTarget extends TimingTargetAdapter {
+
+        public WindowTimingTarget() {
+        }
+
+        public void begin(Animator source) {
+        }
+
+        public void end(Animator source) {
+
+            if (!isForward()) {
+
+                hideMe();
+            }
+        }
+
     }
 
 }
