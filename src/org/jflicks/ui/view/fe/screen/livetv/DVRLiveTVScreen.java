@@ -43,11 +43,11 @@ import org.jflicks.tv.Recording;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
-import org.jflicks.ui.view.fe.ChannelInfoWindow;
+import org.jflicks.ui.view.fe.ChannelInfoPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.GuideJob;
 import org.jflicks.ui.view.fe.NMSProperty;
-import org.jflicks.ui.view.fe.RecordingInfoWindow;
+import org.jflicks.ui.view.fe.RecordingInfoPanel;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 
 import org.jdesktop.swingx.JXLabel;
@@ -71,8 +71,8 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     private Channel nextChannel;
     private JobContainer guideJobContainer;
     private HashMap<Channel, ShowAiring[]> guideMap;
-    private RecordingInfoWindow recordingInfoWindow;
-    private ChannelInfoWindow channelInfoWindow;
+    private RecordingInfoPanel recordingInfoPanel;
+    private ChannelInfoPanel channelInfoPanel;
     private long watchingStartTime;
 
     /**
@@ -127,20 +127,20 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         log(INFO, "Guide is done...");
     }
 
-    private RecordingInfoWindow getRecordingInfoWindow() {
-        return (recordingInfoWindow);
+    private RecordingInfoPanel getRecordingInfoPanel() {
+        return (recordingInfoPanel);
     }
 
-    private void setRecordingInfoWindow(RecordingInfoWindow w) {
-        recordingInfoWindow = w;
+    private void setRecordingInfoPanel(RecordingInfoPanel w) {
+        recordingInfoPanel = w;
     }
 
-    private ChannelInfoWindow getChannelInfoWindow() {
-        return (channelInfoWindow);
+    private ChannelInfoPanel getChannelInfoPanel() {
+        return (channelInfoPanel);
     }
 
-    private void setChannelInfoWindow(ChannelInfoWindow w) {
-        channelInfoWindow = w;
+    private void setChannelInfoPanel(ChannelInfoPanel w) {
+        channelInfoPanel = w;
     }
 
     private long getWatchingStartTime() {
@@ -190,17 +190,17 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             int height = (int) d.getHeight();
 
             FrontEndView fev = (FrontEndView) getView();
-            RecordingInfoWindow w = new RecordingInfoWindow(fev.getPosition(),
+            RecordingInfoPanel w = new RecordingInfoPanel(fev.getPosition(),
                 8, getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont());
             w.setImageCache(getImageCache());
             w.setPlayer(getPlayer());
-            setRecordingInfoWindow(w);
+            setRecordingInfoPanel(w);
 
-            ChannelInfoWindow cw = new ChannelInfoWindow(fev.getPosition(), 8,
+            ChannelInfoPanel cw = new ChannelInfoPanel(fev.getPosition(), 8,
                 getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont());
-            setChannelInfoWindow(cw);
+            setChannelInfoPanel(cw);
 
             JXPanel panel = new JXPanel(new BorderLayout());
             JXLabel l = new JXLabel("Tuning channel, please wait...");
@@ -311,7 +311,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void info() {
 
-        RecordingInfoWindow w = getRecordingInfoWindow();
+        RecordingInfoPanel w = getRecordingInfoPanel();
         if (w != null) {
 
             w.setVisible(!w.isVisible());
@@ -329,13 +329,13 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void close() {
 
-        RecordingInfoWindow w = getRecordingInfoWindow();
+        RecordingInfoPanel w = getRecordingInfoPanel();
         if (w != null) {
 
             w.setVisible(false);
         }
 
-        ChannelInfoWindow cw = getChannelInfoWindow();
+        ChannelInfoPanel cw = getChannelInfoPanel();
         if (cw != null) {
 
             cw.setVisible(false);
@@ -406,14 +406,16 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         computeNextChannelUp();
         log(DEBUG, "Up: " + getNextChannel());
 
-        ChannelInfoWindow cw = getChannelInfoWindow();
+        ChannelInfoPanel cw = getChannelInfoPanel();
         Channel c = getNextChannel();
         HashMap<Channel, ShowAiring[]> m = getGuideMap();
         if ((c != null) && (m != null) && (cw != null)) {
 
             cw.setChannel(c);
             cw.setShowAiring(currentShowAiring(m.get(c)));
-            cw.setVisible(true);
+            if (!cw.isVisible()) {
+                cw.setVisible(true);
+            }
         }
     }
 
@@ -425,14 +427,16 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         computeNextChannelDown();
         log(DEBUG, "Down: " + getNextChannel());
 
-        ChannelInfoWindow cw = getChannelInfoWindow();
+        ChannelInfoPanel cw = getChannelInfoPanel();
         Channel c = getNextChannel();
         HashMap<Channel, ShowAiring[]> m = getGuideMap();
         if ((c != null) && (m != null) && (cw != null)) {
 
             cw.setChannel(c);
             cw.setShowAiring(currentShowAiring(m.get(c)));
-            cw.setVisible(true);
+            if (!cw.isVisible()) {
+                cw.setVisible(true);
+            }
         }
     }
 
@@ -480,7 +484,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                     p.stop();
                 }
 
-                ChannelInfoWindow cw = getChannelInfoWindow();
+                ChannelInfoPanel cw = getChannelInfoPanel();
                 if (cw != null) {
 
                     cw.setVisible(false);
@@ -562,6 +566,16 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                     t.stop();
                     setStartTimer(null);
                     p.addPropertyChangeListener("Playing", this);
+                    ChannelInfoPanel cip = getChannelInfoPanel();
+                    if (cip != null) {
+                        cip.setPlayer(p);
+                    }
+
+                    RecordingInfoPanel rip = getRecordingInfoPanel();
+                    if (rip != null) {
+                        rip.setPlayer(p);
+                    }
+
                     p.play(f.getPath());
 
                 } else {
@@ -671,7 +685,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             Channel c = l.getCurrentChannel();
             HashMap<Channel, ShowAiring[]> m = getGuideMap();
-            RecordingInfoWindow w = getRecordingInfoWindow();
+            RecordingInfoPanel w = getRecordingInfoPanel();
             if ((c != null) && (m != null) && (w != null)) {
 
                 ShowAiring[] array = m.get(c);

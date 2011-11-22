@@ -29,6 +29,7 @@ import javax.swing.KeyStroke;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JDialog;
+import javax.swing.JLayeredPane;
 import javax.swing.Timer;
 
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
@@ -142,6 +143,7 @@ public class Vlcj extends BasePlayer {
 
         Canvas can = new Canvas();
         can.setBackground(Color.BLACK);
+        can.setFocusable(true);
         pan.add(can, BorderLayout.CENTER);
 
         setKeyPanel(pan);
@@ -312,18 +314,29 @@ public class Vlcj extends BasePlayer {
             int width = (int) r.getWidth();
             int height = (int) r.getHeight();
 
-            Cursor cursor = Util.getNoCursor();
             JDialog win = new JDialog(getFrame());
+            win.setFocusable(true);
             win.setUndecorated(true);
             win.setBounds(x, y, width, height);
-            win.setCursor(cursor);
-
-            JPanel pan = getKeyPanel();
-
-            win.add(pan, BorderLayout.CENTER);
-            win.setVisible(true);
-
             setDialog(win);
+
+            Canvas can = getCanvas();
+            JPanel pan = getKeyPanel();
+            JLayeredPane lpane = new JLayeredPane();
+            setLayeredPane(lpane);
+            pan.setBounds(0, 0, width, height);
+
+            lpane.add(pan, Integer.valueOf(100));
+            win.add(lpane, BorderLayout.CENTER);
+
+            Cursor cursor = Util.getNoCursor();
+            if (cursor != null) {
+
+                pan.setCursor(cursor);
+                can.setCursor(cursor);
+            }
+
+            win.setVisible(true);
 
             String[] vlcArgs = getArgs();
             log(DEBUG, "vlcargs " + (vlcArgs != null));

@@ -47,7 +47,7 @@ import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.RecordingListPanel;
 import org.jflicks.ui.view.fe.RecordingDetailPanel;
-import org.jflicks.ui.view.fe.RecordingInfoWindow;
+import org.jflicks.ui.view.fe.RecordingInfoPanel;
 import org.jflicks.ui.view.fe.RecordingProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.ui.view.fe.screen.ScreenEvent;
@@ -74,7 +74,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     private RecordingListPanel recordingListPanel;
     private RecordingDetailPanel recordingDetailPanel;
     private JXPanel screenShotPanel;
-    private RecordingInfoWindow recordingInfoWindow;
+    private RecordingInfoPanel recordingInfoPanel;
     private Integer[] timeline;
     private int currentGroupIndex;
     private int currentGroupStartIndex;
@@ -346,7 +346,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     rllp.updateRecording(r);
                 }
 
-                RecordingInfoWindow w = getRecordingInfoWindow();
+                RecordingInfoPanel w = getRecordingInfoPanel();
                 if (w != null) {
 
                     if (r.equals(w.getRecording())) {
@@ -456,12 +456,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         screenShotAnimator = a;
     }
 
-    private RecordingInfoWindow getRecordingInfoWindow() {
-        return (recordingInfoWindow);
+    private RecordingInfoPanel getRecordingInfoPanel() {
+        return (recordingInfoPanel);
     }
 
-    private void setRecordingInfoWindow(RecordingInfoWindow w) {
-        recordingInfoWindow = w;
+    private void setRecordingInfoPanel(RecordingInfoPanel p) {
+        recordingInfoPanel = p;
     }
 
     private int getCurrentGroupIndex() {
@@ -603,7 +603,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             pane.add(ssp, Integer.valueOf(100));
 
             FrontEndView fev = (FrontEndView) getView();
-            setRecordingInfoWindow(new RecordingInfoWindow(
+            setRecordingInfoPanel(new RecordingInfoPanel(
                 fev.getPosition(), 8, getInfoColor(),
                 getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont()));
@@ -1018,10 +1018,10 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
      */
     public void info() {
 
-        RecordingInfoWindow w = getRecordingInfoWindow();
-        if (w != null) {
+        RecordingInfoPanel p = getRecordingInfoPanel();
+        if (p != null) {
 
-            w.setVisible(!w.isVisible());
+            p.setVisible(!p.isVisible());
         }
     }
 
@@ -1039,7 +1039,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         removeBlankPanel();
         controlKeyboard(true);
         setCurrentRecording(null);
-        RecordingInfoWindow w = getRecordingInfoWindow();
+        RecordingInfoPanel w = getRecordingInfoPanel();
         if (w != null) {
 
             w.setVisible(false);
@@ -1204,9 +1204,10 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
 
                     p.addPropertyChangeListener("Completed", this);
-                    RecordingInfoWindow w = getRecordingInfoWindow();
+                    RecordingInfoPanel w = getRecordingInfoPanel();
                     if (w != null) {
 
+                        w.setVisible(false);
                         w.setImageCache(getImageCache());
                         w.setRecording(r);
                         w.setPlayer(p);
@@ -1233,7 +1234,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
 
                     p.addPropertyChangeListener("Completed", this);
-                    RecordingInfoWindow w = getRecordingInfoWindow();
+                    RecordingInfoPanel w = getRecordingInfoPanel();
                     if (w != null) {
 
                         w.setImageCache(getImageCache());

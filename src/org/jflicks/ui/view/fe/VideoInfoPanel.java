@@ -20,32 +20,22 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Panel;
 import java.awt.Rectangle;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
-import java.text.FieldPosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import javax.swing.JLayeredPane;
-import javax.swing.JWindow;
-import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.SwingConstants;
 
 import org.jflicks.imagecache.ImageCache;
+import org.jflicks.nms.Video;
 import org.jflicks.player.Player;
 import org.jflicks.player.PlayState;
-import org.jflicks.tv.Recording;
 import org.jflicks.util.Util;
 
-import org.jdesktop.core.animation.timing.Animator;
-import org.jdesktop.core.animation.timing.KeyFrames;
-import org.jdesktop.core.animation.timing.PropertySetter;
-import org.jdesktop.core.animation.timing.TimingTarget;
-import org.jdesktop.core.animation.timing.TimingTargetAdapter;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.painter.ImagePainter;
@@ -53,8 +43,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * This is our "banner" window showing the state of the currently running
- * video.  It uses the DetailPanel to display information about the
- * recording and draws the "poster" for the recording on the back side.
+ * video.
  *
  * The banner is not transparent to allow video bits to come through as
  * a Java window functionality for this is not available until Java 7, or
@@ -65,32 +54,27 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @author Doug Barnum
  * @version 1.0
  */
-public class RecordingInfoWindow extends JWindow implements ActionListener {
+public class VideoInfoPanel extends Panel implements ActionListener {
 
     private static final double HGAP = 0.02;
     private static final double VGAP = 0.02;
 
     private JXPanel panel;
     private JXLabel titleLabel;
-    private JXLabel channelDateLabel;
+    private JXLabel releasedLabel;
     private JXLabel descriptionLabel;
     private TimelinePanel timelinePanel;
-    private Recording recording;
+    private Video video;
     private Player player;
     private int seconds;
     private ImageCache imageCache;
     private Timer timer;
     private int currentSeconds;
-    private SimpleDateFormat dateFormat;
-    private Animator windowAnimator;
-    private boolean forward;
 
     /**
      * Simple constructor with our required arguments.
      *
-     * @param w The parent window.
      * @param r The Rectangle defining the location of the main window.
-     * use the "poster" image without scaling it ugly.
      * @param seconds the number of seconds to leave the banner visible.
      * @param normal The text color to match the theme.
      * @param backlight The background color to match the theme.
@@ -99,34 +83,7 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
      * @param small A small font to use.
      * @param large A large font to use.
      */
-    public RecordingInfoWindow(Window w, Rectangle r, int seconds, Color normal,
-        Color backlight, float alpha, Font small, Font large) {
-
-        super(w);
-
-        initialize(r, seconds, normal, backlight, alpha, small, large);
-    }
-
-    /**
-     * Simple constructor with our required arguments.
-     *
-     * @param r The Rectangle defining the location of the main window.
-     * use the "poster" image without scaling it ugly.
-     * @param seconds the number of seconds to leave the banner visible.
-     * @param normal The text color to match the theme.
-     * @param backlight The background color to match the theme.
-     * @param alpha The translucent level for the window so the back image
-     * shows through.
-     * @param small A small font to use.
-     * @param large A large font to use.
-     */
-    public RecordingInfoWindow(Rectangle r, int seconds, Color normal,
-        Color backlight, float alpha, Font small, Font large) {
-
-        initialize(r, seconds, normal, backlight, alpha, small, large);
-    }
-
-    private void initialize(Rectangle r, int seconds, Color normal,
+    public VideoInfoPanel(Rectangle r, int seconds, Color normal,
         Color backlight, float alpha, Font small, Font large) {
 
         setCursor(Util.getNoCursor());
@@ -137,20 +94,7 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
         int width = r.width - (2 * loffset);
         int height = (int) (width / 5.4);
 
-        setBounds(loffset + r.x, toffset + r.y, width, height);
-        RectangleEvaluator re = new RectangleEvaluator(getBounds());
-        //setBounds(loffset + r.x, -height, width, height);
-
-        KeyFrames.Builder<Rectangle> kfb = new KeyFrames.Builder<Rectangle>();
-        kfb.addFrames(re.getRectangles());
-        kfb.setEvaluator(re);
-        KeyFrames<Rectangle> rectFrames = kfb.build();
-        TimingTarget tt = PropertySetter.getTarget(this, "bounds", rectFrames);
-        Animator animator = new Animator.Builder().setDuration(180,
-            TimeUnit.MILLISECONDS).setEndBehavior(
-            Animator.EndBehavior.HOLD).addTarget(tt).build();
-        animator.addTarget(new WindowTimingTarget());
-        //setWindowAnimator(animator);
+        setBounds(loffset, toffset, width, height);
 
         double hgap = width * HGAP;
         double vgap = height * VGAP;
@@ -176,11 +120,11 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
         title.setForeground(normal);
         setTitleLabel(title);
 
-        JXLabel channelDate = new JXLabel();
-        channelDate.setFont(small);
-        channelDate.setTextAlignment(JXLabel.TextAlignment.LEFT);
-        channelDate.setForeground(normal);
-        setChannelDateLabel(channelDate);
+        JXLabel released = new JXLabel();
+        released.setFont(small);
+        released.setTextAlignment(JXLabel.TextAlignment.LEFT);
+        released.setForeground(normal);
+        setReleasedLabel(released);
 
         JXLabel description = new JXLabel();
         description.setFont(small);
@@ -198,24 +142,24 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
 
         double halfWidth = ((double) width) / 2.0;
         double titleHeight = ((double) height) * 0.2;
-        double chanDateHeight = ((double) height) * 0.2;
+        double releasedHeight = ((double) height) * 0.2;
         double descriptionHeight = ((double) height) * 0.4;
         double timelineHeight = ((double) height) * 0.2 - vgap;
 
         title.setBounds((int) hgap, (int) vgap, (int) halfWidth,
             (int) titleHeight);
-        channelDate.setBounds((int) hgap,
+        released.setBounds((int) hgap,
             (int) (titleHeight + vgap), (int) halfWidth,
-            (int) chanDateHeight);
+            (int) releasedHeight);
         description.setBounds((int) hgap,
-            (int) (vgap + titleHeight + chanDateHeight),
+            (int) (vgap + titleHeight + releasedHeight),
             (int) (width - hgap * 2.0), (int) descriptionHeight);
         tp.setBounds((int) hgap,
-            (int) (vgap + titleHeight + chanDateHeight + descriptionHeight),
+            (int) (vgap + titleHeight + releasedHeight + descriptionHeight),
             (int) (width - hgap * 2.0), (int) timelineHeight);
 
         pane.add(title, Integer.valueOf(100));
-        pane.add(channelDate, Integer.valueOf(100));
+        pane.add(released, Integer.valueOf(100));
         pane.add(description, Integer.valueOf(100));
         pane.add(tp, Integer.valueOf(100));
 
@@ -229,11 +173,11 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
             pane.add(cpanel, Integer.valueOf(120));
         }
 
-        add(p);
+        setLayout(new BorderLayout());
+        add(p, BorderLayout.CENTER);
+
         Timer t = new Timer(1000, this);
         setTimer(t);
-
-        setDateFormat(new SimpleDateFormat("EEE MMM d h:mm aaa"));
     }
 
     private JXPanel getPanel() {
@@ -252,12 +196,12 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
         titleLabel = l;
     }
 
-    private JXLabel getChannelDateLabel() {
-        return (channelDateLabel);
+    private JXLabel getReleasedLabel() {
+        return (releasedLabel);
     }
 
-    private void setChannelDateLabel(JXLabel l) {
-        channelDateLabel = l;
+    private void setReleasedLabel(JXLabel l) {
+        releasedLabel = l;
     }
 
     private JXLabel getDescriptionLabel() {
@@ -282,54 +226,6 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
 
     private void setSeconds(int i) {
         seconds = i;
-    }
-
-    private Animator getWindowAnimator() {
-        return (windowAnimator);
-    }
-
-    private void setWindowAnimator(Animator a) {
-        windowAnimator = a;
-    }
-
-    private boolean isForward() {
-        return (forward);
-    }
-
-    private void setForward(boolean b) {
-        forward = b;
-    }
-
-    private SimpleDateFormat getDateFormat() {
-        return (dateFormat);
-    }
-
-    private void setDateFormat(SimpleDateFormat df) {
-        dateFormat = df;
-    }
-
-    private String formatDate(SimpleDateFormat df, Date d) {
-
-        String result = null;
-
-        if (df != null) {
-
-            if (d != null) {
-
-                StringBuffer sb = new StringBuffer();
-                df.format(d, sb, new FieldPosition(0));
-                result = sb.toString();
-            }
-
-        } else {
-
-            if (d != null) {
-
-                result = d.toString();
-            }
-        }
-
-        return (result);
     }
 
     /**
@@ -367,30 +263,30 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
     }
 
     /**
-     * We need a Recording instance to be able to draw information useful
+     * We need a Video instance to be able to draw information useful
      * to the user.
      *
-     * @return A given Recording instance.
+     * @return A given Video instance.
      */
-    public Recording getRecording() {
-        return (recording);
+    public Video getVideo() {
+        return (video);
     }
 
     /**
-     * We need a Recording instance to be able to draw information useful
+     * We need a Video instance to be able to draw information useful
      * to the user.
      *
-     * @param r A given Recording instance.
+     * @param v A given Video instance.
      */
-    public void setRecording(Recording r) {
+    public void setVideo(Video v) {
 
-        recording = r;
+        video = v;
 
         JXPanel p = getPanel();
         ImageCache ic = getImageCache();
-        if ((r != null) && (p != null) && (ic != null)) {
+        if ((v != null) && (p != null) && (ic != null)) {
 
-            BufferedImage bi = ic.getImage(r.getBannerURL());
+            BufferedImage bi = ic.getImage(v.getBannerURL());
             if (bi != null) {
 
                 int w = getWidth();
@@ -409,34 +305,32 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
             JXLabel l = getTitleLabel();
             if (l != null) {
 
-                l.setText(r.getTitle());
+                l.setText(v.getTitle());
             }
 
-            l = getChannelDateLabel();
-            Date d = r.getDate();
-            if ((l != null) && (d != null)) {
+            l = getReleasedLabel();
+            if (l != null) {
 
-                l.setText(formatDate(getDateFormat(), d));
+                String released = v.getReleased();
+                if (released != null) {
+                    l.setText(released);
+                } else {
+                    l.setText("");
+                }
             }
 
             l = getDescriptionLabel();
             if (l != null) {
-                String sub = r.getSubtitle();
-                String desc = r.getDescription();
-                StringBuilder sb = new StringBuilder();
-                if (sub != null) {
 
-                    sb.append("\"");
-                    sb.append(sub);
-                    sb.append("\" ");
-                }
-
+                String desc = v.getDescription();
                 if (desc != null) {
 
-                    sb.append(desc);
-                }
+                    l.setText(desc);
 
-                l.setText(sb.toString());
+                } else {
+
+                    l.setText("");
+                }
             }
         }
     }
@@ -461,6 +355,18 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
         player = p;
     }
 
+    private JLayeredPane getPlayerPane() {
+
+        JLayeredPane result = null;
+
+        if (player != null) {
+
+            result = player.getLayeredPane();
+        }
+
+        return (result);
+    }
+
     /**
      * Override so we can start a Timer to auto shut off the banner.
      *
@@ -469,85 +375,47 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
     public void setVisible(boolean b) {
 
         setCurrentSeconds(0);
+        updateWindow();
 
-        setForward(b);
-        Animator a = getWindowAnimator();
-        if (a != null) {
+        JLayeredPane pane = getPlayerPane();
+
+        Timer t = getTimer();
+        if (t != null) {
 
             if (b) {
-                a.start();
-            } else {
-                a.startReverse();
-            }
-        } else {
-            super.setVisible(b);
-        }
 
-        if (b) {
-
-            super.setVisible(b);
-            updateWindow();
-            Timer t = getTimer();
-            if (t != null) {
-
+                if (pane != null) {
+                    pane.add(this, Integer.valueOf(300));
+                }
                 if (!t.isRunning()) {
 
                     t.restart();
                 }
-            }
 
-        } else {
+            } else {
 
-            Timer t = getTimer();
-            if (t != null) {
-
-                if (t.isRunning()) {
-
-                    t.stop();
+                t.stop();
+                if (pane != null) {
+                    pane.remove(this);
                 }
             }
         }
-    }
 
-    private void hideMe() {
-        super.setVisible(false);
+        super.setVisible(b);
     }
 
     private void updateWindow() {
 
         TimelinePanel tp = getTimelinePanel();
         Player p = getPlayer();
-        Recording r = getRecording();
-        if ((p != null) && (tp != null) && (r != null)) {
+        Video v = getVideo();
+        if ((p != null) && (tp != null) && (v != null)) {
 
             PlayState ps = p.getPlayState();
             if (ps != null) {
 
                 double current = ps.getTime();
-                double length = (double) r.getDuration();
-                if (r.isCurrentlyRecording()) {
-
-                    long now = System.currentTimeMillis();
-                    long realstart = r.getRealStart();
-                    if (realstart == 0L) {
-
-                        length = current;
-
-                    } else {
-
-                        long llength = now - realstart;
-                        llength /= 1000L;
-                        length = (double) llength;
-                    }
-                }
-
-                // Sometimes the player can't give us an accurate time.  So
-                // either we display 0 (or at the beginning) or at the end.
-                // It's probably more correct to be at the end...
-                if (current == 0.0) {
-                    current = length;
-                }
-
+                double length = (double) v.getDuration();
                 double percentage = current / length * 100.0;
                 tp.setValue((int) percentage);
                 tp.setCurrent((int) current);
@@ -578,24 +446,6 @@ public class RecordingInfoWindow extends JWindow implements ActionListener {
             setCurrentSeconds(current);
             updateWindow();
         }
-    }
-
-    class WindowTimingTarget extends TimingTargetAdapter {
-
-        public WindowTimingTarget() {
-        }
-
-        public void begin(Animator source) {
-        }
-
-        public void end(Animator source) {
-
-            if (!isForward()) {
-
-                hideMe();
-            }
-        }
-
     }
 
 }

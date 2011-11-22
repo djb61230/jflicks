@@ -32,6 +32,7 @@ import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import com.sun.jna.Native;
@@ -144,6 +145,7 @@ public class MPlayer extends BasePlayer {
 
         Canvas can = new Canvas();
         can.setBackground(Color.BLACK);
+        can.setFocusable(true);
         pan.add(can, BorderLayout.CENTER);
 
         setKeyPanel(pan);
@@ -381,6 +383,7 @@ public class MPlayer extends BasePlayer {
                 int height = (int) r.getHeight();
 
                 JWindow win = new JWindow(getFrame());
+                win.setFocusable(true);
                 win.setBounds(x, y, width, height);
                 win.setBackground(Color.BLACK);
                 setWindow(win);
@@ -402,6 +405,17 @@ public class MPlayer extends BasePlayer {
                 }
 
                 win.setVisible(true);
+
+                final Canvas fcan = can;
+                Runnable doRun = new Runnable() {
+
+                    public void run() {
+
+                        System.out.println("Requesting focus 4 canvas....");
+                        fcan.requestFocus();
+                    }
+                };
+                SwingUtilities.invokeLater(doRun);
 
                 long canid = Native.getComponentID(can);
                 String wid = "" + canid;

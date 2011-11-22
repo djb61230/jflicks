@@ -18,32 +18,29 @@ package org.jflicks.ui.view.fe;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Panel;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
-import java.awt.image.BufferedImage;
 import javax.swing.JLayeredPane;
-import javax.swing.JWindow;
-import javax.swing.Timer;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 
-import org.jflicks.imagecache.ImageCache;
-import org.jflicks.nms.Video;
 import org.jflicks.player.Player;
-import org.jflicks.player.PlayState;
+import org.jflicks.tv.Channel;
+import org.jflicks.tv.Show;
+import org.jflicks.tv.ShowAiring;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXLabel;
-import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * This is our "banner" window showing the state of the currently running
- * video.
+ * live channel.
  *
  * The banner is not transparent to allow video bits to come through as
  * a Java window functionality for this is not available until Java 7, or
@@ -54,27 +51,27 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @author Doug Barnum
  * @version 1.0
  */
-public class VideoInfoWindow extends JWindow implements ActionListener {
+public class ChannelInfoPanel extends Panel implements ActionListener {
 
     private static final double HGAP = 0.02;
     private static final double VGAP = 0.02;
 
     private JXPanel panel;
+    private JXLabel channelLabel;
     private JXLabel titleLabel;
-    private JXLabel releasedLabel;
     private JXLabel descriptionLabel;
-    private TimelinePanel timelinePanel;
-    private Video video;
-    private Player player;
     private int seconds;
-    private ImageCache imageCache;
     private Timer timer;
     private int currentSeconds;
+    private Channel channel;
+    private ShowAiring showAiring;
+    private Player player;
 
     /**
      * Simple constructor with our required arguments.
      *
      * @param r The Rectangle defining the location of the main window.
+     * use the "poster" image without scaling it ugly.
      * @param seconds the number of seconds to leave the banner visible.
      * @param normal The text color to match the theme.
      * @param backlight The background color to match the theme.
@@ -83,18 +80,18 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
      * @param small A small font to use.
      * @param large A large font to use.
      */
-    public VideoInfoWindow(Rectangle r, int seconds, Color normal,
+    public ChannelInfoPanel(Rectangle r, int seconds, Color normal,
         Color backlight, float alpha, Font small, Font large) {
 
         setCursor(Util.getNoCursor());
         setSeconds(seconds);
 
-        int loffset = (int) (r.width * 0.05);
-        int toffset = (int) (r.height * 0.05);
+        int loffset = (int) (r.width * 0.10);
+        int toffset = (int) (r.height - (r.height * 0.25));
         int width = r.width - (2 * loffset);
-        int height = (int) (width / 5.4);
+        int height = (int) (r.height / 5);
 
-        setBounds(loffset + r.x, toffset + r.y, width, height);
+        setBounds(loffset, toffset, width, height);
 
         double hgap = width * HGAP;
         double vgap = height * VGAP;
@@ -120,11 +117,11 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
         title.setForeground(normal);
         setTitleLabel(title);
 
-        JXLabel released = new JXLabel();
-        released.setFont(small);
-        released.setTextAlignment(JXLabel.TextAlignment.LEFT);
-        released.setForeground(normal);
-        setReleasedLabel(released);
+        JXLabel channelLab = new JXLabel();
+        channelLab.setFont(large);
+        channelLab.setTextAlignment(JXLabel.TextAlignment.LEFT);
+        channelLab.setForeground(normal);
+        setChannelLabel(channelLab);
 
         JXLabel description = new JXLabel();
         description.setFont(small);
@@ -134,47 +131,26 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
         description.setLineWrap(true);
         setDescriptionLabel(description);
 
-        TimelinePanel tp = new TimelinePanel();
-        setTimelinePanel(tp);
-
-        ClockPanel cpanel = new ClockPanel(large, normal, backlight, alpha);
-        cpanel.setOpaque(false);
-
-        double halfWidth = ((double) width) / 2.0;
+        double quarterWidth = ((double) width) / 4.0;
         double titleHeight = ((double) height) * 0.2;
-        double releasedHeight = ((double) height) * 0.2;
-        double descriptionHeight = ((double) height) * 0.4;
-        double timelineHeight = ((double) height) * 0.2 - vgap;
+        double chanHeight = ((double) height) * 0.2;
+        double descHeight = ((double) height) * 0.8;
+        double chanTop = (((double) height) - chanHeight) / 2.0;
 
-        title.setBounds((int) hgap, (int) vgap, (int) halfWidth,
-            (int) titleHeight);
-        released.setBounds((int) hgap,
-            (int) (titleHeight + vgap), (int) halfWidth,
-            (int) releasedHeight);
-        description.setBounds((int) hgap,
-            (int) (vgap + titleHeight + releasedHeight),
-            (int) (width - hgap * 2.0), (int) descriptionHeight);
-        tp.setBounds((int) hgap,
-            (int) (vgap + titleHeight + releasedHeight + descriptionHeight),
-            (int) (width - hgap * 2.0), (int) timelineHeight);
+        channelLab.setBounds((int) hgap, (int) chanTop,
+            (int) quarterWidth, (int) chanHeight);
+        title.setBounds((int) (hgap + quarterWidth), (int) vgap,
+            (int) (quarterWidth * 4), (int) titleHeight);
+        description.setBounds((int) (hgap + quarterWidth),
+            (int) (vgap + titleHeight + vgap),
+            (int) (quarterWidth * 4), (int) descHeight);
 
+        pane.add(channelLab, Integer.valueOf(100));
         pane.add(title, Integer.valueOf(100));
-        pane.add(released, Integer.valueOf(100));
         pane.add(description, Integer.valueOf(100));
-        pane.add(tp, Integer.valueOf(100));
 
-        Dimension cpdim = cpanel.getPreferredSize();
-        if (cpdim != null) {
-
-            double x = width - cpdim.getWidth() - hgap - ClockPanel.FUDGE;
-            cpanel.setBounds((int) x, (int) vgap,
-                (int) (cpdim.getWidth() + ClockPanel.FUDGE),
-                (int) cpdim.getHeight());
-            pane.add(cpanel, Integer.valueOf(120));
-        }
-
-        add(p);
-
+        setLayout(new BorderLayout());
+        add(p, BorderLayout.CENTER);
         Timer t = new Timer(1000, this);
         setTimer(t);
     }
@@ -187,20 +163,20 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
         panel = p;
     }
 
+    private JXLabel getChannelLabel() {
+        return (channelLabel);
+    }
+
+    private void setChannelLabel(JXLabel l) {
+        channelLabel = l;
+    }
+
     private JXLabel getTitleLabel() {
         return (titleLabel);
     }
 
     private void setTitleLabel(JXLabel l) {
         titleLabel = l;
-    }
-
-    private JXLabel getReleasedLabel() {
-        return (releasedLabel);
-    }
-
-    private void setReleasedLabel(JXLabel l) {
-        releasedLabel = l;
     }
 
     private JXLabel getDescriptionLabel() {
@@ -211,38 +187,12 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
         descriptionLabel = l;
     }
 
-    private TimelinePanel getTimelinePanel() {
-        return (timelinePanel);
-    }
-
-    private void setTimelinePanel(TimelinePanel p) {
-        timelinePanel = p;
-    }
-
     private int getSeconds() {
         return (seconds);
     }
 
     private void setSeconds(int i) {
         seconds = i;
-    }
-
-    /**
-     * We use the ImageCache service to get poster images to display.
-     *
-     * @return An ImageCache instance.
-     */
-    public ImageCache getImageCache() {
-        return (imageCache);
-    }
-
-    /**
-     * We use the ImageCache service to get poster images to display.
-     *
-     * @param ic An ImageCache instance.
-     */
-    public void setImageCache(ImageCache ic) {
-        imageCache = ic;
     }
 
     private Timer getTimer() {
@@ -262,81 +212,94 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
     }
 
     /**
-     * We need a Video instance to be able to draw information useful
+     * We need a Channel instance to be able to draw information useful
      * to the user.
      *
-     * @return A given Video instance.
+     * @return A given Channel instance.
      */
-    public Video getVideo() {
-        return (video);
+    public Channel getChannel() {
+        return (channel);
     }
 
     /**
-     * We need a Video instance to be able to draw information useful
+     * We need a Channel instance to be able to draw information useful
      * to the user.
      *
-     * @param v A given Video instance.
+     * @param c A given Channel instance.
      */
-    public void setVideo(Video v) {
+    public void setChannel(Channel c) {
 
-        video = v;
+        channel = c;
 
         JXPanel p = getPanel();
-        ImageCache ic = getImageCache();
-        if ((v != null) && (p != null) && (ic != null)) {
+        if ((c != null) && (p != null)) {
 
-            BufferedImage bi = ic.getImage(v.getBannerURL());
-            if (bi != null) {
+            JXLabel l = getChannelLabel();
+            if (l != null) {
 
-                int w = getWidth();
-                if (w > bi.getWidth()) {
+                l.setText(c.toString());
+            }
+        }
+    }
 
-                    bi = Util.scaleLarger(w, bi);
+    /**
+     * We need a ShowAiring instance to be able to draw information useful
+     * to the user.
+     *
+     * @return A given ShowAiring instance.
+     */
+    public ShowAiring getShowAiring() {
+        return (showAiring);
+    }
+
+    /**
+     * We need a ShowAiring instance to be able to draw information useful
+     * to the user.
+     *
+     * @param sa A given ShowAiring instance.
+     */
+    public void setShowAiring(ShowAiring sa) {
+
+        showAiring = sa;
+
+        JXPanel p = getPanel();
+        if ((sa != null) && (p != null)) {
+
+            Show s = sa.getShow();
+            if (s != null) {
+
+                JXLabel l = getTitleLabel();
+                if (l != null) {
+
+                    l.setText(s.getTitle());
                 }
-                ImagePainter painter = new ImagePainter(bi);
-                painter.setScaleToFit(true);
-                p.setBackgroundPainter(painter);
 
-            } else {
+                l = getDescriptionLabel();
+                if (l != null) {
 
-                p.setBackgroundPainter(null);
-            }
-            JXLabel l = getTitleLabel();
-            if (l != null) {
+                    String sub = s.getSubtitle();
+                    String desc = s.getDescription();
+                    StringBuilder sb = new StringBuilder();
+                    if (sub != null) {
 
-                l.setText(v.getTitle());
-            }
+                        sb.append("\"");
+                        sb.append(sub);
+                        sb.append("\" ");
+                    }
 
-            l = getReleasedLabel();
-            if (l != null) {
+                    if (desc != null) {
 
-                String released = v.getReleased();
-                if (released != null) {
-                    l.setText(released);
-                } else {
-                    l.setText("");
-                }
-            }
+                        sb.append(desc);
+                    }
 
-            l = getDescriptionLabel();
-            if (l != null) {
-
-                String desc = v.getDescription();
-                if (desc != null) {
-
-                    l.setText(desc);
-
-                } else {
-
-                    l.setText("");
+                    l.setText(sb.toString());
                 }
             }
         }
     }
 
     /**
-     * We need to communicate with the player to get status of the playing
-     * video.
+     * We need to communicate with the player to display panels.
      *
      * @return The Player instance.
      */
@@ -345,13 +308,24 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
     }
 
     /**
-     * We need to communicate with the player to get status of the playing
-     * video.
+     * We need to communicate with the player to display panels.
      *
      * @param p The Player instance.
      */
     public void setPlayer(Player p) {
         player = p;
+    }
+
+    private JLayeredPane getPlayerPane() {
+
+        JLayeredPane result = null;
+
+        if (player != null) {
+
+            result = player.getLayeredPane();
+        }
+
+        return (result);
     }
 
     /**
@@ -362,45 +336,31 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
     public void setVisible(boolean b) {
 
         setCurrentSeconds(0);
-        updateWindow();
 
-        super.setVisible(b);
+        JLayeredPane pane = getPlayerPane();
 
-        Timer t = getTimer();
-        if (t != null) {
+        if (b) {
 
-            if (b) {
+            if (pane != null) {
+                pane.add(this, Integer.valueOf(300));
+            }
+            Timer t = getTimer();
+            if (t != null) {
 
                 if (!t.isRunning()) {
 
                     t.restart();
                 }
+            }
 
-            } else {
+        } else {
 
-                t.stop();
+            if (pane != null) {
+                pane.remove(this);
             }
         }
-    }
 
-    private void updateWindow() {
-
-        TimelinePanel tp = getTimelinePanel();
-        Player p = getPlayer();
-        Video v = getVideo();
-        if ((p != null) && (tp != null) && (v != null)) {
-
-            PlayState ps = p.getPlayState();
-            if (ps != null) {
-
-                double current = ps.getTime();
-                double length = (double) v.getDuration();
-                double percentage = current / length * 100.0;
-                tp.setValue((int) percentage);
-                tp.setCurrent((int) current);
-                tp.setLength((int) length);
-            }
-        }
+        super.setVisible(b);
     }
 
     /**
@@ -423,7 +383,6 @@ public class VideoInfoWindow extends JWindow implements ActionListener {
         } else {
 
             setCurrentSeconds(current);
-            updateWindow();
         }
     }
 
