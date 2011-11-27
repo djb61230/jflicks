@@ -665,9 +665,9 @@ public abstract class BaseLive extends BaseConfig implements Live {
                 LiveTV l = s.getLiveTV();
                 if (l != null) {
 
-                    String id = l.getId();
+                    String id = l.getId() + "-" + System.currentTimeMillis();
                     result = new File(dir, "live-" + id + "-" + c.getNumber()
-                        + ".mpg");
+                        + ".ts");
                 }
             }
         }

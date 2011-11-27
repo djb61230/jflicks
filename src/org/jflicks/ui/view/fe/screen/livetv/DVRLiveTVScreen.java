@@ -157,7 +157,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         watchingStartTime = l;
     }
 
-    private void restartPlayer(LiveTV l) {
+    private void startPlayer(LiveTV l) {
 
         Player p = getPlayer();
         Transfer t = getTransfer();
@@ -192,13 +192,13 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             r.setStreamURL(l.getStreamURL());
             r.setHostPort(l.getHostPort());
 
-            System.out.println(l.getPath());
-            System.out.println(l.getStreamURL());
+            log(DEBUG, l.getPath());
+            log(DEBUG, l.getStreamURL());
 
             p.addPropertyChangeListener("Completed", this);
 
-            String path = t.transfer(r, 20, 5);
-            System.out.println("local: " + path);
+            String path = t.transfer(r, 20, 4);
+            log(DEBUG, "local: " + path);
             p.play(path);
         }
     }
@@ -314,13 +314,14 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                             setLiveTV(l);
                             updateInfoWindow();
                             controlKeyboard(false);
+
                             final LiveTV fl = l;
                             Runnable doRun = new Runnable() {
 
                                 public void run() {
 
-                                    System.out.println("Starting player...");
-                                    restartPlayer(fl);
+                                    log(DEBUG, "Starting player...");
+                                    startPlayer(fl);
                                 }
                             };
                             SwingUtilities.invokeLater(doRun);
@@ -384,6 +385,21 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     /**
      * {@inheritDoc}
      */
+    @Override
+    public void save() {
+
+        Player p = getPlayer();
+        if (p != null) {
+
+            p.stop();
+        }
+
+        close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void guide() {
     }
 
@@ -392,7 +408,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void close() {
 
-        System.out.println("Yep at close!!!!");
+        log(DEBUG, "Yep at close!!!!");
         controlKeyboard(true);
         RecordingInfoPanel w = getRecordingInfoPanel();
         if (w != null) {
@@ -553,6 +569,12 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                         cw.setVisible(false);
                     }
 
+                    if (p.isPlaying()) {
+
+                        p.stop();
+                    }
+                    repaint();
+
                     NMS n = NMSUtil.select(getNMS(), l.getHostPort());
                     if (n != null) {
 
@@ -562,13 +584,14 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                             setLiveTV(l);
                             updateInfoWindow();
+                            controlKeyboard(false);
                             final LiveTV fl = l;
                             Runnable doRun = new Runnable() {
 
                                 public void run() {
 
-                                    System.out.println("Starting player...");
-                                    restartPlayer(fl);
+                                    log(DEBUG, "Starting player...");
+                                    startPlayer(fl);
                                 }
                             };
                             SwingUtilities.invokeLater(doRun);
@@ -598,7 +621,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void propertyChange(PropertyChangeEvent event) {
 
-        System.out.println("propertyChange: " + event.getPropertyName());
+        log(DEBUG, "propertyChange: " + event.getPropertyName());
         if ((event.getSource() == getPlayer()) && (!isDone())) {
 
             // If we get this property update, then it means the video

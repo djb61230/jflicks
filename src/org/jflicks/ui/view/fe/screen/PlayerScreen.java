@@ -442,6 +442,7 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
                 log(DEBUG, getClass().getName() + " commandReceived: " + s);
                 if (s.equals(RC.ESCAPE_COMMAND)) {
 
+                    log(DEBUG, "OK we are to close up shop!");
                     saveBookmark(p);
                     p.stop();
                     close();
