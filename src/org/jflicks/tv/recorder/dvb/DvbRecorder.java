@@ -307,5 +307,45 @@ public class DvbRecorder extends BaseRecorder {
         return (result);
     }
 
+    /**
+     * Convenience method to get the channel changing ready text.
+     *
+     * @return A String showing that it is OK to change channels.
+     */
+    public String getConfiguredChannelChangeReadyText() {
+
+        String result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue[] array = c.getNameValues();
+            if (array != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    String name = array[i].getName();
+                    if ((name != null) && (name.equals(
+                        NMSConstants.CHANGE_CHANNEL_READY_TEXT))) {
+
+                        result = array[i].getValue();
+                        if (result != null) {
+
+                            result = result.trim();
+                        }
+
+                        if ((result != null) && (result.length() == 0)) {
+                            result = null;
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
 }
 

@@ -35,6 +35,8 @@ public class ChannelJob extends BaseDeviceJob {
 
     private String channel;
     private String script;
+    private String readyText;
+    private boolean ready;
 
     /**
      * Simple no argument constructor.
@@ -78,6 +80,25 @@ public class ChannelJob extends BaseDeviceJob {
      */
     public void setScript(String s) {
         script = s;
+    }
+
+    public String getReadyText() {
+        return (readyText);
+    }
+
+    public void setReadyText(String s) {
+        readyText = s;
+    }
+
+    public boolean isReady() {
+        return (ready);
+    }
+
+    private void setReady(boolean b) {
+
+        boolean old = ready;
+        ready = b;
+        firePropertyChange("Ready", old, ready);
     }
 
     /**
@@ -145,6 +166,15 @@ public class ChannelJob extends BaseDeviceJob {
                 fireJobEvent(JobEvent.UPDATE, "ProgramJob: exit: "
                     + job.getExitValue());
                 stop();
+            }
+
+        } else {
+
+            String text = event.getMessage();
+            System.out.println("Text from azap: " + text);
+            if ((!isReady()) && (text != null)) {
+
+                setReady(text.indexOf(getReadyText()) != -1);
             }
         }
     }

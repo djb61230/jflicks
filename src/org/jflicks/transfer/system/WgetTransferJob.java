@@ -42,6 +42,7 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
     private Recording recording;
     private File file;
     private String maxRate;
+    private int restSeconds;
 
     /**
      * Simple one argument constructor.
@@ -49,12 +50,14 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
      * @param r A Recording instance.
      * @param f A given File.
      * @param s The max rate for transfers for curl.
+     * @param i The number of seconds to rest after we catch up.
      */
-    public WgetTransferJob(Recording r, File f, String s) {
+    public WgetTransferJob(Recording r, File f, String s, int i) {
 
         setRecording(r);
         setFile(f);
         setMaxRate(s);
+        setRestSeconds(i);
     }
 
     /**
@@ -113,6 +116,14 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
         maxRate = s;
     }
 
+    public int getRestSeconds() {
+        return (restSeconds);
+    }
+
+    public void setRestSeconds(int i) {
+        restSeconds = i;
+    }
+
     private SystemJob getSystemJob() {
         return (systemJob);
     }
@@ -135,6 +146,7 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
 
         if (s != null) {
 
+            System.out.println(s);
             result = s.indexOf(DONE_MESSAGE) != -1;
         }
 
@@ -200,6 +212,18 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
         }
     }
 
+    private String toFtp(String s) {
+
+        String result = null;
+
+        if ((s != null) && (s.startsWith("http"))) {
+
+            result = "ftp" + s.substring(s.indexOf(":"));
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -221,7 +245,7 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
                 if (!isFinished(job.getOutputText())) {
 
                     // Let's sleep a few seconds and try to get more data.
-                    JobManager.sleep(20000);
+                    JobManager.sleep(getRestSeconds() * 1000);
 
                     job = SystemJob.getInstance("wget --limit-rate="
                         + getMaxRate() + " -c "

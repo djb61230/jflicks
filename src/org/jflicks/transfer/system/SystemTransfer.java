@@ -27,6 +27,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.Recording;
 import org.jflicks.transfer.BaseTransfer;
+import org.jflicks.util.Hostname;
 
 /**
  * This is our implementation of a Transfer service.
@@ -36,6 +37,8 @@ import org.jflicks.transfer.BaseTransfer;
  */
 public class SystemTransfer extends BaseTransfer implements JobListener,
     ActionListener {
+
+    private static final long MINSIZE = 10240000L;
 
     private WgetTransferJob wgetTransferJob;
     private JobContainer jobContainer;
@@ -94,23 +97,24 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
     /**
      * {@inheritDoc}
      */
-    public String transfer(Recording r) {
+    public String transfer(Recording r, int initial, int rest) {
 
         String result = null;
 
         log(DEBUG, "Recording: " + r);
+
+        // First thing we do is stop the last one if it exists.
+        WgetTransferJob job = getWgetTransferJob();
+        JobContainer jc = getJobContainer();
+        if ((job != null) && (jc != null)) {
+
+            job.setRecording(null);
+            jc.stop();
+            setWgetTransferJob(null);
+            setJobContainer(null);
+        }
+
         if (r != null) {
-
-            // First thing we do is stop the last one if it exists.
-            WgetTransferJob job = getWgetTransferJob();
-            JobContainer jc = getJobContainer();
-            if ((job != null) && (jc != null)) {
-
-                job.setRecording(null);
-                jc.stop();
-                setWgetTransferJob(null);
-                setJobContainer(null);
-            }
 
             // Now start up the new one.
             File local = toFile(r);
@@ -118,33 +122,43 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
 
                 result = local.getPath();
 
-                job = new WgetTransferJob(r, local, getMaxRate());
+                job = new WgetTransferJob(r, local, getMaxRate(), rest);
                 job.addJobListener(this);
                 jc = JobManager.getJobContainer(job);
                 setWgetTransferJob(job);
                 setJobContainer(jc);
                 jc.start();
 
+            } else {
+
+                // The file is actually local so nothing to transfer
+                result = r.getPath();
+                local = new File(result);
+            }
+
+            if (local != null) {
+
                 // Now we want to block until we have a file with some
                 // data.
                 boolean done = false;
-                int maxwaits = 10;
                 int waits = 0;
                 while (!done) {
 
                     if ((local.exists()) && (local.isFile())
-                        && (local.length() > 1024000L)) {
+                        && (local.length() > MINSIZE)) {
 
                         done = true;
+                        log(INFO, "Blocked for " + waits + " seconds!");
 
                     } else {
 
                         waits++;
-                        if (waits < maxwaits) {
+                        if (waits < initial) {
                             JobManager.sleep(1000);
                         } else {
+                            log(INFO, "Blocked for " + initial
+                                + " seconds but gave up!");
                             done = true;
-                            result = null;
                         }
                     }
                 }
@@ -193,11 +207,31 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
         }
     }
 
+    private boolean isLocal(Recording r) {
+
+        boolean result = false;
+
+        if (r != null) {
+
+            String hp = r.getHostPort();
+            log(DEBUG, "isLocal hp: <" + hp + ">");
+            if (hp != null) {
+
+                hp = hp.substring(0, hp.indexOf(":"));
+                log(DEBUG, "isLocal hp: <" + hp + ">");
+                log(DEBUG, "isLocal host: <" + Hostname.getHostAddress() + ">");
+                result = hp.equals(Hostname.getHostAddress());
+            }
+        }
+
+        return (result);
+    }
+
     public File toFile(Recording r) {
 
         File result = null;
 
-        if (r != null) {
+        if ((r != null) && (!isLocal(r))) {
 
             String path = r.getPath();
             if (path != null) {
@@ -221,7 +255,7 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
 
             setWgetTransferJob(null);
             setJobContainer(null);
-            log(DEBUG, "curl job done!!");
+            log(DEBUG, "wget job done!!");
 
         } else if (event.getType() == JobEvent.UPDATE) {
 

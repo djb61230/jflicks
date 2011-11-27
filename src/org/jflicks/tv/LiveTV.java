@@ -53,6 +53,7 @@ public class LiveTV implements Serializable {
     private String destinationHost;
     private int destinationPort;
     private String hostPort;
+    private String streamURL;
 
     /**
      * Simple empty constructor.
@@ -238,6 +239,28 @@ public class LiveTV implements Serializable {
      */
     public void setHostPort(String s) {
         hostPort = s;
+    }
+
+    /**
+     * When the live tv mode is non-streaming via UDP, we still need to
+     * support streaming via the web server by the client doing a Transfer
+     * to get the video local.
+     *
+     * @return A String representing a URL.
+     */
+    public String getStreamURL() {
+        return (streamURL);
+    }
+
+    /**
+     * When the live tv mode is non-streaming via UDP, we still need to
+     * support streaming via the web server by the client doing a Transfer
+     * to get the video local.
+     *
+     * @param s A String representing a URL.
+     */
+    public void setStreamURL(String s) {
+        streamURL = s;
     }
 
     /**

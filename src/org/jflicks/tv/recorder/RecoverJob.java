@@ -180,7 +180,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
         } catch (IOException ex) {
 
-            System.out.println("Failed to re-open channel, perhaps next time.");
+            System.out.println("Failed to re-open, perhaps next time.");
         }
     }
 
@@ -228,23 +228,32 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                     timer.stop();
                     count = 0;
-                    reset();
-                    timer.restart();
+                    if (!isTerminate()) {
+
+                        reset();
+                        timer.restart();
+                    }
 
                 } catch (ClosedChannelException ex) {
 
                     timer.stop();
                     count = 0;
-                    reset();
-                    timer.restart();
+                    if (!isTerminate()) {
+
+                        reset();
+                        timer.restart();
+                    }
 
                 } catch (Exception ex) {
 
                     // Here is a catch-all.  Hopefully we can still reset.
                     timer.stop();
                     count = 0;
-                    reset();
-                    timer.restart();
+                    if (!isTerminate()) {
+
+                        reset();
+                        timer.restart();
+                    }
                 }
 
                 if (count > 0) {
@@ -274,6 +283,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
      */
     public void stop() {
 
+        System.out.println("RecoverJob: We are told to terminate!");
         setTerminate(true);
     }
 

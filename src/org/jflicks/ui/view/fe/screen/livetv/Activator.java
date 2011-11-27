@@ -46,6 +46,7 @@ public class Activator extends BaseActivator {
 
     private ServiceTracker serviceTracker;
     private RCTracker rcTracker;
+    private TransferTracker transferTracker;
     private ImageCacheTracker imageCacheTracker;
     private ServiceTracker logServiceTracker;
 
@@ -62,6 +63,9 @@ public class Activator extends BaseActivator {
 
             s = new DVRLiveTVScreen();
             playertype = Player.PLAYER_VIDEO_TRANSPORT_STREAM;
+            TransferTracker tt = new TransferTracker(bc, (DVRLiveTVScreen) s);
+            setTransferTracker(tt);
+            tt.open();
 
         } else {
 
@@ -118,6 +122,11 @@ public class Activator extends BaseActivator {
             t.close();
         }
 
+        TransferTracker tt = getTransferTracker();
+        if (tt != null) {
+            tt.close();
+        }
+
         RCTracker rct = getRCTracker();
         if (rct != null) {
             rct.close();
@@ -141,6 +150,14 @@ public class Activator extends BaseActivator {
 
     private void setServiceTracker(ServiceTracker t) {
         serviceTracker = t;
+    }
+
+    private TransferTracker getTransferTracker() {
+        return (transferTracker);
+    }
+
+    private void setTransferTracker(TransferTracker t) {
+        transferTracker = t;
     }
 
     private RCTracker getRCTracker() {

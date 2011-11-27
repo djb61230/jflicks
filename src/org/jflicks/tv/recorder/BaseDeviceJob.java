@@ -16,6 +16,9 @@
 */
 package org.jflicks.tv.recorder;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobListener;
@@ -30,6 +33,8 @@ import org.jflicks.job.SystemJob;
  */
 public abstract class BaseDeviceJob extends AbstractJob implements JobListener {
 
+    private PropertyChangeSupport propertyChangeSupport;
+
     private SystemJob systemJob;
     private JobContainer jobContainer;
     private String device;
@@ -38,6 +43,44 @@ public abstract class BaseDeviceJob extends AbstractJob implements JobListener {
      * Simple no argument constructor.
      */
     public BaseDeviceJob() {
+
+        setPropertyChangeSupport(new PropertyChangeSupport(this));
+    }
+
+    private PropertyChangeSupport getPropertyChangeSupport() {
+        return (propertyChangeSupport);
+    }
+
+    private void setPropertyChangeSupport(PropertyChangeSupport pcs) {
+        propertyChangeSupport = pcs;
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+
+        PropertyChangeSupport pcs = getPropertyChangeSupport();
+        if (pcs != null) {
+
+            pcs.addPropertyChangeListener(l);
+        }
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener l) {
+
+        PropertyChangeSupport pcs = getPropertyChangeSupport();
+        if (pcs != null) {
+
+            pcs.removePropertyChangeListener(l);
+        }
+    }
+
+    public void firePropertyChange(String s, Object oldValue,
+        Object newValue) {
+
+        PropertyChangeSupport pcs = getPropertyChangeSupport();
+        if ((pcs != null) && (s != null)) {
+
+            pcs.firePropertyChange(s, oldValue, newValue);
+        }
     }
 
     protected SystemJob getSystemJob() {

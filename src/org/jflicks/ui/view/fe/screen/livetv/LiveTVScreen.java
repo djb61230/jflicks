@@ -180,6 +180,8 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
             if (rip != null) {
                 rip.setPlayer(p);
             }
+
+            System.out.println("udp://@" + hostaddr + ":1234");
             p.play("udp://@" + hostaddr + ":1234");
         }
     }

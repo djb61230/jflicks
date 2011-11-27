@@ -46,9 +46,12 @@ public interface Transfer {
      * returns the user can be assured that the file has begun transferring
      * and can be played.
      *
+     * @param r A Recording instance.
+     * @param initial The number of seconds to block to ensure a cache of data.
+     * @param rest The number of seconds to rest between fetches.
      * @return The local path as a String.
      */
-    String transfer(Recording r);
+    String transfer(Recording r, int initial, int rest);
 
     /**
      * Stop all transfers and clean up all local files.

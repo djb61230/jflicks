@@ -156,6 +156,7 @@ public class RecordJob extends BaseDeviceJob {
         JobContainer jc = getJobContainer();
         if (jc != null) {
 
+            System.out.println("RecordJob is stoppingt");
             jc.stop();
             setJobContainer(null);
         }

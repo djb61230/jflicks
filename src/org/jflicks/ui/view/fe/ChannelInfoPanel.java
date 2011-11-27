@@ -341,7 +341,7 @@ public class ChannelInfoPanel extends Panel implements ActionListener {
 
         if (b) {
 
-            if (pane != null) {
+            if ((!isVisible()) && (pane != null)) {
                 pane.add(this, Integer.valueOf(300));
             }
             Timer t = getTimer();

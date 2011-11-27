@@ -29,26 +29,30 @@ import java.util.Arrays;
 import java.util.HashMap;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
+import org.jflicks.mvc.View;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSUtil;
+import org.jflicks.player.Bookmark;
+import org.jflicks.player.Player;
+import org.jflicks.transfer.Transfer;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.LiveTV;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.ShowAiring;
-import org.jflicks.player.Bookmark;
-import org.jflicks.player.Player;
 import org.jflicks.ui.view.fe.ChannelInfoPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.GuideJob;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.RecordingInfoPanel;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -63,8 +67,6 @@ import org.jdesktop.swingx.painter.MattePainter;
 public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     PropertyChangeListener, JobListener {
 
-    private static final long FILE_MIN_SIZE = 3072000L;
-
     private NMS[] nms;
     private LiveTV liveTV;
     private Timer startTimer;
@@ -74,6 +76,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     private RecordingInfoPanel recordingInfoPanel;
     private ChannelInfoPanel channelInfoPanel;
     private long watchingStartTime;
+    private Transfer transfer;
 
     /**
      * Simple empty constructor.
@@ -83,6 +86,17 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         setTitle("Live TV");
         BufferedImage bi = getImageByName("Live_TV");
         setDefaultBackgroundImage(bi);
+
+        setFocusable(true);
+        requestFocus();
+    }
+
+    public Transfer getTransfer() {
+        return (transfer);
+    }
+
+    public void setTransfer(Transfer t) {
+        transfer = t;
     }
 
     private LiveTV getLiveTV() {
@@ -99,14 +113,6 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
     private void setNextChannel(Channel c) {
         nextChannel = c;
-    }
-
-    private Timer getStartTimer() {
-        return (startTimer);
-    }
-
-    private void setStartTimer(Timer t) {
-        startTimer = t;
     }
 
     private JobContainer getGuideJobContainer() {
@@ -149,6 +155,52 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
     private void setWatchingStartTime(long l) {
         watchingStartTime = l;
+    }
+
+    private void restartPlayer(LiveTV l) {
+
+        Player p = getPlayer();
+        Transfer t = getTransfer();
+        if ((p != null) && (t != null) && (l != null)) {
+
+            if (p.isPlaying()) {
+
+                p.stop();
+            }
+
+            View v = getView();
+            if (v instanceof FrontEndView) {
+
+                FrontEndView fev = (FrontEndView) v;
+                p.setRectangle(fev.getPosition());
+            }
+
+            p.setFrame(Util.findFrame(this));
+
+            ChannelInfoPanel cip = getChannelInfoPanel();
+            if (cip != null) {
+                cip.setPlayer(p);
+            }
+
+            RecordingInfoPanel rip = getRecordingInfoPanel();
+            if (rip != null) {
+                rip.setPlayer(p);
+            }
+
+            Recording r = new Recording();
+            r.setPath(l.getPath());
+            r.setStreamURL(l.getStreamURL());
+            r.setHostPort(l.getHostPort());
+
+            System.out.println(l.getPath());
+            System.out.println(l.getStreamURL());
+
+            p.addPropertyChangeListener("Completed", this);
+
+            String path = t.transfer(r, 20, 5);
+            System.out.println("local: " + path);
+            p.play(path);
+        }
     }
 
     /**
@@ -195,11 +247,13 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 getSmallFont(), getMediumFont());
             w.setImageCache(getImageCache());
             w.setPlayer(getPlayer());
+            w.setVisible(false);
             setRecordingInfoPanel(w);
 
             ChannelInfoPanel cw = new ChannelInfoPanel(fev.getPosition(), 8,
                 getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont());
+            cw.setVisible(false);
             setChannelInfoPanel(cw);
 
             JXPanel panel = new JXPanel(new BorderLayout());
@@ -258,9 +312,18 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                             jc.start();
 
                             setLiveTV(l);
-                            Timer wait = new Timer(1000, this);
-                            setStartTimer(wait);
-                            wait.start();
+                            updateInfoWindow();
+                            controlKeyboard(false);
+                            final LiveTV fl = l;
+                            Runnable doRun = new Runnable() {
+
+                                public void run() {
+
+                                    System.out.println("Starting player...");
+                                    restartPlayer(fl);
+                                }
+                            };
+                            SwingUtilities.invokeLater(doRun);
 
                         } else {
 
@@ -329,6 +392,8 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void close() {
 
+        System.out.println("Yep at close!!!!");
+        controlKeyboard(true);
         RecordingInfoPanel w = getRecordingInfoPanel();
         if (w != null) {
 
@@ -360,6 +425,13 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 }
             }
         }
+
+        Transfer t = getTransfer();
+        if (t != null) {
+            t.transfer(null, 0, 0);
+        }
+
+        setDone(true);
     }
 
     /**
@@ -413,9 +485,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             cw.setChannel(c);
             cw.setShowAiring(currentShowAiring(m.get(c)));
-            if (!cw.isVisible()) {
-                cw.setVisible(true);
-            }
+            cw.setVisible(true);
         }
     }
 
@@ -434,9 +504,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             cw.setChannel(c);
             cw.setShowAiring(currentShowAiring(m.get(c)));
-            if (!cw.isVisible()) {
-                cw.setVisible(true);
-            }
+            cw.setVisible(true);
         }
     }
 
@@ -475,45 +543,48 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             if (!c.equals(l.getCurrentChannel())) {
 
+                Transfer t = getTransfer();
                 Player p = getPlayer();
-                if (p != null) {
+                if ((p != null) && (t != null)) {
 
-                    // Remove us from the listener so we won't get the
-                    // stop property update and end the session.
-                    p.removePropertyChangeListener("Playing", this);
-                    p.stop();
-                }
+                    ChannelInfoPanel cw = getChannelInfoPanel();
+                    if (cw != null) {
 
-                ChannelInfoPanel cw = getChannelInfoPanel();
-                if (cw != null) {
+                        cw.setVisible(false);
+                    }
 
-                    cw.setVisible(false);
-                }
+                    NMS n = NMSUtil.select(getNMS(), l.getHostPort());
+                    if (n != null) {
 
-                NMS n = NMSUtil.select(getNMS(), l.getHostPort());
-                if (n != null) {
+                        setWatchingStartTime(System.currentTimeMillis());
+                        l = n.changeChannel(l, c);
+                        if (l.getMessageType() == LiveTV.MESSAGE_TYPE_NONE) {
 
-                    setWatchingStartTime(System.currentTimeMillis());
-                    l = n.changeChannel(l, c);
-                    if (l.getMessageType() == LiveTV.MESSAGE_TYPE_NONE) {
+                            setLiveTV(l);
+                            updateInfoWindow();
+                            final LiveTV fl = l;
+                            Runnable doRun = new Runnable() {
 
-                        setLiveTV(l);
-                        updateInfoWindow();
-                        Timer wait = new Timer(1000, this);
-                        setStartTimer(wait);
-                        wait.start();
+                                public void run() {
+
+                                    System.out.println("Starting player...");
+                                    restartPlayer(fl);
+                                }
+                            };
+                            SwingUtilities.invokeLater(doRun);
+
+                        } else {
+
+                            n.closeSession(l);
+                            setLiveTV(null);
+                            setDone(true);
+                        }
 
                     } else {
 
-                        n.closeSession(l);
                         setLiveTV(null);
                         setDone(true);
                     }
-
-                } else {
-
-                    setLiveTV(null);
-                    setDone(true);
                 }
             }
         }
@@ -527,63 +598,26 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void propertyChange(PropertyChangeEvent event) {
 
+        System.out.println("propertyChange: " + event.getPropertyName());
         if ((event.getSource() == getPlayer()) && (!isDone())) {
 
             // If we get this property update, then it means the video
             // finished playing on it's own.
             Boolean bobj = (Boolean) event.getNewValue();
-            if (!bobj.booleanValue()) {
+            if (bobj.booleanValue()) {
 
                 getPlayer().removePropertyChangeListener(this);
                 log(DEBUG, "we are stopping because mplayer says so");
 
                 close();
-                setDone(true);
+
+                log(DEBUG, "about to request focus");
+                requestFocus();
             }
         }
     }
 
-    /**
-     * We are listening for a timer event so we can begin playing.  Live TV
-     * needs a few seconds to begin before we can start playing or else we
-     * just exit.
-     *
-     * @param event An ActionEvent instance.
-     */
     public void actionPerformed(ActionEvent event) {
-
-        if (!isDone()) {
-
-            LiveTV l = getLiveTV();
-            Player p = getPlayer();
-            Timer t = getStartTimer();
-            FrontEndView fev = (FrontEndView) getView();
-            if ((l != null) && (p != null) && (t != null) && (fev != null)) {
-
-                File f = new File(fev.transformPath(l.getPath()));
-                if ((f.exists()) && (f.length() > FILE_MIN_SIZE)) {
-
-                    t.stop();
-                    setStartTimer(null);
-                    p.addPropertyChangeListener("Playing", this);
-                    ChannelInfoPanel cip = getChannelInfoPanel();
-                    if (cip != null) {
-                        cip.setPlayer(p);
-                    }
-
-                    RecordingInfoPanel rip = getRecordingInfoPanel();
-                    if (rip != null) {
-                        rip.setPlayer(p);
-                    }
-
-                    p.play(f.getPath());
-
-                } else {
-
-                    log(INFO, "it ain't ready...." + f.exists());
-                }
-            }
-        }
     }
 
     /**

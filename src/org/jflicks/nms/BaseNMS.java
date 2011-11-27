@@ -1464,6 +1464,42 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         return (result);
     }
 
+    private String computeStreamURL(LiveTV l) {
+
+        String result = null;
+
+        String h = getHost();
+        String[] array = getConfiguredStreamPaths();
+        if ((h != null) && (array != null) && (l != null)) {
+
+            boolean found = false;
+            String path = l.getPath();
+            if (path != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    if (path.startsWith(array[i])) {
+
+                        path = path.substring(array[i].length());
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if ((found) && (path != null)) {
+
+                if (path.startsWith("/")) {
+                    result = "http://" + h + path;
+                } else {
+                    result = "http://" + h + "/" + path;
+                }
+            }
+        }
+
+        return (result);
+    }
+
     private String computeStreamURL(Recording r) {
 
         String result = null;
@@ -2034,6 +2070,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             if (result != null) {
 
                 result.setHostPort(getHost() + ":" + getPort());
+                result.setStreamURL(computeStreamURL(result));
             }
         }
 
@@ -2073,6 +2110,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if (lve != null) {
 
             lve.changeChannel(l, c);
+            l.setStreamURL(computeStreamURL(l));
         }
 
         return (l);

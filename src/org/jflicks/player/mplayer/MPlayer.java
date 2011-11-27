@@ -31,7 +31,7 @@ import javax.swing.KeyStroke;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.JWindow;
+import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -53,7 +53,7 @@ import org.jflicks.util.Util;
  */
 public class MPlayer extends BasePlayer {
 
-    private JWindow window;
+    private JDialog window;
     private JPanel keyPanel;
     private Canvas canvas;
     private MPlayerJob mplayerJob;
@@ -183,11 +183,11 @@ public class MPlayer extends BasePlayer {
         }
     }
 
-    private JWindow getWindow() {
+    private JDialog getWindow() {
         return (window);
     }
 
-    private void setWindow(JWindow w) {
+    private void setWindow(JDialog w) {
         window = w;
     }
 
@@ -382,7 +382,8 @@ public class MPlayer extends BasePlayer {
                 int width = (int) r.getWidth();
                 int height = (int) r.getHeight();
 
-                JWindow win = new JWindow(getFrame());
+                JDialog win = new JDialog(getFrame());
+                win.setUndecorated(true);
                 win.setFocusable(true);
                 win.setBounds(x, y, width, height);
                 win.setBackground(Color.BLACK);
@@ -561,7 +562,7 @@ public class MPlayer extends BasePlayer {
      */
     public void dispose() {
 
-        JWindow w = getWindow();
+        JDialog w = getWindow();
         if (w != null) {
 
             w.setVisible(false);

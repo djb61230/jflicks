@@ -809,7 +809,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     Transfer t = getTransfer();
                     if ((t != null) && (r.isCurrentlyRecording())) {
 
-                        result = t.transfer(r);
+                        result = t.transfer(r, 5, 20);
                         setPlayingVideo(false);
                     }
                 }
@@ -1036,7 +1036,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
      */
     public void close() {
 
-        removeBlankPanel();
+        //removeBlankPanel();
         controlKeyboard(true);
         setCurrentRecording(null);
         RecordingInfoPanel w = getRecordingInfoPanel();
@@ -1047,7 +1047,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         Transfer t = getTransfer();
         if (t != null) {
-            t.transfer(null);
+            t.transfer(null, 0, 0);
         }
     }
 
@@ -1219,7 +1219,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     controlKeyboard(false);
 
                     p.setFrame(Util.findFrame(this));
-                    addBlankPanel();
+                    //addBlankPanel();
                     p.play(recpath);
 
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
@@ -1260,7 +1260,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                         controlKeyboard(false);
                         p.setFrame(Util.findFrame(this));
-                        addBlankPanel();
+                        //addBlankPanel();
                         p.play(recpath, bm);
                     }
 

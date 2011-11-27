@@ -18,6 +18,8 @@ package org.jflicks.tv.recorder.dvb;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Date;
 import javax.swing.Timer;
@@ -37,13 +39,15 @@ import org.jflicks.tv.Channel;
  * @author Doug Barnum
  * @version 1.0
  */
-public class DvbRecorderJob extends AbstractJob implements JobListener {
+public class DvbRecorderJob extends AbstractJob implements JobListener,
+    PropertyChangeListener {
 
     private DvbRecorder dvbRecorder;
     private ChannelJob channelJob;
     private RecordJob recordJob;
     private JobContainer channelJobContainer;
     private JobContainer recordJobContainer;
+    private boolean startedRecord;
 
     /**
      * This job supports the DvbRecorder service.
@@ -95,6 +99,14 @@ public class DvbRecorderJob extends AbstractJob implements JobListener {
         dvbRecorder = r;
     }
 
+    private boolean isStartedRecord() {
+        return (startedRecord);
+    }
+
+    private void setStartedRecord(boolean b) {
+        startedRecord = b;
+    }
+
     private void log(int status, String message) {
 
         DvbRecorder r = getDvbRecorder();
@@ -125,6 +137,19 @@ public class DvbRecorderJob extends AbstractJob implements JobListener {
         if (r != null) {
 
             result = r.getConfiguredChannelChangeScriptName();
+        }
+
+        return (result);
+    }
+
+    private String getChannelChangeReadyText() {
+
+        String result = null;
+
+        DvbRecorder r = getDvbRecorder();
+        if (r != null) {
+
+            result = r.getConfiguredChannelChangeReadyText();
         }
 
         return (result);
@@ -186,6 +211,9 @@ public class DvbRecorderJob extends AbstractJob implements JobListener {
         cj.setDevice(getDevice());
         cj.setChannel(getChannel());
         cj.setScript(getChannelChangeScriptName());
+        cj.setReadyText(getChannelChangeReadyText());
+        cj.addPropertyChangeListener(this);
+        log(DvbRecorder.DEBUG, "ready text: " + cj.getReadyText());
 
         RecordJob rj = new RecordJob();
         setRecordJob(rj);
@@ -224,6 +252,7 @@ public class DvbRecorderJob extends AbstractJob implements JobListener {
             JobManager.sleep(getSleepTime());
         }
 
+        fireJobEvent(JobEvent.COMPLETE);
     }
 
     /**
@@ -248,6 +277,25 @@ public class DvbRecorderJob extends AbstractJob implements JobListener {
         if (r != null) {
 
             r.setRecording(false);
+        }
+        setStartedRecord(false);
+    }
+
+    public void propertyChange(PropertyChangeEvent event) {
+
+        log(DvbRecorder.DEBUG, "propertyChange: " + event.getPropertyName());
+        if (event.getPropertyName().equals("Ready")) {
+
+            ChannelJob cj = getChannelJob();
+            if (!isStartedRecord()) {
+
+                JobContainer jc = getRecordJobContainer();
+                if (jc != null) {
+
+                    //jc.start();
+                    setStartedRecord(true);
+                }
+            }
         }
     }
 

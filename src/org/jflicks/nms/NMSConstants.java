@@ -123,6 +123,13 @@ public final class NMSConstants {
         "Change Channel Script";
 
     /**
+     * The configuration name for a Recorder service to flag that channel
+     * change is ready.
+     */
+    public static final String CHANGE_CHANNEL_READY_TEXT =
+        "Change Channel Ready Text";
+
+    /**
      * The configuration recording indexer name for a Recorder service to
      * perform a recording indexer.
      */

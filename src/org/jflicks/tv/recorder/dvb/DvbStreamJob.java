@@ -210,6 +210,10 @@ public class DvbStreamJob extends AbstractJob implements JobListener {
         setChannelJobContainer(jc);
         jc.start();
 
+        log(DvbRecorder.DEBUG, "Device: <" + getDevice() + ">");
+        log(DvbRecorder.DEBUG, "Host: <" + getHost() + ">");
+        log(DvbRecorder.DEBUG, "Port: <" + getPort() + ">");
+
         // We need to wait a bit before we start to stream to give
         // the channel time to lock in.
         jc = JobManager.getJobContainer(sj);
@@ -217,6 +221,8 @@ public class DvbStreamJob extends AbstractJob implements JobListener {
         final JobContainer fjc = jc;
         ActionListener streamPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
+
+                log(DvbRecorder.DEBUG, "Starting stream job for DVB");
                 fjc.start();
             }
         };
