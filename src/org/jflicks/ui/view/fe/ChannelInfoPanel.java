@@ -342,8 +342,13 @@ public class ChannelInfoPanel extends Panel implements ActionListener {
         if (b) {
 
             if ((!isVisible()) && (pane != null)) {
-                pane.add(this, Integer.valueOf(300));
+
+                if (pane.getPosition(this) == -1) {
+                    pane.add(this, JLayeredPane.POPUP_LAYER);
+                }
             }
+            super.setVisible(true);
+
             Timer t = getTimer();
             if (t != null) {
 
@@ -355,12 +360,8 @@ public class ChannelInfoPanel extends Panel implements ActionListener {
 
         } else {
 
-            if (pane != null) {
-                pane.remove(this);
-            }
+            super.setVisible(false);
         }
-
-        super.setVisible(b);
     }
 
     /**

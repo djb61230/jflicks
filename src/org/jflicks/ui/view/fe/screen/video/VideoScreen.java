@@ -290,6 +290,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             setVideoInfoPanel(new VideoInfoPanel(fev.getPosition(),
                 8, getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont()));
+            getVideoInfoPanel().setVisible(false);
 
             // Create our blank panel.
             JXPanel blank = new JXPanel();

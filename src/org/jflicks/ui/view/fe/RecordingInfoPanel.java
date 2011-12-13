@@ -422,7 +422,6 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
      */
     public void setVisible(boolean b) {
 
-        System.out.println("in setVisible: " + b);
         setCurrentSeconds(0);
 
         JLayeredPane pane = getPlayerPane();
@@ -431,9 +430,11 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
 
             if (pane != null) {
 
-                System.out.println("adding to pane....");
-                pane.add(this, Integer.valueOf(300));
+                if (pane.getPosition(this) == -1) {
+                    pane.add(this, JLayeredPane.POPUP_LAYER);
+                }
             }
+            super.setVisible(true);
 
             updateWindow();
             Timer t = getTimer();
@@ -447,9 +448,16 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
 
         } else {
 
+            super.setVisible(false);
+            /*
             if (pane != null) {
-                pane.remove(this);
+
+                int index = pane.getPosition(this);
+                if (index != -1) {
+                    pane.remove(index);
+                }
             }
+            */
 
             Timer t = getTimer();
             if (t != null) {
@@ -460,7 +468,6 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
                 }
             }
         }
-        super.setVisible(b);
     }
 
     private void updateWindow() {

@@ -199,6 +199,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             String path = t.transfer(r, 20, 4);
             log(DEBUG, "local: " + path);
+            setMarkTime(System.currentTimeMillis());
             p.play(path);
         }
     }
@@ -470,7 +471,11 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         Player p = getPlayer();
         if (p != null) {
 
-            p.seek(30);
+            int left = leftToGo(p, getMarkTime());
+            log(DEBUG, "left to go: " + left);
+            if (left > 30) {
+                p.seek(30);
+            }
         }
     }
 
@@ -544,7 +549,11 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         Player p = getPlayer();
         if (p != null) {
 
-            p.seek(30);
+            int left = leftToGo(p, getMarkTime());
+            log(DEBUG, "left to go: " + left);
+            if (left > 30) {
+                p.seek(30);
+            }
         }
     }
 

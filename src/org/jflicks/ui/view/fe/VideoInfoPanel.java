@@ -385,8 +385,13 @@ public class VideoInfoPanel extends Panel implements ActionListener {
             if (b) {
 
                 if (pane != null) {
-                    pane.add(this, Integer.valueOf(300));
+
+                    if (pane.getPosition(this) == -1) {
+                        pane.add(this, JLayeredPane.POPUP_LAYER);
+                    }
                 }
+                super.setVisible(true);
+
                 if (!t.isRunning()) {
 
                     t.restart();
@@ -394,14 +399,14 @@ public class VideoInfoPanel extends Panel implements ActionListener {
 
             } else {
 
+                super.setVisible(false);
+
                 t.stop();
                 if (pane != null) {
                     pane.remove(this);
                 }
             }
         }
-
-        super.setVisible(b);
     }
 
     private void updateWindow() {

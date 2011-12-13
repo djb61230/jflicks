@@ -607,6 +607,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 fev.getPosition(), 8, getInfoColor(),
                 getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont()));
+            getRecordingInfoPanel().setVisible(false);
 
             setDefaultBackgroundImage(
                 Util.resize(getDefaultBackgroundImage(), width, height));
@@ -810,6 +811,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     if ((t != null) && (r.isCurrentlyRecording())) {
 
                         result = t.transfer(r, 5, 20);
+                        setMarkTime(r.getRealStart());
                         setPlayingVideo(false);
                     }
                 }
@@ -1036,7 +1038,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
      */
     public void close() {
 
-        //removeBlankPanel();
+        removeBlankPanel();
         controlKeyboard(true);
         setCurrentRecording(null);
         RecordingInfoPanel w = getRecordingInfoPanel();
@@ -1095,7 +1097,10 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                     updateLengthHint(cr, p);
                     int diff = next - current;
-                    p.seek(diff);
+                    int left = leftToGo(p, cr);
+                    if (left > diff) {
+                        p.seek(diff);
+                    }
 
                 } else {
 
@@ -1164,10 +1169,20 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     public void right() {
 
         Player p = getPlayer();
-        if (p != null) {
+        Recording r = getCurrentRecording();
+        if ((p != null) && (r != null)) {
 
-            updateLengthHint(getCurrentRecording(), p);
-            p.seek(30);
+            updateLengthHint(r, p);
+            int left = -1;
+            if (r.isCurrentlyRecording()) {
+                left = leftToGo(p, getMarkTime());
+            } else {
+                left = leftToGo(p, r);
+            }
+
+            if (left > 30) {
+                p.seek(30);
+            }
         }
     }
 
@@ -1219,7 +1234,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     controlKeyboard(false);
 
                     p.setFrame(Util.findFrame(this));
-                    //addBlankPanel();
+                    addBlankPanel();
                     p.play(recpath);
 
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
@@ -1237,6 +1252,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     RecordingInfoPanel w = getRecordingInfoPanel();
                     if (w != null) {
 
+                        w.setVisible(false);
                         w.setImageCache(getImageCache());
                         w.setRecording(r);
                         w.setPlayer(p);
@@ -1260,7 +1276,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                         controlKeyboard(false);
                         p.setFrame(Util.findFrame(this));
-                        //addBlankPanel();
+                        addBlankPanel();
                         p.play(recpath, bm);
                     }
 

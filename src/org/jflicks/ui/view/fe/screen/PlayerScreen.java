@@ -29,8 +29,10 @@ import java.util.HashMap;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
+import org.jflicks.nms.Media;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
+import org.jflicks.player.PlayState;
 import org.jflicks.rc.RC;
 import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
@@ -90,6 +92,7 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
     private ButtonPanel playButtonPanel;
     private JPanel blankPanel;
     private boolean popupEnabled;
+    private long markTime;
 
     /**
      * Extensions need to display some info banner over the video.
@@ -411,6 +414,51 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
             pane.remove(bp);
             pane.repaint();
         }
+    }
+
+    public long getMarkTime() {
+        return (markTime);
+    }
+
+    public void setMarkTime(long l) {
+        markTime = l;
+    }
+
+    public int leftToGo(Player p, long startedAt) {
+
+        int result = -1;
+
+        if (p != null) {
+
+            PlayState ps = p.getPlayState();
+            if (ps != null) {
+
+                double current = ps.getTime();
+                double len = (double) (System.currentTimeMillis() - startedAt);
+                len /= 1000.0;
+                result = (int) (len - current);
+            }
+        }
+
+        return (result);
+    }
+
+    public int leftToGo(Player p, Media m) {
+
+        int result = -1;
+
+        if (p != null) {
+
+            PlayState ps = p.getPlayState();
+            if (ps != null) {
+
+                double current = ps.getTime();
+                double len = m.getDuration();
+                result = (int) (len - current);
+            }
+        }
+
+        return (result);
     }
 
     /**
