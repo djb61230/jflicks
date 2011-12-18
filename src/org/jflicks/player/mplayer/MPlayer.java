@@ -288,6 +288,13 @@ public class MPlayer extends BasePlayer {
     /**
      * {@inheritDoc}
      */
+    public boolean supportsMaximize() {
+        return (false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean supportsSeek() {
         return (true);
     }
@@ -454,6 +461,14 @@ public class MPlayer extends BasePlayer {
         setUserStop(true);
         command("stop\n");
         dispose();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void maximize(boolean b) {
+
+        setMaximized(b);
     }
 
     /**

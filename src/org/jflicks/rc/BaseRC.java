@@ -43,6 +43,7 @@ public abstract class BaseRC extends BaseLog implements RC {
     private int enterKeyEvent;
     private int escapeKeyEvent;
     private int infoKeyEvent;
+    private int maximizeKeyEvent;
     private int pauseKeyEvent;
     private int pageUpKeyEvent;
     private int pageDownKeyEvent;
@@ -67,6 +68,7 @@ public abstract class BaseRC extends BaseLog implements RC {
         setEnterKeyEvent(getDefaultEnterKeyEvent());
         setEscapeKeyEvent(getDefaultEscapeKeyEvent());
         setInfoKeyEvent(getDefaultInfoKeyEvent());
+        setMaximizeKeyEvent(getDefaultMaximizeKeyEvent());
         setPauseKeyEvent(getDefaultPauseKeyEvent());
         setPageUpKeyEvent(getDefaultPageUpKeyEvent());
         setPageDownKeyEvent(getDefaultPageDownKeyEvent());
@@ -201,6 +203,13 @@ public abstract class BaseRC extends BaseLog implements RC {
     /**
      * {@inheritDoc}
      */
+    public int getDefaultMaximizeKeyEvent() {
+        return (KeyEvent.VK_F);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public int getDefaultPauseKeyEvent() {
         return (KeyEvent.VK_I);
     }
@@ -230,7 +239,7 @@ public abstract class BaseRC extends BaseLog implements RC {
      * {@inheritDoc}
      */
     public int getDefaultForwardKeyEvent() {
-        return (KeyEvent.VK_F);
+        return (KeyEvent.VK_X);
     }
 
     /**
@@ -315,6 +324,13 @@ public abstract class BaseRC extends BaseLog implements RC {
      */
     public int getInfoKeyEvent() {
         return (infoKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getMaximizeKeyEvent() {
+        return (maximizeKeyEvent);
     }
 
     /**
@@ -434,6 +450,13 @@ public abstract class BaseRC extends BaseLog implements RC {
      */
     public void setInfoKeyEvent(int i) {
         infoKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setMaximizeKeyEvent(int i) {
+        maximizeKeyEvent = i;
     }
 
     /**

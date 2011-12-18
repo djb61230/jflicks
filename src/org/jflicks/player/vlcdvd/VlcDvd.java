@@ -100,6 +100,13 @@ public class VlcDvd extends BasePlayer implements JobListener {
     /**
      * {@inheritDoc}
      */
+    public boolean supportsMaximize() {
+        return (false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean supportsSeek() {
         return (false);
     }
@@ -159,6 +166,14 @@ public class VlcDvd extends BasePlayer implements JobListener {
             jc.stop();
             setJobContainer(null);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void maximize(boolean b) {
+
+        setMaximized(b);
     }
 
     /**

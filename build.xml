@@ -315,6 +315,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-player-mplayer-video-program-stream.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-player-vlcj-video.bnd"
             output="${bundle}"
         />
@@ -532,6 +541,15 @@
             failok="false"
             exceptions="true"
             files="${bnd}/jflicks-ui-view-fe-screen-photo.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-systemstatus.bnd"
             output="${bundle}"
         />
 

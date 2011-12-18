@@ -261,6 +261,13 @@ public class Vlcj extends BasePlayer {
     /**
      * {@inheritDoc}
      */
+    public boolean supportsMaximize() {
+        return (false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean supportsSeek() {
         return (true);
     }
@@ -401,6 +408,14 @@ public class Vlcj extends BasePlayer {
             setDialog(null);
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void maximize(boolean b) {
+
+        setMaximized(b);
     }
 
     /**

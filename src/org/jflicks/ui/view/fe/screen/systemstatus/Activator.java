@@ -14,13 +14,11 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.ui.view.fe.screen.recording;
+package org.jflicks.ui.view.fe.screen.systemstatus;
 
 import java.util.Hashtable;
 
-import org.jflicks.player.Player;
 import org.jflicks.rc.RCTracker;
-import org.jflicks.imagecache.ImageCacheTracker;
 import org.jflicks.ui.view.fe.screen.Screen;
 import org.jflicks.util.BaseActivator;
 
@@ -33,17 +31,14 @@ import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * The recording screen activator.
+ * Activator for the systemstatus screen.
  *
  * @author Doug Barnum
  * @version 1.0
  */
 public class Activator extends BaseActivator {
 
-    private ServiceTracker serviceTracker;
     private RCTracker rcTracker;
-    private TransferTracker transferTracker;
-    private ImageCacheTracker imageCacheTracker;
     private ServiceTracker logServiceTracker;
 
     /**
@@ -53,7 +48,7 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
-        RecordingScreen s = new RecordingScreen();
+        SystemStatusScreen s = new SystemStatusScreen();
 
         // Now we listen for command events.
         String[] topics = new String[] {
@@ -64,34 +59,9 @@ public class Activator extends BaseActivator {
         h.put(EventConstants.EVENT_TOPIC, topics);
         bc.registerService(EventHandler.class.getName(), s, h);
 
-        TransferTracker tt = new TransferTracker(bc, s);
-        setTransferTracker(tt);
-        tt.open();
-
         RCTracker rct = new RCTracker(bc, s);
         setRCTracker(rct);
         rct.open();
-
-        ImageCacheTracker ict = new ImageCacheTracker(bc, s);
-        setImageCacheTracker(ict);
-        ict.open();
-
-        try {
-
-            Filter filter = bc.createFilter("(|(Player-Handle="
-                + Player.PLAYER_VIDEO_TRANSPORT_STREAM + ")"
-                + "(Player-Handle=" + Player.PLAYER_VIDEO_PROGRAM_STREAM + ")"
-                + "(Player-Handle=" + Player.PLAYER_VIDEO + "))");
-            System.out.println(filter);
-            ServiceTracker st = new ServiceTracker(bc, filter, null);
-            setServiceTracker(st);
-            st.open();
-            s.setPlayerServiceTracker(st);
-
-        } catch (InvalidSyntaxException ex) {
-
-            System.out.println(ex.getMessage());
-        }
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
         dict.put(Screen.TITLE_PROPERTY, s.getTitle());
@@ -109,24 +79,9 @@ public class Activator extends BaseActivator {
      */
     public void stop(BundleContext context) {
 
-        ServiceTracker t = getServiceTracker();
-        if (t != null) {
-            t.close();
-        }
-
         RCTracker rct = getRCTracker();
         if (rct != null) {
             rct.close();
-        }
-
-        TransferTracker tt = getTransferTracker();
-        if (tt != null) {
-            tt.close();
-        }
-
-        ImageCacheTracker ict = getImageCacheTracker();
-        if (ict != null) {
-            ict.close();
         }
 
         if (logServiceTracker != null) {
@@ -136,36 +91,12 @@ public class Activator extends BaseActivator {
         }
     }
 
-    private ServiceTracker getServiceTracker() {
-        return (serviceTracker);
-    }
-
-    private void setServiceTracker(ServiceTracker t) {
-        serviceTracker = t;
-    }
-
     private RCTracker getRCTracker() {
         return (rcTracker);
     }
 
     private void setRCTracker(RCTracker t) {
         rcTracker = t;
-    }
-
-    private TransferTracker getTransferTracker() {
-        return (transferTracker);
-    }
-
-    private void setTransferTracker(TransferTracker t) {
-        transferTracker = t;
-    }
-
-    private ImageCacheTracker getImageCacheTracker() {
-        return (imageCacheTracker);
-    }
-
-    private void setImageCacheTracker(ImageCacheTracker t) {
-        imageCacheTracker = t;
     }
 
 }

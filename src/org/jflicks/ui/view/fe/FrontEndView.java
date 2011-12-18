@@ -1154,12 +1154,12 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
                 } else {
 
-                    exitAction();
+                    exitAction(true);
                 }
 
             } else {
 
-                exitAction();
+                exitAction(true);
             }
         }
     }

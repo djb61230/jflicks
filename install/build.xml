@@ -179,6 +179,8 @@
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-mplayer-video.jar"
             todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-player-mplayer-video-program-stream.jar"
+            todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-mplayer-video-transport-stream.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-player-chrome.jar"

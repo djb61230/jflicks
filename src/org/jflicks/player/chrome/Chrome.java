@@ -80,6 +80,13 @@ public class Chrome extends BasePlayer {
     /**
      * {@inheritDoc}
      */
+    public boolean supportsMaximize() {
+        return (true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean supportsSeek() {
         return (false);
     }
@@ -155,6 +162,26 @@ public class Chrome extends BasePlayer {
         if (jc != null) {
 
             jc.stop();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void maximize(boolean b) {
+
+        setMaximized(b);
+
+        try {
+
+            Robot r = new Robot();
+
+            r.keyPress(KeyEvent.VK_F);
+            r.keyRelease(KeyEvent.VK_F);
+
+        } catch (Exception ex) {
+
+            log(ERROR, "Robot error hitting maximize");
         }
     }
 

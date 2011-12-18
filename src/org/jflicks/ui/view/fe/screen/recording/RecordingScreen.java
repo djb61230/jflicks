@@ -85,6 +85,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     private Animator screenShotAnimator;
     private boolean playingVideo;
     private Transfer transfer;
+    private String streamType;
 
     /**
      * Simple empty constructor.
@@ -92,6 +93,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     public RecordingScreen() {
 
         setTitle("Watch Recordings");
+        setStreamType(Player.PLAYER_VIDEO_TRANSPORT_STREAM);
 
         BufferedImage bi = getImageByName("Watch_Recordings");
         setDefaultBackgroundImage(bi);
@@ -174,19 +176,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
     @Override
     public Player getPlayer() {
-
-        Player result = null;
-
-        if (isPlayingVideo()) {
-
-            result = getPlayer(Player.PLAYER_VIDEO);
-
-        } else {
-
-            result = getPlayer(Player.PLAYER_VIDEO_TRANSPORT_STREAM);
-        }
-
-        return (result);
+        return (getPlayer(getStreamType()));
     }
 
     /**
@@ -530,11 +520,15 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     }
 
     private boolean isPlayingVideo() {
-        return (playingVideo);
+        return (Player.PLAYER_VIDEO.equals(streamType));
     }
 
-    private void setPlayingVideo(boolean b) {
-        playingVideo = b;
+    private String getStreamType() {
+        return (streamType);
+    }
+
+    private void setStreamType(String s) {
+        streamType = s;
     }
 
     /**
@@ -751,7 +745,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         surl = surl.substring(0, surl.length() - ilength);
                     }
 
-                    System.out.println("surl <" + surl + ">");
+                    System.out.println("streamurl GERN BLANK <" + surl + ">");
                     result = ic.getImage(surl + ".png", false);
                 }
             }
@@ -764,7 +758,6 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         String result = null;
 
-        setPlayingVideo(false);
         if (r != null) {
 
             // Default to the path property.
@@ -777,7 +770,6 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 if ((tmp.exists()) && (tmp.isFile())) {
 
                     result = tmp.getPath();
-                    setPlayingVideo(true);
                 }
             }
 
@@ -798,7 +790,6 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                         if (streamURL.endsWith(iext)) {
                             System.out.println("saying video");
-                            setPlayingVideo(true);
                         }
                     }
 
@@ -812,9 +803,19 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                         result = t.transfer(r, 5, 20);
                         setMarkTime(r.getRealStart());
-                        setPlayingVideo(false);
                     }
                 }
+            }
+        }
+
+        if (result != null) {
+
+            if (result.endsWith("ts")) {
+                setStreamType(Player.PLAYER_VIDEO_TRANSPORT_STREAM);
+            } else if (result.endsWith("mpg")) {
+                setStreamType(Player.PLAYER_VIDEO_PROGRAM_STREAM);
+            } else {
+                setStreamType(Player.PLAYER_VIDEO);
             }
         }
 

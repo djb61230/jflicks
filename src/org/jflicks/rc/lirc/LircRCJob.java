@@ -374,6 +374,17 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
         }
     }
 
+    private void keyboardMaximize() {
+
+        LircRC rc = getLircRC();
+        Robot r = getRobot();
+        if ((rc != null) && (r != null)) {
+
+            r.keyPress(rc.getMaximizeKeyEvent());
+            r.keyRelease(rc.getMaximizeKeyEvent());
+        }
+    }
+
     private void keyboardInfo() {
 
         LircRC rc = getLircRC();
@@ -588,6 +599,10 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
         command(RC.PAUSE_COMMAND);
     }
 
+    private void eventMaximize() {
+        command(RC.MAXIMIZE_COMMAND);
+    }
+
     private void eventInfo() {
         command(RC.INFO_COMMAND);
     }
@@ -726,6 +741,17 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
 
         if (isEventControl()) {
             eventPause();
+        }
+    }
+
+    private void maximize() {
+
+        if (isKeyboardControl()) {
+            keyboardMaximize();
+        }
+
+        if (isEventControl()) {
+            eventMaximize();
         }
     }
 
@@ -893,6 +919,10 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
             } else if (command.equalsIgnoreCase(RC.PAUSE_COMMAND)) {
 
                 pause();
+
+            } else if (command.equalsIgnoreCase(RC.MAXIMIZE_COMMAND)) {
+
+                maximize();
 
             } else if (command.equalsIgnoreCase(RC.INFO_COMMAND)) {
 

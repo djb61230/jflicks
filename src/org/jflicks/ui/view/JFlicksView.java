@@ -229,12 +229,15 @@ public abstract class JFlicksView extends BaseView implements EventHandler,
     /**
      * Exit out of the OSGi framework nicely.
      */
-    public void exitAction() {
+    public void exitAction(boolean ask) {
 
         String title = "Exit This Program";
         String s = "Are you sure?";
-        int result = JOptionPane.showConfirmDialog(getFrame(),
-            s, title, JOptionPane.YES_NO_OPTION);
+        int result = JOptionPane.YES_OPTION;
+        if (ask) {
+            result = JOptionPane.showConfirmDialog(getFrame(),
+                s, title, JOptionPane.YES_NO_OPTION);
+        }
         if (result == JOptionPane.YES_OPTION) {
 
             BundleContext bc = getBundleContext();

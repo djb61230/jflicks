@@ -52,6 +52,12 @@ public interface Player {
     String PLAYER_VIDEO_TRANSPORT_STREAM = "VideoTransportStream";
 
     /**
+     * A player that can handle video files that are raw program
+     * streams.
+     */
+    String PLAYER_VIDEO_PROGRAM_STREAM = "VideoProgramStream";
+
+    /**
      * A player that can handle web video, most likely a browser.
      */
     String PLAYER_VIDEO_WEB = "VideoWeb";
@@ -138,6 +144,14 @@ public interface Player {
      * @return True if this player works with video.
      */
     boolean isVideoTransportStreamType();
+
+    /**
+     * Convenience method to see if the player type is
+     * PLAYER_VIDEO_PROGRAM_STREAM.
+     *
+     * @return True if this player works with video.
+     */
+    boolean isVideoProgramStreamType();
 
     /**
      * Convenience method to see if the player type is PLAYER_VIDEO_WEB.
@@ -283,6 +297,27 @@ public interface Player {
      * @return True is the player is paused.
      */
     boolean isPaused();
+
+    /**
+     * Toggle maximize.
+     *
+     * @param b If true then go maximize.
+     */
+    void maximize(boolean b);
+
+    /**
+     * Some Players may not be able to go maximize.
+     *
+     * @return True if the Player is capable of going maximize.
+     */
+    boolean supportsMaximize();
+
+    /**
+     * A player knows if it is currently in maximize.
+     *
+     * @return True is the player is in maximize.
+     */
+    boolean isMaximized();
 
     /**
      * If the player naturally finished playing without user interaction

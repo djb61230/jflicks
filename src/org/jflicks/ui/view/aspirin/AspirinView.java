@@ -172,7 +172,7 @@ public class AspirinView extends JFlicksView {
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {
-                    exitAction();
+                    exitAction(true);
                 }
             });
 
@@ -262,7 +262,7 @@ public class AspirinView extends JFlicksView {
     /**
      * Time to exit.
      */
-    public void exitAction() {
+    public void exitAction(boolean ask) {
 
         JFrame mf = getFrame();
         if (mf != null) {
@@ -282,7 +282,7 @@ public class AspirinView extends JFlicksView {
         log(INFO, "saving properties....");
         saveProperties();
 
-        super.exitAction();
+        super.exitAction(ask);
     }
 
     class ExitAction extends AbstractAction {
@@ -299,7 +299,7 @@ public class AspirinView extends JFlicksView {
         }
 
         public void actionPerformed(ActionEvent e) {
-            exitAction();
+            exitAction(true);
         }
     }
 

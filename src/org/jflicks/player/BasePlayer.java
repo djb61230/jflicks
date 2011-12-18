@@ -49,6 +49,7 @@ public abstract class BasePlayer extends BaseLog implements Player {
     private String title;
     private boolean playing;
     private boolean paused;
+    private boolean maximized;
     private boolean autoSkip;
     private boolean completed;
     private double audioOffset;
@@ -256,6 +257,13 @@ public abstract class BasePlayer extends BaseLog implements Player {
     /**
      * {@inheritDoc}
      */
+    public boolean isVideoProgramStreamType() {
+        return (Player.PLAYER_VIDEO_PROGRAM_STREAM.equals(getType()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean isVideoWebType() {
         return (Player.PLAYER_VIDEO_WEB.equals(getType()));
     }
@@ -315,6 +323,25 @@ public abstract class BasePlayer extends BaseLog implements Player {
         boolean old = paused;
         paused = b;
         firePropertyChange("Paused", old, paused);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isMaximized() {
+        return (maximized);
+    }
+
+    /**
+     * Convenience method to set this property.
+     *
+     * @param b The given Maximize state.
+     */
+    public void setMaximized(boolean b) {
+
+        boolean old = maximized;
+        maximized = b;
+        firePropertyChange("Maximized", old, maximized);
     }
 
     /**

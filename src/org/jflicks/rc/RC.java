@@ -74,6 +74,11 @@ public interface RC {
     String PAUSE_COMMAND = "pause";
 
     /**
+     * The pause command is a "player" command.
+     */
+    String MAXIMIZE_COMMAND = "maximize";
+
+    /**
      * The info command is a "player" command.
      */
     String INFO_COMMAND = "info";
@@ -239,6 +244,13 @@ public interface RC {
     int getDefaultPauseKeyEvent();
 
     /**
+     * The default key event for maximize.
+     *
+     * @return The maximize key event.
+     */
+    int getDefaultMaximizeKeyEvent();
+
+    /**
      * The default key event for page up.
      *
      * @return The page up key event.
@@ -358,6 +370,13 @@ public interface RC {
     int getPauseKeyEvent();
 
     /**
+     * The current key event for maximize.
+     *
+     * @return The maximize key event.
+     */
+    int getMaximizeKeyEvent();
+
+    /**
      * The current key event for page up.
      *
      * @return The page up key event.
@@ -475,6 +494,13 @@ public interface RC {
      * @param i The pause key event.
      */
     void setPauseKeyEvent(int i);
+
+    /**
+     * The current key event for maximize.
+     *
+     * @param i The maximize key event.
+     */
+    void setMaximizeKeyEvent(int i);
 
     /**
      * The current key event for page up.

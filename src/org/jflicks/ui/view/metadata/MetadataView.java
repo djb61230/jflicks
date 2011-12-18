@@ -194,7 +194,7 @@ public class MetadataView extends JFlicksView implements ActionListener {
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {
-                    exitAction();
+                    exitAction(true);
                 }
             });
 
@@ -467,7 +467,7 @@ public class MetadataView extends JFlicksView implements ActionListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            exitAction();
+            exitAction(true);
         }
     }
 

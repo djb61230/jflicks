@@ -47,7 +47,7 @@ public class V4l2Recorder extends BaseRecorder {
     public V4l2Recorder() {
 
         setTitle("V4l2");
-        setExtension("ts");
+        setExtension("mpg");
         setQuickTunable(false);
     }
 
@@ -211,6 +211,17 @@ public class V4l2Recorder extends BaseRecorder {
         if (c != null) {
 
             c.setSource(c.getSource() + " " + getDevice());
+        }
+
+        // This is quite hackish but the only analog v4l2 device we
+        // know that creates transport streams is the Hauppauge HD-PVR.
+        // All others appear to make program streams.  So we should overwrite
+        // the extension property for the HD-PVR.
+        log(DEBUG, "card type:" + cardType);
+        if ((cardType != null) && (cardType.indexOf("HD PVR") != -1)) {
+
+            log(DEBUG, "setting extension to ts!");
+            setExtension("ts");
         }
     }
 

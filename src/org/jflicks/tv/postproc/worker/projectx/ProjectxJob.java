@@ -109,7 +109,11 @@ public class ProjectxJob extends BaseWorkerJob implements JobListener {
                 // First build out our resulting files...
                 String pre = path.substring(0, path.lastIndexOf("."));
                 setVideoFile(new File(pre + ".m2v"));
-                setAudioFile(new File(pre + ".ac3"));
+                if (path.endsWith("ts")) {
+                    setAudioFile(new File(pre + ".ac3"));
+                } else {
+                    setAudioFile(new File(pre + ".mp2"));
+                }
                 setLogFile(new File(pre + "_log.txt"));
 
                 cl = cl.replaceFirst("INPUT_PATH", path);

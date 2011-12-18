@@ -163,7 +163,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {
-                    exitAction();
+                    exitAction(true);
                 }
             });
 
@@ -451,7 +451,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
     /**
      * Time to exit.
      */
-    public void exitAction() {
+    public void exitAction(boolean ask) {
 
         JXFrame f = getRecordingFrame();
         if (f != null) {
@@ -476,7 +476,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
         log(INFO, "saving properties....");
         saveProperties();
 
-        super.exitAction();
+        super.exitAction(ask);
     }
 
     /**
@@ -563,7 +563,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
 
-            exitAction();
+            exitAction(true);
         }
     }
 

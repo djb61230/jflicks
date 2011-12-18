@@ -75,6 +75,13 @@ public class Hulu extends BasePlayer implements JobListener {
     /**
      * {@inheritDoc}
      */
+    public boolean supportsMaximize() {
+        return (false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean supportsAutoSkip() {
         return (false);
     }
@@ -151,6 +158,14 @@ public class Hulu extends BasePlayer implements JobListener {
 
             jc.stop();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void maximize(boolean b) {
+
+        setMaximized(b);
     }
 
     /**

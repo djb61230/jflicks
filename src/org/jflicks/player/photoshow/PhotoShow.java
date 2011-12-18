@@ -123,6 +123,13 @@ public class PhotoShow extends BasePlayer implements ActionListener {
     /**
      * {@inheritDoc}
      */
+    public boolean supportsMaximize() {
+        return (false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean supportsSeek() {
         return (false);
     }
@@ -258,6 +265,14 @@ public class PhotoShow extends BasePlayer implements ActionListener {
     public void pause(boolean b) {
 
         setPaused(b);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void maximize(boolean b) {
+
+        setMaximized(b);
     }
 
     /**

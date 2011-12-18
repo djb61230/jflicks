@@ -131,7 +131,7 @@ public class ClientView extends JFlicksView {
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {
-                    exitAction();
+                    exitAction(true);
                 }
             });
 
@@ -250,7 +250,7 @@ public class ClientView extends JFlicksView {
         }
 
         public void actionPerformed(ActionEvent e) {
-            exitAction();
+            exitAction(true);
         }
     }
 
