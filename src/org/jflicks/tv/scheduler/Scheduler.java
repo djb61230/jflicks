@@ -71,7 +71,7 @@ public interface Scheduler extends Config {
      *
      * @return An array of String instances.
      */
-    String[] getConfiguredRecordingDirecories();
+    String[] getConfiguredRecordingDirectories();
 
     /**
      * Acquire all the current RecordingRule instances that are defined.

@@ -190,7 +190,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
     /**
      * {@inheritDoc}
      */
-    public String[] getConfiguredRecordingDirecories() {
+    public String[] getConfiguredRecordingDirectories() {
 
         String[] result = null;
 
@@ -444,7 +444,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
         File result = null;
 
-        String[] array = getConfiguredRecordingDirecories();
+        String[] array = getConfiguredRecordingDirectories();
         if ((array != null) && (array.length > 0)) {
 
             File dir = null;

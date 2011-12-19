@@ -33,6 +33,7 @@ public class MessagePanel extends BaseCustomizePanel {
 
     private String message;
     private JXLabel label;
+    private int labelBorder;
 
     /**
      * Simple empty constructor.
@@ -50,6 +51,28 @@ public class MessagePanel extends BaseCustomizePanel {
         MattePainter mpainter = new MattePainter(getPanelColor());
         setBackgroundPainter(mpainter);
         setAlpha((float) getPanelAlpha());
+    }
+
+    public boolean isLineWrap() {
+
+        boolean result = false;
+
+        JXLabel l = getLabel();
+        if (l != null) {
+
+            result = l.isLineWrap();
+        }
+
+        return (result);
+    }
+
+    public void setLineWrap(boolean b) {
+
+        JXLabel l = getLabel();
+        if (l != null) {
+
+            l.setLineWrap(b);
+        }
     }
 
     /**
@@ -106,10 +129,11 @@ public class MessagePanel extends BaseCustomizePanel {
         JXLabel l = getLabel();
         if ((d != null) && (pane != null) && (l != null)) {
 
-            double width = d.getWidth();
-            double height = d.getHeight();
+            int width = (int) d.getWidth();
+            int height = (int) d.getHeight();
+            int lb = width / 5;
 
-            l.setBounds(0, 0, (int) width, (int) height);
+            l.setBounds(0 + lb, 0, width - (2 * lb), height);
 
             pane.add(l, Integer.valueOf(100));
         }

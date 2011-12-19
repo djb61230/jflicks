@@ -30,6 +30,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.nms.NMS;
+import org.jflicks.nms.State;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.MessagePanel;
 import org.jflicks.ui.view.fe.NMSProperty;
@@ -51,9 +52,11 @@ import org.jdesktop.swingx.painter.MattePainter;
 public class SystemStatusScreen extends Screen implements ParameterProperty,
     NMSProperty, JobListener {
 
-    private static final String SOFTWARE_UPDATE = "Software Update";
     private static final String RESTART = "Restart";
+    private static final String SOFTWARE_UPDATE = "Software Update";
+    private static final String STATISTICS = "Statistics";
     private static final String RSYNC_MESSAGE = "sending incremental file list";
+    private static final long GIGABYTE = 1073741824L;
 
     private NMS[] nms;
     private String[] parameters;
@@ -73,8 +76,9 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
         String[] array = {
 
+            RESTART,
             SOFTWARE_UPDATE,
-            RESTART
+            STATISTICS
         };
 
         setParameters(array);
@@ -176,6 +180,73 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
                 busy.addJobListener(this);
                 busy.execute();
 
+            } else if (isParameterStatistics()) {
+
+                MessagePanel mp = getMessagePanel();
+                StringBuilder sb = new StringBuilder();
+                NMS[] narray = getNMS();
+                if ((mp != null) && (sb != null) && (narray != null)
+                    && (narray.length > 0)) {
+
+                    State state = narray[0].getState();
+                    for (int i = 1; i < narray.length; i++) {
+
+                        state = state.merge(narray[i].getState());
+                    }
+
+                    // At this point we have totals on our servers.
+                    if (narray.length > 1) {
+                        sb.append("You have " + narray.length + " jflicks"
+                            + " media system servers on your network.");
+                    } else {
+                        sb.append("You have 1 jflicks media system server"
+                            + " on your network.");
+                    }
+                    sb.append("\n\n");
+
+                    long gigs = state.getCapacity() / GIGABYTE;
+                    sb.append("Total Recording Space:\t" + gigs + " GB");
+                    sb.append("\n");
+
+                    gigs = state.getFree() / GIGABYTE;
+                    long hours = gigs / 5;
+                    sb.append("Free Recording Space:\t" + gigs + " GB");
+                    sb.append("\n\n");
+                    sb.append("About " + hours + " hours of HD video remain.");
+                    sb.append("\n\n");
+
+                    sb.append("Total Current Recordings:\t"
+                        + state.getRecordingCount());
+                    sb.append("\n");
+                    sb.append("Number of Recorders:\t"
+                        + state.getRecorderCount());
+                    sb.append("\n");
+                    sb.append("Busy Recorders Now:\t"
+                        + state.getRecorderBusyCount());
+                    sb.append("\n\n");
+
+                    String[] cats = state.getVideoCategories();
+                    if ((cats != null) && (cats.length > 0)) {
+
+                        sb.append("Video Category Names:\t");
+                        for (int i = 0; i < cats.length; i++) {
+
+                            if (i > 0) {
+                                sb.append(", ");
+                            }
+                            sb.append(cats[i]);
+                        }
+                        sb.append("\n");
+                        sb.append("Total in Video Library:\t"
+                            + state.getVideoCount());
+                        sb.append("\n");
+                    }
+
+                    mp.setLineWrap(true);
+                    mp.setMessage(sb.toString());
+                    updateLayout(false);
+                }
+
             } else if (isParameterRestart()) {
 
                 FrontEndView fev = (FrontEndView) getView();
@@ -201,6 +272,9 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
             FrontEndView fev = (FrontEndView) getView();
 
+            int width = (int) d.getWidth();
+            int height = (int) d.getHeight();
+
             JXPanel panel = new JXPanel(new BorderLayout());
             JXLabel l = new JXLabel("Working, please wait...");
             l.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -209,12 +283,15 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
             panel.add(l, BorderLayout.CENTER);
             MattePainter p = new MattePainter(Color.BLACK);
             panel.setBackgroundPainter(p);
-            panel.setBounds(0, 0, (int) d.getWidth(), (int) d.getHeight());
+            panel.setBounds(0, 0, width, height);
             setWaitPanel(panel);
 
             MessagePanel mp = new MessagePanel();
-            mp.setBounds(0, 0, (int) d.getWidth(), (int) d.getHeight());
+            mp.setBounds(0, 0, width, height);
             setMessagePanel(mp);
+
+            setDefaultBackgroundImage(
+                Util.resize(getDefaultBackgroundImage(), width, height));
         }
     }
 
@@ -231,6 +308,8 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
             } else {
 
                 if (isParameterSoftwareUpdate()) {
+                    pane.add(getMessagePanel(), Integer.valueOf(100));
+                } else if (isParameterStatistics()) {
                     pane.add(getMessagePanel(), Integer.valueOf(100));
                 }
             }
@@ -274,7 +353,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
             System.out.println("bundleCount: " + bundleCount);
             MessagePanel mp = getMessagePanel();
-            System.out.println("mp: " + mp);
             if (mp != null) {
 
                 String message = "No need to restart as there were no updates.";
@@ -288,6 +366,7 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
                         + more + " found.";
                 }
 
+                mp.setLineWrap(false);
                 mp.setMessage(message);
             }
 
@@ -319,12 +398,16 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
         systemJob = j;
     }
 
+    private boolean isParameterRestart() {
+        return (RESTART.equals(getSelectedParameter()));
+    }
+
     private boolean isParameterSoftwareUpdate() {
         return (SOFTWARE_UPDATE.equals(getSelectedParameter()));
     }
 
-    private boolean isParameterRestart() {
-        return (RESTART.equals(getSelectedParameter()));
+    private boolean isParameterStatistics() {
+        return (STATISTICS.equals(getSelectedParameter()));
     }
 
     private String getScriptExtension() {

@@ -132,7 +132,7 @@ public class HttpStream extends BaseStream implements JobListener,
             Scheduler s = nms.getScheduler();
             if (s != null) {
 
-                result = s.getConfiguredRecordingDirecories();
+                result = s.getConfiguredRecordingDirectories();
             }
         }
 
