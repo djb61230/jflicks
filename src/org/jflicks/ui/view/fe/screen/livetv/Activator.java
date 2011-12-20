@@ -57,18 +57,22 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
-        String playertype = Player.PLAYER_VIDEO_STREAM_UDP;
+        String playerfilter = null;
         Screen s = null;
         if (isDVR()) {
 
+            playerfilter = "(|(Player-Handle="
+                + Player.PLAYER_VIDEO_TRANSPORT_STREAM + ")"
+                + "(Player-Handle=" + Player.PLAYER_VIDEO_PROGRAM_STREAM + "))";
             s = new DVRLiveTVScreen();
-            playertype = Player.PLAYER_VIDEO_TRANSPORT_STREAM;
             TransferTracker tt = new TransferTracker(bc, (DVRLiveTVScreen) s);
             setTransferTracker(tt);
             tt.open();
 
         } else {
 
+            playerfilter =
+                "(Player-Handle=" + Player.PLAYER_VIDEO_STREAM_UDP + ")";
             s = new LiveTVScreen();
         }
 
@@ -91,8 +95,7 @@ public class Activator extends BaseActivator {
 
         try {
 
-            Filter filter = bc.createFilter("(Player-Handle="
-                + playertype + ")");
+            Filter filter = bc.createFilter(playerfilter);
             ServiceTracker st = new ServiceTracker(bc, filter, null);
             setServiceTracker(st);
             st.open();

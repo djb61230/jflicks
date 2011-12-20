@@ -306,7 +306,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
                 log(DEBUG, "recorder: " + r);
                 if ((r != null) && (!r.isRecording())) {
 
-                    File output = computeFile(s, c);
+                    File output = computeFile(s, c, r.getExtension());
                     if (output != null) {
 
                         log(DEBUG, "recording to file <" + output + ">");
@@ -652,7 +652,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
         return (result);
     }
 
-    private File computeFile(Session s, Channel c) {
+    private File computeFile(Session s, Channel c, String ext) {
 
         File result = null;
 
@@ -667,7 +667,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
                     String id = l.getId() + "-" + System.currentTimeMillis();
                     result = new File(dir, "live-" + id + "-" + c.getNumber()
-                        + ".ts");
+                        + "." + ext);
                 }
             }
         }

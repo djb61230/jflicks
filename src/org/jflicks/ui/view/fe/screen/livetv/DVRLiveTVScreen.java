@@ -77,6 +77,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     private ChannelInfoPanel channelInfoPanel;
     private long watchingStartTime;
     private Transfer transfer;
+    private String streamType;
 
     /**
      * Simple empty constructor.
@@ -84,6 +85,8 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     public DVRLiveTVScreen() {
 
         setTitle("Live TV");
+        setStreamType(Player.PLAYER_VIDEO_TRANSPORT_STREAM);
+
         BufferedImage bi = getImageByName("Live_TV");
         setDefaultBackgroundImage(bi);
 
@@ -157,6 +160,23 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         watchingStartTime = l;
     }
 
+    private boolean isPlayingVideo() {
+        return (Player.PLAYER_VIDEO.equals(streamType));
+    }
+
+    private String getStreamType() {
+        return (streamType);
+    }
+
+    private void setStreamType(String s) {
+        streamType = s;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return (getPlayer(getStreamType()));
+    }
+
     private void startPlayer(LiveTV l) {
 
         Player p = getPlayer();
@@ -167,6 +187,16 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 p.stop();
             }
+
+            // Now we have to get the right player in case we switched
+            // stream types.
+            if (l.getPath().endsWith("mpg")) {
+                setStreamType(Player.PLAYER_VIDEO_PROGRAM_STREAM);
+            } else if (l.getPath().endsWith("ts")) {
+                setStreamType(Player.PLAYER_VIDEO_TRANSPORT_STREAM);
+            }
+
+            p = getPlayer();
 
             View v = getView();
             if (v instanceof FrontEndView) {
