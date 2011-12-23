@@ -51,7 +51,8 @@ public class MediainfoWorker extends BaseWorker implements JobListener {
 
         if (r != null) {
 
-            MediainfoJob job = new MediainfoJob(r, this);
+            //MediainfoJob job = new MediainfoJob(r, this);
+            FFmpegJob job = new FFmpegJob(r, this);
             job.addJobListener(this);
             JobContainer jc = JobManager.getJobContainer(job);
             addJobContainer(jc);
@@ -67,7 +68,8 @@ public class MediainfoWorker extends BaseWorker implements JobListener {
         if (event.getType() == JobEvent.COMPLETE) {
 
             log(INFO, "MediainfoWorker: completed");
-            MediainfoJob job = (MediainfoJob) event.getSource();
+            //MediainfoJob job = (MediainfoJob) event.getSource();
+            FFmpegJob job = (FFmpegJob) event.getSource();
             removeJobContainer(job);
             fireWorkerEvent(WorkerEvent.COMPLETE, job.getRecording(), true);
 

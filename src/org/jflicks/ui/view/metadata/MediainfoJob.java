@@ -96,12 +96,11 @@ public class MediainfoJob extends AbstractJob implements JobListener {
         Video v = getVideo();
         if (v != null) {
 
-            SystemJob job = SystemJob.getInstance("mediainfo " + v.getPath());
+            SystemJob job = SystemJob.getInstance("ffmpeg -i " + v.getPath());
             job.addJobListener(this);
             setSystemJob(job);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
-            System.out.println("started: " + job.getCommand());
             jc.start();
             setTerminate(false);
 
@@ -152,43 +151,43 @@ public class MediainfoJob extends AbstractJob implements JobListener {
                 String output = job.getOutputText();
                 if (output != null) {
 
-                    int index = output.indexOf("Duration");
-                    if (index != -1) {
+                    String timeline = null;
+                    StringTokenizer st = new StringTokenizer(output, "\n");
+                    while (st.hasMoreTokens()) {
 
-                        output = output.substring(index);
-                        index = output.indexOf("\n");
-                        if (index != -1) {
-
-                            output = output.substring(0, index);
-                            output = output.substring(output.indexOf(":") + 1);
-                            output = output.trim();
-
-                            int hours = 0;
-                            int minutes = 0;
-                            int secs = 0;
-                            StringTokenizer st = new StringTokenizer(output);
-                            while (st.hasMoreTokens()) {
-
-                                String tmp = st.nextToken();
-                                if (tmp.endsWith("h")) {
-
-                                    tmp = tmp.substring(0, tmp.length() - 1);
-                                    hours = Util.str2int(tmp, hours);
-
-                                } else if (tmp.endsWith("mn")) {
-
-                                    tmp = tmp.substring(0, tmp.length() - 2);
-                                    minutes = Util.str2int(tmp, minutes);
-
-                                } else if (tmp.endsWith("s")) {
-
-                                    tmp = tmp.substring(0, tmp.length() - 1);
-                                    secs = Util.str2int(tmp, secs);
-                                }
-                            }
-
-                            setSeconds(hours * 3600 + minutes * 60 + secs);
+                        String line = st.nextToken().trim();
+                        if (line.startsWith("Duration:")) {
+                            timeline = line;
                         }
+                    }
+
+                    if (timeline != null) {
+
+                        timeline = timeline.substring(9);
+                        timeline = timeline.trim();
+                        timeline = timeline.substring(0, timeline.indexOf(","));
+
+                        // Should have something like 00:00:00.00
+                        int hours = 0;
+                        int minutes = 0;
+                        int secs = 0;
+                        int index = 0;
+                        st = new StringTokenizer(timeline, ":");
+                        while (st.hasMoreTokens()) {
+
+                            String tmp = st.nextToken();
+                            if (index == 0) {
+                                hours = Util.str2int(tmp, hours);
+                            } else if (index == 1) {
+                                minutes = Util.str2int(tmp, minutes);
+                            } else if (index == 2) {
+
+                                tmp = tmp.substring(0, tmp.indexOf("."));
+                                secs = Util.str2int(tmp, secs);
+                            }
+                        }
+
+                        setSeconds(hours * 3600 + minutes * 60 + secs);
                     }
                 }
             }
@@ -197,7 +196,7 @@ public class MediainfoJob extends AbstractJob implements JobListener {
 
         } else {
 
-            System.out.println(event.getMessage());
+            //System.out.println(event.getMessage());
         }
     }
 

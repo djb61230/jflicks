@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <userName>EMAIL_ADDRESS</userName>
+    <password>PASSWORD_FOR_SD</password>
+    <numberOfDays>14</numberOfDays>
+    <webserviceURI>http://webservices.schedulesdirect.tmsdatadirect.com/schedulesdirect/tvlistings/xtvdService</webserviceURI>
+</properties>

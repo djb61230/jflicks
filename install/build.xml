@@ -106,6 +106,124 @@
         <copy file="${resources}/roku_video_Movie.png" todir="server/www"/>
         <copy file="${resources}/roku_video_TV.png" todir="server/www"/>
 
+        <!-- Next do client/server install. -->
+        <copy file="${bundle}/jflicks-autoart-system.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-base.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-jna.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-jdom.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-nms-system.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-photomanager-digikam.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-platform.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-player-mplayer-video.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-player-mplayer-video-program-stream.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-player-mplayer-video-transport-stream.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-player-chrome.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-player-photoshow.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-player-vlcj-video-stream-udp.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-player-vlcdvd.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-stream-http.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-swingx.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-themoviedbapi.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-thetvdbapi.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-timingframework.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-system.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-comrat.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-comskip.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-ffmpegscreenshot.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-mediainfo.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-indexer.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-projectx.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-programdata-sd.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-recorder-dvb.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-recorder-hdhr.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-recorder-v4l2.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-scheduler-system.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-tv-live-system.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-trailer-apple.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-transfer-system.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-dvd.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-googletv.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-livetv.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-photo.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-preview.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-recording.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-schedule.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-script.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-video.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-rc-lirc.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-imagecache-system.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-videomanager-system.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-sqlitejdbc.jar"
+            todir="cs/bundle"/>
+        <copy file="${topdist}/directvweb.jar" todir="cs/bin"/>
+        <mkdir dir="cs/resources/rating"/>
+        <copy todir="cs/resources/rating">
+            <fileset dir="${resources}/rating"/>
+        </copy>
+        <copy file="${resources}/roku_recordings.png" todir="cs/www"/>
+        <copy file="${resources}/roku_rules.png" todir="cs/www"/>
+        <copy file="${resources}/roku_schedule_channel.png" todir="cs/www"/>
+        <copy file="${resources}/roku_schedule_search.png" todir="cs/www"/>
+        <copy file="${resources}/roku_settings.png" todir="cs/www"/>
+        <copy file="${resources}/roku_upcomings.png" todir="cs/www"/>
+        <copy file="${resources}/roku_video_Home.png" todir="cs/www"/>
+        <copy file="${resources}/roku_video_Movie.png" todir="cs/www"/>
+        <copy file="${resources}/roku_video_TV.png" todir="cs/www"/>
+
         <!-- Now do aspirin side. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="aspirin/bundle"/>
@@ -291,6 +409,13 @@
             <fileset dir="server" includes="bundle/jflicks-*.jar"/>
         </delete>
         <delete dir="server/resources"/>
+
+        <delete>
+            <fileset dir="cs" includes="bin/directvweb.jar"/>
+            <fileset dir="cs" includes="bin/jflicks-*.jar"/>
+            <fileset dir="cs" includes="bundle/jflicks-*.jar"/>
+        </delete>
+        <delete dir="cs/resources"/>
 
         <delete>
             <fileset dir="fe" includes="bin/jflicks-*.jar"/>
