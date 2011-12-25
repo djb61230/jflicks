@@ -25,6 +25,8 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,6 +106,10 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
     private static final String RECORDING_UPCOMING_TEXT = "Showing Recording";
     private static final String NOT_RECORDING_UPCOMING_TEXT =
         "Showing Not Recording";
+    private static final int ALL_CHANNELS = 1;
+    private static final int FAVORITE_CHANNELS = 2;
+    private static final String ALL_CHANNELS_TEXT = "All Channels";
+    private static final String FAVORITE_CHANNELS_TEXT = "Favorite Channels";
 
     private NMS[] nms;
     private String[] parameters;
@@ -115,6 +121,9 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
     private JobContainer allGuideJobContainer;
     private long lastGuide;
     private HashMap<Tag, TagValue> tagMap;
+    private Channel[] allChannels;
+    private Channel selectedChannel;
+    private ArrayList<String> favoriteChannelList;
 
     private JXPanel waitPanel;
     private TagListPanel titleTagListPanel;
@@ -129,7 +138,9 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
     private UpcomingDetailPanel upcomingDetailPanel;
     private JXLabel upcomingLabel;
     private int upcomingState;
-    private ButtonPanel upcomingButtonPanel;
+    private JXLabel channelLabel;
+    private int channelState;
+    private ButtonPanel userButtonPanel;
     private boolean popupEnabled;
 
     /**
@@ -140,11 +151,14 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         setTitle("Schedule");
         BufferedImage bi = getImageByName("Schedule");
         setDefaultBackgroundImage(bi);
+        setFavoriteChannelList(new ArrayList<String>());
 
         setFocusable(true);
         requestFocus();
         setUpcomingState(ALL_UPCOMING);
         setUpcomingLabel(new JXLabel(ALL_UPCOMING_TEXT));
+        setChannelState(ALL_CHANNELS);
+        setChannelLabel(new JXLabel(ALL_CHANNELS_TEXT));
 
         InputMap map = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 
@@ -314,12 +328,36 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         applyUpcoming();
     }
 
+    private ArrayList<String> getFavoriteChannelList() {
+        return (favoriteChannelList);
+    }
+
+    private void setFavoriteChannelList(ArrayList<String> l) {
+        favoriteChannelList = l;
+    }
+
+    private Channel[] getAllChannels() {
+        return (allChannels);
+    }
+
+    private void setAllChannels(Channel[] array) {
+        allChannels = array;
+    }
+
     private int getUpcomingState() {
         return (upcomingState);
     }
 
     private void setUpcomingState(int i) {
         upcomingState = i;
+    }
+
+    private int getChannelState() {
+        return (channelState);
+    }
+
+    private void setChannelState(int i) {
+        channelState = i;
     }
 
     private Upcoming[] filterByRule(Upcoming[] array) {
@@ -449,6 +487,92 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         }
     }
 
+    private Channel[] filterByFavorite(Channel[] array) {
+
+        Channel[] result = null;
+
+        ArrayList<String> favlist = getFavoriteChannelList();
+        if ((array != null) && (favlist != null)) {
+
+            ArrayList<Channel> filter = new ArrayList<Channel>();
+            for (int i = 0; i < favlist.size(); i++) {
+
+                String tmp = favlist.get(i);
+                if (tmp != null) {
+
+                    for (int j = 0; j < array.length; j++) {
+
+                        if (tmp.equals(array[j].toString())) {
+
+                            filter.add(array[j]);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (filter.size() > 0) {
+
+                Collections.sort(filter);
+                result = filter.toArray(new Channel[filter.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    private int getIndex(Channel[] array, Channel c) {
+
+        int result = 0;
+
+        if ((array != null) && (c != null)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                if (c.equals(array[i])) {
+
+                    result = i;
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private void applyChannels() {
+
+        ChannelListPanel clp = getChannelListPanel();
+        Channel[] carray = getAllChannels();
+        JXLabel l = getChannelLabel();
+        if ((clp != null) && (carray != null) && (l != null)) {
+
+            if (getChannelState() == ALL_CHANNELS) {
+
+                int index = getIndex(carray, clp.getSelectedChannel());
+                clp.setChannels(carray);
+                clp.setSelectedIndex(index);
+                l.setText(ALL_CHANNELS_TEXT);
+
+            } else if (getChannelState() == FAVORITE_CHANNELS) {
+
+                Channel[] only = filterByFavorite(carray);
+                if (only != null) {
+
+                    int index = getIndex(only, clp.getSelectedChannel());
+                    clp.setChannels(only);
+                    clp.setSelectedIndex(index);
+                    l.setText(FAVORITE_CHANNELS_TEXT);
+
+                } else {
+
+                    setChannelState(ALL_CHANNELS);
+                }
+            }
+        }
+
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -560,6 +684,14 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         upcomingLabel = l;
     }
 
+    private JXLabel getChannelLabel() {
+        return (channelLabel);
+    }
+
+    private void setChannelLabel(JXLabel l) {
+        channelLabel = l;
+    }
+
     private UpcomingDetailPanel getUpcomingDetailPanel() {
         return (upcomingDetailPanel);
     }
@@ -568,12 +700,12 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         upcomingDetailPanel = p;
     }
 
-    private ButtonPanel getUpcomingButtonPanel() {
-        return (upcomingButtonPanel);
+    private ButtonPanel getUserButtonPanel() {
+        return (userButtonPanel);
     }
 
-    private void setUpcomingButtonPanel(ButtonPanel p) {
-        upcomingButtonPanel = p;
+    private void setUserButtonPanel(ButtonPanel p) {
+        userButtonPanel = p;
     }
 
     private JobContainer getAllGuideJobContainer() {
@@ -696,7 +828,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             bp.setSmallFont(bp.getLargeFont());
             bp.addActionListener(this);
             bp.setButtons(choices);
-            setUpcomingButtonPanel(bp);
+            setUserButtonPanel(bp);
 
             d = bp.getPreferredSize();
             int bpwidth = (int) d.getWidth();
@@ -717,11 +849,11 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         setPopupEnabled(false);
         JLayeredPane pane = getLayeredPane();
-        ButtonPanel bp = getUpcomingButtonPanel();
+        ButtonPanel bp = getUserButtonPanel();
         if ((pane != null) && (bp != null)) {
 
             bp.removeActionListener(this);
-            setUpcomingButtonPanel(null);
+            setUserButtonPanel(null);
             pane.remove(bp);
             pane.repaint();
         }
@@ -731,6 +863,27 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
      * {@inheritDoc}
      */
     public void save() {
+
+        System.out.println("save called!!!!");
+        ArrayList<String> favlist = getFavoriteChannelList();
+        if (favlist != null) {
+
+            StringBuilder sb = new StringBuilder("");
+            for (int i = 0; i < favlist.size(); i++) {
+
+                sb.append(favlist.get(i));
+                sb.append("\n");
+            }
+
+            try {
+
+                File here = new File (".");
+                Util.writeTextFile(new File(here, "fav-chan.txt"),
+                    sb.toString());
+
+            } catch (IOException ex) {
+            }
+        }
     }
 
     /**
@@ -748,6 +901,31 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         super.setVisible(b);
         if (b) {
+
+            // We are being shown so let's read the local channel favorite
+            // text file in case it's been changed since last time we were
+            // here.  Each entry is a line that came from a Channel.toString()
+            // call.  Since we can dynamically change them here we will read
+            // them into an ArrayList<String>.  When this screen ends we
+            // will need to write out the current state in case other screens
+            // need the same info.
+            ArrayList<String> favlist = getFavoriteChannelList();
+            if (favlist != null) {
+
+                favlist.clear();
+                File here = new File (".");
+                String[] cnames =
+                    Util.readTextFile(new File(here, "fav-chan.txt"));
+                if ((cnames != null) && (cnames.length > 0)) {
+
+                    for (int i = 0; i < cnames.length; i++) {
+
+                        favlist.add(cnames[i]);
+                    }
+
+                    Collections.sort(favlist);
+                }
+            }
 
             if ((isParameterByTitle()) || (isParameterByGuide())) {
 
@@ -855,14 +1033,11 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             ChannelListPanel clp = new ChannelListPanel();
             clp.setControl(true);
             clp.addPropertyChangeListener("SelectedChannel", this);
-            clp.setBounds(wspan, hspan, onethirdlistwidth, listheight);
             setChannelListPanel(clp);
 
             ShowAiringListPanel salp = new ShowAiringListPanel();
             salp.setControl(false);
             salp.addPropertyChangeListener("SelectedShowAiring", this);
-            salp.setBounds(wspan + wspan + onethirdlistwidth, hspan,
-                twothirdlistwidth, listheight);
             setShowAiringListPanel(salp);
 
             RecordingRuleListPanel rrlp = new RecordingRuleListPanel();
@@ -886,13 +1061,27 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             dp.setAlpha(alpha);
             setUpcomingDetailPanel(dp);
 
-            JXLabel label = getUpcomingLabel();
-            label.setFont(ulp.getLargeFont());
-            label.setForeground(ulp.getInfoColor());
+            JXLabel label = getChannelLabel();
+            label.setFont(clp.getLargeFont());
+            label.setForeground(clp.getInfoColor());
             label.setHorizontalTextPosition(SwingConstants.CENTER);
             label.setHorizontalAlignment(SwingConstants.RIGHT);
             Dimension ldim = label.getPreferredSize();
             int labelHeight = (int) ldim.getHeight();
+            label.setBounds(wspan, hspan, listwidth, labelHeight);
+
+            clp.setBounds(wspan, hspan + labelHeight, halflistwidth,
+                listheight - labelHeight);
+            salp.setBounds(wspan + wspan + halflistwidth, hspan + labelHeight,
+                halflistwidth, listheight - labelHeight);
+
+            label = getUpcomingLabel();
+            label.setFont(ulp.getLargeFont());
+            label.setForeground(ulp.getInfoColor());
+            label.setHorizontalTextPosition(SwingConstants.CENTER);
+            label.setHorizontalAlignment(SwingConstants.RIGHT);
+            ldim = label.getPreferredSize();
+            labelHeight = (int) ldim.getHeight();
             label.setBounds(wspan, hspan, listwidth, labelHeight);
 
             rrlp.setBounds(wspan, hspan + labelHeight, halflistwidth,
@@ -927,6 +1116,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                 } else if (isParameterByGuide()) {
 
+                    pane.add(getChannelLabel(), Integer.valueOf(110));
                     pane.add(getChannelListPanel(), Integer.valueOf(100));
                     pane.add(getShowAiringListPanel(), Integer.valueOf(100));
                     pane.add(getShowDetailPanel(), Integer.valueOf(100));
@@ -1159,16 +1349,13 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     tlp.setRootTag(root);
                 }
 
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
+                Set<Channel> set = map.keySet();
+                if (set.size() > 0) {
 
-                    Set<Channel> set = map.keySet();
-                    if (set.size() > 0) {
-
-                        Channel[] chans = set.toArray(new Channel[set.size()]);
-                        Arrays.sort(chans);
-                        clp.setChannels(chans);
-                    }
+                    Channel[] chans = set.toArray(new Channel[set.size()]);
+                    Arrays.sort(chans);
+                    setAllChannels(chans);
+                    applyChannels();
                 }
 
                 updateLayout(false);
@@ -1257,23 +1444,59 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
      */
     public void actionPerformed(ActionEvent event) {
 
-        UpcomingListPanel ulp = getUpcomingListPanel();
-        if ((ulp != null) && (event.getSource() == getUpcomingButtonPanel())) {
+        if (event.getSource() == getUserButtonPanel()) {
 
-            ButtonPanel bp = getUpcomingButtonPanel();
-            if (!CANCEL.equals(bp.getSelectedButton())) {
+            ButtonPanel bp = getUserButtonPanel();
+            if (isParameterByGuide()) {
 
-                Upcoming up = ulp.getSelectedUpcoming();
-                if (up != null) {
+                ChannelListPanel clp = getChannelListPanel();
+                ArrayList<String> favlist = getFavoriteChannelList();
+                if ((clp != null) && (favlist != null)) {
 
-                    NMS n = NMSUtil.select(getNMS(), up.getHostPort());
-                    if (n != null) {
+                    Channel chan = clp.getSelectedChannel();
+                    if (chan != null) {
 
-                        OverrideUpcomingJob ouj =
-                            new OverrideUpcomingJob(n, up);
-                        Busy busy = new Busy(getLayeredPane(), ouj);
-                        busy.addJobListener(this);
-                        busy.execute();
+                        String text = chan.toString();
+                        if (getChannelState() == ALL_CHANNELS) {
+
+                            if (!favlist.contains(text)) {
+
+                                favlist.add(text);
+                                Collections.sort(favlist);
+                            }
+
+                        } else if (getChannelState() == FAVORITE_CHANNELS) {
+
+                            if (favlist.contains(text)) {
+
+                                favlist.remove(text);
+                                Collections.sort(favlist);
+                                applyChannels();
+                            }
+                        }
+                    }
+                }
+
+            } else {
+
+                UpcomingListPanel ulp = getUpcomingListPanel();
+                if (ulp != null) {
+
+                    if (!CANCEL.equals(bp.getSelectedButton())) {
+
+                        Upcoming up = ulp.getSelectedUpcoming();
+                        if (up != null) {
+
+                            NMS n = NMSUtil.select(getNMS(), up.getHostPort());
+                            if (n != null) {
+
+                                OverrideUpcomingJob ouj =
+                                    new OverrideUpcomingJob(n, up);
+                                Busy busy = new Busy(getLayeredPane(), ouj);
+                                busy.addJobListener(this);
+                                busy.execute();
+                            }
+                        }
                     }
                 }
             }
@@ -1394,7 +1617,18 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     ChannelListPanel clp = getChannelListPanel();
                     if (clp != null) {
 
-                        clp.setControl(true);
+                        if (!clp.isControl()) {
+                            clp.setControl(true);
+                        } else {
+
+                            if (getChannelState() == ALL_CHANNELS) {
+                                setChannelState(FAVORITE_CHANNELS);
+                            } else if (getChannelState() == FAVORITE_CHANNELS) {
+                                setChannelState(ALL_CHANNELS);
+                            }
+
+                            applyChannels();
+                        }
                     }
 
                     ShowAiringListPanel salp = getShowAiringListPanel();
@@ -1512,7 +1746,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
             if (isPopupEnabled()) {
 
-                ButtonPanel bp = getUpcomingButtonPanel();
+                ButtonPanel bp = getUserButtonPanel();
                 if (bp != null) {
 
                     bp.moveUp();
@@ -1573,7 +1807,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
             if (isPopupEnabled()) {
 
-                ButtonPanel bp = getUpcomingButtonPanel();
+                ButtonPanel bp = getUserButtonPanel();
                 if (bp != null) {
 
                     bp.moveDown();
@@ -1797,6 +2031,30 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             }
         }
 
+        public void handleFavorite() {
+
+            ChannelListPanel clp = getChannelListPanel();
+            if (clp != null) {
+
+                Channel chan = clp.getSelectedChannel();
+                if (chan != null) {
+
+                    ArrayList<String> blist = new ArrayList<String>();
+                    if (getChannelState() == ALL_CHANNELS) {
+
+                        blist.add("Add to Favorites");
+
+                    } else {
+
+                        blist.add("Remove from Favorites");
+                    }
+
+                    blist.add(CANCEL);
+                    popup(blist.toArray(new String[blist.size()]));
+                }
+            }
+        }
+
         public void actionPerformed(ActionEvent e) {
 
             System.out.println("enter:actionPerformed");
@@ -1823,7 +2081,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                         }
                     }
 
-                } else if ((isParameterByGuide()) || (isParameterByTitle())) {
+                } else if (isParameterByTitle()) {
 
                     ShowAiring sa = getSelectedShowAiring();
                     if (sa != null) {
@@ -1855,6 +2113,58 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                                 editRule(n, p, rr);
                             }
+                        }
+                    }
+
+                } else if (isParameterByGuide()) {
+
+                    ShowAiringListPanel salp = getShowAiringListPanel();
+                    if (salp != null) {
+
+                        if (salp.isControl()) {
+
+                            ShowAiring sa = getSelectedShowAiring();
+                            if (sa != null) {
+
+                                NMS n = NMSUtil.select(getNMS(),
+                                    sa.getHostPort());
+                                if (n != null) {
+
+                                    Show show = sa.getShow();
+                                    Airing airing = sa.getAiring();
+                                    if ((show != null) && (airing != null)) {
+
+                                        RecordingRule rr = getRecordingRule(sa);
+
+                                        if (rr == null) {
+
+                                            rr = new RecordingRule();
+                                            rr.setShowAiring(sa);
+                                            rr.setType(
+                                                RecordingRule.SERIES_TYPE);
+                                            rr.setName(show.getTitle());
+                                            rr.setShowId(show.getId());
+                                            rr.setSeriesId(show.getSeriesId());
+                                            rr.setChannelId(
+                                                airing.getChannelId());
+                                            rr.setListingId(
+                                                airing.getListingId());
+                                            rr.setDuration(
+                                                airing.getDuration());
+                                            rr.setPriority(
+                                                RecordingRule.NORMAL_PRIORITY);
+                                            rr.setTasks(n.getTasks());
+                                        }
+
+                                        editRule(n, p, rr);
+                                    }
+                                }
+                            }
+
+                        } else {
+
+                            // We should handle favorite channel here.
+                            handleFavorite();
                         }
                     }
                 }

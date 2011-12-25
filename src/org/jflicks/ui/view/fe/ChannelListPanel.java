@@ -55,6 +55,16 @@ public class ChannelListPanel extends BaseListPanel {
         return (result);
     }
 
+    /**
+     * Convenience method to return the selected Channel so users do not have
+     * to cast from an Object.
+     *
+     * @return A Channel instance.
+     */
+    public Channel getSelectedChannel() {
+        return ((Channel) getSelectedObject());
+    }
+
     private ArrayList<Channel> getChannelList() {
         return (channelList);
     }
