@@ -75,6 +75,7 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
     private Timer timer;
     private int currentSeconds;
     private SimpleDateFormat dateFormat;
+    private Rectangle descriptionRectangle;
 
     /**
      * Simple constructor with our required arguments.
@@ -171,6 +172,10 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
             (int) (vgap + titleHeight + chanDateHeight + descriptionHeight),
             (int) (width - hgap * 2.0), (int) timelineHeight);
 
+        setDescriptionRectangle(new Rectangle((int) hgap,
+            (int) (vgap + titleHeight + chanDateHeight),
+            (int) (width - hgap * 2.0), (int) descriptionHeight));
+
         pane.add(title, Integer.valueOf(100));
         pane.add(channelDate, Integer.valueOf(100));
         pane.add(description, Integer.valueOf(100));
@@ -240,6 +245,14 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
 
     private void setSeconds(int i) {
         seconds = i;
+    }
+
+    private Rectangle getDescriptionRectangle() {
+        return (descriptionRectangle);
+    }
+
+    private void setDescriptionRectangle(Rectangle r) {
+        descriptionRectangle = r;
     }
 
     private SimpleDateFormat getDateFormat() {
@@ -428,6 +441,7 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
 
         if (b) {
 
+            getDescriptionLabel().setBounds(getDescriptionRectangle());
             if (pane != null) {
 
                 if (pane.getPosition(this) == -1) {
@@ -449,15 +463,6 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
         } else {
 
             super.setVisible(false);
-            /*
-            if (pane != null) {
-
-                int index = pane.getPosition(this);
-                if (index != -1) {
-                    pane.remove(index);
-                }
-            }
-            */
 
             Timer t = getTimer();
             if (t != null) {
@@ -466,6 +471,18 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
 
                     t.stop();
                 }
+            }
+        }
+    }
+
+    public void removeFromPlayer() {
+
+        JLayeredPane pane = getPlayerPane();
+        if (pane != null) {
+
+            int place = pane.getPosition(this);
+            if (place != -1) {
+                pane.remove(place);
             }
         }
     }

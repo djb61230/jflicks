@@ -49,6 +49,8 @@ public class Activator extends BaseActivator {
     private TransferTracker transferTracker;
     private ImageCacheTracker imageCacheTracker;
     private ServiceTracker logServiceTracker;
+    private int initialTime;
+    private int restTime;
 
     /**
      * {@inheritDoc}
@@ -64,7 +66,10 @@ public class Activator extends BaseActivator {
             playerfilter = "(|(Player-Handle="
                 + Player.PLAYER_VIDEO_TRANSPORT_STREAM + ")"
                 + "(Player-Handle=" + Player.PLAYER_VIDEO_PROGRAM_STREAM + "))";
-            s = new DVRLiveTVScreen();
+            DVRLiveTVScreen dvr = new DVRLiveTVScreen();
+            dvr.setInitialTime(getInitialTime());
+            dvr.setRestTime(getRestTime());
+            s = dvr;
             TransferTracker tt = new TransferTracker(bc, (DVRLiveTVScreen) s);
             setTransferTracker(tt);
             tt.open();
@@ -147,6 +152,22 @@ public class Activator extends BaseActivator {
         }
     }
 
+    private int getInitialTime() {
+        return (initialTime);
+    }
+
+    private void setInitialTime(int i) {
+        initialTime = i;
+    }
+
+    private int getRestTime() {
+        return (restTime);
+    }
+
+    private void setRestTime(int i) {
+        restTime = i;
+    }
+
     private ServiceTracker getServiceTracker() {
         return (serviceTracker);
     }
@@ -193,6 +214,10 @@ public class Activator extends BaseActivator {
                 if (p != null) {
 
                     result = Util.str2boolean(p.getProperty("dvr"), result);
+
+                    setInitialTime(Util.str2int(p.getProperty("initialTime"),
+                        20));
+                    setRestTime(Util.str2int(p.getProperty("restTime"), 2));
                 }
             }
         }

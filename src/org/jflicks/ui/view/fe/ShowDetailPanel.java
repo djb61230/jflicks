@@ -211,7 +211,7 @@ public class ShowDetailPanel extends BaseCustomizePanel {
 
                         sb.setLength(0);
                         sdf.format(tmp, sb, fp);
-                        l.setText("Original Air Date: " + sb.toString());
+                        l.setText("First Air: " + sb.toString());
 
                     } else {
                         l.setText("");
@@ -389,7 +389,7 @@ public class ShowDetailPanel extends BaseCustomizePanel {
             double originalHeight = height * 0.2;
             double statusHeight = (height * 0.2) * 2;
 
-            title.setBounds(0, 0, (int) twoThirdWidth, (int) titleHeight);
+            title.setBounds(0, 0, (int) width, (int) titleHeight);
             chanNumberName.setBounds(0, (int) titleHeight, (int) halfWidth,
                 (int) chanNumberNameHeight);
             description.setBounds(0,

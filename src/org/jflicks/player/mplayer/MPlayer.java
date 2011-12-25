@@ -562,6 +562,12 @@ public class MPlayer extends BasePlayer {
 
         if (r != null) {
 
+            JDialog d = getWindow();
+            if (d != null) {
+
+                d.setBounds(r);
+            }
+
             JPanel p = getKeyPanel();
             if (p != null) {
 
@@ -572,12 +578,6 @@ public class MPlayer extends BasePlayer {
             if (c != null) {
 
                 c.setBounds(0, 0, r.width, r.height);
-            }
-
-            JDialog d = getWindow();
-            if (d != null) {
-
-                d.setBounds(r);
             }
         }
     }

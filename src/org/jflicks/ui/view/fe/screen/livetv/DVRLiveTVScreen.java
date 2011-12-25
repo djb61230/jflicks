@@ -122,6 +122,8 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     private JXLabel channelLabel;
     private ArrayList<String> favoriteChannelList;
     private Channel[] allChannels;
+    private int initialTime;
+    private int restTime;
 
     /**
      * Simple empty constructor.
@@ -419,7 +421,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             p.addPropertyChangeListener("Completed", this);
 
-            String path = t.transfer(r, 20, 2);
+            String path = t.transfer(r, getInitialTime(), getRestTime());
             log(DEBUG, "local: " + path);
             setMarkTime(System.currentTimeMillis());
             p.play(path);
@@ -451,6 +453,22 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         } else {
             nms = null;
         }
+    }
+
+    public int getInitialTime() {
+        return (initialTime);
+    }
+
+    public void setInitialTime(int i) {
+        initialTime = i;
+    }
+
+    public int getRestTime() {
+        return (restTime);
+    }
+
+    public void setRestTime(int i) {
+        restTime = i;
     }
 
     /**
@@ -543,6 +561,9 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             int subh = detailheight;
 
             setGuideRectangle(new Rectangle(subx, suby, subw, subh));
+
+            setDefaultBackgroundImage(
+                Util.resize(getDefaultBackgroundImage(), width, height));
         }
     }
 
@@ -748,6 +769,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 if (w != null) {
 
                     w.setVisible(false);
+                    w.removeFromPlayer();
                 }
                 ChannelInfoPanel cw = getChannelInfoPanel();
                 if (cw != null) {
@@ -1520,7 +1542,12 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 int index = getIndex(carray, clp.getSelectedChannel());
                 clp.setChannels(carray);
-                clp.setSelectedIndex(index);
+                if (clp.getStartIndex() + clp.getVisibleCount() < index) {
+                    clp.setStartIndex(index);
+                    clp.setSelectedIndex(0);
+                } else {
+                    clp.setSelectedIndex(index);
+                }
                 l.setText(ALL_CHANNELS_TEXT);
 
             } else if (getChannelState() == FAVORITE_CHANNELS) {
@@ -1530,7 +1557,12 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                     int index = getIndex(only, clp.getSelectedChannel());
                     clp.setChannels(only);
-                    clp.setSelectedIndex(index);
+                    if (clp.getStartIndex() + clp.getVisibleCount() < index) {
+                        clp.setStartIndex(index);
+                        clp.setSelectedIndex(0);
+                    } else {
+                        clp.setSelectedIndex(index);
+                    }
                     l.setText(FAVORITE_CHANNELS_TEXT);
 
                 } else {
@@ -1599,6 +1631,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                         p.stop();
                     }
+                    p.setSize(p.getRectangle());
                     repaint();
 
                     NMS n = NMSUtil.select(getNMS(), l.getHostPort());

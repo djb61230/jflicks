@@ -63,6 +63,12 @@ public class Activator extends BaseActivator {
 
                         st.setMaxRate(maxRate);
                     }
+
+                    String minSize = p.getProperty("minSize");
+                    if (minSize != null) {
+
+                        st.setMinSize(Util.str2long(minSize, st.getMinSize()));
+                    }
                 }
             }
         }

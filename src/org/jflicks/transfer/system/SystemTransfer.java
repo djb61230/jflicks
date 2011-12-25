@@ -44,6 +44,7 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
     private JobContainer jobContainer;
     private Timer timer;
     private String maxRate;
+    private long minSize;
 
     /**
      * Default empty constructor.
@@ -51,10 +52,11 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
     public SystemTransfer() {
 
         setTitle("SystemTransfer");
-        Timer t = new Timer(60000, this);
+        Timer t = new Timer(300000, this);
         t.start();
         setTimer(t);
         setMaxRate("4m");
+        setMinSize(MINSIZE);
     }
 
     public String getMaxRate() {
@@ -63,6 +65,14 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
 
     public void setMaxRate(String s) {
         maxRate = s;
+    }
+
+    public long getMinSize() {
+        return (minSize);
+    }
+
+    public void setMinSize(long l) {
+        minSize = l;
     }
 
     private WgetTransferJob getWgetTransferJob() {
@@ -145,7 +155,7 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
                 while (!done) {
 
                     if ((local.exists()) && (local.isFile())
-                        && (local.length() > MINSIZE)) {
+                        && (local.length() > getMinSize())) {
 
                         done = true;
                         log(INFO, "Blocked for " + waits + " seconds!");
@@ -196,6 +206,7 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
                     long now = System.currentTimeMillis();
                     if (now > modified) {
 
+                        log(INFO, "Should delete " + files[i].getPath());
                         if (!files[i].delete()) {
 
                             log(WARNING, "Failed to delete "
