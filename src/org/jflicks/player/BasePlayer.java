@@ -66,6 +66,9 @@ public abstract class BasePlayer extends BaseLog implements Player {
         setAudioOffset(0.0);
     }
 
+    public void setSize(Rectangle r) {
+    }
+
     /**
      * We keep a service tracker to keep track of the OSGi Event Admin.
      *

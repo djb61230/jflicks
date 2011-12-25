@@ -224,6 +224,18 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
     /**
      * {@inheritDoc}
      */
+    public void pageup() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void pagedown() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void close() {
 
         controlKeyboard(true);

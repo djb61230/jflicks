@@ -180,6 +180,18 @@ public class HuluScreen extends PlayerScreen implements PropertyChangeListener {
     /**
      * {@inheritDoc}
      */
+    public void pageup() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void pagedown() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void close() {
 
         SimpleInfoWindow w = getSimpleInfoWindow();

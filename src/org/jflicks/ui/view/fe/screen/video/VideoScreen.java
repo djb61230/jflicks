@@ -437,6 +437,18 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
     /**
      * {@inheritDoc}
      */
+    public void pageup() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void pagedown() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void close() {
 
         removeBlankPanel();

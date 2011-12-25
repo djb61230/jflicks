@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.ui.view.fe.screen.schedule;
+package org.jflicks.ui.view.fe;
 
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobEvent;

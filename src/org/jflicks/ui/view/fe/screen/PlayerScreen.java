@@ -105,6 +105,16 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
     public abstract void guide();
 
     /**
+     * Extensions might need to do something with a page up.
+     */
+    public abstract void pageup();
+
+    /**
+     * Extensions might need to do something with a page down.
+     */
+    public abstract void pagedown();
+
+    /**
      * If anything needs to be "cleaned up" after the stopping of video,
      * extensions should do it here.
      */
@@ -396,9 +406,9 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
 
             setPopupEnabled(true);
             pane.add(bp, Integer.valueOf(300));
-            bp.requestFocus();
             bp.setControl(true);
             bp.setButtons(choices);
+            bp.requestFocus();
         }
     }
 
@@ -503,6 +513,14 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
                 } else if (s.equals(RC.INFO_COMMAND)) {
 
                     info();
+
+                } else if (s.equals(RC.PAGE_UP_COMMAND)) {
+
+                    pageup();
+
+                } else if (s.equals(RC.PAGE_DOWN_COMMAND)) {
+
+                    pagedown();
 
                 } else if (s.equals(RC.GUIDE_COMMAND)) {
 

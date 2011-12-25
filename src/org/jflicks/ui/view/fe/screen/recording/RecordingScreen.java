@@ -1037,6 +1037,18 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     /**
      * {@inheritDoc}
      */
+    public void pageup() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void pagedown() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void close() {
 
         removeBlankPanel();

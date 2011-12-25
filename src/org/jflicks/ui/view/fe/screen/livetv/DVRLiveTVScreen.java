@@ -16,18 +16,28 @@
 */
 package org.jflicks.ui.view.fe.screen.livetv;
 
+import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.KeyboardFocusManager;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JLayeredPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -42,16 +52,28 @@ import org.jflicks.nms.NMSUtil;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.Player;
 import org.jflicks.transfer.Transfer;
+import org.jflicks.tv.Airing;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.LiveTV;
 import org.jflicks.tv.Recording;
+import org.jflicks.tv.RecordingRule;
+import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
+import org.jflicks.ui.view.fe.AddRuleJob;
+import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.ChannelInfoPanel;
+import org.jflicks.ui.view.fe.ChannelListPanel;
+import org.jflicks.ui.view.fe.Dialog;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.GuideJob;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.RecordingInfoPanel;
+import org.jflicks.ui.view.fe.RecordingRulePanel;
+import org.jflicks.ui.view.fe.RecordingRuleProperty;
+import org.jflicks.ui.view.fe.ShowAiringListPanel;
+import org.jflicks.ui.view.fe.ShowDetailPanel;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.Busy;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXLabel;
@@ -65,7 +87,16 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @version 1.0
  */
 public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
-    PropertyChangeListener, JobListener {
+    RecordingRuleProperty, PropertyChangeListener, JobListener {
+
+    private static final int ALL_CHANNELS = 1;
+    private static final int FAVORITE_CHANNELS = 2;
+    private static final String ALL_CHANNELS_TEXT = "All Channels";
+    private static final String FAVORITE_CHANNELS_TEXT = "Favorite Channels";
+    private static final String ADD_FAVORITE = "Add to Favorites";
+    private static final String REMOVE_FAVORITE = "Remove from Favorites";
+    private static final String CHANGE_CHANNEL = "Change Channel";
+    private static final String SCHEDULE = "Schedule";
 
     private NMS[] nms;
     private LiveTV liveTV;
@@ -73,11 +104,24 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     private Channel nextChannel;
     private JobContainer guideJobContainer;
     private HashMap<Channel, ShowAiring[]> guideMap;
+    private RecordingRule[] recordingRules;
     private RecordingInfoPanel recordingInfoPanel;
     private ChannelInfoPanel channelInfoPanel;
     private long watchingStartTime;
     private Transfer transfer;
     private String streamType;
+    private Rectangle guideRectangle;
+    private boolean guideMode;
+    private JXPanel waitPanel;
+    private ChannelListPanel channelListPanel;
+    private ShowAiringListPanel showAiringListPanel;
+    private ShowDetailPanel showDetailPanel;
+    private ShowAiring selectedShowAiring;
+    private RecordingRulePanel recordingRulePanel;
+    private int channelState;
+    private JXLabel channelLabel;
+    private ArrayList<String> favoriteChannelList;
+    private Channel[] allChannels;
 
     /**
      * Simple empty constructor.
@@ -86,12 +130,33 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
         setTitle("Live TV");
         setStreamType(Player.PLAYER_VIDEO_TRANSPORT_STREAM);
+        setFavoriteChannelList(new ArrayList<String>());
 
         BufferedImage bi = getImageByName("Live_TV");
         setDefaultBackgroundImage(bi);
 
         setFocusable(true);
         requestFocus();
+
+        setChannelState(ALL_CHANNELS);
+        setChannelLabel(new JXLabel(ALL_CHANNELS_TEXT));
+
+        RecordingRulePanel rrp = new RecordingRulePanel();
+        HashSet<AWTKeyStroke> set =
+            new HashSet<AWTKeyStroke>(rrp.getFocusTraversalKeys(
+                KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
+        set.clear();
+        set.add(KeyStroke.getKeyStroke("DOWN"));
+        rrp.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,
+            set);
+
+        set = new HashSet<AWTKeyStroke>(rrp.getFocusTraversalKeys(
+            KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));
+        set.clear();
+        set.add(KeyStroke.getKeyStroke("UP"));
+        rrp.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,
+            set);
+        setRecordingRulePanel(rrp);
     }
 
     public Transfer getTransfer() {
@@ -100,6 +165,77 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
     public void setTransfer(Transfer t) {
         transfer = t;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RecordingRule[] getRecordingRules() {
+
+        RecordingRule[] result = null;
+
+        if (recordingRules != null) {
+
+            result = Arrays.copyOf(recordingRules, recordingRules.length);
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRecordingRules(RecordingRule[] array) {
+
+        if (array != null) {
+            recordingRules = Arrays.copyOf(array, array.length);
+        } else {
+            recordingRules = null;
+        }
+    }
+
+    private Frame getFrame() {
+        return (Util.findFrame(this));
+    }
+
+    private ArrayList<String> getFavoriteChannelList() {
+        return (favoriteChannelList);
+    }
+
+    private void setFavoriteChannelList(ArrayList<String> l) {
+        favoriteChannelList = l;
+    }
+
+    private Channel[] getAllChannels() {
+        return (allChannels);
+    }
+
+    private void setAllChannels(Channel[] array) {
+        allChannels = array;
+    }
+
+    private int getChannelState() {
+        return (channelState);
+    }
+
+    private void setChannelState(int i) {
+        channelState = i;
+    }
+
+    private boolean isGuideMode() {
+        return (guideMode);
+    }
+
+    private void setGuideMode(boolean b) {
+        guideMode = b;
+    }
+
+    private Rectangle getGuideRectangle() {
+        return (guideRectangle);
+    }
+
+    private void setGuideRectangle(Rectangle r) {
+        guideRectangle = r;
     }
 
     private LiveTV getLiveTV() {
@@ -152,12 +288,60 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         channelInfoPanel = w;
     }
 
+    private ChannelListPanel getChannelListPanel() {
+        return (channelListPanel);
+    }
+
+    private void setChannelListPanel(ChannelListPanel p) {
+        channelListPanel = p;
+    }
+
+    private ShowAiringListPanel getShowAiringListPanel() {
+        return (showAiringListPanel);
+    }
+
+    private void setShowAiringListPanel(ShowAiringListPanel p) {
+        showAiringListPanel = p;
+    }
+
+    private ShowDetailPanel getShowDetailPanel() {
+        return (showDetailPanel);
+    }
+
+    private void setShowDetailPanel(ShowDetailPanel p) {
+        showDetailPanel = p;
+    }
+
+    private JXLabel getChannelLabel() {
+        return (channelLabel);
+    }
+
+    private void setChannelLabel(JXLabel l) {
+        channelLabel = l;
+    }
+
     private long getWatchingStartTime() {
         return (watchingStartTime);
     }
 
     private void setWatchingStartTime(long l) {
         watchingStartTime = l;
+    }
+
+    private JXPanel getWaitPanel() {
+        return (waitPanel);
+    }
+
+    private void setWaitPanel(JXPanel p) {
+        waitPanel = p;
+    }
+
+    private RecordingRulePanel getRecordingRulePanel() {
+        return (recordingRulePanel);
+    }
+
+    private void setRecordingRulePanel(RecordingRulePanel p) {
+        recordingRulePanel = p;
     }
 
     private boolean isPlayingVideo() {
@@ -170,6 +354,14 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
     private void setStreamType(String s) {
         streamType = s;
+    }
+
+    private ShowAiring getSelectedShowAiring() {
+        return (selectedShowAiring);
+    }
+
+    private void setSelectedShowAiring(ShowAiring sa) {
+        selectedShowAiring = sa;
     }
 
     @Override
@@ -227,7 +419,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             p.addPropertyChangeListener("Completed", this);
 
-            String path = t.transfer(r, 20, 4);
+            String path = t.transfer(r, 20, 2);
             log(DEBUG, "local: " + path);
             setMarkTime(System.currentTimeMillis());
             p.play(path);
@@ -269,8 +461,22 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         JLayeredPane pane = getLayeredPane();
         if ((d != null) && (pane != null)) {
 
+            float alpha = (float) getPanelAlpha();
+
             int width = (int) d.getWidth();
             int height = (int) d.getHeight();
+
+            int wspan = (int) (width * 0.03);
+            int listwidth = (width - (2 * wspan));
+            int halflistwidth = (width - (3 * wspan)) / 2;
+            int onethirdlistwidth = (width - (3 * wspan)) / 3;
+            int twothirdlistwidth = onethirdlistwidth * 2;
+
+            int hspan = (int) (height * 0.03);
+            int listheight = (int) ((height - (2 * hspan)) / 1.5);
+
+            int detailwidth = (int) (width * 0.63);
+            int detailheight = (height - (3 * hspan)) - listheight;
 
             FrontEndView fev = (FrontEndView) getView();
             RecordingInfoPanel w = new RecordingInfoPanel(fev.getPosition(),
@@ -296,8 +502,76 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             MattePainter p = new MattePainter(Color.BLACK);
             panel.setBackgroundPainter(p);
             panel.setBounds(0, 0, (int) d.getWidth(), (int) d.getHeight());
+            setWaitPanel(panel);
 
-            pane.add(panel, Integer.valueOf(100));
+            ChannelListPanel clp = new ChannelListPanel();
+            clp.setControl(true);
+            clp.addPropertyChangeListener("SelectedChannel", this);
+            setChannelListPanel(clp);
+
+            ShowAiringListPanel salp = new ShowAiringListPanel();
+            salp.setControl(false);
+            salp.addPropertyChangeListener("SelectedShowAiring", this);
+            setShowAiringListPanel(salp);
+
+            ShowDetailPanel sdp = new ShowDetailPanel();
+            sdp.setBounds(wspan, hspan + listheight + hspan, detailwidth,
+                detailheight);
+            setShowDetailPanel(sdp);
+
+            JXLabel label = getChannelLabel();
+            label.setFont(clp.getLargeFont());
+            label.setForeground(clp.getInfoColor());
+            label.setHorizontalTextPosition(SwingConstants.CENTER);
+            label.setHorizontalAlignment(SwingConstants.RIGHT);
+            Dimension ldim = label.getPreferredSize();
+            int labelHeight = (int) ldim.getHeight();
+            label.setBounds(wspan, hspan, listwidth, labelHeight);
+
+            clp.setBounds(wspan, hspan + labelHeight, halflistwidth,
+                listheight - labelHeight);
+            salp.setBounds(wspan + wspan + halflistwidth, hspan + labelHeight,
+                halflistwidth, listheight - labelHeight);
+
+            Rectangle fevrec = fev.getPosition();
+
+            int subx = wspan + detailwidth + wspan;
+            subx += (int) fevrec.getX();
+            int suby = hspan + hspan + listheight;
+            suby += (int) fevrec.getY();
+            int subw = detailheight * 16 / 9;
+            int subh = detailheight;
+
+            setGuideRectangle(new Rectangle(subx, suby, subw, subh));
+        }
+    }
+
+    private void updateLayout(boolean wait) {
+
+        JLayeredPane pane = getLayeredPane();
+        if (pane != null) {
+
+            pane.removeAll();
+            if (wait) {
+
+                pane.add(getWaitPanel(), Integer.valueOf(100));
+
+            } else {
+
+                if (isGuideMode()) {
+
+                    pane.add(getChannelLabel(), Integer.valueOf(110));
+                    pane.add(getChannelListPanel(), Integer.valueOf(100));
+                    pane.add(getShowAiringListPanel(), Integer.valueOf(100));
+                    pane.add(getShowDetailPanel(), Integer.valueOf(100));
+
+                } else {
+
+                    pane.add(getWaitPanel(), Integer.valueOf(100));
+                }
+            }
+
+            repaint();
         }
     }
 
@@ -310,6 +584,31 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
         super.setVisible(b);
         if (b) {
+
+            // We are being shown so let's read the local channel favorite
+            // text file in case it's been changed since last time we were
+            // here.  Each entry is a line that came from a Channel.toString()
+            // call.  Since we can dynamically change them here we will read
+            // them into an ArrayList<String>.  When this screen ends we
+            // will need to write out the current state in case other screens
+            // need the same info.
+            ArrayList<String> favlist = getFavoriteChannelList();
+            if (favlist != null) {
+
+                favlist.clear();
+                File here = new File (".");
+                String[] cnames =
+                    Util.readTextFile(new File(here, "fav-chan.txt"));
+                if ((cnames != null) && (cnames.length > 0)) {
+
+                    for (int i = 0; i < cnames.length; i++) {
+
+                        favlist.add(cnames[i]);
+                    }
+
+                    Collections.sort(favlist);
+                }
+            }
 
             NMS[] array = getNMS();
             if ((array != null) && (array.length > 0)) {
@@ -356,6 +655,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                                 }
                             };
                             SwingUtilities.invokeLater(doRun);
+                            updateLayout(true);
 
                         } else {
 
@@ -406,10 +706,14 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void info() {
 
-        RecordingInfoPanel w = getRecordingInfoPanel();
-        if (w != null) {
+        System.out.println("info called: " + isGuideMode());
+        if (!isGuideMode()) {
 
-            w.setVisible(!w.isVisible());
+            RecordingInfoPanel w = getRecordingInfoPanel();
+            if (w != null) {
+
+                w.setVisible(!w.isVisible());
+            }
         }
     }
 
@@ -432,6 +736,81 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      * {@inheritDoc}
      */
     public void guide() {
+
+        System.out.println("guide function");
+        Player p = getPlayer();
+        Rectangle r = getGuideRectangle();
+        if ((p != null) && (p.isPlaying()) && (r != null)) {
+
+            if (!isGuideMode()) {
+
+                RecordingInfoPanel w = getRecordingInfoPanel();
+                if (w != null) {
+
+                    w.setVisible(false);
+                }
+                ChannelInfoPanel cw = getChannelInfoPanel();
+                if (cw != null) {
+
+                    cw.setVisible(false);
+                }
+
+                setGuideMode(true);
+                p.setSize(r);
+                requestFocus();
+                updateLayout(false);
+
+            } else {
+
+                setGuideMode(false);
+                p.setSize(p.getRectangle());
+                updateLayout(true);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void pageup() {
+
+        ChannelListPanel clp = getChannelListPanel();
+        if (clp != null) {
+
+            if (clp.isControl()) {
+                clp.movePageUp();
+            }
+        }
+
+        ShowAiringListPanel salp = getShowAiringListPanel();
+        if (salp != null) {
+
+            if (salp.isControl()) {
+                salp.movePageUp();
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void pagedown() {
+
+        ChannelListPanel clp = getChannelListPanel();
+        if (clp != null) {
+
+            if (clp.isControl()) {
+                clp.movePageDown();
+            }
+        }
+
+        ShowAiringListPanel salp = getShowAiringListPanel();
+        if (salp != null) {
+
+            if (salp.isControl()) {
+                salp.movePageDown();
+            }
+        }
     }
 
     /**
@@ -478,6 +857,27 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             t.transfer(null, 0, 0);
         }
 
+        ArrayList<String> favlist = getFavoriteChannelList();
+        if (favlist != null) {
+
+            StringBuilder sb = new StringBuilder("");
+            for (int i = 0; i < favlist.size(); i++) {
+
+                sb.append(favlist.get(i));
+                sb.append("\n");
+            }
+
+            try {
+
+                File here = new File (".");
+                Util.writeTextFile(new File(here, "fav-chan.txt"),
+                    sb.toString());
+
+            } catch (IOException ex) {
+            }
+        }
+
+        setGuideMode(false);
         setDone(true);
     }
 
@@ -526,17 +926,49 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void up() {
 
-        computeNextChannelUp();
-        log(DEBUG, "Up: " + getNextChannel());
+        if (!isGuideMode()) {
 
-        ChannelInfoPanel cw = getChannelInfoPanel();
-        Channel c = getNextChannel();
-        HashMap<Channel, ShowAiring[]> m = getGuideMap();
-        if ((c != null) && (m != null) && (cw != null)) {
+            computeNextChannelUp();
+            log(DEBUG, "Up: " + getNextChannel());
 
-            cw.setChannel(c);
-            cw.setShowAiring(currentShowAiring(m.get(c)));
-            cw.setVisible(true);
+            ChannelInfoPanel cw = getChannelInfoPanel();
+            Channel c = getNextChannel();
+            HashMap<Channel, ShowAiring[]> m = getGuideMap();
+            if ((c != null) && (m != null) && (cw != null)) {
+
+                cw.setChannel(c);
+                cw.setShowAiring(currentShowAiring(m.get(c)));
+                cw.setVisible(true);
+            }
+
+        } else {
+
+            if (isPopupEnabled()) {
+
+                ButtonPanel bp = getPlayButtonPanel();
+                if (bp != null) {
+
+                    bp.moveUp();
+                }
+
+            } else {
+
+                ChannelListPanel clp = getChannelListPanel();
+                if (clp != null) {
+
+                    if (clp.isControl()) {
+                        clp.moveUp();
+                    }
+                }
+
+                ShowAiringListPanel salp = getShowAiringListPanel();
+                if (salp != null) {
+
+                    if (salp.isControl()) {
+                        salp.moveUp();
+                    }
+                }
+            }
         }
     }
 
@@ -545,17 +977,49 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void down() {
 
-        computeNextChannelDown();
-        log(DEBUG, "Down: " + getNextChannel());
+        if (!isGuideMode()) {
 
-        ChannelInfoPanel cw = getChannelInfoPanel();
-        Channel c = getNextChannel();
-        HashMap<Channel, ShowAiring[]> m = getGuideMap();
-        if ((c != null) && (m != null) && (cw != null)) {
+            computeNextChannelDown();
+            log(DEBUG, "Down: " + getNextChannel());
 
-            cw.setChannel(c);
-            cw.setShowAiring(currentShowAiring(m.get(c)));
-            cw.setVisible(true);
+            ChannelInfoPanel cw = getChannelInfoPanel();
+            Channel c = getNextChannel();
+            HashMap<Channel, ShowAiring[]> m = getGuideMap();
+            if ((c != null) && (m != null) && (cw != null)) {
+
+                cw.setChannel(c);
+                cw.setShowAiring(currentShowAiring(m.get(c)));
+                cw.setVisible(true);
+            }
+
+        } else {
+
+            if (isPopupEnabled()) {
+
+                ButtonPanel bp = getPlayButtonPanel();
+                if (bp != null) {
+
+                    bp.moveDown();
+                }
+
+            } else {
+
+                ChannelListPanel clp = getChannelListPanel();
+                if (clp != null) {
+
+                    if (clp.isControl()) {
+                        clp.moveDown();
+                    }
+                }
+
+                ShowAiringListPanel salp = getShowAiringListPanel();
+                if (salp != null) {
+
+                    if (salp.isControl()) {
+                        salp.moveDown();
+                    }
+                }
+            }
         }
     }
 
@@ -564,10 +1028,42 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void left() {
 
-        Player p = getPlayer();
-        if (p != null) {
+        if (!isGuideMode()) {
 
-            p.seek(-8);
+            Player p = getPlayer();
+            if (p != null) {
+
+                p.seek(-8);
+            }
+
+        } else {
+
+            if (isPopupEnabled()) {
+            } else {
+
+                ChannelListPanel clp = getChannelListPanel();
+                if (clp != null) {
+
+                    if (!clp.isControl()) {
+                        clp.setControl(true);
+                    } else {
+
+                        if (getChannelState() == ALL_CHANNELS) {
+                            setChannelState(FAVORITE_CHANNELS);
+                        } else if (getChannelState() == FAVORITE_CHANNELS) {
+                            setChannelState(ALL_CHANNELS);
+                        }
+
+                        applyChannels();
+                    }
+                }
+
+                ShowAiringListPanel salp = getShowAiringListPanel();
+                if (salp != null) {
+
+                    salp.setControl(false);
+                }
+            }
         }
     }
 
@@ -576,13 +1072,34 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void right() {
 
-        Player p = getPlayer();
-        if (p != null) {
+        if (!isGuideMode()) {
 
-            int left = leftToGo(p, getMarkTime());
-            log(DEBUG, "left to go: " + left);
-            if (left > 30) {
-                p.seek(30);
+            Player p = getPlayer();
+            if (p != null) {
+
+                int left = leftToGo(p, getMarkTime());
+                log(DEBUG, "left to go: " + left);
+                if (left > 30) {
+                    p.seek(30);
+                }
+            }
+
+        } else {
+
+            if (isPopupEnabled()) {
+            } else {
+
+                ChannelListPanel clp = getChannelListPanel();
+                if (clp != null) {
+
+                    clp.setControl(false);
+                }
+
+                ShowAiringListPanel salp = getShowAiringListPanel();
+                if (salp != null) {
+
+                    salp.setControl(true);
+                }
             }
         }
     }
@@ -592,62 +1109,23 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void enter() {
 
-        LiveTV l = getLiveTV();
-        Channel c = getNextChannel();
-        if ((l != null) && (c != null)) {
+        if (!isGuideMode()) {
 
-            if (!c.equals(l.getCurrentChannel())) {
+            changeChannel(getLiveTV(), getNextChannel());
 
-                Transfer t = getTransfer();
-                Player p = getPlayer();
-                if ((p != null) && (t != null)) {
+        } else {
 
-                    ChannelInfoPanel cw = getChannelInfoPanel();
-                    if (cw != null) {
+            if (!isPopupEnabled()) {
 
-                        cw.setVisible(false);
-                    }
+                handleGuideEnter();
 
-                    if (p.isPlaying()) {
+            } else {
 
-                        p.stop();
-                    }
-                    repaint();
-
-                    NMS n = NMSUtil.select(getNMS(), l.getHostPort());
-                    if (n != null) {
-
-                        setWatchingStartTime(System.currentTimeMillis());
-                        l = n.changeChannel(l, c);
-                        if (l.getMessageType() == LiveTV.MESSAGE_TYPE_NONE) {
-
-                            setLiveTV(l);
-                            updateInfoWindow();
-                            controlKeyboard(false);
-                            final LiveTV fl = l;
-                            Runnable doRun = new Runnable() {
-
-                                public void run() {
-
-                                    log(DEBUG, "Starting player...");
-                                    startPlayer(fl);
-                                }
-                            };
-                            SwingUtilities.invokeLater(doRun);
-
-                        } else {
-
-                            n.closeSession(l);
-                            setLiveTV(null);
-                            setDone(true);
-                        }
-
-                    } else {
-
-                        setLiveTV(null);
-                        setDone(true);
-                    }
-                }
+                // We got this event because the player has focus.  So
+                // as a hack we call actionPerformed so we do the right
+                // thing.  Cheesy.
+                String val = getPlayButtonPanel().getSelectedButton();
+                actionPerformed(new ActionEvent(this, 1, val));
             }
         }
     }
@@ -676,10 +1154,161 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 log(DEBUG, "about to request focus");
                 requestFocus();
             }
+
+        } else if (event.getPropertyName().equals("SelectedChannel")) {
+
+            HashMap<Channel, ShowAiring[]> map = getGuideMap();
+            Channel c = (Channel) event.getNewValue();
+            ShowAiringListPanel salp = getShowAiringListPanel();
+            if ((map != null) && (c != null) && (salp != null)) {
+
+                salp.setShowAirings(map.get(c));
+            }
+
+        } else if (event.getPropertyName().equals("SelectedShowAiring")) {
+
+            ShowDetailPanel sdp = getShowDetailPanel();
+            if (sdp != null) {
+
+                ShowAiring sa = (ShowAiring) event.getNewValue();
+                sdp.setShowAiring(sa);
+                setSelectedShowAiring(sa);
+            }
         }
     }
 
+    private void handleFavorite() {
+
+        ChannelListPanel clp = getChannelListPanel();
+        ArrayList<String> favlist = getFavoriteChannelList();
+        if ((clp != null) && (favlist != null)) {
+
+            Channel chan = clp.getSelectedChannel();
+            if (chan != null) {
+
+                String text = chan.toString();
+                if (getChannelState() == ALL_CHANNELS) {
+
+                    if (!favlist.contains(text)) {
+
+                        favlist.add(text);
+                        Collections.sort(favlist);
+                    }
+
+                } else if (getChannelState() == FAVORITE_CHANNELS) {
+
+                    if (favlist.contains(text)) {
+
+                        favlist.remove(text);
+                        Collections.sort(favlist);
+                        applyChannels();
+                    }
+                }
+            }
+        }
+    }
+
+    public void editRule(NMS n, RecordingRulePanel p, RecordingRule rr) {
+
+        if ((n != null) && (p != null) && (rr != null)) {
+
+            p.setNMS(n);
+            p.setRecordingRule(rr);
+            p.setFrame(getFrame());
+
+            Dialog.showPanel(getFrame(), p, p.getOkButton(),
+                p.getCancelButton());
+            if (p.isAccept()) {
+
+                rr = p.getRecordingRule();
+                AddRuleJob arj = new AddRuleJob(n, rr);
+                Busy busy = new Busy(getLayeredPane(), arj);
+                busy.addJobListener(this);
+                busy.execute();
+
+            } else {
+
+                requestFocus();
+            }
+        }
+    }
+
+    /**
+     * We need to listen for events from the "play popup dialog".
+     *
+     * @param event A given event.
+     */
     public void actionPerformed(ActionEvent event) {
+
+        System.out.println("action performed: " + event.getSource());
+        if (isGuideMode()) {
+
+            ButtonPanel pbp = getPlayButtonPanel();
+            if (pbp != null) {
+
+                if (CHANGE_CHANNEL.equals(pbp.getSelectedButton())) {
+
+                    System.out.println("change channel");
+                    ChannelListPanel clp = getChannelListPanel();
+                    if (clp != null) {
+
+                        setGuideMode(false);
+                        updateLayout(true);
+                        changeChannel(getLiveTV(), clp.getSelectedChannel());
+                    }
+
+                } else if (ADD_FAVORITE.equals(pbp.getSelectedButton())) {
+
+                    System.out.println("add favorite");
+                    handleFavorite();
+
+                } else if (REMOVE_FAVORITE.equals(pbp.getSelectedButton())) {
+
+                    System.out.println("remove favorite");
+                    handleFavorite();
+
+                } else if (SCHEDULE.equals(pbp.getSelectedButton())) {
+                    System.out.println("schedule");
+
+                    ShowAiring sa = getSelectedShowAiring();
+                    RecordingRulePanel rrp = getRecordingRulePanel();
+                    if ((sa != null) && (rrp != null)) {
+
+                        NMS n = NMSUtil.select(getNMS(), sa.getHostPort());
+                        if (n != null) {
+
+                            Show show = sa.getShow();
+                            Airing airing = sa.getAiring();
+                            if ((show != null) && (airing != null)) {
+
+                                RecordingRule rr = getRecordingRule(sa);
+
+                                if (rr == null) {
+
+                                    rr = new RecordingRule();
+                                    rr.setShowAiring(sa);
+                                    rr.setType(RecordingRule.SERIES_TYPE);
+                                    rr.setName(show.getTitle());
+                                    rr.setShowId(show.getId());
+                                    rr.setSeriesId(show.getSeriesId());
+                                    rr.setChannelId(airing.getChannelId());
+                                    rr.setListingId(airing.getListingId());
+                                    rr.setDuration(airing.getDuration());
+                                    rr.setPriority(
+                                        RecordingRule.NORMAL_PRIORITY);
+                                    rr.setTasks(n.getTasks());
+                                }
+
+                                editRule(n, rrp, rr);
+                            }
+                        }
+                    }
+                }
+
+                System.out.println("unpopup");
+                unpopup();
+            }
+        }
     }
 
     /**
@@ -693,9 +1322,20 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             Serializable s = event.getState();
             if (s instanceof HashMap<?, ?>) {
 
-                setGuideMap((HashMap<Channel, ShowAiring[]>) s);
+                HashMap<Channel, ShowAiring[]> map =
+                    (HashMap<Channel, ShowAiring[]>) s;
+                setGuideMap(map);
                 updateInfoWindow();
                 setGuideJobContainer(null);
+
+                Set<Channel> set = map.keySet();
+                if (set.size() > 0) {
+
+                    Channel[] chans = set.toArray(new Channel[set.size()]);
+                    Arrays.sort(chans);
+                    setAllChannels(chans);
+                    applyChannels();
+                }
             }
         }
     }
@@ -808,6 +1448,237 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                         result = array[i];
                         break;
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private Channel[] filterByFavorite(Channel[] array) {
+
+        Channel[] result = null;
+
+        ArrayList<String> favlist = getFavoriteChannelList();
+        if ((array != null) && (favlist != null)) {
+
+            ArrayList<Channel> filter = new ArrayList<Channel>();
+            for (int i = 0; i < favlist.size(); i++) {
+
+                String tmp = favlist.get(i);
+                if (tmp != null) {
+
+                    for (int j = 0; j < array.length; j++) {
+
+                        if (tmp.equals(array[j].toString())) {
+
+                            filter.add(array[j]);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (filter.size() > 0) {
+
+                Collections.sort(filter);
+                result = filter.toArray(new Channel[filter.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    private int getIndex(Channel[] array, Channel c) {
+
+        int result = 0;
+
+        if ((array != null) && (c != null)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                if (c.equals(array[i])) {
+
+                    result = i;
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private void applyChannels() {
+
+        ChannelListPanel clp = getChannelListPanel();
+        Channel[] carray = getAllChannels();
+        JXLabel l = getChannelLabel();
+        if ((clp != null) && (carray != null) && (l != null)) {
+
+            if (getChannelState() == ALL_CHANNELS) {
+
+                int index = getIndex(carray, clp.getSelectedChannel());
+                clp.setChannels(carray);
+                clp.setSelectedIndex(index);
+                l.setText(ALL_CHANNELS_TEXT);
+
+            } else if (getChannelState() == FAVORITE_CHANNELS) {
+
+                Channel[] only = filterByFavorite(carray);
+                if (only != null) {
+
+                    int index = getIndex(only, clp.getSelectedChannel());
+                    clp.setChannels(only);
+                    clp.setSelectedIndex(index);
+                    l.setText(FAVORITE_CHANNELS_TEXT);
+
+                } else {
+
+                    setChannelState(ALL_CHANNELS);
+                }
+            }
+        }
+
+    }
+
+    private void handleGuideEnter() {
+
+        ChannelListPanel clp = getChannelListPanel();
+        ShowAiringListPanel salp = getShowAiringListPanel();
+        if ((clp != null) && (salp != null)) {
+
+            Channel chan = clp.getSelectedChannel();
+            if (chan != null) {
+
+                ArrayList<String> blist = new ArrayList<String>();
+                if (clp.isControl()) {
+
+                    blist.add(CHANGE_CHANNEL);
+                    if (getChannelState() == ALL_CHANNELS) {
+
+                        blist.add(ADD_FAVORITE);
+
+                    } else {
+
+                        blist.add(REMOVE_FAVORITE);
+                    }
+
+                } else {
+
+                    if (salp.getSelectedIndex() == 0) {
+                        blist.add(CHANGE_CHANNEL);
+                    } else {
+                        blist.add(SCHEDULE);
+                    }
+                }
+
+                blist.add(CANCEL);
+                popup(blist.toArray(new String[blist.size()]));
+            }
+        }
+    }
+
+    private void changeChannel(LiveTV l, Channel c) {
+
+        if ((l != null) && (c != null)) {
+
+            if (!c.equals(l.getCurrentChannel())) {
+
+                Transfer t = getTransfer();
+                Player p = getPlayer();
+                if ((p != null) && (t != null)) {
+
+                    ChannelInfoPanel cw = getChannelInfoPanel();
+                    if (cw != null) {
+
+                        cw.setVisible(false);
+                    }
+
+                    if (p.isPlaying()) {
+
+                        p.stop();
+                    }
+                    repaint();
+
+                    NMS n = NMSUtil.select(getNMS(), l.getHostPort());
+                    if (n != null) {
+
+                        setWatchingStartTime(System.currentTimeMillis());
+                        l = n.changeChannel(l, c);
+                        if (l.getMessageType() == LiveTV.MESSAGE_TYPE_NONE) {
+
+                            setLiveTV(l);
+                            updateInfoWindow();
+                            controlKeyboard(false);
+                            final LiveTV fl = l;
+                            Runnable doRun = new Runnable() {
+
+                                public void run() {
+
+                                    log(DEBUG, "Starting player...");
+                                    startPlayer(fl);
+                                }
+                            };
+                            SwingUtilities.invokeLater(doRun);
+
+                        } else {
+
+                            n.closeSession(l);
+                            setLiveTV(null);
+                            setDone(true);
+                        }
+
+                    } else {
+
+                        setLiveTV(null);
+                        setDone(true);
+                    }
+                }
+            }
+        }
+    }
+
+    private RecordingRule getRecordingRule(ShowAiring sa) {
+
+        RecordingRule result = null;
+
+        if (sa != null) {
+
+            NMS n = NMSUtil.select(getNMS(), sa.getHostPort());
+            Show show = sa.getShow();
+            Airing airing = sa.getAiring();
+
+            if ((n != null) && (show != null) && (airing != null)) {
+
+                int cid = airing.getChannelId();
+                String seriesId = show.getSeriesId();
+                RecordingRule[] rules = n.getRecordingRules();
+                if ((seriesId != null) && (rules != null)) {
+
+                    for (int i = 0; i < rules.length; i++) {
+
+                        ShowAiring rrsa = rules[i].getShowAiring();
+                        if (rrsa != null) {
+
+                            // We have a rule that is a ONCE recording.  It
+                            // is only our rule to edit if the two ShowAiring
+                            // instances are the same.
+                            if (rrsa.equals(sa)) {
+
+                                result = rules[i];
+                                break;
+                            }
+
+                        } else {
+
+                            if ((cid == rules[i].getChannelId())
+                                && (seriesId.equals(rules[i].getSeriesId()))) {
+
+                                result = rules[i];
+                                break;
+                            }
+                        }
                     }
                 }
             }

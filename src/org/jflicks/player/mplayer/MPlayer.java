@@ -389,7 +389,7 @@ public class MPlayer extends BasePlayer {
                 int width = (int) r.getWidth();
                 int height = (int) r.getHeight();
 
-                JDialog win = new JDialog(getFrame());
+                JDialog win = new JDialog(getFrame(), false);
                 win.setUndecorated(true);
                 win.setFocusable(true);
                 win.setBounds(x, y, width, height);
@@ -555,6 +555,31 @@ public class MPlayer extends BasePlayer {
         setAudioOffset(current);
 
         command("set_property audio_delay " + current + "\n");
+    }
+
+    @Override
+    public void setSize(Rectangle r) {
+
+        if (r != null) {
+
+            JPanel p = getKeyPanel();
+            if (p != null) {
+
+                p.setBounds(0, 0, r.width, r.height);
+            }
+
+            Canvas c = getCanvas();
+            if (c != null) {
+
+                c.setBounds(0, 0, r.width, r.height);
+            }
+
+            JDialog d = getWindow();
+            if (d != null) {
+
+                d.setBounds(r);
+            }
+        }
     }
 
     /**

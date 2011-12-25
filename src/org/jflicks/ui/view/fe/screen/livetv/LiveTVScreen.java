@@ -366,6 +366,18 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
     /**
      * {@inheritDoc}
      */
+    public void pageup() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void pagedown() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void close() {
 
         controlKeyboard(true);

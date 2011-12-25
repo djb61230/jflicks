@@ -61,6 +61,7 @@ import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Upcoming;
+import org.jflicks.ui.view.fe.AddRuleJob;
 import org.jflicks.ui.view.fe.AllGuideJob;
 import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.ChannelListPanel;
@@ -68,6 +69,7 @@ import org.jflicks.ui.view.fe.Dialog;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
 import org.jflicks.ui.view.fe.RecordingRuleListPanel;
+import org.jflicks.ui.view.fe.RecordingRulePanel;
 import org.jflicks.ui.view.fe.RecordingRuleProperty;
 import org.jflicks.ui.view.fe.ShowAiringListPanel;
 import org.jflicks.ui.view.fe.ShowDetailPanel;
@@ -122,7 +124,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
     private long lastGuide;
     private HashMap<Tag, TagValue> tagMap;
     private Channel[] allChannels;
-    private Channel selectedChannel;
     private ArrayList<String> favoriteChannelList;
 
     private JXPanel waitPanel;

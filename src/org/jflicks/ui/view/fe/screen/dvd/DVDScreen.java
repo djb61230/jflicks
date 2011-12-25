@@ -137,6 +137,18 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
     /**
      * {@inheritDoc}
      */
+    public void pageup() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void pagedown() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void close() {
 
         log(DEBUG, "DVDScreen close");

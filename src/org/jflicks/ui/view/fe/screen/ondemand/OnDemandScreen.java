@@ -424,6 +424,18 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
     /**
      * {@inheritDoc}
      */
+    public void pageup() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void pagedown() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void close() {
 
         SimpleInfoWindow w = getSimpleInfoWindow();

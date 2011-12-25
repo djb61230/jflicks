@@ -432,6 +432,8 @@ public interface Player {
      */
     JLayeredPane getLayeredPane();
 
+    void setSize(Rectangle r);
+
     /**
      * Add a listener.
      *
