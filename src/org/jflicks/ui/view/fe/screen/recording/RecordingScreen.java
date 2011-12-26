@@ -1085,10 +1085,14 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     public void forward() {
 
         Player p = getPlayer();
-        if (p != null) {
+        Recording cr = getCurrentRecording();
+        if ((p != null) && (cr != null)) {
 
-            updateLengthHint(getCurrentRecording(), p);
-            p.seek(30);
+            updateLengthHint(cr, p);
+            int left = leftToGo(p, cr);
+            if (left > 30) {
+                p.seek(30);
+            }
         }
     }
 
