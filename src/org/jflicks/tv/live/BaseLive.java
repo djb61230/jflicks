@@ -593,7 +593,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
         if (s != null) {
 
             RecorderInformation[] array = s.getRecorderInformations();
-            if (array != null) {
+            if ((array != null) && (array.length > 0)) {
 
                 if (startc == null) {
                     startc = getConfiguredStartChannel();
@@ -605,6 +605,21 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
                         result = findChannel(array[i].getChannels(), startc);
                         if (result != null) {
+                            break;
+                        }
+                    }
+                }
+
+                if (result == null) {
+
+                    // We didn't find the right Channel so let's just
+                    // set it to something so we don't crap out.
+                    for (int i = 0; i < array.length; i++) {
+
+                        Channel[] chans = array[i].getChannels();
+                        if ((chans != null) && (chans.length > 0)) {
+
+                            result = chans[0];
                             break;
                         }
                     }
