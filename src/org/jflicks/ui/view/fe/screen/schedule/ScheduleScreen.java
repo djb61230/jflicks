@@ -552,7 +552,12 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                 int index = getIndex(carray, clp.getSelectedChannel());
                 clp.setChannels(carray);
-                clp.setSelectedIndex(index);
+                if (clp.getStartIndex() + clp.getVisibleCount() < index) {
+                    clp.setStartIndex(index);
+                    clp.setSelectedIndex(0);
+                } else {
+                    clp.setSelectedIndex(index);
+                }
                 l.setText(ALL_CHANNELS_TEXT);
 
             } else if (getChannelState() == FAVORITE_CHANNELS) {
@@ -562,7 +567,12 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                     int index = getIndex(only, clp.getSelectedChannel());
                     clp.setChannels(only);
-                    clp.setSelectedIndex(index);
+                    if (clp.getStartIndex() + clp.getVisibleCount() < index) {
+                        clp.setStartIndex(index);
+                        clp.setSelectedIndex(0);
+                    } else {
+                        clp.setSelectedIndex(index);
+                    }
                     l.setText(FAVORITE_CHANNELS_TEXT);
 
                 } else {

@@ -139,6 +139,13 @@ public abstract class BaseLive extends BaseConfig implements Live {
      * {@inheritDoc}
      */
     public LiveTV openSession() {
+        return (openSession(null));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public LiveTV openSession(String channelNumber) {
 
         LiveTV result = new LiveTV();
         result.setMessageType(LiveTV.MESSAGE_TYPE_NONE);
@@ -172,7 +179,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
                     addSession(session);
 
                     result.setChannels(computeAllChannels(session));
-                    Channel c = computeStartChannel(session);
+                    Channel c = computeStartChannel(session, channelNumber);
                     changeChannel(result, c);
 
                 } else {
@@ -200,6 +207,13 @@ public abstract class BaseLive extends BaseConfig implements Live {
      * {@inheritDoc}
      */
     public LiveTV openSession(String host, int port) {
+        return (openSession(host, port, null));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public LiveTV openSession(String host, int port, String channelNumber) {
 
         LiveTV result = new LiveTV(host, port);
         result.setMessageType(LiveTV.MESSAGE_TYPE_NONE);
@@ -233,7 +247,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
                     addSession(session);
 
                     result.setChannels(computeAllChannels(session));
-                    Channel c = computeStartChannel(session);
+                    Channel c = computeStartChannel(session, channelNumber);
                     changeChannel(result, c);
 
                 } else {
@@ -572,7 +586,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
         return (result);
     }
 
-    private Channel computeStartChannel(Session s) {
+    private Channel computeStartChannel(Session s, String startc) {
 
         Channel result = null;
 
@@ -581,7 +595,9 @@ public abstract class BaseLive extends BaseConfig implements Live {
             RecorderInformation[] array = s.getRecorderInformations();
             if (array != null) {
 
-                String startc = getConfiguredStartChannel();
+                if (startc == null) {
+                    startc = getConfiguredStartChannel();
+                }
                 log(DEBUG, "start channel: " + startc);
                 if (startc != null) {
 

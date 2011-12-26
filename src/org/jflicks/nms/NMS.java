@@ -437,11 +437,29 @@ public interface NMS extends Config {
     /**
      * Begin a LiveTV session.
      *
+     * @param channelNumber The Channel we wish to start.
+     * @return A LiveTV instance.
+     */
+    LiveTV openSession(String channelNumber);
+
+    /**
+     * Begin a LiveTV session.
+     *
      * @param host The host destination for video packets.
      * @param port The port destination for video packets.
      * @return A LiveTV instance.
      */
     LiveTV openSession(String host, int port);
+
+    /**
+     * Begin a LiveTV session.
+     *
+     * @param host The host destination for video packets.
+     * @param port The port destination for video packets.
+     * @param channelNumber The Channel we wish to start.
+     * @return A LiveTV instance.
+     */
+    LiveTV openSession(String host, int port, String channelNumber);
 
     /**
      * Change to the given Channel.

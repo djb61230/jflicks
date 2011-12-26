@@ -120,6 +120,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     private RecordingRulePanel recordingRulePanel;
     private int channelState;
     private JXLabel channelLabel;
+    private Channel lastChannel;
     private ArrayList<String> favoriteChannelList;
     private Channel[] allChannels;
     private int initialTime;
@@ -214,6 +215,14 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
     private void setAllChannels(Channel[] array) {
         allChannels = array;
+    }
+
+    private Channel getLastChannel() {
+        return (lastChannel);
+    }
+
+    private void setLastChannel(Channel c) {
+        lastChannel = c;
     }
 
     private int getChannelState() {
@@ -613,11 +622,11 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             // them into an ArrayList<String>.  When this screen ends we
             // will need to write out the current state in case other screens
             // need the same info.
+            File here = new File (".");
             ArrayList<String> favlist = getFavoriteChannelList();
             if (favlist != null) {
 
                 favlist.clear();
-                File here = new File (".");
                 String[] cnames =
                     Util.readTextFile(new File(here, "fav-chan.txt"));
                 if ((cnames != null) && (cnames.length > 0)) {
@@ -629,6 +638,14 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                     Collections.sort(favlist);
                 }
+            }
+
+            // Try to find the last channel.
+            String lastChannelNumber = null;
+            String[] lastText =
+                Util.readTextFile(new File(here, "last-chan.txt"));
+            if ((lastText != null) && (lastText.length > 0)) {
+                lastChannelNumber = lastText[0];
             }
 
             NMS[] array = getNMS();
@@ -649,7 +666,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 if (n != null) {
 
                     setWatchingStartTime(System.currentTimeMillis());
-                    LiveTV l = n.openSession();
+                    LiveTV l = n.openSession(lastChannelNumber);
                     log(DEBUG, "Called start livetv: " + l);
                     if (l != null) {
 
@@ -879,6 +896,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             t.transfer(null, 0, 0);
         }
 
+        File here = new File (".");
         ArrayList<String> favlist = getFavoriteChannelList();
         if (favlist != null) {
 
@@ -891,9 +909,20 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             try {
 
-                File here = new File (".");
                 Util.writeTextFile(new File(here, "fav-chan.txt"),
                     sb.toString());
+
+            } catch (IOException ex) {
+            }
+        }
+
+        Channel lc = getLastChannel();
+        if (lc != null) {
+
+            try {
+
+                Util.writeTextFile(new File(here, "last-chan.txt"),
+                    lc.getNumber() + "\n");
 
             } catch (IOException ex) {
             }
@@ -1641,6 +1670,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                         l = n.changeChannel(l, c);
                         if (l.getMessageType() == LiveTV.MESSAGE_TYPE_NONE) {
 
+                            setLastChannel(c);
                             setLiveTV(l);
                             updateInfoWindow();
                             controlKeyboard(false);

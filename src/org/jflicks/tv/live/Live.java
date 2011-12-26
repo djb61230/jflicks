@@ -71,11 +71,31 @@ public interface Live extends Config {
      * Request to open a live TV session.  Any problems will be reported
      * in the returned LiveTV instance.
      *
+     * @param channelNumber The Channel we wish to start.
+     * @return A LiveTV instance.
+     */
+    LiveTV openSession(String channelNumber);
+
+    /**
+     * Request to open a live TV session.  Any problems will be reported
+     * in the returned LiveTV instance.
+     *
      * @param host The host destination for streaming video.
      * @param port The port destination for streaming video.
      * @return A LiveTV instance.
      */
     LiveTV openSession(String host, int port);
+
+    /**
+     * Request to open a live TV session.  Any problems will be reported
+     * in the returned LiveTV instance.
+     *
+     * @param host The host destination for streaming video.
+     * @param port The port destination for streaming video.
+     * @param channelNumber The Channel we wish to start.
+     * @return A LiveTV instance.
+     */
+    LiveTV openSession(String host, int port, String channelNumber);
 
     /**
      * Request a change to the given Channel.
