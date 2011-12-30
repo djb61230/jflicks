@@ -24,6 +24,7 @@ import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 import org.jflicks.util.Bif;
+import org.jflicks.util.Util;
 
 /**
  * A base worker job class that workers can extend.
@@ -38,6 +39,7 @@ public abstract class BaseWorkerJob extends AbstractJob {
     private JobContainer jobContainer;
     private BaseWorker baseWorker;
     private String extension;
+    private String nice;
 
     /**
      * Constructor with one required argument.
@@ -49,6 +51,11 @@ public abstract class BaseWorkerJob extends AbstractJob {
 
         setRecording(r);
         setBaseWorker(bw);
+
+        if (Util.isLinux()) {
+
+            setNice("ionice -c3");
+        }
     }
 
     /**
@@ -135,6 +142,30 @@ public abstract class BaseWorkerJob extends AbstractJob {
 
     public void setExtension(String s) {
         extension = s;
+    }
+
+    /**
+     * A worker can use a "nice" feature so as to not hog up too
+     * many resources.  We include this because we have nice and
+     * ionice on Linux but nothing like it on Windows.  So at
+     * runtime this can be set to the right thing.
+     *
+     * @return A nice String.
+     */
+    public String getNice() {
+        return (nice);
+    }
+
+    /**
+     * A worker can use a "nice" feature so as to not hog up too
+     * many resources.  We include this because we have nice and
+     * ionice on Linux but nothing like it on Windows.  So at
+     * runtime this can be set to the right thing.
+     *
+     * @param s A nice String.
+     */
+    public void setNice(String s) {
+        nice = s;
     }
 
     /**

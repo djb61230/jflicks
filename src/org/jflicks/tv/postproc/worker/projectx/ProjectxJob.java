@@ -117,7 +117,13 @@ public class ProjectxJob extends BaseWorkerJob implements JobListener {
                 setLogFile(new File(pre + "_log.txt"));
 
                 cl = cl.replaceFirst("INPUT_PATH", path);
-                SystemJob job = SystemJob.getInstance("ionice -c3 " + cl);
+                SystemJob job = null;
+                String nice = getNice();
+                if (nice != null) {
+                    job = SystemJob.getInstance(nice + " " + cl);
+                } else {
+                    job = SystemJob.getInstance(cl);
+                }
 
                 job.addJobListener(this);
                 setSystemJob(job);

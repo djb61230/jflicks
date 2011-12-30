@@ -181,9 +181,20 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
             setDirectory(dir);
             if (dir != null) {
 
-                SystemJob job = SystemJob.getInstance("ionice -c3 ffmpeg -i "
-                    + r.getPath() + " -r 1/" + getSpan() + " -s hd480 "
-                    + dir.getPath() + File.separator + "frame-%4d.jpg");
+                SystemJob job = null;
+                String nice = getNice();
+                if (nice != null) {
+
+                    job = SystemJob.getInstance(nice + " ffmpeg -i "
+                        + r.getPath() + " -r 1/" + getSpan() + " -s hd480 "
+                        + dir.getPath() + File.separator + "frame-%4d.jpg");
+
+                } else {
+
+                    job = SystemJob.getInstance("ffmpeg -i "
+                        + r.getPath() + " -r 1/" + getSpan() + " -s hd480 "
+                        + dir.getPath() + File.separator + "frame-%4d.jpg");
+                }
 
                 job.addJobListener(this);
                 setSystemJob(job);

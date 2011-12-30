@@ -74,7 +74,13 @@ public class IndexerJob extends BaseWorkerJob implements JobListener {
 
                 cl = cl.replaceFirst("INPUT_PATH", path);
                 cl = cl.replaceFirst("OUTPUT_PATH", tmp.getPath());
-                SystemJob job = SystemJob.getInstance("ionice -c3 " + cl);
+                SystemJob job = null;
+                String nice = getNice();
+                if (nice != null) {
+                    job = SystemJob.getInstance(nice + " " + cl);
+                } else {
+                    job = SystemJob.getInstance(cl);
+                }
 
                 job.addJobListener(this);
                 setSystemJob(job);

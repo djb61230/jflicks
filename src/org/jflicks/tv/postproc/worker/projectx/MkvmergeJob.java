@@ -96,7 +96,13 @@ public class MkvmergeJob extends BaseWorkerJob implements JobListener {
                 cl = cl.replaceFirst("OUTPUT_PATH", tmp.getPath());
                 cl = cl.replaceFirst("INPUT_VPATH", vfile.getPath());
                 cl = cl.replaceFirst("INPUT_APATH", afile.getPath());
-                SystemJob job = SystemJob.getInstance("ionice -c3 " + cl);
+                SystemJob job = null;
+                String nice = getNice();
+                if (nice != null) {
+                    job = SystemJob.getInstance(nice + " " + cl);
+                } else {
+                    job = SystemJob.getInstance(cl);
+                }
 
                 job.addJobListener(this);
                 setSystemJob(job);
