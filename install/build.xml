@@ -199,6 +199,8 @@
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-script.jar"
             todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-systemstatus.jar"
+            todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-video.jar"
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-rc-lirc.jar"
@@ -340,6 +342,8 @@
         <copy file="${bundle}/jflicks-ui-view-fe-screen-schedule.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-script.jar"
+            todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-fe-screen-systemstatus.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-video.jar"
             todir="fe/bundle"/>

@@ -1,2 +1,2 @@
 sleep 5
-./jflicks-fe
+./jflicks-cs
