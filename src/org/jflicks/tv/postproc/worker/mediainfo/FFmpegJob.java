@@ -16,8 +16,6 @@
 */
 package org.jflicks.tv.postproc.worker.mediainfo;
 
-import java.util.StringTokenizer;
-
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
@@ -137,23 +135,18 @@ public class FFmpegJob extends BaseWorkerJob implements JobListener {
             if ((r != null) && (job != null)) {
 
                 String output = job.getOutputText();
+                log(BaseWorker.INFO, "output: " + output);
                 if (output != null) {
 
                     String videoLine = null;
                     String audioLine = null;
 
-                    StringTokenizer st = new StringTokenizer(output, "\n");
-                    while (st.hasMoreTokens()) {
+                    int vindex = output.indexOf("Video:");
+                    int aindex = output.indexOf("Audio:");
+                    if ((vindex != -1) && (aindex != -1)) {
 
-                        String line = st.nextToken().trim();
-                        if (line.startsWith("Stream")) {
-
-                            if (line.indexOf("Video:") != -1) {
-                                videoLine = line;
-                            } else if (line.indexOf("Audio:") != -1) {
-                                audioLine = line;
-                            }
-                        }
+                        videoLine = output.substring(vindex, aindex);
+                        audioLine = output.substring(aindex);
                     }
 
                     log(BaseWorker.INFO, "videoLine: " + videoLine);

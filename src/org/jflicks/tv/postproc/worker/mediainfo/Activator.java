@@ -21,6 +21,8 @@ import org.jflicks.tv.postproc.worker.Worker;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 import java.util.Hashtable;
 
@@ -32,6 +34,8 @@ import java.util.Hashtable;
  */
 public class Activator extends BaseActivator {
 
+    private ServiceTracker logServiceTracker;
+
     /**
      * {@inheritDoc}
      */
@@ -39,7 +43,12 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        logServiceTracker.open();
+
         MediainfoWorker mw = new MediainfoWorker();
+        mw.setLogServiceTracker(logServiceTracker);
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
         dict.put(Worker.TITLE_PROPERTY, mw.getTitle());
@@ -55,6 +64,12 @@ public class Activator extends BaseActivator {
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
         }
     }
 
