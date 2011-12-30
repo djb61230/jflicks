@@ -583,6 +583,16 @@ public final class NMSConstants {
      */
     public static final String PASSWORD = "Password";
 
+    /**
+     * A constant for identifying over the air frequency type.
+     */
+    public static final String OTA = "Over the air";
+
+    /**
+     * A constant for identifying over the cable tv frequency type.
+     */
+    public static final String CABLE = "Cable";
+
     private NMSConstants() {
     }
 

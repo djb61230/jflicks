@@ -241,8 +241,10 @@ public interface Recorder extends Config {
      *
      * @param array The set of Channel instances associated with
      * this recorder.
+     * @param type We supply a scan type here so the recorder can
+     * override it's frequency type.
      */
-    void performScan(Channel[] array);
+    void performScan(Channel[] array, String type);
 
     /**
      * Not all recorders will have a Tuner so scanning does not

@@ -2427,7 +2427,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
-    public boolean performChannelScan(String recorderSource) {
+    public boolean performChannelScan(String recorderSource, String type) {
 
         boolean result = false;
 
@@ -2466,7 +2466,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                             if (chans != null) {
 
                                 result = true;
-                                r.performScan(chans);
+                                r.performScan(chans, type);
                             }
                         }
                     }

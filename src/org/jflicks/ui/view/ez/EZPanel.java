@@ -1346,27 +1346,45 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
 
                     String src = r.getName();
                     System.out.println("src: <" + src + ">");
-                    if (nms.performChannelScan(src)) {
 
-                        MessagePanel mp = getMessagePanel();
-                        if (mp != null) {
+                    Object[] options = {
+                        NMSConstants.OTA,
+                        NMSConstants.CABLE
+                    };
+                    Object svalue = JOptionPane.showInputDialog(getFrame(),
+                        "Choose one", "Select Frequency Type",
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null, options, options[0]);
+                    System.out.println("svalue: <" + svalue + ">");
+                    if (svalue instanceof String) {
 
-                            mp.clearMessage();
+                        String answer = (String) svalue;
+
+                        if (!answer.equals("Cancel")) {
+
+                            if (nms.performChannelScan(src, answer)) {
+
+                                MessagePanel mp = getMessagePanel();
+                                if (mp != null) {
+
+                                    mp.clearMessage();
+                                }
+
+                            } else {
+
+                                String mess = "Scan NOT started."
+                                    + " This could be because:\n"
+                                    + " 1) This Recorder doesn't"
+                                    + " have a tuner.\n"
+                                    + " 2) It's not connected to a"
+                                    + " Channel Listing.\n"
+                                    + " Please See the Scheduler"
+                                    + " configuration to assign one.";
+                                JOptionPane.showMessageDialog(
+                                    getFrame(), mess, "Alert",
+                                    JOptionPane.ERROR_MESSAGE);
+                            }
                         }
-
-                    } else {
-
-                        String mess = "Scan NOT started."
-                            + " This could be because:\n"
-                            + " 1) This Recorder doesn't"
-                            + " have a tuner.\n"
-                            + " 2) It's not connected to a"
-                            + " Channel Listing.\n"
-                            + " Please See the Scheduler"
-                            + " configuration to assign one.";
-                        JOptionPane.showMessageDialog(
-                            getFrame(), mess, "Alert",
-                            JOptionPane.ERROR_MESSAGE);
                     }
 
                 } else {

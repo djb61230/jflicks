@@ -91,7 +91,7 @@ public class DvbRecorder extends BaseRecorder {
     /**
      * {@inheritDoc}
      */
-    public void performScan(Channel[] array) {
+    public void performScan(Channel[] array, String type) {
 
         log(DEBUG, "performScan dvb called: " + array);
         for (int i = 0; i < array.length; i++) {
@@ -101,7 +101,7 @@ public class DvbRecorder extends BaseRecorder {
             log(DEBUG, "------------------");
         }
 
-        DvbScanJob scanner = new DvbScanJob(this, array);
+        DvbScanJob scanner = new DvbScanJob(this, array, type);
         JobContainer jc = JobManager.getJobContainer(scanner);
         jc.start();
     }

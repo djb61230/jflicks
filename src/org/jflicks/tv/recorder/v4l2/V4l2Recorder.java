@@ -159,7 +159,7 @@ public class V4l2Recorder extends BaseRecorder {
     /**
      * {@inheritDoc}
      */
-    public void performScan(Channel[] array) {
+    public void performScan(Channel[] array, String type) {
     }
 
     /**

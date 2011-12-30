@@ -23,6 +23,7 @@ import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
+import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.recorder.BaseRecorder;
 
@@ -291,7 +292,7 @@ public class HDHRRecorder extends BaseRecorder {
     /**
      * {@inheritDoc}
      */
-    public void performScan(Channel[] array) {
+    public void performScan(Channel[] array, String type) {
 
         log(DEBUG, "performScan hdhr called: " + array);
         for (int i = 0; i < array.length; i++) {
@@ -301,7 +302,15 @@ public class HDHRRecorder extends BaseRecorder {
             log(DEBUG, "------------------");
         }
 
-        HDHRScanJob scanner = new HDHRScanJob(this, array);
+        String ftype = null;
+        if (NMSConstants.OTA.equals(type)) {
+            ftype = US_BCAST;
+        } else if (NMSConstants.CABLE.equals(type)) {
+            ftype = US_CABLE;
+        }
+        log(DEBUG, "type given: <" + type + ">");
+        log(DEBUG, "ftype using: <" + ftype + ">");
+        HDHRScanJob scanner = new HDHRScanJob(this, array, ftype);
         JobContainer jc = JobManager.getJobContainer(scanner);
         jc.start();
     }

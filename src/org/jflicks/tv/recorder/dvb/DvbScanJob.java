@@ -42,6 +42,7 @@ public class DvbScanJob extends AbstractJob implements JobListener {
     private Channel[] channels;
     private ScanJob scanJob;
     private JobContainer jobContainer;
+    private String type;
 
     /**
      * This job does all the work to create a Dvb scan config file.
@@ -50,10 +51,24 @@ public class DvbScanJob extends AbstractJob implements JobListener {
      * @param array An array of possible Channel instances we should be able
      * to tune.
      */
-    public DvbScanJob(DvbRecorder r, Channel[] array) {
+    public DvbScanJob(DvbRecorder r, Channel[] array, String type) {
 
         setDvbRecorder(r);
         setChannels(array);
+        if (type != null) {
+
+            if (type.equals(NMSConstants.OTA)) {
+                setType("1");
+            } else if (type.equals(NMSConstants.CABLE)) {
+                setType("2");
+            } else {
+                setType("3");
+            }
+
+        } else {
+
+            setType("3");
+        }
     }
 
     private DvbRecorder getDvbRecorder() {
@@ -78,6 +93,14 @@ public class DvbScanJob extends AbstractJob implements JobListener {
 
     private void setScanJob(ScanJob j) {
         scanJob = j;
+    }
+
+    private String getType() {
+        return (type);
+    }
+
+    private void setType(String s) {
+        type = s;
     }
 
     private JobContainer getJobContainer() {
@@ -125,7 +148,7 @@ public class DvbScanJob extends AbstractJob implements JobListener {
         setTerminate(false);
 
         String[] args = {
-            "w_scan", "-c", "US", "-A", "3", "-o", "7", "-f", "a", "-X",
+            "w_scan", "-c", "US", "-A", getType(), "-o", "7", "-f", "a", "-X",
             "-O", "0"
         };
         ScanJob sj = new ScanJob(args);

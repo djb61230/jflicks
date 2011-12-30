@@ -448,29 +448,45 @@ public class ClientView extends JFlicksView {
 
                                     String src = c.getSource();
                                     System.out.println("src: <" + src + ">");
-                                    if (nms.performChannelScan(src)) {
+                                    Object[] options = {
+                                        NMSConstants.OTA,
+                                        NMSConstants.CABLE
+                                    };
+                                    Object svalue =
+                                        JOptionPane.showInputDialog(getFrame(),
+                                        "Choose one", "Select Frequency Type",
+                                        JOptionPane.INFORMATION_MESSAGE,
+                                        null, options, options[0]);
+                                    if (svalue instanceof String) {
 
-                                        MessagePanel mp = getMessagePanel();
-                                        if (mp != null) {
+                                        String answer = (String) svalue;
 
-                                            mp.clearMessage();
-                                            Util.showDoneDialog(getFrame(),
-                                                "Scanning...", mp);
+                                        if (nms.performChannelScan(src,
+                                            answer)) {
+
+                                            MessagePanel mp = getMessagePanel();
+                                            if (mp != null) {
+
+                                                mp.clearMessage();
+                                                Util.showDoneDialog(getFrame(),
+                                                    "Scanning...", mp);
+                                            }
+
+                                        } else {
+
+                                            String mess = "Scan NOT started."
+                                                + " This could be because:\n"
+                                                + " 1) This Recorder doesn't"
+                                                + " have a tuner.\n"
+                                                + " 2) It's not connected to a"
+                                                + " Channel Listing.\n"
+                                                + " Please See the Scheduler"
+                                                + " configuration to assign"
+                                                + " one.";
+                                            JOptionPane.showMessageDialog(
+                                                getFrame(), mess, "alert",
+                                                JOptionPane.ERROR_MESSAGE);
                                         }
-
-                                    } else {
-
-                                        String mess = "Scan NOT started."
-                                            + " This could be because:\n"
-                                            + " 1) This Recorder doesn't"
-                                            + " have a tuner.\n"
-                                            + " 2) It's not connected to a"
-                                            + " Channel Listing.\n"
-                                            + " Please See the Scheduler"
-                                            + " configuration to assign one.";
-                                        JOptionPane.showMessageDialog(
-                                            getFrame(), mess, "alert",
-                                            JOptionPane.ERROR_MESSAGE);
                                     }
 
                                 } else {

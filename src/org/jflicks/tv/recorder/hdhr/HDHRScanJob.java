@@ -42,6 +42,7 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
     private Channel[] channels;
     private ScanJob scanJob;
     private JobContainer jobContainer;
+    private String type;
 
     /**
      * This job does all the work to create a HDHR scan config file.
@@ -49,11 +50,13 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
      * @param r A given HDHRRecorder instance.
      * @param array An array of possible Channel instances we should be able
      * to tune.
+     * @param type Scan for this type of frequency.
      */
-    public HDHRScanJob(HDHRRecorder r, Channel[] array) {
+    public HDHRScanJob(HDHRRecorder r, Channel[] array, String type) {
 
         setHDHRRecorder(r);
         setChannels(array);
+        setType(type);
     }
 
     private HDHRRecorder getHDHRRecorder() {
@@ -78,6 +81,14 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
 
     private void setScanJob(ScanJob j) {
         scanJob = j;
+    }
+
+    private String getType() {
+        return (type);
+    }
+
+    private void setType(String s) {
+        type = s;
     }
 
     private JobContainer getJobContainer() {
@@ -176,7 +187,11 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
         sj.addJobListener(this);
         sj.setId(getId());
         sj.setTuner(getTuner());
-        sj.setFrequencyType(getFrequencyType());
+        String usertype = getType();
+        if (usertype == null) {
+            usertype = getFrequencyType();
+        }
+        sj.setFrequencyType(usertype);
 
         log(HDHRRecorder.DEBUG, "starting scan job...");
         JobContainer jc = JobManager.getJobContainer(sj);
