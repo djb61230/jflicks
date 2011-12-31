@@ -237,6 +237,7 @@ public class Busy implements JobListener, Jobable {
                 if (p != null) {
 
                     p.remove(p.getIndexOf(bl));
+                    p.repaint();
                 }
             }
 
