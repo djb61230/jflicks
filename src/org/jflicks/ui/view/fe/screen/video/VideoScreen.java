@@ -123,6 +123,14 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         map.put(KeyStroke.getKeyStroke("ENTER"), "enter");
         getActionMap().put("enter", enterAction);
 
+        PageUpAction pageUpAction = new PageUpAction();
+        map.put(KeyStroke.getKeyStroke("PAGE_UP"), "pageup");
+        getActionMap().put("pageup", pageUpAction);
+
+        PageDownAction pageDownAction = new PageDownAction();
+        map.put(KeyStroke.getKeyStroke("PAGE_DOWN"), "pagedown");
+        getActionMap().put("pagedown", pageDownAction);
+
         String[] array = {
 
             NMSConstants.VIDEO_MOVIE,
@@ -1455,6 +1463,84 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     if (tlp != null) {
 
                         tlp.moveDown();
+                    }
+                }
+            }
+        }
+    }
+
+    class PageUpAction extends AbstractAction {
+
+        public PageUpAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            if (!isPopupEnabled()) {
+
+                if (isParameterTV()) {
+
+                    VideoListPanel svlp = getSeasonVideoListPanel();
+                    if (svlp != null) {
+
+                        if (svlp.isControl()) {
+                            svlp.movePageUp();
+                        }
+                    }
+
+                    VideoListPanel evlp = getEpisodeVideoListPanel();
+                    if (evlp != null) {
+
+                        if (evlp.isControl()) {
+                            evlp.movePageUp();
+                        }
+                    }
+
+                } else {
+
+                    TextListPanel tlp = getTextListPanel();
+                    if (tlp != null) {
+
+                        tlp.movePageUp();
+                    }
+                }
+            }
+        }
+    }
+
+    class PageDownAction extends AbstractAction {
+
+        public PageDownAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            if (!isPopupEnabled()) {
+
+                if (isParameterTV()) {
+
+                    VideoListPanel svlp = getSeasonVideoListPanel();
+                    if (svlp != null) {
+
+                        if (svlp.isControl()) {
+                            svlp.movePageDown();
+                        }
+                    }
+
+                    VideoListPanel evlp = getEpisodeVideoListPanel();
+                    if (evlp != null) {
+
+                        if (evlp.isControl()) {
+                            evlp.movePageDown();
+                        }
+                    }
+
+                } else {
+
+                    TextListPanel tlp = getTextListPanel();
+                    if (tlp != null) {
+
+                        tlp.movePageDown();
                     }
                 }
             }
