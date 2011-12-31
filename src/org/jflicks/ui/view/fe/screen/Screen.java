@@ -35,6 +35,7 @@ import org.jflicks.rc.RC;
 import org.jflicks.rc.RCProperty;
 import org.jflicks.tv.Recording;
 import org.jflicks.ui.view.fe.BaseCustomizePanel;
+import org.jflicks.util.RuntimeId;
 
 import org.jdesktop.swingx.painter.ImagePainter;
 
@@ -449,9 +450,13 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
     public void handleEvent(Event event) {
 
         String command = (String) event.getProperty("command");
-        if ((command != null) && (!isDone())) {
+        String runtimeid = (String) event.getProperty("runtimeid");
+        if ((command != null) && (runtimeid != null) && (!isDone())) {
 
-            commandReceived(command);
+            if (runtimeid.equals(RuntimeId.getInstance().getId())) {
+
+                commandReceived(command);
+            }
         }
     }
 

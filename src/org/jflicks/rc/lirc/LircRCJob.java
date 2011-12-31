@@ -37,6 +37,7 @@ import org.jflicks.rc.RC;
 
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobManager;
+import org.jflicks.util.RuntimeId;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
@@ -876,6 +877,7 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
                 Hashtable<String, String> props =
                     new Hashtable<String, String>();
                 props.put("command", s);
+                props.put("runtimeid", RuntimeId.getInstance().getId());
                 Event evt = new Event("org/jflicks/rc/COMMAND", props);
                 ea.postEvent(evt);
             }

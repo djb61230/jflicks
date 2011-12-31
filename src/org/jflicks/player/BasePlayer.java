@@ -32,6 +32,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import org.jflicks.log.BaseLog;
 import org.jflicks.rc.RC;
+import org.jflicks.util.RuntimeId;
 
 /**
  * This class is a base implementation of the Player interface.
@@ -518,6 +519,7 @@ public abstract class BasePlayer extends BaseLog implements Player {
                 Hashtable<String, String> props =
                     new Hashtable<String, String>();
                 props.put("command", s);
+                props.put("runtimeid", RuntimeId.getInstance().getId());
                 Event evt = new Event("org/jflicks/rc/COMMAND", props);
                 ea.postEvent(evt);
             }
