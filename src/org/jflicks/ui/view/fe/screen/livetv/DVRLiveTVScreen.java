@@ -797,6 +797,15 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 setGuideMode(true);
                 p.setSize(r);
                 requestFocus();
+
+                // Reset the current showairings.
+                ShowAiringListPanel salp = getShowAiringListPanel();
+                if (salp != null) {
+
+                    ShowAiring[] sarray = salp.getShowAirings();
+                    sarray = computeShowAirings(sarray);
+                    salp.setShowAirings(sarray);
+                }
                 updateLayout(false);
 
             } else {
@@ -1213,7 +1222,9 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             ShowAiringListPanel salp = getShowAiringListPanel();
             if ((map != null) && (c != null) && (salp != null)) {
 
-                salp.setShowAirings(map.get(c));
+                ShowAiring[] sarray = map.get(c);
+                sarray = computeShowAirings(sarray);
+                salp.setShowAirings(sarray);
             }
 
         } else if (event.getPropertyName().equals("SelectedShowAiring")) {
@@ -1500,6 +1511,34 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                         result = array[i];
                         break;
                     }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private ShowAiring[] computeShowAirings(ShowAiring[] array) {
+
+        ShowAiring[] result = array;
+
+        if (array != null) {
+
+            if (array.length > 0) {
+
+                int skip = 0;
+                for (int i = 0; i < array.length; i++) {
+
+                    if (!array[i].isOver()) {
+
+                        skip = i;
+                        break;
+                    }
+                }
+
+                if (skip > 0) {
+
+                    result = Arrays.copyOfRange(array, skip, array.length);
                 }
             }
         }
