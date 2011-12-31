@@ -152,18 +152,10 @@ public class MediainfoJob extends AbstractJob implements JobListener {
                 if (output != null) {
 
                     String timeline = null;
-                    StringTokenizer st = new StringTokenizer(output, "\n");
-                    while (st.hasMoreTokens()) {
+                    int tindex = output.indexOf("Duration:");
+                    if (tindex != -1) {
 
-                        String line = st.nextToken().trim();
-                        if (line.startsWith("Duration:")) {
-                            timeline = line;
-                        }
-                    }
-
-                    if (timeline != null) {
-
-                        timeline = timeline.substring(9);
+                        timeline = output.substring(tindex + 9);
                         timeline = timeline.trim();
                         timeline = timeline.substring(0, timeline.indexOf(","));
 
@@ -172,7 +164,7 @@ public class MediainfoJob extends AbstractJob implements JobListener {
                         int minutes = 0;
                         int secs = 0;
                         int index = 0;
-                        st = new StringTokenizer(timeline, ":");
+                        StringTokenizer st = new StringTokenizer(timeline, ":");
                         while (st.hasMoreTokens()) {
 
                             String tmp = st.nextToken();
