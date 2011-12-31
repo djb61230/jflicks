@@ -24,6 +24,7 @@ import java.util.Collections;
 import org.jflicks.configure.BaseConfig;
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
+import org.jflicks.job.JobManager;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
@@ -322,6 +323,14 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
                     File output = computeFile(s, c, r.getExtension());
                     if (output != null) {
+
+                        // If we are using the same recorder, let's sleep
+                        // a short time so things can settle down.
+                        if (r.equals(old)) {
+
+                            log(DEBUG, "waiting a bit...");
+                            JobManager.sleep(500);
+                        }
 
                         log(DEBUG, "recording to file <" + output + ">");
                         s.setCurrentRecorder(r);
