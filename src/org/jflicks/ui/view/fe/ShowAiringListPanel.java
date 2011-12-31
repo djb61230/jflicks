@@ -72,6 +72,12 @@ public class ShowAiringListPanel extends BaseListPanel {
 
         ShowAiring[] result = null;
 
+        ArrayList<ShowAiring> l = getShowAiringList();
+        if ((l != null) && (l.size() > 0)) {
+
+            result = l.toArray(new ShowAiring[l.size()]);
+        }
+
         return (result);
     }
 
