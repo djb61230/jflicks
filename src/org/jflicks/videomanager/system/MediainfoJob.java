@@ -177,6 +177,7 @@ public class MediainfoJob extends AbstractJob implements JobListener {
                                 tmp = tmp.substring(0, tmp.indexOf("."));
                                 secs = Util.str2int(tmp, secs);
                             }
+                            index++;
                         }
 
                         setSeconds(hours * 3600 + minutes * 60 + secs);

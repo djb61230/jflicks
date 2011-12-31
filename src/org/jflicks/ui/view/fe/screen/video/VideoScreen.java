@@ -629,15 +629,22 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
      */
     public void setVideos(Video[] array) {
 
-        if (isUpdatedParameter()) {
+        Video[] tmp = null;
+        if (array != null) {
+            tmp = Arrays.copyOf(array, array.length);
+        }
+
+        Arrays.sort(tmp, new VideoSortByTitle());
+        int newhashCode = Arrays.hashCode(tmp);
+        int oldhashCode = Arrays.hashCode(videos);
+        System.out.println("hashCode: " + newhashCode);
+        System.out.println("hashCode: " + oldhashCode);
+        //if (isUpdatedParameter()) {
+        if ((newhashCode != oldhashCode) || (isUpdatedParameter())) {
 
             log(DEBUG, "Seems like we got a new list...");
 
-            if (array != null) {
-                videos = Arrays.copyOf(array, array.length);
-            } else {
-                videos = null;
-            }
+            videos = tmp;
 
             if (isParameterTV()) {
 
