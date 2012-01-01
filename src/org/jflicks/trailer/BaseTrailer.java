@@ -16,11 +16,17 @@
 */
 package org.jflicks.trailer;
 
+import java.io.File;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.jflicks.configure.BaseConfig;
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.util.Util;
 
 /**
  * This class is a base implementation of the Trailer interface.
@@ -32,6 +38,7 @@ public abstract class BaseTrailer extends BaseConfig implements Trailer {
 
     private String title;
     private NMS nms;
+    private int maxTrailerCount;
 
     /**
      * Simple empty constructor.
@@ -93,6 +100,30 @@ public abstract class BaseTrailer extends BaseConfig implements Trailer {
     }
 
     /**
+     * Convenience method to find the configured max trailer count
+     * property.
+     *
+     * @return An int.
+     */
+    public int getConfiguredMaxTrailerCount() {
+
+        int result = 50;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv =
+                c.findNameValueByName(NMSConstants.MAX_TRAILER_COUNT);
+            if (nv != null) {
+
+                result = Util.str2int(nv.getValue(), result);
+            }
+        }
+
+        return (result);
+    }
+
+    /**
      * Convenience method that extensions can use to get the Trailer home
      * from the NMS.
      *
@@ -109,6 +140,42 @@ public abstract class BaseTrailer extends BaseConfig implements Trailer {
         }
 
         return (result);
+    }
+
+    public void autoExpire() {
+
+        // We will do the deleting straight away hopefully without
+        // disrupting things too much.
+        String thome = getTrailerHome();
+        if (thome != null) {
+
+            int max = getConfiguredMaxTrailerCount();
+            File dir = new File(thome);
+            File[] all = dir.listFiles();
+            if ((all != null) && (all.length > 0) && (all.length > max)) {
+
+                Arrays.sort(all, new FileOldestSort());
+                int count = all.length - max;
+                for (int i = 0; i < count; i++) {
+
+                    if (!all[i].delete()) {
+
+                        log(WARNING, all[i].getPath() + " delete fail");
+                    }
+                }
+            }
+        }
+    }
+
+    static class FileOldestSort implements Comparator<File>, Serializable {
+
+        public int compare(File f0, File f1) {
+
+            Long l0 = Long.valueOf(f0.lastModified());
+            Long l1 = Long.valueOf(f1.lastModified());
+
+            return (l0.compareTo(l1));
+        }
     }
 
 }

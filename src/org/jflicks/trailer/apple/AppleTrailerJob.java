@@ -136,6 +136,8 @@ public class AppleTrailerJob extends AbstractJob implements JobListener {
                             jc.start();
                         }
                     }
+
+                    at.autoExpire();
                 }
             }
         }

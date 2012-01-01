@@ -227,6 +227,12 @@ public final class NMSConstants {
     public static final String TRAILER_INTRO = "Trailer Intro";
 
     /**
+     * We want to auto delete movie trailers by having a max number
+     * to keep.
+     */
+    public static final String MAX_TRAILER_COUNT = "Max Trailer Count";
+
+    /**
      * The NMS needs a configuration of where a intro file for
      * playing a feature movie is located.  This is in 16:9 aspect ratio.
      */
