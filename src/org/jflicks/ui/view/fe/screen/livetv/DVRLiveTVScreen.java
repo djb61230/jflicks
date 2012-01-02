@@ -1310,7 +1310,6 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 if (CHANGE_CHANNEL.equals(pbp.getSelectedButton())) {
 
-                    System.out.println("change channel");
                     ChannelListPanel clp = getChannelListPanel();
                     if (clp != null) {
 
@@ -1321,16 +1320,13 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 } else if (ADD_FAVORITE.equals(pbp.getSelectedButton())) {
 
-                    System.out.println("add favorite");
                     handleFavorite();
 
                 } else if (REMOVE_FAVORITE.equals(pbp.getSelectedButton())) {
 
-                    System.out.println("remove favorite");
                     handleFavorite();
 
                 } else if (SCHEDULE.equals(pbp.getSelectedButton())) {
-                    System.out.println("schedule");
 
                     ShowAiring sa = getSelectedShowAiring();
                     RecordingRulePanel rrp = getRecordingRulePanel();
@@ -1367,7 +1363,6 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                     }
                 }
 
-                System.out.println("unpopup");
                 unpopup();
             }
         }

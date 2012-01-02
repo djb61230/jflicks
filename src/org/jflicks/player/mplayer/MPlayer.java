@@ -38,6 +38,8 @@ import javax.swing.Timer;
 import com.sun.jna.Native;
 
 import org.jflicks.job.JobContainer;
+import org.jflicks.job.JobEvent;
+import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
@@ -51,7 +53,7 @@ import org.jflicks.util.Util;
  * @author Doug Barnum
  * @version 1.0
  */
-public class MPlayer extends BasePlayer {
+public class MPlayer extends BasePlayer implements JobListener {
 
     private JDialog window;
     private JPanel keyPanel;
@@ -370,6 +372,7 @@ public class MPlayer extends BasePlayer {
 
                 job = new MPlayerJob(this, null, getArgs(), position, time, url,
                     isAutoSkip());
+                job.addJobListener(this);
                 setMPlayerJob(job);
 
             } else {
@@ -430,6 +433,7 @@ public class MPlayer extends BasePlayer {
 
                 job = new MPlayerJob(this, wid, getArgs(), position, time, url,
                     isAutoSkip());
+                job.addJobListener(this);
                 setMPlayerJob(job);
             }
 
@@ -460,7 +464,7 @@ public class MPlayer extends BasePlayer {
         setPlaying(false);
         setUserStop(true);
         command("stop\n");
-        dispose();
+        //dispose();
     }
 
     /**
@@ -618,6 +622,14 @@ public class MPlayer extends BasePlayer {
 
             log(DEBUG, "send command to mplayer <" + s + ">");
             job.command(s);
+        }
+    }
+
+    public void jobUpdate(JobEvent event) {
+
+        if (event.getType() == JobEvent.COMPLETE) {
+
+            dispose();
         }
     }
 
