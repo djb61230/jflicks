@@ -597,7 +597,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 } else {
 
-                    pane.add(getWaitPanel(), Integer.valueOf(100));
+                    //pane.add(getWaitPanel(), Integer.valueOf(100));
                 }
             }
 
@@ -795,8 +795,6 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 }
 
                 setGuideMode(true);
-                p.setSize(r);
-                requestFocus();
 
                 // Reset the current showairings.
                 ShowAiringListPanel salp = getShowAiringListPanel();
@@ -806,6 +804,8 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                     sarray = computeShowAirings(sarray);
                     salp.setShowAirings(sarray);
                 }
+                p.setSize(r);
+                requestFocus();
                 updateLayout(false);
 
             } else {
