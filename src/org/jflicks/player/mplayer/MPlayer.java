@@ -17,7 +17,6 @@
 package org.jflicks.player.mplayer;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Rectangle;
@@ -57,7 +56,7 @@ public class MPlayer extends BasePlayer implements JobListener {
 
     private JDialog window;
     private JPanel keyPanel;
-    private Canvas canvas;
+    private MPlayerCanvas canvas;
     private MPlayerJob mplayerJob;
     private PlayStateJob statusJob;
     private JobContainer jobContainer;
@@ -145,7 +144,7 @@ public class MPlayer extends BasePlayer implements JobListener {
         map.put(KeyStroke.getKeyStroke("M"), "m");
         pan.getActionMap().put("m", audioSyncMinusAction);
 
-        Canvas can = new Canvas();
+        MPlayerCanvas can = new MPlayerCanvas();
         can.setBackground(Color.BLACK);
         can.setFocusable(true);
         pan.add(can, BorderLayout.CENTER);
@@ -185,11 +184,11 @@ public class MPlayer extends BasePlayer implements JobListener {
         }
     }
 
-    private JDialog getWindow() {
+    private JDialog getDialog() {
         return (window);
     }
 
-    private void setWindow(JDialog w) {
+    private void setDialog(JDialog w) {
         window = w;
     }
 
@@ -201,11 +200,11 @@ public class MPlayer extends BasePlayer implements JobListener {
         keyPanel = p;
     }
 
-    private Canvas getCanvas() {
+    private MPlayerCanvas getCanvas() {
         return (canvas);
     }
 
-    private void setCanvas(Canvas c) {
+    private void setCanvas(MPlayerCanvas c) {
         canvas = c;
     }
 
@@ -392,14 +391,14 @@ public class MPlayer extends BasePlayer implements JobListener {
                 int width = (int) r.getWidth();
                 int height = (int) r.getHeight();
 
-                JDialog win = new JDialog(getFrame(), false);
+                JDialog win = new JDialog(getFrame());
                 win.setUndecorated(true);
                 win.setFocusable(true);
                 win.setBounds(x, y, width, height);
                 win.setBackground(Color.BLACK);
-                setWindow(win);
+                setDialog(win);
 
-                Canvas can = getCanvas();
+                MPlayerCanvas can = getCanvas();
                 JPanel pan = getKeyPanel();
                 JLayeredPane lpane = new JLayeredPane();
                 setLayeredPane(lpane);
@@ -417,7 +416,7 @@ public class MPlayer extends BasePlayer implements JobListener {
 
                 win.setVisible(true);
 
-                final Canvas fcan = can;
+                final MPlayerCanvas fcan = can;
                 Runnable doRun = new Runnable() {
 
                     public void run() {
@@ -429,6 +428,7 @@ public class MPlayer extends BasePlayer implements JobListener {
                 SwingUtilities.invokeLater(doRun);
 
                 long canid = Native.getComponentID(can);
+                log(DEBUG, "canvas id: " + canid);
                 String wid = "" + canid;
 
                 job = new MPlayerJob(this, wid, getArgs(), position, time, url,
@@ -464,7 +464,6 @@ public class MPlayer extends BasePlayer implements JobListener {
         setPlaying(false);
         setUserStop(true);
         command("stop\n");
-        //dispose();
     }
 
     /**
@@ -566,7 +565,7 @@ public class MPlayer extends BasePlayer implements JobListener {
 
         if (r != null) {
 
-            JDialog d = getWindow();
+            JDialog d = getDialog();
             if (d != null) {
 
                 d.setBounds(r);
@@ -576,12 +575,6 @@ public class MPlayer extends BasePlayer implements JobListener {
             if (p != null) {
 
                 p.setBounds(0, 0, r.width, r.height);
-            }
-
-            Canvas c = getCanvas();
-            if (c != null) {
-
-                c.setBounds(0, 0, r.width, r.height);
             }
         }
     }
@@ -606,12 +599,12 @@ public class MPlayer extends BasePlayer implements JobListener {
      */
     public void dispose() {
 
-        JDialog w = getWindow();
+        JDialog w = getDialog();
         if (w != null) {
 
             w.setVisible(false);
             w.dispose();
-            setWindow(null);
+            setDialog(null);
         }
     }
 

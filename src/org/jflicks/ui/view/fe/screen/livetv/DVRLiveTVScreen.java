@@ -597,7 +597,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 } else {
 
-                    //pane.add(getWaitPanel(), Integer.valueOf(100));
+                    pane.add(getWaitPanel(), Integer.valueOf(100));
                 }
             }
 
@@ -797,6 +797,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 setGuideMode(true);
 
                 // Reset the current showairings.
+                /*
                 ShowAiringListPanel salp = getShowAiringListPanel();
                 if (salp != null) {
 
@@ -804,6 +805,8 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                     sarray = computeShowAirings(sarray);
                     salp.setShowAirings(sarray);
                 }
+                */
+                log(DEBUG, "About to resize to little");
                 p.setSize(r);
                 requestFocus();
                 updateLayout(false);
@@ -811,6 +814,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             } else {
 
                 setGuideMode(false);
+                log(DEBUG, "About to resize to big");
                 p.setSize(p.getRectangle());
                 updateLayout(true);
             }
@@ -1695,7 +1699,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                         p.stop();
                     }
                     p.setSize(p.getRectangle());
-                    repaint();
+                    //repaint();
 
                     NMS n = NMSUtil.select(getNMS(), l.getHostPort());
                     if (n != null) {
