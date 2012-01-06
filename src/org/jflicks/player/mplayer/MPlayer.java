@@ -63,6 +63,7 @@ public class MPlayer extends BasePlayer implements JobListener {
     private JobContainer statusJobContainer;
     private boolean userStop;
     private boolean forceFullscreen;
+    private String programName;
     private String[] args;
 
     /**
@@ -72,6 +73,7 @@ public class MPlayer extends BasePlayer implements JobListener {
 
         setType(PLAYER_VIDEO);
         setTitle("M");
+        setProgramName("mplayer");
 
         JPanel pan = new JPanel(new BorderLayout());
         pan.setFocusable(true);
@@ -270,6 +272,26 @@ public class MPlayer extends BasePlayer implements JobListener {
      */
     public void setForceFullscreen(boolean b) {
         forceFullscreen = b;
+    }
+
+    /**
+     * The program name to run.  This allows use to use mplayer or
+     * mplayer2.
+     *
+     * @return The program name property.
+     */
+    public String getProgramName() {
+        return (programName);
+    }
+
+    /**
+     * The program name to run.  This allows use to use mplayer or
+     * mplayer2.
+     *
+     * @param s The program name property.
+     */
+    public void setProgramName(String s) {
+        programName = s;
     }
 
     /**

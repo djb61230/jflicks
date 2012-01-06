@@ -300,6 +300,19 @@ public class MPlayerJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private String getProgramName() {
+
+        String result = "mplayer";
+
+        MPlayer m = getMPlayer();
+        if (m != null) {
+
+            result = m.getProgramName();
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -331,6 +344,8 @@ public class MPlayerJob extends AbstractJob implements JobListener {
             userArg = sb.toString().trim();
         }
 
+        String programName = getProgramName();
+
         SystemJob job = null;
 
         String demuxer = computeDemuxer();
@@ -339,7 +354,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
         if (wid != null) {
 
             job = SystemJob.getInstance(
-                "mplayer -wid " + wid + " " + userArg + " " + demuxer
+                programName + " -wid " + wid + " " + userArg + " " + demuxer
                 + " -input nodefault-bindings:conf=/dev/null:"
                 + "file=mplayer.fifo" + " -slave " + edltext
                 + " " + startParameter + " " + getPath());
@@ -349,7 +364,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
             File conf = new File("conf");
             File full = new File(conf, "mplayer.conf");
             job = SystemJob.getInstance(
-                "mplayer -fs -zoom" + " " + userArg + " " + demuxer
+                programName + " -fs -zoom" + " " + userArg + " " + demuxer
                 + " -input nodefault-bindings:conf="
                 + full.getAbsolutePath() + ":"
                 + "file=mplayer.fifo" + " -slave " + edltext

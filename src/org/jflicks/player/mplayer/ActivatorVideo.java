@@ -76,6 +76,12 @@ public class ActivatorVideo extends BaseActivator {
                     mplayer.setForceFullscreen(Util.str2boolean(
                         p.getProperty("forceFullscreen"), false));
 
+                    String pn = p.getProperty(MPlayer.PLAYER_VIDEO);
+                    if (pn != null) {
+
+                        mplayer.setProgramName(pn);
+                    }
+
                     ArrayList<String> l = new ArrayList<String>();
                     int count = Util.str2int(p.getProperty("argCount"), 0);
                     for (int i = 0; i < count; i++) {
