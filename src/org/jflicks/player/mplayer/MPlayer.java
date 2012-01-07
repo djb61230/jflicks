@@ -52,7 +52,7 @@ import org.jflicks.util.Util;
  * @author Doug Barnum
  * @version 1.0
  */
-public class MPlayer extends BasePlayer implements JobListener {
+public class MPlayer extends BasePlayer {
 
     private JDialog window;
     private JPanel keyPanel;
@@ -64,6 +64,7 @@ public class MPlayer extends BasePlayer implements JobListener {
     private boolean userStop;
     private boolean forceFullscreen;
     private String programName;
+    private int disposeTimeout;
     private String[] args;
 
     /**
@@ -74,6 +75,7 @@ public class MPlayer extends BasePlayer implements JobListener {
         setType(PLAYER_VIDEO);
         setTitle("M");
         setProgramName("mplayer");
+        setDisposeTimeout(0);
 
         JPanel pan = new JPanel(new BorderLayout());
         pan.setFocusable(true);
@@ -295,6 +297,32 @@ public class MPlayer extends BasePlayer implements JobListener {
     }
 
     /**
+     * A hack-ish value to timeout before doing a dispose of the window.
+     * The idea is that closing the window too soon stops a system job that
+     * runs mplayer to not exit properly.  This seems to happen in a jflicks
+     * client-server instance often so we wait a bit before disposing and
+     * it seems to fix it.  Again this is a hack.
+     *
+     * @return The timeout value.
+     */
+    public int getDisposeTimeout() {
+        return (disposeTimeout);
+    }
+
+    /**
+     * A hack-ish value to timeout before doing a dispose of the window.
+     * The idea is that closing the window too soon stops a system job that
+     * runs mplayer to not exit properly.  This seems to happen in a jflicks
+     * client-server instance often so we wait a bit before disposing and
+     * it seems to fix it.  Again this is a hack.
+     *
+     * @param i The timeout value.
+     */
+    public void setDisposeTimeout(int i) {
+        disposeTimeout = i;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public boolean supportsPause() {
@@ -393,7 +421,6 @@ public class MPlayer extends BasePlayer implements JobListener {
 
                 job = new MPlayerJob(this, null, getArgs(), position, time, url,
                     isAutoSkip());
-                job.addJobListener(this);
                 setMPlayerJob(job);
 
             } else {
@@ -455,7 +482,6 @@ public class MPlayer extends BasePlayer implements JobListener {
 
                 job = new MPlayerJob(this, wid, getArgs(), position, time, url,
                     isAutoSkip());
-                job.addJobListener(this);
                 setMPlayerJob(job);
             }
 
@@ -625,9 +651,38 @@ public class MPlayer extends BasePlayer implements JobListener {
         JDialog w = getDialog();
         if (w != null) {
 
+            waitForFinish(getDisposeTimeout(), 10);
             w.setVisible(false);
             w.dispose();
             setDialog(null);
+        }
+    }
+
+    private void waitForFinish(int timeout, int step) {
+
+        JobContainer jc = getJobContainer();
+        if ((jc != null) && (timeout > 0)) {
+
+            int sofar = 0;
+            boolean done = false;
+            while (!done) {
+
+                if (jc.isAlive()) {
+
+                    JobManager.sleep((long) step);
+                    sofar += step;
+                    if (sofar >= timeout) {
+
+                        log(DEBUG, "Not Cool we timed out.");
+                        done = true;
+                    }
+
+                } else {
+
+                    log(DEBUG, "Cool Job thread was done.");
+                    done = true;
+                }
+            }
         }
     }
 
@@ -638,14 +693,6 @@ public class MPlayer extends BasePlayer implements JobListener {
 
             log(DEBUG, "send command to mplayer <" + s + ">");
             job.command(s);
-        }
-    }
-
-    public void jobUpdate(JobEvent event) {
-
-        if (event.getType() == JobEvent.COMPLETE) {
-
-            //dispose();
         }
     }
 

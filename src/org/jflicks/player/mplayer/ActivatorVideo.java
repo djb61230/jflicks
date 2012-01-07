@@ -82,6 +82,9 @@ public class ActivatorVideo extends BaseActivator {
                         mplayer.setProgramName(pn);
                     }
 
+                    mplayer.setDisposeTimeout(Util.str2int(
+                        p.getProperty("disposeTimeout"), 0));
+
                     ArrayList<String> l = new ArrayList<String>();
                     int count = Util.str2int(p.getProperty("argCount"), 0);
                     for (int i = 0; i < count; i++) {
