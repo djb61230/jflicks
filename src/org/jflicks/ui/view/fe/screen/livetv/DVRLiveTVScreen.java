@@ -388,6 +388,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             if (p.isPlaying()) {
 
+                p.removePropertyChangeListener("Completed", this);
                 p.stop();
             }
 
@@ -1699,7 +1700,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                         p.stop();
                     }
                     p.setSize(p.getRectangle());
-                    //repaint();
+                    repaint();
 
                     NMS n = NMSUtil.select(getNMS(), l.getHostPort());
                     if (n != null) {

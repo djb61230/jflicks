@@ -401,13 +401,13 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
                 } else {
 
-                    System.out.println("From mplayer: " + message);
+                    //System.out.println("From mplayer: " + message);
                     //log(MPlayer.DEBUG, "From mplayer: " + message);
                 }
 
             } else {
 
-                log(MPlayer.DEBUG, "From mplayer: " + message);
+                //log(MPlayer.DEBUG, "From mplayer: " + message);
             }
         }
     }

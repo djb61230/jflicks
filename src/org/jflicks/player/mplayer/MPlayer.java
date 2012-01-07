@@ -486,6 +486,7 @@ public class MPlayer extends BasePlayer implements JobListener {
         setPlaying(false);
         setUserStop(true);
         command("stop\n");
+        dispose();
     }
 
     /**
@@ -644,7 +645,7 @@ public class MPlayer extends BasePlayer implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            dispose();
+            //dispose();
         }
     }
 

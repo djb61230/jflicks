@@ -146,7 +146,7 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
 
         if (s != null) {
 
-            System.out.println(s);
+            //System.out.println(s);
             result = s.indexOf(DONE_MESSAGE) != -1;
         }
 
