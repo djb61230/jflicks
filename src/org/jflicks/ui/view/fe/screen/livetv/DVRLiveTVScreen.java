@@ -422,6 +422,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             }
 
             Recording r = new Recording();
+            r.setTitle(l.getPath());
             r.setPath(l.getPath());
             r.setStreamURL(l.getStreamURL());
             r.setHostPort(l.getHostPort());

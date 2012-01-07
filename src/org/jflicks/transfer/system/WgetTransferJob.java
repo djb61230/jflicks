@@ -76,6 +76,11 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
      */
     public void setRecording(Recording r) {
         recording = r;
+
+        if (recording == null) {
+
+            stop();
+        }
     }
 
     /**
@@ -262,6 +267,10 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
 
                     stop();
                 }
+
+            } else {
+
+                stop();
             }
         }
     }
