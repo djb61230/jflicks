@@ -450,7 +450,7 @@
             eclipse="false"
             failok="false"
             exceptions="true"
-            files="${bnd}/jflicks-ui-view-client.bnd"
+            files="${bnd}/jflicks-ui-view-advanced.bnd"
             output="${bundle}"
         />
 
@@ -765,9 +765,9 @@
 
     </target>
 
-    <target name="check-felix-client" unless="felix.client.home">
+    <target name="check-felix-advanced" unless="felix.advanced.home">
 
-        <echo message="Felix client home is not defined!"/>
+        <echo message="Felix advanced home is not defined!"/>
 
     </target>
 
@@ -801,7 +801,7 @@
 
     </target>
 
-    <target name="deploy" depends="build,check-felix-server,check-felix-aspirin,check-felix-client,check-felix-ez,check-felix-scheduler,check-felix-fe,check-felix-metadata,check-felix-vm"
+    <target name="deploy" depends="build,check-felix-server,check-felix-aspirin,check-felix-advanced,check-felix-ez,check-felix-scheduler,check-felix-fe,check-felix-metadata,check-felix-vm"
         description="Gotta do more than just compile!">
 
         <!-- First do server side. -->
@@ -814,9 +814,9 @@
             <fileset dir="${bundle}" includes="${aspirin.deploy}"/>
         </copy>
 
-        <!-- Now do client side. -->
-        <copy todir="${felix.client.home}/bundle">
-            <fileset dir="${bundle}" includes="${client.deploy}"/>
+        <!-- Now do advanced side. -->
+        <copy todir="${felix.advanced.home}/bundle">
+            <fileset dir="${bundle}" includes="${advanced.deploy}"/>
         </copy>
 
         <!-- Now do ez side. -->
