@@ -248,19 +248,19 @@
         <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-schedulesdirect.jar"
             todir="aspirin/bundle"/>
 
-        <!-- Now do client side. -->
+        <!-- Now do advanced side. -->
         <copy file="${bundle}/jflicks-base.jar"
-            todir="client/bundle"/>
+            todir="advanced/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
-            todir="client/bundle"/>
+            todir="advanced/bundle"/>
         <copy file="${bundle}/jflicks-nms-remote.jar"
-            todir="client/bundle"/>
+            todir="advanced/bundle"/>
         <copy file="${bundle}/jflicks-ui.jar"
-            todir="client/bundle"/>
+            todir="advanced/bundle"/>
         <copy file="${bundle}/jflicks-ui-view.jar"
-            todir="client/bundle"/>
+            todir="advanced/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-client.jar"
-            todir="client/bundle"/>
+            todir="advanced/bundle"/>
 
         <!-- Now do ez. -->
         <copy file="${bundle}/jflicks-base.jar"
@@ -427,7 +427,7 @@
         </delete>
 
         <delete>
-            <fileset dir="client" includes="bundle/jflicks-*.jar"/>
+            <fileset dir="advanced" includes="bundle/jflicks-*.jar"/>
         </delete>
 
         <delete>
