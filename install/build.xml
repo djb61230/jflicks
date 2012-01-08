@@ -259,7 +259,7 @@
             todir="advanced/bundle"/>
         <copy file="${bundle}/jflicks-ui-view.jar"
             todir="advanced/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-client.jar"
+        <copy file="${bundle}/jflicks-ui-view-advanced.jar"
             todir="advanced/bundle"/>
 
         <!-- Now do ez. -->
