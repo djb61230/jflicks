@@ -429,6 +429,10 @@
         </delete>
 
         <delete>
+            <fileset dir="aspirin" includes="bundle/jflicks-*.jar"/>
+        </delete>
+
+        <delete>
             <fileset dir="ez" includes="bundle/jflicks-*.jar"/>
         </delete>
 
