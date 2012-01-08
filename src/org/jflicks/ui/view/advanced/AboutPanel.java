@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.ui.view.client;
+package org.jflicks.ui.view.advanced;
 
 import java.io.IOException;
 import java.awt.Color;

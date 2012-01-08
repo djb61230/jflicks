@@ -15,7 +15,7 @@
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * The client view package contains all the UI components needed for the
- * client UI for the JFLICKS project.
+ * The advanced view package contains all the UI components needed for the
+ * advanced UI for the JFLICKS project.
  */
-package org.jflicks.ui.view.client;
+package org.jflicks.ui.view.advanced;
