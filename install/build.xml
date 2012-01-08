@@ -243,8 +243,6 @@
             todir="aspirin/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-path.jar"
             todir="aspirin/bundle"/>
-        <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-localhost.jar"
-            todir="aspirin/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-schedulesdirect.jar"
             todir="aspirin/bundle"/>
 
