@@ -241,6 +241,8 @@
             todir="aspirin/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-aspirin-analyze.jar"
             todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-lirc.jar"
+            todir="aspirin/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-path.jar"
             todir="aspirin/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-aspirin-analyze-schedulesdirect.jar"

@@ -16,6 +16,7 @@
 */
 package org.jflicks.configure;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -84,6 +85,18 @@ public class BaseConfig extends BaseLog implements Config {
 
         if (c != null) {
 
+            // First compute the full path to our home directory
+            // because we might want to set some default paths to
+            // here.
+            File here = new File(".");
+            String homePath = here.getAbsolutePath();
+            homePath = homePath.substring(0, homePath.length() - 1);
+            homePath = homePath.replace('\\', '/');
+            if (homePath.endsWith("/")) {
+
+                homePath = homePath.substring(0, homePath.length() - 1);
+            }
+
             result = new Properties();
             result.setProperty("configuration_name", c.getName());
             result.setProperty("configuration_source", c.getSource());
@@ -103,11 +116,15 @@ public class BaseConfig extends BaseLog implements Config {
 
                     tmp = array[i].getDefaultValue();
                     if (tmp != null) {
+
+                        tmp = tmp.replace("JFLICKS_HOME", homePath);
                         result.setProperty(prefix + "_defaultValue", tmp);
                     }
 
                     tmp = array[i].getValue();
                     if (tmp != null) {
+
+                        tmp = tmp.replace("JFLICKS_HOME", homePath);
                         result.setProperty(prefix + "_value", tmp);
                     }
 
