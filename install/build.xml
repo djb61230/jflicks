@@ -205,6 +205,8 @@
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-rc-lirc.jar"
             todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-rc-lirc-32.jar"
+            todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-imagecache-system.jar"
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-videomanager-system.jar"
@@ -348,6 +350,8 @@
         <copy file="${bundle}/jflicks-ui-view-fe-screen-video.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-rc-lirc.jar"
+            todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-rc-lirc-32.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-rc-winlirc.jar"
             todir="fe/bundle"/>

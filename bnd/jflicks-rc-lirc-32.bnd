@@ -7,10 +7,10 @@ Bundle-Activator: ${module}.Activator
 
 Include-Resource:\
  ../lib/jlirc.jar,\
- ../sharedlib/libjunixsocket.so,\
+ libjunixsocket.so=../sharedlib/libjunixsocket32.so,\
  org/jflicks/input/lirc/LircJob.lircrc=../conf/LircJob.lircrc
 
-Bundle-NativeCode: libjunixsocket.so; osname=Linux; processor=x86-64
+Bundle-NativeCode: libjunixsocket.so; osname=Linux; processor=x86
 
 Bundle-ClassPath: ., jlirc.jar
 
