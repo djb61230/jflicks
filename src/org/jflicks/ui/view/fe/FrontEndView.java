@@ -81,6 +81,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
     private int pathCount;
     private ArrayList<String> fromPathList;
     private ArrayList<String> toPathList;
+    private Rectangle positionRectangle;
 
     /**
      * Default constructor.
@@ -438,23 +439,51 @@ public class FrontEndView extends JFlicksView implements ActionListener,
      */
     public Rectangle getPosition() {
 
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        Dimension d = tk.getScreenSize();
-        int x = 0;
-        int y = 0;
-        int width = (int) d.getWidth();
-        int height = (int) d.getHeight();
+        if (positionRectangle == null) {
+
+            Toolkit tk = Toolkit.getDefaultToolkit();
+            Dimension d = tk.getScreenSize();
+            int x = 0;
+            int y = 0;
+            int width = (int) d.getWidth();
+            int height = (int) d.getHeight();
+
+            Properties p = getProperties();
+            if (p != null) {
+
+                x = Util.str2int(p.getProperty("x"), x);
+                y = Util.str2int(p.getProperty("y"), y);
+                width = Util.str2int(p.getProperty("width"), width);
+                height = Util.str2int(p.getProperty("height"), height);
+            }
+
+            positionRectangle = new Rectangle(x, y, width, height);
+
+        } else {
+
+            // We have been here before.  We want to change positionRectangle
+            // if the user has dragged it off somewhere.  We only worry
+            // about this when undecorated is false.
+            if (!isUndecorated()) {
+
+                positionRectangle = frame.getBounds();
+            }
+        }
+
+        return (positionRectangle);
+    }
+
+    private boolean isUndecorated() {
+
+        boolean result = true;
 
         Properties p = getProperties();
         if (p != null) {
 
-            x = Util.str2int(p.getProperty("x"), x);
-            y = Util.str2int(p.getProperty("y"), y);
-            width = Util.str2int(p.getProperty("width"), width);
-            height = Util.str2int(p.getProperty("height"), height);
+            result = Util.str2boolean(p.getProperty("undecorated"), result);
         }
 
-        return (new Rectangle(x, y, width, height));
+        return (result);
     }
 
     /**
@@ -493,8 +522,9 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             int height = (int) position.getHeight();
 
             frame = new JXFrame();
-            frame.setTitle("Herm Schmiget");
-            frame.setUndecorated(true);
+            frame.setTitle("jflicks media system TV UI");
+            frame.setUndecorated(isUndecorated());
+            frame.setResizable(false);
             frame.setBounds(x, y, width, height);
 
             JXPanel cards = new JXPanel(new CardLayout());
