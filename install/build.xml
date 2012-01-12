@@ -61,8 +61,6 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-system.jar"
             todir="server/bundle"/>
-        <copy file="${bundle}/jflicks-tv-postproc-worker-comrat.jar"
-            todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-worker-comskip.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-worker-ffmpegscreenshot.jar"
@@ -92,10 +90,6 @@
         <copy file="${bundle}/jflicks-sqlitejdbc.jar"
             todir="server/bundle"/>
         <copy file="${topdist}/directvweb.jar" todir="server/bin"/>
-        <mkdir dir="server/resources/rating"/>
-        <copy todir="server/resources/rating">
-            <fileset dir="${resources}/rating"/>
-        </copy>
         <copy file="${resources}/roku_recordings.png" todir="server/www"/>
         <copy file="${resources}/roku_rules.png" todir="server/www"/>
         <copy file="${resources}/roku_schedule_channel.png" todir="server/www"/>
@@ -146,8 +140,6 @@
         <copy file="${bundle}/jflicks-timingframework.jar"
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-system.jar"
-            todir="cs/bundle"/>
-        <copy file="${bundle}/jflicks-tv-postproc-worker-comrat.jar"
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-worker-comskip.jar"
             todir="cs/bundle"/>
@@ -214,10 +206,6 @@
         <copy file="${bundle}/jflicks-sqlitejdbc.jar"
             todir="cs/bundle"/>
         <copy file="${topdist}/directvweb.jar" todir="cs/bin"/>
-        <mkdir dir="cs/resources/rating"/>
-        <copy todir="cs/resources/rating">
-            <fileset dir="${resources}/rating"/>
-        </copy>
         <copy file="${resources}/roku_recordings.png" todir="cs/www"/>
         <copy file="${resources}/roku_rules.png" todir="cs/www"/>
         <copy file="${resources}/roku_schedule_channel.png" todir="cs/www"/>
@@ -416,14 +404,12 @@
             <fileset dir="server" includes="bin/jflicks-*.jar"/>
             <fileset dir="server" includes="bundle/jflicks-*.jar"/>
         </delete>
-        <delete dir="server/resources"/>
 
         <delete>
             <fileset dir="cs" includes="bin/directvweb.jar"/>
             <fileset dir="cs" includes="bin/jflicks-*.jar"/>
             <fileset dir="cs" includes="bundle/jflicks-*.jar"/>
         </delete>
-        <delete dir="cs/resources"/>
 
         <delete>
             <fileset dir="fe" includes="bin/jflicks-*.jar"/>
