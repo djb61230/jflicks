@@ -93,6 +93,7 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                 com.db4o.config.Configuration config = s.newConfiguration();
                 config.objectClass(RecordingRule.class).cascadeOnActivate(true);
                 config.objectClass(RecordingRule.class).cascadeOnUpdate(true);
+                config.objectClass(ShowAiring.class).cascadeOnUpdate(true);
                 objectContainer = s.openFile(config, "db/sched.dat");
             }
         }
