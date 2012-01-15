@@ -92,7 +92,26 @@ public class SystemPostProcHeavyJob extends SystemPostProcJob {
                                     // We probably got here before the
                                     // recording  started.  Let's push
                                     // and get it next time.
-                                    spp.pushHeavyWorkerRecording(wr);
+                                    //spp.pushHeavyWorkerRecording(wr);
+                                    if (getLastWorkerRecording() == null) {
+
+                                        setRetryCount(1);
+                                        setLastWorkerRecording(wr);
+                                        spp.pushHeavyWorkerRecording(wr);
+
+                                    } else {
+
+                                        setRetryCount(getRetryCount() + 1);
+                                        if (getRetryCount() >= MAX_RETRIES) {
+
+                                            setRetryCount(0);
+                                            setLastWorkerRecording(null);
+
+                                        } else {
+
+                                            spp.pushHeavyWorkerRecording(wr);
+                                        }
+                                    }
                                 }
                             }
                         }
