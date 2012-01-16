@@ -34,7 +34,7 @@ import org.jflicks.tv.postproc.worker.WorkerListener;
 public abstract class SystemPostProcJob extends AbstractJob
     implements WorkerListener {
 
-    public final static int MAX_RETRIES = 20;
+    public static final int MAX_RETRIES = 20;
 
     private SystemPostProc systemPostProc;
     private int count;

@@ -62,15 +62,14 @@ import org.jflicks.tv.ShowAiring;
 import org.jflicks.ui.view.fe.AddRuleJob;
 import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.ChannelInfoPanel;
-import org.jflicks.ui.view.fe.ChannelListPanel;
 import org.jflicks.ui.view.fe.Dialog;
 import org.jflicks.ui.view.fe.FrontEndView;
+import org.jflicks.ui.view.fe.GridGuidePanel;
 import org.jflicks.ui.view.fe.GuideJob;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.RecordingInfoPanel;
 import org.jflicks.ui.view.fe.RecordingRulePanel;
 import org.jflicks.ui.view.fe.RecordingRuleProperty;
-import org.jflicks.ui.view.fe.ShowAiringListPanel;
 import org.jflicks.ui.view.fe.ShowDetailPanel;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.util.Busy;
@@ -113,8 +112,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     private Rectangle guideRectangle;
     private boolean guideMode;
     private JXPanel waitPanel;
-    private ChannelListPanel channelListPanel;
-    private ShowAiringListPanel showAiringListPanel;
+    private GridGuidePanel gridGuidePanel;
     private ShowDetailPanel showDetailPanel;
     private ShowAiring selectedShowAiring;
     private RecordingRulePanel recordingRulePanel;
@@ -281,6 +279,12 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         guideMap = m;
 
         log(INFO, "Guide is done...");
+
+        GridGuidePanel ggp = getGridGuidePanel();
+        if (ggp != null) {
+
+            ggp.setGuideMap(guideMap);
+        }
     }
 
     private RecordingInfoPanel getRecordingInfoPanel() {
@@ -299,20 +303,12 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         channelInfoPanel = w;
     }
 
-    private ChannelListPanel getChannelListPanel() {
-        return (channelListPanel);
+    private GridGuidePanel getGridGuidePanel() {
+        return (gridGuidePanel);
     }
 
-    private void setChannelListPanel(ChannelListPanel p) {
-        channelListPanel = p;
-    }
-
-    private ShowAiringListPanel getShowAiringListPanel() {
-        return (showAiringListPanel);
-    }
-
-    private void setShowAiringListPanel(ShowAiringListPanel p) {
-        showAiringListPanel = p;
+    private void setGridGuidePanel(GridGuidePanel p) {
+        gridGuidePanel = p;
     }
 
     private ShowDetailPanel getShowDetailPanel() {
@@ -533,15 +529,9 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             panel.setBounds(0, 0, (int) d.getWidth(), (int) d.getHeight());
             setWaitPanel(panel);
 
-            ChannelListPanel clp = new ChannelListPanel();
-            clp.setControl(true);
-            clp.addPropertyChangeListener("SelectedChannel", this);
-            setChannelListPanel(clp);
-
-            ShowAiringListPanel salp = new ShowAiringListPanel();
-            salp.setControl(false);
-            salp.addPropertyChangeListener("SelectedShowAiring", this);
-            setShowAiringListPanel(salp);
+            GridGuidePanel ggp = new GridGuidePanel();
+            ggp.addPropertyChangeListener("SelectedShowAiring", this);
+            setGridGuidePanel(ggp);
 
             ShowDetailPanel sdp = new ShowDetailPanel();
             sdp.setBounds(wspan, hspan + listheight + hspan, detailwidth,
@@ -549,18 +539,16 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             setShowDetailPanel(sdp);
 
             JXLabel label = getChannelLabel();
-            label.setFont(clp.getLargeFont());
-            label.setForeground(clp.getInfoColor());
+            label.setFont(ggp.getLargeFont());
+            label.setForeground(ggp.getInfoColor());
             label.setHorizontalTextPosition(SwingConstants.CENTER);
             label.setHorizontalAlignment(SwingConstants.RIGHT);
             Dimension ldim = label.getPreferredSize();
             int labelHeight = (int) ldim.getHeight();
             label.setBounds(wspan, hspan, listwidth, labelHeight);
 
-            clp.setBounds(wspan, hspan + labelHeight, halflistwidth,
+            ggp.setBounds(wspan, hspan + labelHeight, listwidth,
                 listheight - labelHeight);
-            salp.setBounds(wspan + wspan + halflistwidth, hspan + labelHeight,
-                halflistwidth, listheight - labelHeight);
 
             Rectangle fevrec = fev.getPosition();
 
@@ -593,8 +581,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 if (isGuideMode()) {
 
                     pane.add(getChannelLabel(), Integer.valueOf(110));
-                    pane.add(getChannelListPanel(), Integer.valueOf(100));
-                    pane.add(getShowAiringListPanel(), Integer.valueOf(100));
+                    pane.add(getGridGuidePanel(), Integer.valueOf(100));
                     pane.add(getShowDetailPanel(), Integer.valueOf(100));
 
                 } else {
@@ -747,7 +734,24 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     public void info() {
 
         System.out.println("info called: " + isGuideMode());
-        if (!isGuideMode()) {
+        if (isGuideMode()) {
+
+            ArrayList<String> blist = new ArrayList<String>();
+
+            blist.add(CHANGE_CHANNEL);
+            if (getChannelState() == ALL_CHANNELS) {
+
+                blist.add(ADD_FAVORITE);
+
+            } else {
+
+                blist.add(REMOVE_FAVORITE);
+            }
+
+            blist.add(CANCEL);
+            popup(blist.toArray(new String[blist.size()]));
+
+        } else {
 
             RecordingInfoPanel w = getRecordingInfoPanel();
             if (w != null) {
@@ -798,16 +802,6 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 setGuideMode(true);
 
-                // Reset the current showairings.
-                /*
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
-
-                    ShowAiring[] sarray = salp.getShowAirings();
-                    sarray = computeShowAirings(sarray);
-                    salp.setShowAirings(sarray);
-                }
-                */
                 log(DEBUG, "About to resize to little");
                 p.setSize(r);
                 requestFocus();
@@ -828,20 +822,9 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void pageup() {
 
-        ChannelListPanel clp = getChannelListPanel();
-        if (clp != null) {
-
-            if (clp.isControl()) {
-                clp.movePageUp();
-            }
-        }
-
-        ShowAiringListPanel salp = getShowAiringListPanel();
-        if (salp != null) {
-
-            if (salp.isControl()) {
-                salp.movePageUp();
-            }
+        GridGuidePanel ggp = getGridGuidePanel();
+        if (ggp != null) {
+            ggp.pageUp();
         }
     }
 
@@ -850,20 +833,10 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
      */
     public void pagedown() {
 
-        ChannelListPanel clp = getChannelListPanel();
-        if (clp != null) {
+        GridGuidePanel ggp = getGridGuidePanel();
+        if (ggp != null) {
 
-            if (clp.isControl()) {
-                clp.movePageDown();
-            }
-        }
-
-        ShowAiringListPanel salp = getShowAiringListPanel();
-        if (salp != null) {
-
-            if (salp.isControl()) {
-                salp.movePageDown();
-            }
+            ggp.pageDown();
         }
     }
 
@@ -1019,20 +992,10 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             } else {
 
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
+                GridGuidePanel ggp = getGridGuidePanel();
+                if (ggp != null) {
 
-                    if (clp.isControl()) {
-                        clp.moveUp();
-                    }
-                }
-
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
-
-                    if (salp.isControl()) {
-                        salp.moveUp();
-                    }
+                    ggp.up();
                 }
             }
         }
@@ -1070,20 +1033,10 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
             } else {
 
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
+                GridGuidePanel ggp = getGridGuidePanel();
+                if (ggp != null) {
 
-                    if (clp.isControl()) {
-                        clp.moveDown();
-                    }
-                }
-
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
-
-                    if (salp.isControl()) {
-                        salp.moveDown();
-                    }
+                    ggp.down();
                 }
             }
         }
@@ -1107,12 +1060,10 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             if (isPopupEnabled()) {
             } else {
 
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
+                GridGuidePanel ggp = getGridGuidePanel();
+                if (ggp != null) {
 
-                    if (!clp.isControl()) {
-                        clp.setControl(true);
-                    } else {
+                    if (!ggp.left()) {
 
                         if (getChannelState() == ALL_CHANNELS) {
                             setChannelState(FAVORITE_CHANNELS);
@@ -1122,12 +1073,6 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                         applyChannels();
                     }
-                }
-
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
-
-                    salp.setControl(false);
                 }
             }
         }
@@ -1155,16 +1100,10 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
             if (isPopupEnabled()) {
             } else {
 
-                ChannelListPanel clp = getChannelListPanel();
-                if (clp != null) {
+                GridGuidePanel ggp = getGridGuidePanel();
+                if (ggp != null) {
 
-                    clp.setControl(false);
-                }
-
-                ShowAiringListPanel salp = getShowAiringListPanel();
-                if (salp != null) {
-
-                    salp.setControl(true);
+                    ggp.right();
                 }
             }
         }
@@ -1221,18 +1160,6 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 requestFocus();
             }
 
-        } else if (event.getPropertyName().equals("SelectedChannel")) {
-
-            HashMap<Channel, ShowAiring[]> map = getGuideMap();
-            Channel c = (Channel) event.getNewValue();
-            ShowAiringListPanel salp = getShowAiringListPanel();
-            if ((map != null) && (c != null) && (salp != null)) {
-
-                ShowAiring[] sarray = map.get(c);
-                sarray = computeShowAirings(sarray);
-                salp.setShowAirings(sarray);
-            }
-
         } else if (event.getPropertyName().equals("SelectedShowAiring")) {
 
             ShowDetailPanel sdp = getShowDetailPanel();
@@ -1247,11 +1174,11 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
     private void handleFavorite() {
 
-        ChannelListPanel clp = getChannelListPanel();
+        GridGuidePanel ggp = getGridGuidePanel();
         ArrayList<String> favlist = getFavoriteChannelList();
-        if ((clp != null) && (favlist != null)) {
+        if ((ggp != null) && (favlist != null)) {
 
-            Channel chan = clp.getSelectedChannel();
+            Channel chan = ggp.getSelectedChannel();
             if (chan != null) {
 
                 String text = chan.toString();
@@ -1316,12 +1243,12 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 if (CHANGE_CHANNEL.equals(pbp.getSelectedButton())) {
 
-                    ChannelListPanel clp = getChannelListPanel();
-                    if (clp != null) {
+                    GridGuidePanel ggp = getGridGuidePanel();
+                    if (ggp != null) {
 
                         setGuideMode(false);
                         updateLayout(true);
-                        changeChannel(getLiveTV(), clp.getSelectedChannel());
+                        changeChannel(getLiveTV(), ggp.getSelectedChannel());
                     }
 
                 } else if (ADD_FAVORITE.equals(pbp.getSelectedButton())) {
@@ -1602,21 +1529,14 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
     private void applyChannels() {
 
-        ChannelListPanel clp = getChannelListPanel();
+        GridGuidePanel ggp = getGridGuidePanel();
         Channel[] carray = getAllChannels();
         JXLabel l = getChannelLabel();
-        if ((clp != null) && (carray != null) && (l != null)) {
+        if ((ggp != null) && (carray != null) && (l != null)) {
 
             if (getChannelState() == ALL_CHANNELS) {
 
-                int index = getIndex(carray, clp.getSelectedChannel());
-                clp.setChannels(carray);
-                if (clp.getStartIndex() + clp.getVisibleCount() < index) {
-                    clp.setStartIndex(index);
-                    clp.setSelectedIndex(0);
-                } else {
-                    clp.setSelectedIndex(index);
-                }
+                ggp.setChannels(carray);
                 l.setText(ALL_CHANNELS_TEXT);
 
             } else if (getChannelState() == FAVORITE_CHANNELS) {
@@ -1624,14 +1544,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 Channel[] only = filterByFavorite(carray);
                 if (only != null) {
 
-                    int index = getIndex(only, clp.getSelectedChannel());
-                    clp.setChannels(only);
-                    if (clp.getStartIndex() + clp.getVisibleCount() < index) {
-                        clp.setStartIndex(index);
-                        clp.setSelectedIndex(0);
-                    } else {
-                        clp.setSelectedIndex(index);
-                    }
+                    ggp.setChannels(only);
                     l.setText(FAVORITE_CHANNELS_TEXT);
 
                 } else {
@@ -1645,29 +1558,18 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
     private void handleGuideEnter() {
 
-        ChannelListPanel clp = getChannelListPanel();
-        ShowAiringListPanel salp = getShowAiringListPanel();
-        if ((clp != null) && (salp != null)) {
+        GridGuidePanel ggp = getGridGuidePanel();
+        if (ggp != null) {
 
-            Channel chan = clp.getSelectedChannel();
+            Channel chan = ggp.getSelectedChannel();
             if (chan != null) {
 
                 ArrayList<String> blist = new ArrayList<String>();
-                if (clp.isControl()) {
 
-                    blist.add(CHANGE_CHANNEL);
-                    if (getChannelState() == ALL_CHANNELS) {
+                ShowAiring sa = getSelectedShowAiring();
+                if (sa != null) {
 
-                        blist.add(ADD_FAVORITE);
-
-                    } else {
-
-                        blist.add(REMOVE_FAVORITE);
-                    }
-
-                } else {
-
-                    if (salp.getSelectedIndex() == 0) {
+                    if (ggp.isOn(sa)) {
                         blist.add(CHANGE_CHANNEL);
                     } else {
                         blist.add(SCHEDULE);
