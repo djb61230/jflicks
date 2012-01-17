@@ -93,7 +93,9 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
     private static final String ALL_CHANNELS_TEXT = "All Channels";
     private static final String FAVORITE_CHANNELS_TEXT = "Favorite Channels";
     private static final String ADD_FAVORITE = "Add to Favorites";
+    private static final String SWITCH_TO_FAVORITE = "Switch to Favorites";
     private static final String REMOVE_FAVORITE = "Remove from Favorites";
+    private static final String SWITCH_FROM_FAVORITE = "Switch from Favorites";
     private static final String CHANGE_CHANNEL = "Change Channel";
     private static final String SCHEDULE = "Schedule";
 
@@ -736,20 +738,34 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
         System.out.println("info called: " + isGuideMode());
         if (isGuideMode()) {
 
-            ArrayList<String> blist = new ArrayList<String>();
+            if (!isPopupEnabled()) {
 
-            blist.add(CHANGE_CHANNEL);
-            if (getChannelState() == ALL_CHANNELS) {
+                System.out.println("Should be only popup");
+                GridGuidePanel ggp = getGridGuidePanel();
+                if (ggp != null) {
 
-                blist.add(ADD_FAVORITE);
+                    ArrayList<String> blist = new ArrayList<String>();
 
-            } else {
+                    if (ggp.isOn(getSelectedShowAiring())) {
+                        blist.add(CHANGE_CHANNEL);
+                    } else {
+                        blist.add(SCHEDULE);
+                    }
+                    if (getChannelState() == ALL_CHANNELS) {
 
-                blist.add(REMOVE_FAVORITE);
+                        blist.add(SWITCH_TO_FAVORITE);
+                        blist.add(ADD_FAVORITE);
+
+                    } else {
+
+                        blist.add(SWITCH_FROM_FAVORITE);
+                        blist.add(REMOVE_FAVORITE);
+                    }
+
+                    blist.add(CANCEL);
+                    popup(blist.toArray(new String[blist.size()]));
+                }
             }
-
-            blist.add(CANCEL);
-            popup(blist.toArray(new String[blist.size()]));
 
         } else {
 
@@ -801,6 +817,17 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 }
 
                 setGuideMode(true);
+
+                LiveTV l = getLiveTV();
+                GridGuidePanel ggp = getGridGuidePanel();
+                if ((l != null) && (ggp != null)) {
+
+                    Channel c = l.getCurrentChannel();
+                    if (c != null) {
+
+                        ggp.setCurrentChannel(c);
+                    }
+                }
 
                 log(DEBUG, "About to resize to little");
                 p.setSize(r);
@@ -1063,6 +1090,9 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 GridGuidePanel ggp = getGridGuidePanel();
                 if (ggp != null) {
 
+                    ggp.left();
+
+                    /*
                     if (!ggp.left()) {
 
                         if (getChannelState() == ALL_CHANNELS) {
@@ -1073,6 +1103,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                         applyChannels();
                     }
+                    */
                 }
             }
         }
@@ -1258,6 +1289,17 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 } else if (REMOVE_FAVORITE.equals(pbp.getSelectedButton())) {
 
                     handleFavorite();
+
+                } else if (SWITCH_TO_FAVORITE.equals(pbp.getSelectedButton())) {
+
+                    setChannelState(FAVORITE_CHANNELS);
+                    applyChannels();
+
+                } else if (SWITCH_FROM_FAVORITE.equals(
+                    pbp.getSelectedButton())) {
+
+                    setChannelState(ALL_CHANNELS);
+                    applyChannels();
 
                 } else if (SCHEDULE.equals(pbp.getSelectedButton())) {
 
@@ -1502,25 +1544,6 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 Collections.sort(filter);
                 result = filter.toArray(new Channel[filter.size()]);
-            }
-        }
-
-        return (result);
-    }
-
-    private int getIndex(Channel[] array, Channel c) {
-
-        int result = 0;
-
-        if ((array != null) && (c != null)) {
-
-            for (int i = 0; i < array.length; i++) {
-
-                if (c.equals(array[i])) {
-
-                    result = i;
-                    break;
-                }
             }
         }
 

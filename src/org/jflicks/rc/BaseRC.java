@@ -197,7 +197,7 @@ public abstract class BaseRC extends BaseLog implements RC {
      * {@inheritDoc}
      */
     public int getDefaultInfoKeyEvent() {
-        return (KeyEvent.VK_P);
+        return (KeyEvent.VK_I);
     }
 
     /**
@@ -211,7 +211,7 @@ public abstract class BaseRC extends BaseLog implements RC {
      * {@inheritDoc}
      */
     public int getDefaultPauseKeyEvent() {
-        return (KeyEvent.VK_I);
+        return (KeyEvent.VK_P);
     }
 
     /**

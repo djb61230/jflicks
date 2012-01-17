@@ -18,6 +18,8 @@ package org.jflicks.ui.view.fe;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -51,7 +54,8 @@ import org.jflicks.tv.ShowAiring;
  * @author Doug Barnum
  * @version 1.0
  */
-public class GridGuidePanel extends BaseCustomizePanel {
+public class GridGuidePanel extends BaseCustomizePanel
+    implements ActionListener {
 
     private static final long JUMP_MILLIS = 30 * 60 * 1000;
 
@@ -63,12 +67,14 @@ public class GridGuidePanel extends BaseCustomizePanel {
     private Channel selectedChannel;
     private ShowAiring selectedShowAiring;
     private long timeOffset;
+    private long lastTime;
     private SimpleDateFormat daySimpleDateFormat;
     private SimpleDateFormat timeSimpleDateFormat;
     private int selectedRow;
     private int selectedColumn;
     private int channelIndex;
     private int visibleRowCount;
+    private Timer displayTimer;
 
     /**
      * Simple empty constructor.
@@ -84,6 +90,10 @@ public class GridGuidePanel extends BaseCustomizePanel {
         MattePainter mpainter = new MattePainter(getPanelColor());
         setBackgroundPainter(mpainter);
         setAlpha((float) getPanelAlpha());
+
+        Timer t = new Timer(60000, this);
+        setDisplayTimer(t);
+        t.start();
     }
 
     public int getVisibleRowCount() {
@@ -92,6 +102,14 @@ public class GridGuidePanel extends BaseCustomizePanel {
 
     public void setVisibleRowCount(int i) {
         visibleRowCount = i;
+    }
+
+    private Timer getDisplayTimer() {
+        return (displayTimer);
+    }
+
+    private void setDisplayTimer(Timer t) {
+        displayTimer = t;
     }
 
     private ArrayList<Channel> getChannelList() {
@@ -137,7 +155,6 @@ public class GridGuidePanel extends BaseCustomizePanel {
 
     public void setGuideMap(HashMap<Channel, ShowAiring[]> m) {
         guideMap = m;
-        setTimeOffset(0L);
     }
 
     private JXLabel getDateLabel() {
@@ -286,7 +303,7 @@ public class GridGuidePanel extends BaseCustomizePanel {
             int newcindex = getChannelIndex() + 1;
             int total = getChannelCount();
             int rows = getVisibleRowCount();
-            if ((newcindex + rows) < total) {
+            if ((newcindex + rows) <= total) {
 
                 setChannelIndex(newcindex);
                 applyHighlight(false);
@@ -398,7 +415,9 @@ public class GridGuidePanel extends BaseCustomizePanel {
                 }
             }
 
-            setChannelIndex(0);
+            if (getChannelIndex() + getVisibleRowCount() >= l.size()) {
+                setChannelIndex(l.size() - (getVisibleRowCount() + 1));
+            }
             applyChannels();
             applyTimeLabels();
             applyHighlight(true);
@@ -459,13 +478,13 @@ public class GridGuidePanel extends BaseCustomizePanel {
 
             JXLabel channelLabel = new JXLabel();
             channelLabel.setBorder(BorderFactory.createLineBorder(
-                getUnselectedColor(), 1));
+                getSelectedColor(), 1));
             channelLabel.setBounds(0, top, channelwidth, colheight);
             pane.add(channelLabel, Integer.valueOf(100));
 
             JXLabel dlabel = new JXLabel("DATE");
             dlabel.setFont(getSmallFont());
-            dlabel.setForeground(getUnselectedColor());
+            dlabel.setForeground(getSelectedColor());
             dlabel.setBounds(0, 0, channelwidth, top);
             pane.add(dlabel, Integer.valueOf(100));
             setDateLabel(dlabel);
@@ -482,7 +501,7 @@ public class GridGuidePanel extends BaseCustomizePanel {
 
                 larray[i] = new JXLabel("TIME");
                 larray[i].setFont(getSmallFont());
-                larray[i].setForeground(getUnselectedColor());
+                larray[i].setForeground(getSelectedColor());
                 larray[i].setBounds(x, 0, halfhourwidth, top);
                 pane.add(larray[i], Integer.valueOf(100));
                 x += halfhourwidth;
@@ -679,7 +698,7 @@ public class GridGuidePanel extends BaseCustomizePanel {
         return (result);
     }
 
-    private void applyChannels() {
+    private synchronized void applyChannels() {
 
         Channel[] array = getChannels();
         RowDisplay[] rdarray = getRowDisplays();
@@ -692,7 +711,7 @@ public class GridGuidePanel extends BaseCustomizePanel {
 
                 if (index < array.length) {
 
-                    Channel chan = array[index++];
+                    Channel chan = array[index];
                     ShowAiring[] sarray = m.get(chan);
                     sarray = stripViaTime(sarray, rounded);
                     rdarray[i].apply(chan, sarray, rounded);
@@ -701,6 +720,7 @@ public class GridGuidePanel extends BaseCustomizePanel {
 
                     rdarray[i].apply(null, null, rounded);
                 }
+                index++;
             }
 
             repaint();
@@ -744,6 +764,33 @@ public class GridGuidePanel extends BaseCustomizePanel {
                 // Set our selected channel when we highlight.
                 setSelectedChannel(array[row].getChannel());
             }
+        }
+    }
+
+    private int getIndex(Channel[] array, Channel c) {
+
+        int result = 0;
+
+        if ((array != null) && (c != null)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                if (c.equals(array[i])) {
+
+                    result = i;
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    public void setCurrentChannel(Channel c) {
+
+        if (c != null) {
+
+            setChannelIndex(getIndex(getChannels(), c));
         }
     }
 
@@ -793,6 +840,15 @@ public class GridGuidePanel extends BaseCustomizePanel {
         return (result);
     }
 
+    public void actionPerformed(ActionEvent event) {
+
+        if (getGuideMap() != null) {
+
+            applyTimeLabels();
+            applyChannels();
+        }
+    }
+
     class RowDisplay {
 
         private JLayeredPane layeredPane;
@@ -836,7 +892,7 @@ public class GridGuidePanel extends BaseCustomizePanel {
             clabel.setFont(getSmallFont());
             clabel.setTextAlignment(JXLabel.TextAlignment.LEFT);
             clabel.setLineWrap(true);
-            clabel.setForeground(getUnselectedColor());
+            clabel.setForeground(getSelectedColor());
             clabel.setBounds(r.x, r.y, cwidth, r.height);
             setChannelLabel(clabel);
             p.add(clabel, Integer.valueOf(110));

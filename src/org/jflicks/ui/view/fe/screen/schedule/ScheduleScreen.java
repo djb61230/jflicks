@@ -46,6 +46,7 @@ import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
@@ -55,6 +56,7 @@ import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.NMSUtil;
 import org.jflicks.photomanager.Tag;
+import org.jflicks.rc.RC;
 import org.jflicks.tv.Airing;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.RecordingRule;
@@ -111,6 +113,10 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
     private static final int FAVORITE_CHANNELS = 2;
     private static final String ALL_CHANNELS_TEXT = "All Channels";
     private static final String FAVORITE_CHANNELS_TEXT = "Favorite Channels";
+    private static final String ADD_FAVORITE = "Add to Favorites";
+    private static final String SWITCH_TO_FAVORITE = "Switch to Favorites";
+    private static final String REMOVE_FAVORITE = "Remove from Favorites";
+    private static final String SWITCH_FROM_FAVORITE = "Switch from Favorites";
 
     private NMS[] nms;
     private String[] parameters;
@@ -524,25 +530,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         return (result);
     }
 
-    private int getIndex(Channel[] array, Channel c) {
-
-        int result = 0;
-
-        if ((array != null) && (c != null)) {
-
-            for (int i = 0; i < array.length; i++) {
-
-                if (c.equals(array[i])) {
-
-                    result = i;
-                    break;
-                }
-            }
-        }
-
-        return (result);
-    }
-
     private void applyChannels() {
 
         GridGuidePanel ggp = getGridGuidePanel();
@@ -731,11 +718,11 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         selectedRecordingRule = rr;
     }
 
-    private boolean isWithinAnHour() {
+    private boolean isWithinAnHalfHour() {
 
         boolean result = false;
 
-        long l = getLastGuide() + 60 * 60 * 1000;
+        long l = getLastGuide() + 30 * 60 * 1000;
         if (System.currentTimeMillis() < l) {
 
             result = true;
@@ -925,7 +912,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
             if ((isParameterByTitle()) || (isParameterByGuide())) {
 
-                if (!isWithinAnHour()) {
+                if (!isWithinAnHalfHour()) {
 
                     AllGuideJob gjob = new AllGuideJob(getNMS());
                     gjob.addJobListener(this);
@@ -936,6 +923,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                 } else {
 
+                    applyChannels();
                     updateLayout(false);
                 }
 
@@ -1437,32 +1425,47 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             ButtonPanel bp = getUserButtonPanel();
             if (isParameterByGuide()) {
 
-                GridGuidePanel ggp = getGridGuidePanel();
-                ArrayList<String> favlist = getFavoriteChannelList();
-                if ((ggp != null) && (favlist != null)) {
+                if ((ADD_FAVORITE.equals(bp.getSelectedButton()))
+                    || (REMOVE_FAVORITE.equals(bp.getSelectedButton()))) {
 
-                    Channel chan = ggp.getSelectedChannel();
-                    if (chan != null) {
+                    GridGuidePanel ggp = getGridGuidePanel();
+                    ArrayList<String> favlist = getFavoriteChannelList();
+                    if ((ggp != null) && (favlist != null)) {
 
-                        String text = chan.toString();
-                        if (getChannelState() == ALL_CHANNELS) {
+                        Channel chan = ggp.getSelectedChannel();
+                        if (chan != null) {
 
-                            if (!favlist.contains(text)) {
+                            String text = chan.toString();
+                            if (getChannelState() == ALL_CHANNELS) {
 
-                                favlist.add(text);
-                                Collections.sort(favlist);
-                            }
+                                if (!favlist.contains(text)) {
 
-                        } else if (getChannelState() == FAVORITE_CHANNELS) {
+                                    favlist.add(text);
+                                    Collections.sort(favlist);
+                                }
 
-                            if (favlist.contains(text)) {
+                            } else if (getChannelState() == FAVORITE_CHANNELS) {
 
-                                favlist.remove(text);
-                                Collections.sort(favlist);
-                                applyChannels();
+                                if (favlist.contains(text)) {
+
+                                    favlist.remove(text);
+                                    Collections.sort(favlist);
+                                    applyChannels();
+                                }
                             }
                         }
                     }
+
+                } else if (SWITCH_TO_FAVORITE.equals(bp.getSelectedButton())) {
+
+                    setChannelState(FAVORITE_CHANNELS);
+                    applyChannels();
+
+                } else if (SWITCH_FROM_FAVORITE.equals(
+                    bp.getSelectedButton())) {
+
+                    setChannelState(ALL_CHANNELS);
+                    applyChannels();
                 }
 
             } else {
@@ -1490,6 +1493,32 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
             }
 
             unpopup();
+        }
+    }
+
+    private void handleFavorite() {
+
+        GridGuidePanel ggp = getGridGuidePanel();
+        if ((ggp != null) && (!isPopupEnabled())) {
+
+            Channel chan = ggp.getSelectedChannel();
+            if (chan != null) {
+
+                ArrayList<String> blist = new ArrayList<String>();
+                if (getChannelState() == ALL_CHANNELS) {
+
+                    blist.add(SWITCH_TO_FAVORITE);
+                    blist.add(ADD_FAVORITE);
+
+                } else {
+
+                    blist.add(SWITCH_FROM_FAVORITE);
+                    blist.add(REMOVE_FAVORITE);
+                }
+
+                blist.add(CANCEL);
+                popup(blist.toArray(new String[blist.size()]));
+            }
         }
     }
 
@@ -1595,6 +1624,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     GridGuidePanel ggp = getGridGuidePanel();
                     if (ggp != null) {
 
+                        ggp.left();
+                        /*
                         if (!ggp.left()) {
 
                             if (getChannelState() == ALL_CHANNELS) {
@@ -1605,6 +1636,7 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                             applyChannels();
                         }
+                        */
                     }
 
                 } else if (isParameterUpcomingRecordings()) {
@@ -2063,32 +2095,9 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
         public InfoAction() {
         }
 
-        public void handleFavorite() {
-
-            GridGuidePanel ggp = getGridGuidePanel();
-            if (ggp != null) {
-
-                Channel chan = ggp.getSelectedChannel();
-                if (chan != null) {
-
-                    ArrayList<String> blist = new ArrayList<String>();
-                    if (getChannelState() == ALL_CHANNELS) {
-
-                        blist.add("Add to Favorites");
-
-                    } else {
-
-                        blist.add("Remove from Favorites");
-                    }
-
-                    blist.add(CANCEL);
-                    popup(blist.toArray(new String[blist.size()]));
-                }
-            }
-        }
-
         public void actionPerformed(ActionEvent e) {
 
+            System.out.println("actionPerformed info");
             if (isParameterByGuide()) {
 
                 handleFavorite();
