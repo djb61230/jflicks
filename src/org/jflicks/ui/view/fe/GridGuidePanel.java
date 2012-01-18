@@ -17,9 +17,11 @@
 package org.jflicks.ui.view.fe;
 
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Line2D;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import java.awt.Dimension;
+import java.awt.geom.RoundRectangle2D;
 import javax.swing.BorderFactory;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
@@ -36,6 +39,8 @@ import javax.swing.Timer;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.painter.Painter;
+import org.jdesktop.swingx.painter.ShapePainter;
 
 import org.jflicks.tv.Airing;
 import org.jflicks.tv.Channel;
@@ -85,7 +90,7 @@ public class GridGuidePanel extends BaseCustomizePanel
         setVisibleRowCount(4);
 
         setDaySimpleDateFormat(new SimpleDateFormat("MMM d"));
-        setTimeSimpleDateFormat(new SimpleDateFormat("h:mm"));
+        setTimeSimpleDateFormat(new SimpleDateFormat("h:mm a"));
 
         MattePainter mpainter = new MattePainter(getPanelColor());
         setBackgroundPainter(mpainter);
@@ -189,6 +194,14 @@ public class GridGuidePanel extends BaseCustomizePanel
         timeOffset = l;
     }
 
+    private long getLastTime() {
+        return (lastTime);
+    }
+
+    private void setLastTime(long l) {
+        lastTime = l;
+    }
+
     private int getSelectedRow() {
         return (selectedRow);
     }
@@ -255,10 +268,10 @@ public class GridGuidePanel extends BaseCustomizePanel
         if (isRowVisible(newrow)) {
 
             applyHighlight(false);
+            int index = computeGridIndex(getSelectedRow(), newrow,
+                getSelectedColumn());
             setSelectedRow(newrow);
-            if (!isColumnVisible(getSelectedColumn())) {
-                setSelectedColumn(getGreatestVisible());
-            }
+            setSelectedColumn(index);
             applyHighlight(true);
             result = true;
 
@@ -271,9 +284,10 @@ public class GridGuidePanel extends BaseCustomizePanel
                 setChannelIndex(newcindex);
                 applyHighlight(false);
                 applyChannels();
-                if (!isColumnVisible(getSelectedColumn())) {
-                    setSelectedColumn(getGreatestVisible());
-                }
+                int index = computeGridIndex(getSelectedRow() + 1,
+                    getSelectedRow(),
+                    getSelectedColumn());
+                setSelectedColumn(index);
                 applyHighlight(true);
                 result = true;
             }
@@ -290,10 +304,10 @@ public class GridGuidePanel extends BaseCustomizePanel
         if (isRowVisible(newrow)) {
 
             applyHighlight(false);
+            int index = computeGridIndex(getSelectedRow(), newrow,
+                getSelectedColumn());
             setSelectedRow(newrow);
-            if (!isColumnVisible(getSelectedColumn())) {
-                setSelectedColumn(getGreatestVisible());
-            }
+            setSelectedColumn(index);
             applyHighlight(true);
             result = true;
 
@@ -308,9 +322,9 @@ public class GridGuidePanel extends BaseCustomizePanel
                 setChannelIndex(newcindex);
                 applyHighlight(false);
                 applyChannels();
-                if (!isColumnVisible(getSelectedColumn())) {
-                    setSelectedColumn(getGreatestVisible());
-                }
+                int index = computeGridIndex(getSelectedRow() - 1,
+                    getSelectedRow(), getSelectedColumn());
+                setSelectedColumn(index);
                 applyHighlight(true);
                 result = true;
             }
@@ -368,10 +382,8 @@ public class GridGuidePanel extends BaseCustomizePanel
             applyHighlight(false);
             setTimeOffset(getTimeOffset() + JUMP_MILLIS);
             applyTimeLabels();
-            if (!isColumnVisible(getSelectedColumn())) {
-                setSelectedColumn(getGreatestVisible());
-            }
             applyChannels();
+            setSelectedColumn(getGreatestVisible());
             applyHighlight(true);
         }
 
@@ -607,7 +619,7 @@ public class GridGuidePanel extends BaseCustomizePanel
                     long airend = airstart + (a.getDuration() * 1000);
                     long now = System.currentTimeMillis();
 
-                    result = ((airstart <= now) && (now < airend));
+                    result = ((airstart < now) && (now < airend));
                 }
             }
         }
@@ -794,6 +806,27 @@ public class GridGuidePanel extends BaseCustomizePanel
         }
     }
 
+    private int computeGridIndex(int oldrow, int newrow, int defaultColumn) {
+
+        int result = defaultColumn;
+
+        RowDisplay[] array = getRowDisplays();
+        if ((array != null) && (oldrow >= 0) && (newrow >= 0)
+            && (oldrow != newrow) && (oldrow < array.length)
+            && (newrow < array.length)) {
+
+            RowDisplay oldrd = array[oldrow];
+            RowDisplay newrd = array[newrow];
+            ShowAiring sa = oldrd.getShowAiringByIndex(defaultColumn);
+            if (sa != null) {
+
+                result = newrd.match(sa, defaultColumn);
+            }
+        }
+
+        return (result);
+    }
+
     private int getGreatestVisible() {
 
         int result = 0;
@@ -844,8 +877,27 @@ public class GridGuidePanel extends BaseCustomizePanel
 
         if (getGuideMap() != null) {
 
-            applyTimeLabels();
-            applyChannels();
+            long last = getLastTime();
+            if (last != 0L) {
+
+                long current = getCurrentRounded() - getTimeOffset();
+                if (current != last) {
+
+                    // The start of our time line has changed.  We should
+                    // update.  This can be unsettling to the user if they
+                    // are interacting right now.  But this should happen
+                    // only every 30 minutes.
+                    System.out.println("We should update because of time");
+                    setLastTime(current);
+                    applyTimeLabels();
+                    applyChannels();
+                    repaint();
+                }
+
+            } else {
+
+                setLastTime(getCurrentRounded() - getTimeOffset());
+            }
         }
     }
 
@@ -872,6 +924,7 @@ public class GridGuidePanel extends BaseCustomizePanel
             for (int i = 0; i < array.length; i++) {
 
                 array[i] = new JXLabel();
+                array[i].setTextAlignment(JXLabel.TextAlignment.CENTER);
                 array[i].setLineWrap(true);
                 array[i].setForeground(getSelectedColor());
                 array[i].setFont(getSmallFont());
@@ -889,8 +942,8 @@ public class GridGuidePanel extends BaseCustomizePanel
             setShowAirings(showArray);
 
             JXLabel clabel = new JXLabel();
+            clabel.setTextAlignment(JXLabel.TextAlignment.CENTER);
             clabel.setFont(getSmallFont());
-            clabel.setTextAlignment(JXLabel.TextAlignment.LEFT);
             clabel.setLineWrap(true);
             clabel.setForeground(getSelectedColor());
             clabel.setBounds(r.x, r.y, cwidth, r.height);
@@ -962,6 +1015,82 @@ public class GridGuidePanel extends BaseCustomizePanel
             channel = c;
         }
 
+        public ShowAiring getShowAiringByIndex(int index) {
+
+            ShowAiring result = null;
+
+            ShowAiring[] array = getShowAirings();
+            if ((array != null) && (index < array.length) && (index >= 0)) {
+
+                result = array[index];
+            }
+
+            return (result);
+        }
+
+        private long getShowAiringStart(ShowAiring sa) {
+
+            long result = 0L;
+
+            if (sa != null) {
+
+                Airing a = sa.getAiring();
+                if (a != null) {
+
+                    Date d = a.getAirDate();
+                    if (d != null) {
+
+                        result = d.getTime();
+                    }
+                }
+            }
+
+            return (result);
+        }
+
+        private long getShowAiringEnd(ShowAiring sa) {
+
+            long result = 0L;
+
+            if (sa != null) {
+
+                Airing a = sa.getAiring();
+                if (a != null) {
+
+                    result = getShowAiringStart(sa) + (a.getDuration() * 1000);
+                }
+            }
+
+            return (result);
+        }
+
+        public int match(ShowAiring sa, int defaultIndex) {
+
+            int result = defaultIndex;
+
+            ShowAiring[] array = getShowAirings();
+            if ((sa != null) && (array != null) && (array.length > 0)) {
+
+                long most = 0L;
+                double start = (double) getShowAiringStart(sa);
+                double end = (double) getShowAiringEnd(sa);
+                Line2D.Double line =
+                    new Line2D.Double(start + 10, 0, end - 10, 0);
+                for (int i = 0; i < array.length; i++) {
+
+                    start = (double) getShowAiringStart(array[i]);
+                    end = (double) getShowAiringEnd(array[i]);
+                    if (line.intersectsLine(start, 0, end, 0)) {
+
+                        result = i;
+                        break;
+                    }
+                }
+            }
+
+            return (result);
+        }
+
         private int computeX(long startTime, long current) {
 
             int result = 0;
@@ -978,6 +1107,30 @@ public class GridGuidePanel extends BaseCustomizePanel
 
                 result = (int) (min * permin);
             }
+
+            return (result);
+        }
+
+        private Painter createPainter(Rectangle r, Color main, Color c) {
+
+            Painter result = null;
+
+            Color mcopy = new Color(main.getRed(), main.getGreen(),
+                main.getBlue(), (int) (getAlpha() * 255));
+
+            Color copy = new Color(c.getRed(), c.getGreen(),
+                c.getBlue(), (int) (getAlpha() * 255));
+
+            GradientPaint gp = new GradientPaint(r.width / 2, 0, copy,
+                r.width / 2, (int) (r.getHeight() * 0.1), mcopy, false);
+
+            int inset = 8;
+            double arc = 10.0;
+            RoundRectangle2D.Double rr = new RoundRectangle2D.Double(inset,
+                inset, r.width - (inset * 2), r.height - (inset * 2), arc, arc);
+            ShapePainter sp = new ShapePainter(rr, gp);
+            MattePainter mp = new MattePainter(gp);
+            result = mp;
 
             return (result);
         }
@@ -1004,6 +1157,10 @@ public class GridGuidePanel extends BaseCustomizePanel
                 JXLabel[] labs = getLabels();
                 ShowAiring[] showArray = getShowAirings();
                 if ((labs != null) && (showArray != null)) {
+
+                    for (int i = 0; i < labs.length; i++) {
+                        labs[i].setBounds(-1, -1, 0, 0);
+                    }
 
                     int count = 0;
                     for (int i = 0; i < labs.length; i++) {
@@ -1055,14 +1212,14 @@ public class GridGuidePanel extends BaseCustomizePanel
                                     labs[i].setBounds(x, rectangle.y, w,
                                         rectangle.height);
                                     labs[i].setText(show.getTitle());
+
+                                    Painter p = createPainter(
+                                        labs[i].getBounds(),
+                                        getPanelColor(),
+                                        getSelectedColor());
+                                    labs[i].setBackgroundPainter(p);
                                 }
-
-                            } else {
-                                labs[i].setBounds(-1, -1, 0, 0);
                             }
-
-                        } else {
-                            labs[i].setBounds(-1, -1, 0, 0);
                         }
                     }
                 }
@@ -1112,13 +1269,18 @@ public class GridGuidePanel extends BaseCustomizePanel
                 && (showArray != null)) {
 
                 Color c = null;
+                Painter p = null;
                 if (b) {
                     c = getHighlightColor();
+                    p = createPainter(labs[column].getBounds(),
+                        getHighlightColor(), getSelectedColor());
                 } else {
                     c = getSelectedColor();
+                    p = createPainter(labs[column].getBounds(),
+                        getPanelColor(), getSelectedColor());
                 }
                 labs[column].setBorder(BorderFactory.createLineBorder(c, 1));
-                labs[column].setForeground(c);
+                labs[column].setBackgroundPainter(p);
 
                 if (b) {
                     setSelectedShowAiring(showArray[column]);
