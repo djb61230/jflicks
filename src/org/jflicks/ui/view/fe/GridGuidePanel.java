@@ -803,6 +803,9 @@ public class GridGuidePanel extends BaseCustomizePanel
         if (c != null) {
 
             setChannelIndex(getIndex(getChannels(), c));
+            applyChannels();
+            setSelectedColumn(0);
+            applyHighlight(true);
         }
     }
 
