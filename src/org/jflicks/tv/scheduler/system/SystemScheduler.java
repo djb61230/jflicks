@@ -95,6 +95,10 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                 config.objectClass(RecordingRule.class).cascadeOnUpdate(true);
                 config.objectClass(ShowAiring.class).cascadeOnActivate(true);
                 config.objectClass(ShowAiring.class).cascadeOnUpdate(true);
+                config.objectClass(Show.class).cascadeOnActivate(true);
+                config.objectClass(Show.class).cascadeOnUpdate(true);
+                config.objectClass(Airing.class).cascadeOnActivate(true);
+                config.objectClass(Airing.class).cascadeOnUpdate(true);
                 objectContainer = s.openFile(config, "db/sched.dat");
             }
         }
