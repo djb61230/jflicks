@@ -93,9 +93,15 @@ public class MkvmergeJob extends BaseWorkerJob implements JobListener {
             String cl = getCommandLine();
             if (cl != null) {
 
-                cl = cl.replaceFirst("OUTPUT_PATH", tmp.getPath());
-                cl = cl.replaceFirst("INPUT_VPATH", vfile.getPath());
-                cl = cl.replaceFirst("INPUT_APATH", afile.getPath());
+                String tpath = tmp.getPath();
+                tpath = tpath.replace("\\", "/");
+                cl = cl.replaceFirst("OUTPUT_PATH", tpath);
+                tpath = vfile.getPath();
+                tpath = tpath.replace("\\", "/");
+                cl = cl.replaceFirst("INPUT_VPATH", tpath);
+                tpath = afile.getPath();
+                tpath = tpath.replace("\\", "/");
+                cl = cl.replaceFirst("INPUT_APATH", tpath);
                 SystemJob job = null;
                 String nice = getNice();
                 if (nice != null) {

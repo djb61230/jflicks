@@ -116,6 +116,7 @@ public class ProjectxJob extends BaseWorkerJob implements JobListener {
                 }
                 setLogFile(new File(pre + "_log.txt"));
 
+                path = path.replace("\\", "/");
                 cl = cl.replaceFirst("INPUT_PATH", path);
                 SystemJob job = null;
                 String nice = getNice();

@@ -72,8 +72,11 @@ public class IndexerJob extends BaseWorkerJob implements JobListener {
             String cl = getCommandLine();
             if (cl != null) {
 
+                path = path.replace("\\", "/");
                 cl = cl.replaceFirst("INPUT_PATH", path);
-                cl = cl.replaceFirst("OUTPUT_PATH", tmp.getPath());
+                path = tmp.getPath();
+                path = path.replace("\\", "/");
+                cl = cl.replaceFirst("OUTPUT_PATH", path);
                 SystemJob job = null;
                 String nice = getNice();
                 if (nice != null) {
