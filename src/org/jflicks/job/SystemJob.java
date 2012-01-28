@@ -115,7 +115,7 @@ public final class SystemJob extends AbstractJob implements JobListener {
         outputText = s;
     }
 
-    private Process getProcess() {
+    public Process getProcess() {
         return (process);
     }
 

@@ -22,6 +22,8 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.nativeutil.WindowsKill;
+import org.jflicks.util.Util;
 
 /**
  * After finding, setting a frequency and a program, it's time to record
@@ -160,8 +162,21 @@ public class RecordJob extends BaseHDHRJob {
         JobContainer jc = getJobContainer();
         if (jc != null) {
 
-            jc.stop();
-            setJobContainer(null);
+            if (Util.isWindows()) {
+
+                SystemJob job = getSystemJob();
+                if (job != null) {
+
+                    WindowsKill.kill(job.getProcess());
+                    jc.stop();
+                    setJobContainer(null);
+                }
+
+            } else {
+
+                jc.stop();
+                setJobContainer(null);
+            }
         }
     }
 

@@ -1393,34 +1393,32 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         return (result);
     }
 
-    private String computeStreamURL(String s) {
+    private String computeStreamURL(String path) {
 
         String result = null;
 
         String h = getHost();
         String[] array = getConfiguredStreamPaths();
-        if ((h != null) && (array != null) && (s != null)) {
+        if ((h != null) && (array != null) && (path != null)) {
 
             boolean found = false;
-            if (s != null) {
+            path = path.replace("\\", "/");
+            for (int i = 0; i < array.length; i++) {
 
-                for (int i = 0; i < array.length; i++) {
+                if (path.startsWith(array[i])) {
 
-                    if (s.startsWith(array[i])) {
-
-                        s = s.substring(array[i].length());
-                        found = true;
-                        break;
-                    }
+                    path = path.substring(array[i].length());
+                    found = true;
+                    break;
                 }
             }
 
-            if ((found) && (s != null)) {
+            if ((found) && (path != null)) {
 
-                if (s.startsWith("/")) {
-                    result = "http://" + h + s;
+                if (path.startsWith("/")) {
+                    result = "http://" + h + path;
                 } else {
-                    result = "http://" + h + "/" + s;
+                    result = "http://" + h + "/" + path;
                 }
             }
         }
@@ -1440,6 +1438,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             String path = p.getPath();
             if (path != null) {
 
+                path = path.replace("\\", "/");
                 for (int i = 0; i < array.length; i++) {
 
                     if (path.startsWith(array[i])) {
@@ -1476,6 +1475,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             String path = l.getPath();
             if (path != null) {
 
+                path = path.replace("\\", "/");
                 for (int i = 0; i < array.length; i++) {
 
                     if (path.startsWith(array[i])) {
@@ -1528,6 +1528,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 boolean found = false;
                 if (path != null) {
 
+                    path = path.replace("\\", "/");
                     for (int i = 0; i < array.length; i++) {
 
                         if (path.startsWith(array[i])) {

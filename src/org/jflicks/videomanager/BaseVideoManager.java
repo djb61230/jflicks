@@ -202,6 +202,7 @@ public abstract class BaseVideoManager extends BaseConfig
             String path = v.getPath();
             if (path != null) {
 
+                path = path.replace("\\", "/");
                 for (int i = 0; i < array.length; i++) {
 
                     if (path.startsWith(array[i])) {

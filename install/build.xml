@@ -45,11 +45,17 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-jdom.jar"
             todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-jna.jar"
+            todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-nativeutil.jar"
+            todir="server/bundle"/>
         <copy file="${bundle}/jflicks-nms-system.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-nms-remote.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-photomanager-digikam.jar"
+            todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-platform.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-stream-http.jar"
             todir="server/bundle"/>
@@ -108,6 +114,8 @@
         <copy file="${bundle}/jflicks-jna.jar"
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-jdom.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-nativeutil.jar"
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-nms-system.jar"
             todir="cs/bundle"/>
@@ -198,6 +206,8 @@
         <copy file="${bundle}/jflicks-rc-lirc.jar"
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-rc-lirc-32.jar"
+            todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-rc-winlirc.jar"
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-imagecache-system.jar"
             todir="cs/bundle"/>

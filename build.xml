@@ -680,6 +680,15 @@
         />
 
         <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-nativeutil.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
             classpath="${lib}/jdom.jar"
             eclipse="false"
             failok="false"

@@ -713,6 +713,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         if ((ic != null) && (r != null)) {
 
             String path = r.getPath();
+            System.out.println("path <" + path + ">");
             File tmp = new File(path);
             if ((tmp.exists()) && (tmp.isFile())) {
 
@@ -736,6 +737,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 // from the "indexed" video version.  So we have to do some
                 // trickery here.
                 String surl = r.getStreamURL();
+                System.out.println("streamurl <" + surl + ">");
                 if (surl != null) {
 
                     String iext = r.getIndexedExtension();

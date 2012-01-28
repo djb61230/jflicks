@@ -831,7 +831,7 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
 
                 log(DEBUG, "About to resize to little");
                 p.setSize(r);
-                requestFocus();
+                //requestFocus();
                 updateLayout(false);
 
             } else {

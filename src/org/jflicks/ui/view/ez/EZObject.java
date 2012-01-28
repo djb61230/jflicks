@@ -115,7 +115,6 @@ public class EZObject implements Serializable {
             elist.add(ind);
             for (int i = 0; i < tarray.length; i++) {
 
-                System.out.println("poop: " + tarray[i].isIndexer());
                 if (tarray[i].isIndexer()) {
 
                     ind = new EZIndexer();
@@ -210,7 +209,6 @@ public class EZObject implements Serializable {
                 setRecorders(rnames);
             }
 
-            System.out.println("recsource: " + recsource);
             if (recsource != null) {
 
                 setListingNames(getListingNames(array, recsource, true));
