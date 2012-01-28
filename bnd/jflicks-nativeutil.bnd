@@ -1,0 +1,11 @@
+custom=true
+
+Bundle-Version: 1.0.0
+
+Export-Package:\
+ org.jflicks.nativeutil;version="1.0.0"
+
+Import-Package:\
+ org.jflicks.job;version="1.0.0",\
+ org.jflicks.nativeutil;version="1.0.0",\
+ com.sun.jna
