@@ -173,8 +173,8 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
             if (isParameterSoftwareUpdate()) {
 
                 updateLayout(true);
-                SystemJob job =
-                    SystemJob.getInstance("./update." + getScriptExtension());
+                SystemJob job = SystemJob.getInstance(getScriptPrefix()
+                    + "update." + getScriptExtension());
                 setSystemJob(job);
                 Busy busy = new Busy(getLayeredPane(), job);
                 busy.addJobListener(this);
@@ -252,8 +252,8 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
                 FrontEndView fev = (FrontEndView) getView();
                 if (fev != null) {
 
-                    SystemJob job = SystemJob.getInstance("./restart."
-                        + getScriptExtension());
+                    SystemJob job = SystemJob.getInstance(getScriptPrefix()
+                        + "restart." + getScriptExtension());
                     JobContainer jc = JobManager.getJobContainer(job);
                     jc.start();
                     fev.exitAction(false);
@@ -416,6 +416,17 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
         if (Util.isWindows()) {
             result = "cmd";
+        }
+
+        return (result);
+    }
+
+    private String getScriptPrefix() {
+
+        String result = "";
+
+        if (Util.isLinux()) {
+            result = "./";
         }
 
         return (result);
