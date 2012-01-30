@@ -19,6 +19,7 @@ package org.jflicks.ui.view.fe.screen.recording;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
@@ -34,6 +35,7 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 
 import org.jflicks.imagecache.ImageCache;
 import org.jflicks.mvc.View;
@@ -69,6 +71,9 @@ import org.jdesktop.swingx.painter.MattePainter;
 public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     PropertyChangeListener {
 
+    private static final String AUTO_SKIP_IS_ON = "Auto Skip is On";
+    private static final String AUTO_SKIP_IS_OFF = "Auto Skip is Off";
+
     private Recording[] recordings;
     private RecordingListPanel groupRecordingListPanel;
     private RecordingListPanel recordingListPanel;
@@ -86,6 +91,9 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     private boolean playingVideo;
     private Transfer transfer;
     private String streamType;
+    private boolean autoSkip;
+    private Timer autoSkipTimer;
+    private AutoSkipActionListener autoSkipActionListener;
 
     /**
      * Simple empty constructor.
@@ -135,6 +143,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         EnterAction enterAction = new EnterAction();
         map.put(KeyStroke.getKeyStroke("ENTER"), "enter");
         getActionMap().put("enter", enterAction);
+
+        AutoSkipActionListener asal = new AutoSkipActionListener();
+        setAutoSkipActionListener(asal);
+        Timer t = new Timer(1000, asal);
+        t.setInitialDelay(5000);
+        setAutoSkipTimer(t);
     }
 
     public Transfer getTransfer() {
@@ -500,6 +514,30 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
     private void setRestoreState(boolean b) {
         restoreState = b;
+    }
+
+    private boolean isAutoSkip() {
+        return (autoSkip);
+    }
+
+    private void setAutoSkip(boolean b) {
+        autoSkip = b;
+    }
+
+    private AutoSkipActionListener getAutoSkipActionListener() {
+        return (autoSkipActionListener);
+    }
+
+    private void setAutoSkipActionListener(AutoSkipActionListener l) {
+        autoSkipActionListener = l;
+    }
+
+    private Timer getAutoSkipTimer() {
+        return (autoSkipTimer);
+    }
+
+    private void setAutoSkipTimer(Timer t) {
+        autoSkipTimer = t;
     }
 
     private void preserveState() {
@@ -1066,6 +1104,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         if (t != null) {
             t.transfer(null, 0, 0);
         }
+
+        Timer timer = getAutoSkipTimer();
+        if (timer != null) {
+
+            timer.stop();
+        }
     }
 
     /**
@@ -1225,6 +1269,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             Player p = getPlayer();
             if ((p != null) && (!p.isPlaying()) && (r != null)) {
 
+                boolean doUnpopup = true;
+
                 ButtonPanel pbp = getPlayButtonPanel();
                 if (PLAY.equals(pbp.getSelectedButton())) {
 
@@ -1251,6 +1297,17 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     setCurrentRecording(r);
                     updateLengthHint(r, p);
                     controlKeyboard(false);
+
+                    if (isAutoSkip()) {
+
+                        AutoSkipActionListener asal = getAutoSkipActionListener();
+                        Timer timer = getAutoSkipTimer();
+                        if ((asal != null) && (timer != null)) {
+
+                            asal.setRecording(r);
+                            timer.start();
+                        }
+                    }
 
                     p.setFrame(Util.findFrame(this));
                     addBlankPanel();
@@ -1293,6 +1350,19 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                             bm.setPreferTime(false);
                         }
 
+                        if (isAutoSkip()) {
+
+
+                            AutoSkipActionListener asal =
+                                getAutoSkipActionListener();
+                            Timer timer = getAutoSkipTimer();
+                            if ((asal != null) && (timer != null)) {
+
+                                asal.setRecording(r);
+                                timer.start();
+                            }
+                        }
+
                         controlKeyboard(false);
                         p.setFrame(Util.findFrame(this));
                         addBlankPanel();
@@ -1319,9 +1389,27 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 } else if (CANCEL.equals(pbp.getSelectedButton())) {
 
                     log(DEBUG, "cancel hit");
+
+                } else {
+
+                    boolean old = isAutoSkip();
+                    setAutoSkip(!isAutoSkip());
+                    doUnpopup = false;
+                    String[] barray = pbp.getButtons();
+                    if ((barray != null) && (barray.length > 2)) {
+                        if (old) {
+                            barray[barray.length - 2] = AUTO_SKIP_IS_OFF;
+                        } else {
+                            barray[barray.length - 2] = AUTO_SKIP_IS_ON;
+                        }
+                        pbp.setButtons(barray);
+                    }
                 }
 
-                unpopup();
+                if (doUnpopup) {
+
+                    unpopup();
+                }
             }
         }
     }
@@ -1528,9 +1616,15 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                             blist.add(DELETE);
                             blist.add(DELETE_ALLOW_RERECORDING);
                         }
+                        if (isAutoSkip()) {
+                            blist.add(AUTO_SKIP_IS_ON);
+                        } else {
+                            blist.add(AUTO_SKIP_IS_OFF);
+                        }
                         blist.add(CANCEL);
 
-                        popup(blist.toArray(new String[blist.size()]));
+                        String[] barray = blist.toArray(new String[blist.size()]);
+                        popup(barray);
                     }
                 }
             }
@@ -1546,6 +1640,74 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             String title1 = Util.toSortableTitle(r1.getTitle());
 
             return (title0.compareTo(title1));
+        }
+    }
+
+    class AutoSkipActionListener implements ActionListener {
+
+        private Recording recording;
+
+        public AutoSkipActionListener() {
+        }
+
+        public Recording getRecording() {
+            return (recording);
+        }
+
+        public void setRecording(Recording r) {
+            recording = r;
+        }
+
+        private boolean isTimeToSkip(double current, double start, double end) {
+
+            return ((current >= start) && (current < end));
+        }
+
+        private boolean isTimeToSkip(double current, Integer[] array) {
+
+            boolean result = false;
+
+            if ((array != null) && (array.length > 0)) {
+
+                for (int i = 0; i < array.length; i += 2) {
+
+                    double start = array[i].doubleValue();
+                    double end = array[i + 1].doubleValue();
+                    if (start > 0.0) {
+
+                        if (isTimeToSkip(current, start, end)) {
+
+                            result = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return (result);
+        }
+
+        public void actionPerformed(ActionEvent event) {
+
+            Player p = getPlayer();
+            Recording r = getRecording();
+            if ((r != null) && (p != null) && (p.isPlaying())) {
+
+                Commercial[] carray = r.getCommercials();
+                if ((carray != null) && (carray.length > 0)) {
+
+                    Integer[] timeline = Commercial.timeline(carray);
+                    PlayState ps = p.getPlayState();
+                    if ((ps != null) && (timeline != null)) {
+
+                        double current = ps.getTime();
+                        if (isTimeToSkip(current, timeline)) {
+
+                            skipforward();
+                        }
+                    }
+                }
+            }
         }
     }
 
