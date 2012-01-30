@@ -1,0 +1,25 @@
+module=org.jflicks.update.system
+custom=true
+
+Bundle-Version: 1.0.0
+
+Bundle-Activator: ${module}.Activator
+
+Include-Resource:\
+ ../lib/commons-io-2.1.jar
+
+Bundle-ClassPath:\
+ .,\
+ commons-io-2.1.jar
+
+Import-Package:\
+ org.jflicks.update;version="1.0.0",\
+ org.jflicks.util;version="1.0.0",\
+ org.jdom;version="1.0.0",\
+ org.jdom.input;version="1.0.0",\
+ org.osgi.framework;version="[1.3,2.0)",\
+ org.osgi.service.log;version="[1.0,4.0)",\
+ org.osgi.util.tracker;version="[1.3,2.0)"
+
+Export-Package:\
+ ${module}

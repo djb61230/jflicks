@@ -19,6 +19,7 @@ Import-Package:\
  org.jflicks.tv;version="1.0.0",\
  org.jflicks.ui.view.fe;version="1.0.0",\
  org.jflicks.ui.view.fe.screen;version="1.0.0",\
+ org.jflicks.update;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\
  org.osgi.framework;version="[1.3,2.0)",\
  org.osgi.service.event;version="[1.0,2.0)",\

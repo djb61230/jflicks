@@ -19,9 +19,15 @@ package org.jflicks.ui.view.fe.screen.systemstatus;
 import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import javax.swing.AbstractAction;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
 import org.jflicks.job.JobContainer;
@@ -31,11 +37,15 @@ import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.State;
+import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.MessagePanel;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
 import org.jflicks.ui.view.fe.screen.Screen;
+import org.jflicks.update.Update;
+import org.jflicks.update.UpdateProperty;
+import org.jflicks.update.UpdateState;
 import org.jflicks.util.Busy;
 import org.jflicks.util.Util;
 
@@ -50,20 +60,26 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @version 1.0
  */
 public class SystemStatusScreen extends Screen implements ParameterProperty,
-    NMSProperty, JobListener {
+    NMSProperty, UpdateProperty, ActionListener, JobListener {
 
     private static final String RESTART = "Restart";
     private static final String SOFTWARE_UPDATE = "Software Update";
     private static final String STATISTICS = "Statistics";
     private static final String RSYNC_MESSAGE = "sending incremental file list";
     private static final long GIGABYTE = 1073741824L;
+    private static final String CANCEL = "Cancel";
 
     private NMS[] nms;
     private String[] parameters;
     private String selectedParameter;
     private JXPanel waitPanel;
     private MessagePanel messagePanel;
-    private SystemJob systemJob;
+    private boolean popupEnabled;
+    private ButtonPanel buttonPanel;
+    private UpdateOpenJob updateOpenJob;
+    private UpdateJob updateJob;
+    private Update update;
+    private UpdateState updateState;
 
     /**
      * Simple empty constructor.
@@ -82,6 +98,15 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
         };
 
         setParameters(array);
+
+        InputMap map = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        UpAction upAction = new UpAction();
+        map.put(KeyStroke.getKeyStroke("UP"), "up");
+        getActionMap().put("up", upAction);
+
+        DownAction downAction = new DownAction();
+        map.put(KeyStroke.getKeyStroke("DOWN"), "down");
+        getActionMap().put("down", downAction);
     }
     /**
      * {@inheritDoc}
@@ -151,6 +176,28 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
     /**
      * {@inheritDoc}
      */
+    public Update getUpdate() {
+        return (update);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setUpdate(Update u) {
+        update = u;
+    }
+
+    private UpdateState getUpdateState() {
+        return (updateState);
+    }
+
+    private void setUpdateState(UpdateState us) {
+        updateState = us;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void save() {
     }
 
@@ -173,9 +220,8 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
             if (isParameterSoftwareUpdate()) {
 
                 updateLayout(true);
-                SystemJob job = SystemJob.getInstance(getScriptPrefix()
-                    + "update." + getScriptExtension());
-                setSystemJob(job);
+                UpdateOpenJob job = new UpdateOpenJob(getUpdate());
+                setUpdateOpenJob(job);
                 Busy busy = new Busy(getLayeredPane(), job);
                 busy.addJobListener(this);
                 busy.execute();
@@ -319,58 +365,86 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
     /**
      * {@inheritDoc}
      */
+    public void actionPerformed(ActionEvent event) {
+
+        ButtonPanel bp = getButtonPanel();
+        if (bp != null) {
+
+            if (!CANCEL.equals(bp.getSelectedButton())) {
+
+                updateLayout(true);
+                UpdateJob job = new UpdateJob(getUpdate(), getUpdateState());
+                setUpdateJob(job);
+                Busy busy = new Busy(getLayeredPane(), job);
+                busy.addJobListener(this);
+                busy.execute();
+            }
+        }
+
+        unpopup();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void jobUpdate(JobEvent event) {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            System.out.println("The update finished!!!!!");
+            if (event.getSource() == getUpdateOpenJob()) {
 
-            int bundleCount = 0;
-            SystemJob job = getSystemJob();
-            if (job != null) {
+                System.out.println("The update open finished!");
+                if (event.getState() instanceof UpdateState) {
 
-                String text = job.getOutputText();
-                if (text != null) {
+                    UpdateState us = (UpdateState) event.getState();
+                    MessagePanel mp = getMessagePanel();
+                    if (mp != null) {
 
-                    int index = text.indexOf(RSYNC_MESSAGE);
-                    if (index != -1) {
+                        String message =
+                            "No need to restart as there were no updates.";
+                        int bundleCount = us.getUpdateCount();
+                        if (bundleCount > 0) {
 
-                        text = text.substring(index);
-                        String[] lines = text.split("\n");
-                        if ((lines != null) && (lines.length > 0)) {
-
-                            for (int i = 0; i < lines.length; i++) {
-
-                                if (lines[i].startsWith("jflicks")) {
-                                    bundleCount++;
-                                }
+                            if (bundleCount == 1) {
+                                message = "There is 1 update.";
+                            } else {
+                                message = "There are " + bundleCount
+                                    + " updates.";
                             }
+                            mp.setLineWrap(false);
+                            mp.setMessage(message);
+                            updateLayout(false);
+                            setUpdateState(us);
+                            popup(message);
+
+                        } else {
+
+                            mp.setLineWrap(false);
+                            mp.setMessage(message);
+                            updateLayout(false);
+                            getUpdate().close(us);
                         }
                     }
                 }
-                setSystemJob(null);
-            }
 
-            System.out.println("bundleCount: " + bundleCount);
-            MessagePanel mp = getMessagePanel();
-            if (mp != null) {
+            } else if (event.getSource() == getUpdateJob()) {
 
-                String message = "No need to restart as there were no updates.";
-                if (bundleCount > 0) {
+                if (event.getState() instanceof Boolean) {
 
-                    String more = " was";
-                    if (bundleCount > 1) {
-                        more = "s were";
+                    Boolean bobj = (Boolean) event.getState();
+                    MessagePanel mp = getMessagePanel();
+                    if (mp != null) {
+
+                        String message = "Update complete, please restart.";
+                        if (!bobj.booleanValue()) {
+                            message = "There was an error, try again later.";
+                        }
+                        mp.setLineWrap(false);
+                        mp.setMessage(message);
+                        updateLayout(false);
                     }
-                    message = "Please restart as " + bundleCount + " update"
-                        + more + " found.";
                 }
-
-                mp.setLineWrap(false);
-                mp.setMessage(message);
             }
-
-            updateLayout(false);
         }
     }
 
@@ -390,12 +464,28 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
         messagePanel = p;
     }
 
-    private SystemJob getSystemJob() {
-        return (systemJob);
+    private ButtonPanel getButtonPanel() {
+        return (buttonPanel);
     }
 
-    private void setSystemJob(SystemJob j) {
-        systemJob = j;
+    private void setButtonPanel(ButtonPanel p) {
+        buttonPanel = p;
+    }
+
+    private UpdateOpenJob getUpdateOpenJob() {
+        return (updateOpenJob);
+    }
+
+    private void setUpdateOpenJob(UpdateOpenJob j) {
+        updateOpenJob = j;
+    }
+
+    private UpdateJob getUpdateJob() {
+        return (updateJob);
+    }
+
+    private void setUpdateJob(UpdateJob j) {
+        updateJob = j;
     }
 
     private boolean isParameterRestart() {
@@ -430,6 +520,109 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
         }
 
         return (result);
+    }
+
+    private boolean isPopupEnabled() {
+        return (popupEnabled);
+    }
+
+    private void setPopupEnabled(boolean b) {
+        popupEnabled = b;
+    }
+
+    private void popup(String select) {
+
+        JLayeredPane pane = getLayeredPane();
+        System.out.println("pane: " + pane);
+        if (pane != null) {
+
+            setPopupEnabled(true);
+            Dimension d = pane.getSize();
+            int width = (int) d.getWidth();
+            int height = (int) d.getHeight();
+
+            // See if we have an image as a background...
+            BufferedImage bi = null;
+            FrontEndView fe = (FrontEndView) getView();
+            if (fe != null) {
+
+                bi = fe.getLogoImage();
+            }
+
+            String[] choices = new String[2];
+            choices[0] = select;
+            choices[1] = CANCEL;
+
+            ButtonPanel bp = new ButtonPanel();
+            bp.addActionListener(this);
+            bp.setButtons(choices);
+            bp.setBufferedImage(bi);
+            setButtonPanel(bp);
+
+            d = bp.getPreferredSize();
+            int bpwidth = (int) d.getWidth();
+            int bpheight = (int) d.getHeight();
+            int bpx = (int) ((width - bpwidth) / 2);
+            int bpy = (int) ((height - bpheight) / 2);
+            bp.setBounds(bpx, bpy, bpwidth, bpheight);
+
+            System.out.println("bp bounds: " + bp.getBounds());
+            pane.add(bp, Integer.valueOf(300));
+            bp.setControl(true);
+            bp.setButtons(choices);
+            bp.requestFocus();
+        }
+    }
+
+    private void unpopup() {
+
+        setPopupEnabled(false);
+        JLayeredPane pane = getLayeredPane();
+        ButtonPanel bp = getButtonPanel();
+        if ((pane != null) && (bp != null)) {
+
+            bp.removeActionListener(this);
+            setButtonPanel(null);
+            pane.remove(bp);
+            pane.repaint();
+        }
+    }
+
+    class UpAction extends AbstractAction {
+
+        public UpAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            System.out.println("fred");
+            if (isPopupEnabled()) {
+
+                ButtonPanel bp = getButtonPanel();
+                if (bp != null) {
+
+                    bp.moveUp();
+                }
+            }
+        }
+    }
+
+    class DownAction extends AbstractAction {
+
+        public DownAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            if (isPopupEnabled()) {
+
+                ButtonPanel bp = getButtonPanel();
+                if (bp != null) {
+
+                    bp.moveDown();
+                }
+            }
+        }
     }
 
 }

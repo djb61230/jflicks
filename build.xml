@@ -689,6 +689,15 @@
         />
 
         <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-update-system.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
             classpath="${lib}/jdom.jar"
             eclipse="false"
             failok="false"
@@ -1140,6 +1149,18 @@
     <target name="test-hdhr-parse" depends="build">
 
         <java classname="org.jflicks.tv.recorder.hdhr.ParseScanFile" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-bundle-tree" depends="build">
+
+        <java classname="org.jflicks.update.system.BundleTree" fork="true">
 
             <classpath>
                 <path refid="runtime.classpath"/>

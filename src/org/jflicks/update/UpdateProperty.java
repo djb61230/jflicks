@@ -14,43 +14,28 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.util;
-
-import java.io.File;
-import java.io.FilenameFilter;
+package org.jflicks.update;
 
 /**
- * Given a set of extensions, create a FilenameFilter.
+ * The UpdateProperty is a get/set pair for classes that want to be
+ * notified by an UpdateTracker.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class BundleFilter implements FilenameFilter {
+public interface UpdateProperty {
 
     /**
-     * Empty contructor.
-     */
-    public BundleFilter() {
-    }
-
-    /**
-     * Check a File.
+     * The Update property.
      *
-     * @param dir The directory where is located (we don't care).
-     * @param name The name of the file.
-     * @return True if any of the extensions match.
+     * @return The Update instance.
      */
-    public boolean accept(File dir, String name) {
+    Update getUpdate();
 
-        boolean result = false;
-
-        if ((name != null) && (name.startsWith("jflicks-"))
-            && (name.endsWith(".jar"))) {
-
-            result = true;
-        }
-
-        return (result);
-    }
-
+    /**
+     * The Update property.
+     *
+     * @param ic The Update instance.
+     */
+    void setUpdate(Update ic);
 }

@@ -209,6 +209,8 @@
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-rc-winlirc.jar"
             todir="cs/bundle"/>
+        <copy file="${bundle}/jflicks-update-system.jar"
+            todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-imagecache-system.jar"
             todir="cs/bundle"/>
         <copy file="${bundle}/jflicks-videomanager-system.jar"
@@ -293,6 +295,8 @@
         <!-- Now do fe side. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-jdom.jar"
+            todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-jna.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-platform.jar"
@@ -346,6 +350,8 @@
         <copy file="${bundle}/jflicks-ui-view-fe-screen-systemstatus.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-ui-view-fe-screen-video.jar"
+            todir="fe/bundle"/>
+        <copy file="${bundle}/jflicks-update-system.jar"
             todir="fe/bundle"/>
         <copy file="${bundle}/jflicks-rc-lirc.jar"
             todir="fe/bundle"/>

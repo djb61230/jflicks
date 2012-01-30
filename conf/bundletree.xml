@@ -1,0 +1,310 @@
+<bundletree>
+    <bundle name="jflicks-autoart-system" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-metadata-themoviedb"/>
+        <needs name="jflicks-thetvdbapi"/>
+    </bundle>
+    <bundle name="jflicks-base" feature="no">
+        <needs name="jflicks-swingx"/>
+    </bundle>
+    <bundle name="jflicks-imagecache-system" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-jdom" feature="no">
+    </bundle>
+    <bundle name="jflicks-jna" feature="no">
+    </bundle>
+    <bundle name="jflicks-metadata-themoviedb" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-jdom"/>
+        <needs name="jflicks-swingx"/>
+    </bundle>
+    <bundle name="jflicks-metadata-thetvdb" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-thetvdbapi"/>
+    </bundle>
+    <bundle name="jflicks-nativeutil" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-jna"/>
+    </bundle>
+    <bundle name="jflicks-nms-remote" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-nms-system" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-photomanager-digikam" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-sqlitejdbc"/>
+    </bundle>
+    <bundle name="jflicks-platform" feature="no">
+    </bundle>
+    <bundle name="jflicks-player-chrome" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-player-hulu" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-player-mplayer-video" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-jna"/>
+    </bundle>
+    <bundle name="jflicks-player-mplayer-video-program-stream" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-jna"/>
+    </bundle>
+    <bundle name="jflicks-player-mplayer-video-transport-stream" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-jna"/>
+    </bundle>
+    <bundle name="jflicks-player-photoshow" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+    </bundle>
+    <bundle name="jflicks-player-vlcdvd" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-player-vlcj-video" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-player-vlcj-video-stream-udp" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-rc-lirc-32" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-rc-lirc" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-rc-winlirc" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-sqlitejdbc" feature="no">
+    </bundle>
+    <bundle name="jflicks-stream-http" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-jdom"/>
+    </bundle>
+    <bundle name="jflicks-swingx" feature="no">
+    </bundle>
+    <bundle name="jflicks-themoviedbapi" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-jdom"/>
+        <needs name="jflicks-swingx"/>
+    </bundle>
+    <bundle name="jflicks-thetvdbapi" feature="no">
+    </bundle>
+    <bundle name="jflicks-timingframework" feature="no">
+    </bundle>
+    <bundle name="jflicks-trailer-apple" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-jdom"/>
+    </bundle>
+    <bundle name="jflicks-transfer-system" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-live-system" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-ondemand-roku" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-postproc-system" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-postproc-worker-comrat" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-postproc-worker-comskip" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-postproc-worker-ffmpegscreenshot" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-postproc-worker-indexer" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-postproc-worker-mediainfo" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-postproc-worker-projectx" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-programdata-sd" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-jdom"/>
+    </bundle>
+    <bundle name="jflicks-tv-recorder-dvb" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-recorder-hdhr" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-nativeutil"/>
+    </bundle>
+    <bundle name="jflicks-tv-recorder-v4l2" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-tv-scheduler-system" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-ui" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-advanced" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-aspirin-analyze" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-ui-view-aspirin-analyze-lirc"/>
+        <needs name="jflicks-ui-view-aspirin-analyze-path"/>
+        <needs name="jflicks-ui-view-aspirin-analyze-schedulesdirect"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-aspirin-analyze-lirc" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-aspirin-analyze-path" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-aspirin-analyze-schedulesdirect" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-aspirin" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view"/>
+        <needs name="jflicks-ui-view-aspirin-analyze"/>
+    </bundle>
+    <bundle name="jflicks-ui-view" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-ez" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-platform"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-timingframework"/>
+        <needs name="jflicks-ui-view"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-dvd" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-googletv" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-hulu" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-livetv" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-ondemand" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-photo" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-preference" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-preview" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-recording" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-timingframework"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-schedule" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-timingframework"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-script" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-systemstatus" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-timingframework"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+        <needs name="jflicks-update-system"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-fe-screen-video" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-timingframework"/>
+        <needs name="jflicks-ui-view-fe"/>
+        <needs name="jflicks-ui-view-fe-screen"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-metadata" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-scheduler" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view"/>
+    </bundle>
+    <bundle name="jflicks-ui-view-vm" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-swingx"/>
+        <needs name="jflicks-ui-view"/>
+    </bundle>
+    <bundle name="jflicks-update-system" feature="no">
+        <needs name="jflicks-base"/>
+        <needs name="jflicks-jdom"/>
+    </bundle>
+    <bundle name="jflicks-videomanager-system" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+    <bundle name="jflicks-videomanager-yamj" feature="no">
+        <needs name="jflicks-base"/>
+    </bundle>
+</bundletree>

@@ -41,6 +41,7 @@ Export-Package:\
  org.jflicks.tv.programdata;version="1.0.0",\
  org.jflicks.tv.recorder;version="1.0.0",\
  org.jflicks.tv.scheduler;version="1.0.0",\
+ org.jflicks.update;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\
  org.jflicks.videomanager;version="1.0.0",\
  org.jflicks.wizard;version="1.0.0"
@@ -70,6 +71,7 @@ Import-Package:\
  org.jflicks.tv.programdata;version="1.0.0",\
  org.jflicks.tv.recorder;version="1.0.0",\
  org.jflicks.tv.scheduler;version="1.0.0",\
+ org.jflicks.update;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\
  org.jflicks.videomanager;version="1.0.0",\
  org.jflicks.wizard;version="1.0.0",\

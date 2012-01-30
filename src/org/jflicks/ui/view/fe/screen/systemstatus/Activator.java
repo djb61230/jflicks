@@ -20,6 +20,7 @@ import java.util.Hashtable;
 
 import org.jflicks.rc.RCTracker;
 import org.jflicks.ui.view.fe.screen.Screen;
+import org.jflicks.update.UpdateTracker;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
@@ -39,6 +40,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends BaseActivator {
 
     private RCTracker rcTracker;
+    private UpdateTracker updateTracker;
     private ServiceTracker logServiceTracker;
 
     /**
@@ -63,6 +65,10 @@ public class Activator extends BaseActivator {
         setRCTracker(rct);
         rct.open();
 
+        UpdateTracker ut = new UpdateTracker(bc, s);
+        setUpdateTracker(ut);
+        ut.open();
+
         Hashtable<String, String> dict = new Hashtable<String, String>();
         dict.put(Screen.TITLE_PROPERTY, s.getTitle());
 
@@ -84,6 +90,11 @@ public class Activator extends BaseActivator {
             rct.close();
         }
 
+        UpdateTracker ut = getUpdateTracker();
+        if (ut != null) {
+            ut.close();
+        }
+
         if (logServiceTracker != null) {
 
             logServiceTracker.close();
@@ -97,6 +108,14 @@ public class Activator extends BaseActivator {
 
     private void setRCTracker(RCTracker t) {
         rcTracker = t;
+    }
+
+    private UpdateTracker getUpdateTracker() {
+        return (updateTracker);
+    }
+
+    private void setUpdateTracker(UpdateTracker t) {
+        updateTracker = t;
     }
 
 }
