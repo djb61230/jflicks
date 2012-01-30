@@ -96,6 +96,7 @@
         <copy file="${bundle}/jflicks-sqlitejdbc.jar"
             todir="server/bundle"/>
         <copy file="${topdist}/directvweb.jar" todir="server/bin"/>
+        <copy file="${topdist}/jflicks-update.jar" todir="server/bin"/>
         <copy file="${resources}/roku_recordings.png" todir="server/www"/>
         <copy file="${resources}/roku_rules.png" todir="server/www"/>
         <copy file="${resources}/roku_schedule_channel.png" todir="server/www"/>

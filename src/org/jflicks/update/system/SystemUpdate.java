@@ -158,5 +158,35 @@ public class SystemUpdate extends BaseUpdate {
         }
     }
 
+    public static void main(String[] args) {
+
+        String dir = "bundle";
+        String sourceURL = "http://www.jflicks.org/repository/";
+
+        for (int i = 0; i < args.length; i += 2) {
+
+            if (args[i].equalsIgnoreCase("-dir")) {
+                dir = args[i + 1];
+            } else if (args[i].equalsIgnoreCase("-sourceURL")) {
+                sourceURL = args[i + 1];
+            }
+        }
+
+        SystemUpdate su = new SystemUpdate();
+        su.setBundleDirectory(dir);
+        su.setSourceURL(sourceURL);
+
+        UpdateState us = su.open();
+        if (us != null) {
+
+            if (us.getUpdateCount() > 0) {
+
+                su.update(us);
+            }
+
+            su.close(us);
+        }
+    }
+
 }
 

@@ -85,6 +85,18 @@
 
         </jar>
 
+        <jar destfile="${dist}/jflicks-update.jar" basedir="${build}"
+            excludes="**/test/*.class">
+
+            <zipfileset includes="**/*.class" src="lib/jdom.jar"/>
+            <zipfileset includes="**/*.class" src="lib/commons-io-2.1.jar"/>
+            <manifest>
+                <attribute name="Main-Class"
+                    value="org.jflicks.update.system.SystemUpdate"/>
+            </manifest>
+
+        </jar>
+
         <bnd
             classpath="${build}"
             eclipse="false"

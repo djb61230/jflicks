@@ -304,7 +304,6 @@ public final class BundleTree {
                         for (int i = 0; i < namelist.size(); i++) {
 
                             String bunname = namelist.get(i) + ".jar";
-                            System.out.println(bunname);
                             if (isNewBundle(bunname, bundles)) {
 
                                 File newone = new File(fdir, bunname);
@@ -324,15 +323,12 @@ public final class BundleTree {
     public static void main(String[] args) {
 
         String dir = "bundle";
-        String tmpdir = "repository";
         String sourceURL = "http://www.jflicks.org/repository/";
 
         for (int i = 0; i < args.length; i += 2) {
 
             if (args[i].equalsIgnoreCase("-dir")) {
                 dir = args[i + 1];
-            } else if (args[i].equalsIgnoreCase("-tmpdir")) {
-                tmpdir = args[i + 1];
             } else if (args[i].equalsIgnoreCase("-sourceURL")) {
                 sourceURL = args[i + 1];
             }

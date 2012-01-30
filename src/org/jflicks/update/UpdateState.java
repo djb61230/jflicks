@@ -43,10 +43,8 @@ public class UpdateState implements Serializable {
         try {
 
             File f = File.createTempFile("update", ".tmp");
-            System.out.println("gern: " + f);
             if ((f != null) && (f.isFile()) && (f.exists())) {
 
-                System.out.println("gern2: " + f);
                 if (!f.delete()) {
 
                     System.out.println("Can't delete temp file meant as dir");
