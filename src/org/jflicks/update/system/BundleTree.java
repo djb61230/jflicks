@@ -78,6 +78,27 @@ public final class BundleTree {
         return (result);
     }
 
+    private int getContentLengthURL(String urlstr) {
+
+        int result = 0;
+
+        if (urlstr != null) {
+
+            try {
+
+                URL url = new URL(urlstr);
+                URLConnection conn = url.openConnection();
+                result = conn.getContentLength();
+
+            } catch (IOException ex) {
+
+                System.out.println("Warning: " + ex.getMessage());
+            }
+        }
+
+        return (result);
+    }
+
     private boolean isNewerURL(File f, String url) {
 
         boolean result = false;
@@ -85,6 +106,19 @@ public final class BundleTree {
         if ((f != null) && (url != null)) {
 
             result = (f.lastModified() < lastModifiedURL(url));
+            if (result) {
+
+                // Ok the file is newer.  But we want to assume the
+                // file is the same if it's the same size.  We are taking
+                // a chance here because there could be changes and the
+                // jar could stay the same size.  Most likely not but it
+                // could happen.
+                long size = (long) getContentLengthURL(url);
+                if (size != -1) {
+
+                    result = f.length() != size;
+                }
+            }
         }
 
         return (result);
