@@ -57,30 +57,9 @@ public final class BundleTree {
         return (instance);
     }
 
-    private long lastModifiedURL(String urlstr) {
+    private WhenSize getWhenSize(String urlstr) {
 
-        long result = 0L;
-
-        if (urlstr != null) {
-
-            try {
-
-                URL url = new URL(urlstr);
-                URLConnection conn = url.openConnection();
-                result = conn.getLastModified();
-
-            } catch (IOException ex) {
-
-                System.out.println("Warning: " + ex.getMessage());
-            }
-        }
-
-        return (result);
-    }
-
-    private int getContentLengthURL(String urlstr) {
-
-        int result = 0;
+        WhenSize result = null;
 
         if (urlstr != null) {
 
@@ -88,7 +67,8 @@ public final class BundleTree {
 
                 URL url = new URL(urlstr);
                 URLConnection conn = url.openConnection();
-                result = conn.getContentLength();
+                result = new WhenSize(conn.getLastModified(),
+                    (long) conn.getContentLength());
 
             } catch (IOException ex) {
 
@@ -105,18 +85,25 @@ public final class BundleTree {
 
         if ((f != null) && (url != null)) {
 
-            result = (f.lastModified() < lastModifiedURL(url));
-            if (result) {
+            WhenSize ws = getWhenSize(url);
+            if (ws != null) {
 
-                // Ok the file is newer.  But we want to assume the
-                // file is the same if it's the same size.  We are taking
-                // a chance here because there could be changes and the
-                // jar could stay the same size.  Most likely not but it
-                // could happen.
-                long size = (long) getContentLengthURL(url);
-                if (size != -1) {
+                result = (f.lastModified() < ws.getWhen());
+                if (result) {
 
-                    result = f.length() != size;
+                    // Ok the file is newer.  But we want to assume the
+                    // file is the same if it's the same size.  Looks like
+                    // the compiler/jar program sometimes makes the file
+                    // off by a byte or two even though no code has changed.
+                    // This could be something like a date in the MANIFEST
+                    // using the day of the week or something.  Whatever we
+                    // will assume if there are many code changes then the
+                    // file size will be much different.
+                    long size = ws.getSize();
+                    if (size != -1L) {
+
+                        result = Math.abs(f.length() - size) > 2L;
+                    }
                 }
             }
         }
@@ -352,6 +339,35 @@ public final class BundleTree {
         }
 
         return (result);
+    }
+
+    private class WhenSize {
+
+        private long when;
+        private long size;
+
+        public WhenSize(long when, long size) {
+
+            setWhen(when);
+            setSize(size);
+        }
+
+        public long getWhen() {
+            return (when);
+        }
+
+        private void setWhen(long l) {
+            when = l;
+        }
+
+        public long getSize() {
+            return (size);
+        }
+
+        private void setSize(long l) {
+            size = l;
+        }
+
     }
 
     public static void main(String[] args) {
