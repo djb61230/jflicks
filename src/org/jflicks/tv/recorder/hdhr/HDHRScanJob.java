@@ -18,6 +18,7 @@ package org.jflicks.tv.recorder.hdhr;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.jflicks.job.AbstractJob;
@@ -237,6 +238,7 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
                 if ((array != null) && (array.length > 0)) {
 
                     Arrays.sort(array);
+                    ArrayList<String> foundlist = new ArrayList<String>();
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < array.length; i++) {
 
@@ -244,6 +246,7 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
                         int freq = psf.get(ref);
                         if (freq != -1) {
 
+                            foundlist.add(ref);
                             String line = array[i].getNumber() + "="
                                 + ref + ":" + freq;
                             sb.append(line);
@@ -252,6 +255,33 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
                         } else {
 
                             log(HDHRRecorder.DEBUG, "Not Found!");
+                        }
+                    }
+
+                    // As a convenience we make entries for found channels
+                    // but not wanted.  Fixing "misses" is easier this way
+                    // as we can just edit the file manually.
+                    String[] keys = psf.getKeys();
+                    if ((keys != null) && (keys.length > 0)) {
+
+                        sb.append("# These are found channels but not ");
+                        sb.append("configured or found properly.");
+                        sb.append("\n");
+                        int index = 0;
+                        for (int i = 0; i < keys.length; i++) {
+
+                            if (!foundlist.contains(keys[i])) {
+
+                                int freq = psf.get(keys[i]);
+                                if (freq != -1) {
+
+                                    String line = "UNKNOWN_VIRTUAL_" + index
+                                        + "=" + keys[i] + ":" + freq;
+                                    sb.append(line);
+                                    sb.append("\n");
+                                    index++;
+                                }
+                            }
                         }
                     }
 

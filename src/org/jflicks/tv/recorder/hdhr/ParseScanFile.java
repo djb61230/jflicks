@@ -18,6 +18,8 @@ package org.jflicks.tv.recorder.hdhr;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.jflicks.util.Util;
@@ -50,6 +52,19 @@ public class ParseScanFile {
 
     private void setChannelHashMap(HashMap<String, Integer> hm) {
         channelHashMap = hm;
+    }
+
+    public String[] getKeys() {
+
+        String[] result = null;
+
+        if ((channelHashMap != null) && (channelHashMap.size() > 0)) {
+
+            Set<String> set = channelHashMap.keySet();
+            result = set.toArray(new String[channelHashMap.size()]);
+        }
+
+        return (result);
     }
 
     /**
@@ -194,7 +209,7 @@ public class ParseScanFile {
 
     public static void main(String[] args) {
 
-        File f = new File("/home/djb/marty.log");
+        File f = new File("/home/djb/dave_tw.txt");
         ParseScanFile psf = new ParseScanFile(f);
     }
 

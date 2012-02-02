@@ -62,7 +62,7 @@ import org.jflicks.tv.ShowAiring;
 public class GridGuidePanel extends BaseCustomizePanel
     implements ActionListener {
 
-    private static final long JUMP_MILLIS = 30 * 60 * 1000;
+    private static final long JUMP_MILLIS = 30L * 60L * 1000L;
 
     private ArrayList<Channel> channelList;
     private HashMap<Channel, ShowAiring[]> guideMap;
@@ -805,6 +805,7 @@ public class GridGuidePanel extends BaseCustomizePanel
             setChannelIndex(getIndex(getChannels(), c));
             applyChannels();
             setSelectedColumn(0);
+            setSelectedRow(0);
             applyHighlight(true);
         }
     }
@@ -884,16 +885,19 @@ public class GridGuidePanel extends BaseCustomizePanel
             if (last != 0L) {
 
                 long current = getCurrentRounded() - getTimeOffset();
-                if (current != last) {
+                if ((Math.abs(current - last)) > 1000) {
 
                     // The start of our time line has changed.  We should
                     // update.  This can be unsettling to the user if they
                     // are interacting right now.  But this should happen
                     // only every 30 minutes.
-                    System.out.println("We should update because of time");
+                    int row = getSelectedRow();
+                    int col = getSelectedColumn();
                     setLastTime(current);
                     applyTimeLabels();
                     applyChannels();
+                    setSelectedColumn(col);
+                    setSelectedRow(row);
                     repaint();
                 }
 
