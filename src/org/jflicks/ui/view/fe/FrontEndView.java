@@ -503,7 +503,6 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             result = Util.str2boolean(p.getProperty("effects"), result);
         }
 
-        System.out.println("isEffects: " + result);
         return (result);
     }
 
