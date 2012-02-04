@@ -71,7 +71,7 @@ public class TextImagePanel extends BaseCustomizePanel
 
     private TextImage[] textImages;
 
-    private JXPanel backgroundPanel;
+    private CrossFadePanel backgroundPanel;
     private JXPanel popupPanel;
     private JXLabel logoLabel;
     private MattePainter mattePainter;
@@ -86,6 +86,7 @@ public class TextImagePanel extends BaseCustomizePanel
     private HashMap<JXPanel, Animator> animatorHashMap;
     private HashMap<JXPanel, JXLabel[]> labelsHashMap;
     private ImageIcon rightButtonImageIcon;
+    private boolean effects;
 
     /**
      * Constructor with all required arguments.
@@ -98,6 +99,7 @@ public class TextImagePanel extends BaseCustomizePanel
         setFocusable(true);
         requestFocus();
 
+        setEffects(true);
         setRightButtonImageIcon(
             new ImageIcon(getClass().getResource("right_button.png")));
 
@@ -130,6 +132,14 @@ public class TextImagePanel extends BaseCustomizePanel
         EnterAction enterAction = new EnterAction(this);
         map.put(KeyStroke.getKeyStroke("ENTER"), "enter");
         getActionMap().put("enter", enterAction);
+    }
+
+    public boolean isEffects() {
+        return (effects);
+    }
+
+    public void setEffects(boolean b) {
+        effects = b;
     }
 
     private ImageIcon getRightButtonImageIcon() {
@@ -379,11 +389,11 @@ public class TextImagePanel extends BaseCustomizePanel
         updatePopup(old, popupSelectedIndex);
     }
 
-    private JXPanel getBackgroundPanel() {
+    private CrossFadePanel getBackgroundPanel() {
         return (backgroundPanel);
     }
 
-    private void setBackgroundPanel(JXPanel p) {
+    private void setBackgroundPanel(CrossFadePanel p) {
         backgroundPanel = p;
     }
 
@@ -704,7 +714,8 @@ public class TextImagePanel extends BaseCustomizePanel
             // Make a background panel that makes the fade in of the
             // background image a little nicer since it has the same
             // color as the gray panel.
-            JXPanel backPanel = new JXPanel();
+            //JXPanel backPanel = new JXPanel();
+            CrossFadePanel backPanel = new CrossFadePanel();
             backPanel.setOpaque(false);
             setBackgroundPanel(backPanel);
             backPanel.setBounds(0, 0, (int) width, (int) height);
@@ -798,35 +809,34 @@ public class TextImagePanel extends BaseCustomizePanel
                     BufferedImage bi = currentTextImage.getImage();
                     if (bi != null) {
 
-                        JXPanel backPanel = getBackgroundPanel();
+                        CrossFadePanel backPanel = getBackgroundPanel();
                         if (backPanel != null) {
 
-                            backPanel.setAlpha(0.0f);
-                            ImagePainter p =
-                                (ImagePainter) backPanel.getBackgroundPainter();
-                            if (p != null) {
+                            bi = ensureSize(backPanel, bi);
+                            currentTextImage.setImage(bi);
+                            if (isEffects()) {
 
-                                bi = ensureSize(backPanel, bi);
-                                currentTextImage.setImage(bi);
-                                p.setImage(bi);
+                                backPanel.setAlpha(0.0f);
+                                backPanel.setFromBufferedImage(
+                                    backPanel.getCurrentBufferedImage());
+                                backPanel.setCurrentBufferedImage(bi);
+
+                                Animator backAnimator = getBackgroundAnimator();
+                                if (backAnimator != null) {
+
+                                    if (backAnimator.isRunning()) {
+                                        backAnimator.stop();
+                                    }
+
+                                    backAnimator.start();
+                                }
 
                             } else {
 
-                                bi = ensureSize(backPanel, bi);
-                                currentTextImage.setImage(bi);
-                                p = new ImagePainter(bi);
-                                p.setScaleToFit(true);
-                                backPanel.setBackgroundPainter(p);
-                            }
-
-                            Animator backAnimator = getBackgroundAnimator();
-                            if (backAnimator != null) {
-
-                                if (backAnimator.isRunning()) {
-                                    backAnimator.stop();
-                                }
-
-                                backAnimator.start();
+                                backPanel.setAlpha(1.0f);
+                                backPanel.setFromBufferedImage(null);
+                                backPanel.setCurrentBufferedImage(bi);
+                                backPanel.repaint();
                             }
                         }
                     }

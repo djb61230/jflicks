@@ -73,6 +73,7 @@ public class PosterPanel extends BaseCustomizePanel {
     private int posterWidth;
     private int posterHeight;
     private double aspectRatio;
+    private boolean effects;
 
     /**
      * Simple empty constructor.
@@ -95,6 +96,7 @@ public class PosterPanel extends BaseCustomizePanel {
         setVideoList(new ArrayList<Video>());
         setBufferedImageList(new ArrayList<BufferedImage>());
 
+        setGlowAlpha(1.0f);
         TimingTarget tt = PropertySetter.getTarget(this, "glowAlpha",
             Float.valueOf(0.0f), Float.valueOf(1.0f));
         Animator animator =
@@ -153,7 +155,7 @@ public class PosterPanel extends BaseCustomizePanel {
     public void open() {
 
         Animator a = getGlowAnimator();
-        if (a != null) {
+        if ((isEffects()) && (a != null)) {
 
             if (!a.isRunning()) {
                 a.start();
@@ -167,12 +169,30 @@ public class PosterPanel extends BaseCustomizePanel {
     public void close() {
 
         Animator a = getGlowAnimator();
-        if (a != null) {
+        if ((isEffects()) && (a != null)) {
 
             if (a.isRunning()) {
                 a.stop();
             }
         }
+    }
+
+    /**
+     * Preference of user whether or not to use any fancy effects.
+     *      
+     * @return True if effects are OK.
+     */     
+    public boolean isEffects() {
+        return (effects);
+    }       
+            
+    /**     
+     * Preference of user whether or not to use any fancy effects.
+     *
+     * @param b True if effects are OK.
+     */     
+    public void setEffects(boolean b) {
+        effects = b;
     }
 
     /**
@@ -371,7 +391,7 @@ public class PosterPanel extends BaseCustomizePanel {
                 }
 
                 itts[i] = new ImageTimingTarget(start, left, right, parray[i]);
-                anis[i] = new Animator.Builder().setDuration(180,
+                anis[i] = new Animator.Builder().setDuration(250,
                     TimeUnit.MILLISECONDS).addTarget(itts[i]).build();
             }
 
@@ -789,7 +809,7 @@ public class PosterPanel extends BaseCustomizePanel {
             setDrawImages(null);
 
             Animator a = getGlowAnimator();
-            if ((a != null) && (!a.isRunning())) {
+            if ((isEffects()) && (a != null) && (!a.isRunning())) {
 
                 a.start();
             }

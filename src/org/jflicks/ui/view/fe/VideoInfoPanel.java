@@ -70,6 +70,7 @@ public class VideoInfoPanel extends Panel implements ActionListener {
     private ImageCache imageCache;
     private Timer timer;
     private int currentSeconds;
+    private long lastVisible;
 
     /**
      * Simple constructor with our required arguments.
@@ -367,6 +368,36 @@ public class VideoInfoPanel extends Panel implements ActionListener {
         return (result);
     }
 
+    private long getLastVisible() {
+        return (lastVisible);
+    }
+
+    private void setLastVisible(long l) {
+        lastVisible = l;
+    }
+
+    private boolean isReadyToToggle() {
+
+        boolean result = false;
+
+        long when = getLastVisible();
+        if (when == 0L) {
+
+            setLastVisible(System.currentTimeMillis());
+            result = true;
+
+        } else {
+
+            if (Math.abs(when - System.currentTimeMillis()) > 500) {
+
+                setLastVisible(System.currentTimeMillis());
+                result = true;
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * Override so we can start a Timer to auto shut off the banner.
      *
@@ -374,36 +405,39 @@ public class VideoInfoPanel extends Panel implements ActionListener {
      */
     public void setVisible(boolean b) {
 
-        setCurrentSeconds(0);
-        updateWindow();
+        if (isReadyToToggle()) {
 
-        JLayeredPane pane = getPlayerPane();
+            setCurrentSeconds(0);
+            updateWindow();
 
-        Timer t = getTimer();
-        if (t != null) {
+            JLayeredPane pane = getPlayerPane();
 
-            if (b) {
+            Timer t = getTimer();
+            if (t != null) {
 
-                if (pane != null) {
+                if (b) {
 
-                    if (pane.getPosition(this) == -1) {
-                        pane.add(this, JLayeredPane.POPUP_LAYER);
+                    if (pane != null) {
+
+                        if (pane.getPosition(this) == -1) {
+                            pane.add(this, JLayeredPane.POPUP_LAYER);
+                        }
                     }
-                }
-                super.setVisible(true);
+                    super.setVisible(true);
 
-                if (!t.isRunning()) {
+                    if (!t.isRunning()) {
 
-                    t.restart();
-                }
+                        t.restart();
+                    }
 
-            } else {
+                } else {
 
-                super.setVisible(false);
+                    super.setVisible(false);
 
-                t.stop();
-                if (pane != null) {
-                    pane.remove(this);
+                    t.stop();
+                    if (pane != null) {
+                        pane.remove(this);
+                    }
                 }
             }
         }

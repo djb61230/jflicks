@@ -18,6 +18,7 @@ package org.jflicks.ui.view.fe;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
@@ -58,8 +60,13 @@ import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.ui.view.fe.screen.ScreenListener;
 import org.jflicks.util.Util;
 
+import org.jdesktop.core.animation.timing.Animator;
+import org.jdesktop.core.animation.timing.PropertySetter;
+import org.jdesktop.core.animation.timing.TimingTarget;
+import org.jdesktop.core.animation.timing.TimingTargetAdapter;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.graphics.GraphicsUtilities;
 
 /**
  * A base class that full Views can extend.
@@ -486,6 +493,20 @@ public class FrontEndView extends JFlicksView implements ActionListener,
         return (result);
     }
 
+    private boolean isEffects() {
+
+        boolean result = true;
+
+        Properties p = getProperties();
+        if (p != null) {
+
+            result = Util.str2boolean(p.getProperty("effects"), result);
+        }
+
+        System.out.println("isEffects: " + result);
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -528,6 +549,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             frame.setBounds(x, y, width, height);
 
             JXPanel cards = new JXPanel(new CardLayout());
+            cards.setBackground(Color.BLACK);
             setPanel(cards);
 
             // This assumes we get all screens before we get here to
@@ -539,13 +561,15 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                 ArrayList<TextImage> list = new ArrayList<TextImage>();
                 for (int i = 0; i < array.length; i++) {
 
+                    array[i].setEffects(isEffects());
                     array[i].setDone(true);
                     array[i].addScreenListener(this);
                     array[i].addPropertyChangeListener("Done", this);
                     String title = array[i].getTitle();
                     cards.add(title, array[i]);
-                    TextImage ti = new TextImage(title,
+                    BufferedImage bufcap = GraphicsUtilities.toCompatibleImage(
                         array[i].getDefaultBackgroundImage());
+                    TextImage ti = new TextImage(title, bufcap);
                     list.add(ti);
 
                     if (array[i] instanceof ExecuteScreen) {
@@ -584,6 +608,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
                 TextImagePanel tip =
                     new TextImagePanel(tiarray, getLogoImage());
+                tip.setEffects(isEffects());
                 cards.add(tip, "main");
 
                 tip.addActionListener(this);
@@ -676,6 +701,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
         try {
 
             result = ImageIO.read(getClass().getResource("logo.png"));
+            result = GraphicsUtilities.toCompatibleImage(result);
 
         } catch (IOException ex) {
         }
@@ -828,7 +854,26 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                         if (index != -1) {
                             title = title.substring(0, index);
                         }
-                        cl.show(p, title);
+
+                        TextImagePanel tip = getTextImagePanel();
+
+                        if (isEffects()) {
+
+                            TimingTarget tt = PropertySetter.getTarget(tip,
+                                "alpha", Float.valueOf(1.0f),
+                                Float.valueOf(0.0f));
+                            Animator fadeout =
+                                new Animator.Builder().setDuration(125,
+                                TimeUnit.MILLISECONDS).addTarget(tt).build();
+                            fadeout.addTarget(
+                                new TripScreenFadeIn(p, title, array[i]));
+                            fadeout.start();
+
+                        } else {
+
+                            array[i].setAlpha(1.0f);
+                            cl.show(panel, title);
+                        }
                         break;
                     }
                 }
@@ -1103,7 +1148,23 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             if (p != null) {
 
                 CardLayout cl = (CardLayout) (p.getLayout());
-                cl.show(p, "main");
+                TextImagePanel tip = getTextImagePanel();
+                //tip.setAlpha(0.0f);
+                //cl.show(p, "main");
+                if (isEffects()) {
+
+                    TimingTarget tt = PropertySetter.getTarget(tip,
+                        "alpha", Float.valueOf(1.0f), Float.valueOf(0.0f));
+                    Animator fadeout = new Animator.Builder().setDuration(
+                        125, TimeUnit.MILLISECONDS).addTarget(tt).build();
+                    fadeout.addTarget(new TripMainFadeIn(p));
+                    fadeout.start();
+
+                } else {
+
+                    tip.setAlpha(1.0f);
+                    cl.show(p, "main");
+                }
                 focus(screen.getTitle());
             }
         }
@@ -1212,6 +1273,59 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                 frame.getContentPane().setCursor(Cursor.getDefaultCursor());
             }
         }
+    }
+
+    private class TripScreenFadeIn extends TimingTargetAdapter {
+
+        private JXPanel panel;
+        private String title;
+        private Screen screen;
+
+        public TripScreenFadeIn(JXPanel p, String t, Screen s) {
+
+            panel = p;
+            title = t;
+            screen = s;
+        }
+
+        public void end(Animator source) {
+
+            CardLayout cl = (CardLayout) panel.getLayout();
+            screen.setAlpha(0.0f);
+            cl.show(panel, title);
+
+            TimingTarget tt = PropertySetter.getTarget(screen,
+                "alpha", Float.valueOf(0.0f), Float.valueOf(1.0f));
+            Animator fadein = new Animator.Builder().setDuration(
+                125, TimeUnit.MILLISECONDS).addTarget(tt).build();
+            fadein.start();
+        }
+
+    }
+
+    private class TripMainFadeIn extends TimingTargetAdapter {
+
+        private JXPanel panel;
+
+        public TripMainFadeIn(JXPanel p) {
+
+            panel = p;
+        }
+
+        public void end(Animator source) {
+
+            CardLayout cl = (CardLayout) panel.getLayout();
+            TextImagePanel p = getTextImagePanel();
+            p.setAlpha(0.0f);
+            cl.show(panel, "main");
+
+            TimingTarget tt = PropertySetter.getTarget(p,
+                "alpha", Float.valueOf(0.0f), Float.valueOf(1.0f));
+            Animator fadein = new Animator.Builder().setDuration(
+                125, TimeUnit.MILLISECONDS).addTarget(tt).build();
+            fadein.start();
+        }
+
     }
 
 }

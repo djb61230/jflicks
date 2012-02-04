@@ -76,6 +76,7 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
     private int currentSeconds;
     private SimpleDateFormat dateFormat;
     private Rectangle descriptionRectangle;
+    private long lastVisible;
 
     /**
      * Simple constructor with our required arguments.
@@ -428,6 +429,36 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
         return (result);
     }
 
+    private long getLastVisible() {
+        return (lastVisible);
+    }
+
+    private void setLastVisible(long l) {
+        lastVisible = l;
+    }
+
+    private boolean isReadyToToggle() {
+
+        boolean result = false;
+
+        long when = getLastVisible();
+        if (when == 0L) {
+
+            setLastVisible(System.currentTimeMillis());
+            result = true;
+
+        } else {
+
+            if (Math.abs(when - System.currentTimeMillis()) > 500) {
+
+                setLastVisible(System.currentTimeMillis());
+                result = true;
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * Override so we can start a Timer to auto shut off the banner.
      *
@@ -435,41 +466,44 @@ public class RecordingInfoPanel extends Panel implements ActionListener {
      */
     public void setVisible(boolean b) {
 
-        setCurrentSeconds(0);
+        if (isReadyToToggle()) {
 
-        JLayeredPane pane = getPlayerPane();
+            setCurrentSeconds(0);
 
-        if (b) {
+            JLayeredPane pane = getPlayerPane();
 
-            getDescriptionLabel().setBounds(getDescriptionRectangle());
-            if (pane != null) {
+            if (b) {
 
-                if (pane.getPosition(this) == -1) {
-                    pane.add(this, JLayeredPane.POPUP_LAYER);
+                getDescriptionLabel().setBounds(getDescriptionRectangle());
+                if (pane != null) {
+
+                    if (pane.getPosition(this) == -1) {
+                        pane.add(this, JLayeredPane.POPUP_LAYER);
+                    }
                 }
-            }
-            super.setVisible(true);
+                super.setVisible(true);
 
-            updateWindow();
-            Timer t = getTimer();
-            if (t != null) {
+                updateWindow();
+                Timer t = getTimer();
+                if (t != null) {
 
-                if (!t.isRunning()) {
+                    if (!t.isRunning()) {
 
-                    t.restart();
+                        t.restart();
+                    }
                 }
-            }
 
-        } else {
+            } else {
 
-            super.setVisible(false);
+                super.setVisible(false);
 
-            Timer t = getTimer();
-            if (t != null) {
+                Timer t = getTimer();
+                if (t != null) {
 
-                if (t.isRunning()) {
+                    if (t.isRunning()) {
 
-                    t.stop();
+                        t.stop();
+                    }
                 }
             }
         }

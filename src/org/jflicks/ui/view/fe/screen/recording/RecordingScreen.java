@@ -73,6 +73,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
     private static final String AUTO_SKIP_IS_ON = "Auto Skip is On";
     private static final String AUTO_SKIP_IS_OFF = "Auto Skip is Off";
+    private static final String CERTAIN = "Are you certain?";
 
     private Recording[] recordings;
     private RecordingListPanel groupRecordingListPanel;
@@ -94,6 +95,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     private boolean autoSkip;
     private Timer autoSkipTimer;
     private AutoSkipActionListener autoSkipActionListener;
+    private int lastScreenEvent;
+    private Recording certainRecording;
 
     /**
      * Simple empty constructor.
@@ -538,6 +541,22 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
     private void setAutoSkipTimer(Timer t) {
         autoSkipTimer = t;
+    }
+
+    private int getLastScreenEvent() {
+        return (lastScreenEvent);
+    }
+
+    private void setLastScreenEvent(int i) {
+        lastScreenEvent = i;
+    }
+
+    private Recording getCertainRecording() {
+        return (certainRecording);
+    }
+
+    private void setCertainRecording(Recording r) {
+        certainRecording = r;
     }
 
     private void preserveState() {
@@ -1005,14 +1024,17 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                                 ssp.setBackgroundPainter(painter);
                             }
 
-                            Animator sani = getScreenShotAnimator();
-                            if (sani != null) {
+                            if (isEffects()) {
 
-                                if (sani.isRunning()) {
-                                    sani.stop();
+                                Animator sani = getScreenShotAnimator();
+                                if (sani != null) {
+
+                                    if (sani.isRunning()) {
+                                        sani.stop();
+                                    }
+
+                                    sani.start();
                                 }
-
-                                sani.start();
                             }
 
                         } else {
@@ -1270,6 +1292,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             if ((p != null) && (!p.isPlaying()) && (r != null)) {
 
                 boolean doUnpopup = true;
+                boolean certainPopup = false;
 
                 ButtonPanel pbp = getPlayButtonPanel();
                 if (PLAY.equals(pbp.getSelectedButton())) {
@@ -1371,20 +1394,30 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else if (DELETE.equals(pbp.getSelectedButton())) {
 
-                    log(DEBUG, "firing delete recording");
-                    fireScreenEvent(ScreenEvent.DELETE_RECORDING, r);
+                    log(DEBUG, "firing delete recording after certain");
+                    certainPopup = true;
+                    setLastScreenEvent(ScreenEvent.DELETE_RECORDING);
+                    setCertainRecording(r);
 
                 } else if (DELETE_ALLOW_RERECORDING.equals(
                     pbp.getSelectedButton())) {
 
-                    log(DEBUG, "firing delete recording - allow");
-                    fireScreenEvent(
-                        ScreenEvent.DELETE_RECORDING_ALLOW_RERECORDING, r);
+                    log(DEBUG, "firing delete recording - allow after certain");
+                    certainPopup = true;
+                    setLastScreenEvent(
+                        ScreenEvent.DELETE_RECORDING_ALLOW_RERECORDING);
+                    setCertainRecording(r);
 
                 } else if (STOP_RECORDING.equals(pbp.getSelectedButton())) {
 
-                    log(DEBUG, "firing stop recording");
-                    fireScreenEvent(ScreenEvent.STOP_RECORDING, r);
+                    log(DEBUG, "firing stop recording after certain");
+                    certainPopup = true;
+                    setLastScreenEvent(ScreenEvent.STOP_RECORDING);
+                    setCertainRecording(r);
+
+                } else if (CERTAIN.equals(pbp.getSelectedButton())) {
+
+                    fireScreenEvent(getLastScreenEvent(), getCertainRecording());
 
                 } else if (CANCEL.equals(pbp.getSelectedButton())) {
 
@@ -1409,6 +1442,16 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 if (doUnpopup) {
 
                     unpopup();
+                }
+
+                if (certainPopup) {
+
+                    // We have an action we want to confirm.
+                    ArrayList<String> blist = new ArrayList<String>();
+                    blist.add(CERTAIN);
+                    blist.add(CANCEL);
+                    String[] barray = blist.toArray(new String[blist.size()]);
+                    popup(barray);
                 }
             }
         }

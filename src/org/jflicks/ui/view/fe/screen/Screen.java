@@ -68,6 +68,7 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
     private BufferedImage defaultBackgroundImage;
     private BufferedImage currentBackgroundImage;
     private View view;
+    private boolean effects;
 
     /**
      * This base class does the necessary OSGi Event code so we insist
@@ -115,6 +116,24 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
      */
     public void setView(View v) {
         view = v;
+    }
+
+    /**
+     * Preference of user whether or not to use any fancy effects.
+     *
+     * @return True if effects are OK.
+     */
+    public boolean isEffects() {
+        return (effects);
+    }
+
+    /**
+     * Preference of user whether or not to use any fancy effects.
+     *
+     * @param b True if effects are OK.
+     */
+    public void setEffects(boolean b) {
+        effects = b;
     }
 
     /**

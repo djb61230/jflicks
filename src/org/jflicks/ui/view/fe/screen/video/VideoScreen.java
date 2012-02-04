@@ -257,6 +257,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             setEpisodeVideoListPanel(evlp);
 
             PosterPanel pp = new PosterPanel();
+            setEffects(isEffects());
             pp.setAlpha(alpha);
             pp.addPropertyChangeListener("SelectedVideo", this);
             setPosterPanel(pp);
