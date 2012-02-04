@@ -64,6 +64,7 @@ public abstract class BaseCustomizePanel extends JXPanel implements Customize,
     private Color infoColor;
     private Color panelColor;
     private double panelAlpha;
+    private boolean effects;
 
     private JLayeredPane layeredPane;
     private boolean layoutDone;
@@ -110,6 +111,7 @@ public abstract class BaseCustomizePanel extends JXPanel implements Customize,
         setSmallFontStyle(SMALL_FONT_STYLE);
         setMediumFontStyle(MEDIUM_FONT_STYLE);
         setLargeFontStyle(LARGE_FONT_STYLE);
+        setEffects(true);
 
         // Load up the current theme preferences.
         loadCurrent();
@@ -165,6 +167,20 @@ public abstract class BaseCustomizePanel extends JXPanel implements Customize,
                 ls.log(level, message);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isEffects() {
+        return (effects);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setEffects(boolean b) {
+        effects = b;
     }
 
     /**

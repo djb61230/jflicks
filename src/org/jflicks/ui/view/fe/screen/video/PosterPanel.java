@@ -73,7 +73,6 @@ public class PosterPanel extends BaseCustomizePanel {
     private int posterWidth;
     private int posterHeight;
     private double aspectRatio;
-    private boolean effects;
 
     /**
      * Simple empty constructor.
@@ -175,24 +174,6 @@ public class PosterPanel extends BaseCustomizePanel {
                 a.stop();
             }
         }
-    }
-
-    /**
-     * Preference of user whether or not to use any fancy effects.
-     *      
-     * @return True if effects are OK.
-     */     
-    public boolean isEffects() {
-        return (effects);
-    }       
-            
-    /**     
-     * Preference of user whether or not to use any fancy effects.
-     *
-     * @param b True if effects are OK.
-     */     
-    public void setEffects(boolean b) {
-        effects = b;
     }
 
     /**

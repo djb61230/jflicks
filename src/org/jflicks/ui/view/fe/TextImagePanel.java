@@ -86,7 +86,6 @@ public class TextImagePanel extends BaseCustomizePanel
     private HashMap<JXPanel, Animator> animatorHashMap;
     private HashMap<JXPanel, JXLabel[]> labelsHashMap;
     private ImageIcon rightButtonImageIcon;
-    private boolean effects;
 
     /**
      * Constructor with all required arguments.
@@ -99,7 +98,6 @@ public class TextImagePanel extends BaseCustomizePanel
         setFocusable(true);
         requestFocus();
 
-        setEffects(true);
         setRightButtonImageIcon(
             new ImageIcon(getClass().getResource("right_button.png")));
 
@@ -132,14 +130,6 @@ public class TextImagePanel extends BaseCustomizePanel
         EnterAction enterAction = new EnterAction(this);
         map.put(KeyStroke.getKeyStroke("ENTER"), "enter");
         getActionMap().put("enter", enterAction);
-    }
-
-    public boolean isEffects() {
-        return (effects);
-    }
-
-    public void setEffects(boolean b) {
-        effects = b;
     }
 
     private ImageIcon getRightButtonImageIcon() {

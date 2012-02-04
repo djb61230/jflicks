@@ -53,6 +53,7 @@ public class Theme implements Comparable<Theme>, Customize {
     private Color infoColor;
     private Color panelColor;
     private double panelAlpha;
+    private boolean effects;
 
     /**
      * Simple empty constructor.
@@ -400,6 +401,19 @@ public class Theme implements Comparable<Theme>, Customize {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public boolean isEffects() {
+        return (effects);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setEffects(boolean b) {
+        effects = b;
+    }
+
     /**
      * The standard hashcode override.
      *

@@ -360,5 +360,19 @@ public interface Customize {
      * @param i An int value.
      */
     void setLargeFontStyle(int i);
+
+    /**
+     * Preference of user whether or not to use any fancy effects.
+     *
+     * @return True if effects are OK.
+     */
+    boolean isEffects();
+
+    /**
+     * Preference of user whether or not to use any fancy effects.
+     *
+     * @param b True if effects are OK.
+     */
+    void setEffects(boolean b);
 }
 
