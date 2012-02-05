@@ -17,9 +17,12 @@
 package org.jflicks.ui.view.fe;
 
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
@@ -28,6 +31,7 @@ import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Recording;
 
 import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.graphics.ReflectionRenderer;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
@@ -61,20 +65,40 @@ public class RecordingDetailPanel extends BaseCustomizePanel {
      */
     public RecordingDetailPanel() {
 
-        setRecordingBlankImageIcon(
-            new ImageIcon(getClass().getResource("recording_blank.png")));
-        setDolby20ImageIcon(
-            new ImageIcon(getClass().getResource("dolby20.png")));
-        setDolby51ImageIcon(
-            new ImageIcon(getClass().getResource("dolby51.png")));
-        setVideo1080ImageIcon(
-            new ImageIcon(getClass().getResource("video_1080.png")));
-        setVideo720ImageIcon(
-            new ImageIcon(getClass().getResource("video_720.png")));
-        setVideoFlaggedImageIcon(
-            new ImageIcon(getClass().getResource("video_flagged.png")));
-        setVideoRecordingImageIcon(
-            new ImageIcon(getClass().getResource("video_recording.png")));
+        try {
+
+            ReflectionRenderer rr = new ReflectionRenderer();
+            BufferedImage bi =
+                ImageIO.read(getClass().getResource("recording_blank.png"));
+            bi = rr.appendReflection(bi);
+            setRecordingBlankImageIcon(new ImageIcon(bi));
+
+            bi = ImageIO.read(getClass().getResource("dolby20.png"));
+            bi = rr.appendReflection(bi);
+            setDolby20ImageIcon(new ImageIcon(bi));
+
+            bi = ImageIO.read(getClass().getResource("dolby51.png"));
+            bi = rr.appendReflection(bi);
+            setDolby51ImageIcon(new ImageIcon(bi));
+
+            bi = ImageIO.read(getClass().getResource("video_1080.png"));
+            bi = rr.appendReflection(bi);
+            setVideo1080ImageIcon(new ImageIcon(bi));
+
+            bi = ImageIO.read(getClass().getResource("video_720.png"));
+            bi = rr.appendReflection(bi);
+            setVideo720ImageIcon(new ImageIcon(bi));
+
+            bi = ImageIO.read(getClass().getResource("video_flagged.png"));
+            bi = rr.appendReflection(bi);
+            setVideoFlaggedImageIcon(new ImageIcon(bi));
+
+            bi = ImageIO.read(getClass().getResource("video_recording.png"));
+            bi = rr.appendReflection(bi);
+            setVideoRecordingImageIcon(new ImageIcon(bi));
+
+        } catch (IOException ex) {
+        }
 
         JXLabel title = new JXLabel();
         title.setFont(getLargeFont());
@@ -463,7 +487,7 @@ public class RecordingDetailPanel extends BaseCustomizePanel {
 
                 double span = (gap + labdim.getWidth());
                 double x = width - span;
-                double y = gap;
+                double y = gap / 2;
                 video.setBounds((int) x, (int) y, (int) labdim.getWidth(),
                     (int) labdim.getHeight());
                 pane.add(video, Integer.valueOf(100));
