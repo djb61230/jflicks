@@ -59,6 +59,7 @@ import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.graphics.ReflectionRenderer;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
@@ -935,6 +936,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         PosterPanel pp = getPosterPanel();
         if ((array != null) && (ic != null) && (pp != null)) {
 
+            ReflectionRenderer rr = new ReflectionRenderer();
             ArrayList<BufferedImage> l = new ArrayList<BufferedImage>();
             for (int i = 0; i < array.length; i++) {
 
@@ -986,6 +988,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                 if (bi != null) {
 
+                    bi = rr.appendReflection(bi);
                     l.add(bi);
                 }
             }

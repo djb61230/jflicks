@@ -34,6 +34,7 @@ import org.jdesktop.core.animation.timing.Animator;
 import org.jdesktop.core.animation.timing.TimingTarget;
 import org.jdesktop.core.animation.timing.TimingTargetAdapter;
 import org.jdesktop.core.animation.timing.PropertySetter;
+import org.jdesktop.swingx.graphics.GraphicsUtilities;
 import org.jdesktop.swingx.painter.MattePainter;
 
 import org.jflicks.nms.Video;
@@ -95,7 +96,7 @@ public class PosterPanel extends BaseCustomizePanel {
         setVideoList(new ArrayList<Video>());
         setBufferedImageList(new ArrayList<BufferedImage>());
 
-        setGlowAlpha(1.0f);
+        setGlowAlpha(0.0f);
         TimingTarget tt = PropertySetter.getTarget(this, "glowAlpha",
             Float.valueOf(0.0f), Float.valueOf(1.0f));
         Animator animator =
@@ -302,7 +303,7 @@ public class PosterPanel extends BaseCustomizePanel {
             double labwidth = (width - (((count + 1) * hgap))) / count;
             double labheight = labwidth + (labwidth * (1.0 - getAspectRatio()));
             double labspan = labwidth + hgap;
-            double labtop = (height - labheight) / 2;
+            double labtop = (height - labheight) / 4;
 
             setPosterWidth((int) labwidth);
             setPosterHeight((int) labheight);
@@ -709,6 +710,8 @@ public class PosterPanel extends BaseCustomizePanel {
 
         if (bi != null) {
 
+            result = GraphicsUtilities.toCompatibleImage(bi);
+            /*
             result = createCompatibleImage(bi);
             Graphics2D g2 = result.createGraphics();
             Rectangle rect = new Rectangle(bi.getWidth(), bi.getHeight());
@@ -716,6 +719,7 @@ public class PosterPanel extends BaseCustomizePanel {
             g2.fill(rect);
             g2.draw(rect);
             g2.dispose();
+            */
 
             // Now scale the image.
             int w = result.getWidth() + EXTRA_PIXEL * 2;
