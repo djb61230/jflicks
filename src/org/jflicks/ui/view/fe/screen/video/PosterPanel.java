@@ -67,9 +67,11 @@ public class PosterPanel extends BaseCustomizePanel {
     private ArrayList<Video> videoList;
     private ArrayList<BufferedImage> bufferedImageList;
     private BufferedImage[] drawImages;
-    private BufferedImage glowBufferedImage;
-    private float glowAlpha;
-    private Animator glowAnimator;
+    private BufferedImage centerImage;
+    private double growCount;
+    private Point centerImagePoint;
+    private Point originalCenterImagePoint;
+    private Animator springAnimator;
     private Video selectedVideo;
     private int posterWidth;
     private int posterHeight;
@@ -95,15 +97,6 @@ public class PosterPanel extends BaseCustomizePanel {
         setAspectRatio(DEFAULT_ASPECT_RATIO);
         setVideoList(new ArrayList<Video>());
         setBufferedImageList(new ArrayList<BufferedImage>());
-
-        setGlowAlpha(0.0f);
-        TimingTarget tt = PropertySetter.getTarget(this, "glowAlpha",
-            Float.valueOf(0.0f), Float.valueOf(1.0f));
-        Animator animator =
-            new Animator.Builder().setDuration(250,
-                TimeUnit.MILLISECONDS).setRepeatCount(
-                    Animator.INFINITE).addTarget(tt).build();
-        setGlowAnimator(animator);
     }
 
     /**
@@ -153,28 +146,12 @@ public class PosterPanel extends BaseCustomizePanel {
      * we are to be displayed.
      */
     public void open() {
-
-        Animator a = getGlowAnimator();
-        if ((isEffects()) && (a != null)) {
-
-            if (!a.isRunning()) {
-                a.start();
-            }
-        }
     }
 
     /**
      * We have a close method so the glow animation can be stopped.
      */
     public void close() {
-
-        Animator a = getGlowAnimator();
-        if ((isEffects()) && (a != null)) {
-
-            if (a.isRunning()) {
-                a.stop();
-            }
-        }
     }
 
     /**
@@ -214,49 +191,60 @@ public class PosterPanel extends BaseCustomizePanel {
 
                     l.add(array[i]);
                 }
-            }
 
-            if (l.size() > 0) {
+                BufferedImage bi = GraphicsUtilities.toCompatibleImage(
+                    array[0]);
+                setCenterImage(bi);
+                setCenterImagePoint(getOriginalCenterImagePoint());
 
-                setGlowBufferedImage(createGlow(l.get(0)));
+                SpringTimingTarget stt = new SpringTimingTarget(getGrowCount(),
+                    bi.getWidth(), bi.getHeight());
+                Animator sani = new Animator.Builder().setDuration(250,
+                    TimeUnit.MILLISECONDS).addTarget(stt).build();
+                setSpringAnimator(sani);
+                sani.start();
             }
         }
     }
 
-    private BufferedImage getGlowBufferedImage() {
-        return (glowBufferedImage);
+    private BufferedImage getCenterImage() {
+        return (centerImage);
     }
 
-    private void setGlowBufferedImage(BufferedImage bi) {
-        glowBufferedImage = bi;
+    private void setCenterImage(BufferedImage bi) {
+        centerImage = bi;
     }
 
-    private Animator getGlowAnimator() {
-        return (glowAnimator);
+    private Point getOriginalCenterImagePoint() {
+        return (originalCenterImagePoint);
     }
 
-    private void setGlowAnimator(Animator a) {
-        glowAnimator = a;
+    private void setOriginalCenterImagePoint(Point p) {
+        originalCenterImagePoint = p;
     }
 
-    /**
-     * To glow the selection we need to control it's alpha.
-     *
-     * @return The alpha value for our selection glow.
-     */
-    public float getGlowAlpha() {
-        return (glowAlpha);
+    private double getGrowCount() {
+        return (growCount);
     }
 
-    /**
-     * To glow the selection we need to control it's alpha.
-     *
-     * @param f The alpha value for our selection glow.
-     */
-    public void setGlowAlpha(float f) {
+    private void setGrowCount(double d) {
+        growCount = d;
+    }
 
-        glowAlpha = f;
-        repaint();
+    private Point getCenterImagePoint() {
+        return (centerImagePoint);
+    }
+
+    private void setCenterImagePoint(Point p) {
+        centerImagePoint = p;
+    }
+
+    private Animator getSpringAnimator() {
+        return (springAnimator);
+    }
+
+    private void setSpringAnimator(Animator a) {
+        springAnimator = a;
     }
 
     /**
@@ -375,6 +363,15 @@ public class PosterPanel extends BaseCustomizePanel {
                 itts[i] = new ImageTimingTarget(start, left, right, parray[i]);
                 anis[i] = new Animator.Builder().setDuration(250,
                     TimeUnit.MILLISECONDS).addTarget(itts[i]).build();
+
+                if (i == (array.length / 2)) {
+
+                    setOriginalCenterImagePoint(new Point(start));
+                    setCenterImagePoint(new Point(start));
+                    setGrowCount(labtop - 2);
+                    anis[i].addTarget(
+                        new ShiftTimingTarget(getGrowCount(), itts[i]));
+                }
             }
 
             setImageTimingTargets(itts);
@@ -538,6 +535,14 @@ public class PosterPanel extends BaseCustomizePanel {
                 array[i].stop();
             }
         }
+
+        Animator sani = getSpringAnimator();
+        if (sani != null) {
+
+            sani.stop();
+        }
+
+        setCenterImage(null);
     }
 
     private void startAll() {
@@ -587,34 +592,27 @@ public class PosterPanel extends BaseCustomizePanel {
         super.paintComponent(g);
 
         // We have to paint our images...
+        Graphics2D g2d = (Graphics2D) g.create();
         Point[] array = getPositionPoints();
         BufferedImage[] images = getDrawImages();
         if ((array != null) && (images != null)
             && (array.length == images.length)) {
 
             int center = array.length / 2;
-            Graphics2D g2d = (Graphics2D) g.create();
             for (int i = 0; i < array.length; i++) {
 
                 if (images[i] != null) {
 
                     if (i == center) {
 
-                        BufferedImage glow = getGlowBufferedImage();
-                        if (glow != null) {
+                        BufferedImage bi = getCenterImage();
+                        Point p = getCenterImagePoint();
+                        if ((bi != null) && (p != null)) {
 
-                            int glowx = array[i].x - EXTRA_PIXEL;
-                            int glowy = array[i].y - EXTRA_PIXEL;
-                            g2d.setComposite(AlphaComposite.SrcOver.derive(
-                                getGlowAlpha()));
-                            g2d.drawImage(glow, glowx, glowy, null);
-                            g2d.setComposite(AlphaComposite.SrcOver);
-                            g2d.drawImage(images[i], array[i].x, array[i].y,
-                                null);
+                            g2d.drawImage(bi, p.x, p.y, null);
 
                         } else {
 
-                            // Just draw normally...
                             g2d.drawImage(images[i], array[i].x, array[i].y,
                                 null);
                         }
@@ -625,6 +623,16 @@ public class PosterPanel extends BaseCustomizePanel {
                         g2d.drawImage(images[i], array[i].x, array[i].y, null);
                     }
                 }
+            }
+
+        } else {
+
+            System.out.println("gern on else");
+            BufferedImage bi = getCenterImage();
+            Point p = getCenterImagePoint();
+            if ((bi != null) && (p != null)) {
+
+                g2d.drawImage(bi, p.x, p.y, null);
             }
         }
     }
@@ -651,8 +659,20 @@ public class PosterPanel extends BaseCustomizePanel {
             vl.add(0, vlast);
             setSelectedVideo(vl.get(0));
 
-            // Update the glow...
-            setGlowBufferedImage(createGlow(l.get(0)));
+            if (!shouldAnimate()) {
+
+                BufferedImage bi = GraphicsUtilities.toCompatibleImage(
+                    l.get(0));
+                setCenterImage(bi);
+                setCenterImagePoint(getOriginalCenterImagePoint());
+
+                SpringTimingTarget stt = new SpringTimingTarget(getGrowCount(),
+                    bi.getWidth(), bi.getHeight());
+                Animator sani = new Animator.Builder().setDuration(250,
+                    TimeUnit.MILLISECONDS).addTarget(stt).build();
+                setSpringAnimator(sani);
+                sani.start();
+            }
         }
     }
 
@@ -678,8 +698,20 @@ public class PosterPanel extends BaseCustomizePanel {
             vl.add(vfirst);
             setSelectedVideo(vl.get(0));
 
-            // Update the glow...
-            setGlowBufferedImage(createGlow(l.get(0)));
+            if (!shouldAnimate()) {
+
+                BufferedImage bi = GraphicsUtilities.toCompatibleImage(
+                    l.get(0));
+                setCenterImage(bi);
+                setCenterImagePoint(getOriginalCenterImagePoint());
+
+                SpringTimingTarget stt = new SpringTimingTarget(getGrowCount(),
+                    bi.getWidth(), bi.getHeight());
+                Animator sani = new Animator.Builder().setDuration(250,
+                    TimeUnit.MILLISECONDS).addTarget(stt).build();
+                setSpringAnimator(sani);
+                sani.start();
+            }
         }
     }
 
@@ -704,30 +736,74 @@ public class PosterPanel extends BaseCustomizePanel {
         return (result);
     }
 
-    private BufferedImage createGlow(BufferedImage bi) {
+    class ShiftTimingTarget extends TimingTargetAdapter {
 
-        BufferedImage result = null;
+        private ImageTimingTarget imageTimingTarget;
+        private double growCount;
 
-        if (bi != null) {
+        public ShiftTimingTarget(double grow, ImageTimingTarget itt) {
 
-            result = GraphicsUtilities.toCompatibleImage(bi);
-            /*
-            result = createCompatibleImage(bi);
-            Graphics2D g2 = result.createGraphics();
-            Rectangle rect = new Rectangle(bi.getWidth(), bi.getHeight());
-            g2.setPaint(getHighlightColor());
-            g2.fill(rect);
-            g2.draw(rect);
-            g2.dispose();
-            */
-
-            // Now scale the image.
-            int w = result.getWidth() + EXTRA_PIXEL * 2;
-            int h = result.getHeight() + EXTRA_PIXEL * 2;
-            result = Util.resize(result, w, h);
+            imageTimingTarget = itt;
+            growCount = grow;
         }
 
-        return (result);
+        public void end(Animator source) {
+
+            // Now we want to Spring the centerImage.
+            BufferedImage[] array = getCurrentBufferedImages();
+            if (array != null) {
+
+                BufferedImage bi = GraphicsUtilities.toCompatibleImage(
+                    array[array.length / 2]);
+                setCenterImage(bi);
+                setCenterImagePoint(getOriginalCenterImagePoint());
+
+                SpringTimingTarget stt = new SpringTimingTarget(growCount,
+                    bi.getWidth(), bi.getHeight());
+                Animator sani = new Animator.Builder().setDuration(250,
+                    TimeUnit.MILLISECONDS).addTarget(stt).build();
+                setSpringAnimator(sani);
+                sani.start();
+            }
+        }
+    }
+
+    class SpringTimingTarget extends TimingTargetAdapter {
+
+        private Point savePoint;
+        private Point workPoint;
+        private double growCount;
+        private int width;
+        private int height;
+
+        public SpringTimingTarget(double grow, int w, int h) {
+
+            savePoint = new Point(getOriginalCenterImagePoint());
+            growCount = grow;
+            width = w;
+            height = h;
+        }
+
+        public void timingEvent(Animator source, double fraction) {
+
+            int pixels = (int) (growCount * fraction);
+            workPoint = new Point(savePoint);
+            workPoint.x = workPoint.x - pixels;
+            workPoint.y = workPoint.y - pixels;
+            setCenterImagePoint(workPoint);
+
+            int newwidth = width + (2 * pixels);
+            int newheight = height + (2 * pixels);
+
+            BufferedImage cbi = getCenterImage();
+            if (cbi != null) {
+
+                cbi = Util.resize(cbi, newwidth, newheight);
+                setCenterImage(cbi);
+            }
+
+            repaint();
+        }
     }
 
     class ImageTimingTarget extends TimingTargetAdapter {
@@ -755,7 +831,7 @@ public class PosterPanel extends BaseCustomizePanel {
             goLeft = b;
         }
 
-        private Point getStart() {
+        public Point getStart() {
             return (start);
         }
 
@@ -779,7 +855,7 @@ public class PosterPanel extends BaseCustomizePanel {
             right = p;
         }
 
-        private Point getCurrent() {
+        public Point getCurrent() {
             return (current);
         }
 
@@ -792,12 +868,6 @@ public class PosterPanel extends BaseCustomizePanel {
             current.x = start.x;
             current.y = start.y;
             setDrawImages(null);
-
-            Animator a = getGlowAnimator();
-            if ((isEffects()) && (a != null) && (!a.isRunning())) {
-
-                a.start();
-            }
         }
 
         public void timingEvent(Animator source, double fraction) {
