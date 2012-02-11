@@ -25,8 +25,10 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -249,6 +251,18 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 Collections.sort(list, new RecordingSortByTitle());
 
+                Recording week = new Recording();
+                week.setTitle("Last Week Only");
+                list.add(0, week);
+
+                Recording yesterday = new Recording();
+                yesterday.setTitle("Yesterday Only");
+                list.add(0, yesterday);
+
+                Recording today = new Recording();
+                today.setTitle("Today Only");
+                list.add(0, today);
+
                 Recording all = new Recording();
                 all.setTitle("All");
                 list.add(0, all);
@@ -363,6 +377,65 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 }
             }
         }
+    }
+
+    private Recording[] getLastWeekRecordings() {
+
+        long now = System.currentTimeMillis();
+        return (getTimeRecordings(now, now - (7 * 24 * 60 * 60 * 1000)));
+    }
+
+    private Recording[] getTodayRecordings() {
+
+        long now = System.currentTimeMillis();
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+
+        return (getTimeRecordings(now, c.getTimeInMillis()));
+    }
+
+    private Recording[] getYesterdayRecordings() {
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+
+        long midnight = c.getTimeInMillis();
+
+        return (getTimeRecordings(midnight, midnight - (24 * 60 * 60 * 1000)));
+    }
+
+    private Recording[] getTimeRecordings(long newest, long oldest) {
+
+        Recording[] result = null;
+
+        Recording[] all = getRecordings();
+        if ((all != null) && (all.length > 0)) {
+
+            ArrayList<Recording> rlist = new ArrayList<Recording>();
+            for (int i = 0; i < all.length; i++) {
+
+                Date date = all[i].getDate();
+                if (date != null) {
+
+                    long time = date.getTime();
+                    if ((oldest < time) && (time <= newest)) {
+
+                        rlist.add(all[i]);
+                    }
+                }
+            }
+
+            if (rlist.size() > 0) {
+
+                result = rlist.toArray(new Recording[rlist.size()]);
+            }
+        }
+
+        return (result);
     }
 
     private int getRecordingById(String s) {
@@ -908,6 +981,33 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         }
                         rlp.setRecordings(myrec);
 
+                    } else if (title.equals("Last Week Only")) {
+
+                        rlp.setCompleteDescription(true);
+                        Recording[] weekrec = getLastWeekRecordings();
+                        if (weekrec != null) {
+                            rcount = weekrec.length;
+                        }
+                        rlp.setRecordings(weekrec);
+
+                    } else if (title.equals("Today Only")) {
+
+                        rlp.setCompleteDescription(true);
+                        Recording[] todayrec = getTodayRecordings();
+                        if (todayrec != null) {
+                            rcount = todayrec.length;
+                        }
+                        rlp.setRecordings(todayrec);
+
+                    } else if (title.equals("Yesterday Only")) {
+
+                        rlp.setCompleteDescription(true);
+                        Recording[] yesterdayrec = getYesterdayRecordings();
+                        if (yesterdayrec != null) {
+                            rcount = yesterdayrec.length;
+                        }
+                        rlp.setRecordings(yesterdayrec);
+
                     } else {
 
                         Recording[] recs = getRecordings();
@@ -1189,7 +1289,13 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else {
 
-                    log(INFO, "commercials not set or end");
+                    log(INFO, "commercials not set or end, skipping 10 min");
+
+                    updateLengthHint(cr, p);
+                    int left = leftToGo(p, cr);
+                    if (left > 600) {
+                        p.seek(600);
+                    }
                 }
             }
         }
@@ -1217,7 +1323,9 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else {
 
-                    log(INFO, "commercials not set or end");
+                    log(INFO, "commercials not set or end, going back 10 min");
+                    updateLengthHint(getCurrentRecording(), p);
+                    p.seek(-600);
                 }
             }
         }
