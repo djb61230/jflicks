@@ -16,7 +16,6 @@
 */
 package org.jflicks.restlet.nms;
 
-import org.jflicks.nms.NMS;
 import org.jflicks.nms.State;
 
 import org.restlet.data.MediaType;
@@ -44,8 +43,8 @@ public class StateResource extends BaseNMSApplicationServerResource {
         x.alias("state", State.class);
     }
 
-    @Get
-    public Representation state() {
+    @Get("xml|json")
+    public Representation get() {
 
         Representation result = null;
 
@@ -76,26 +75,6 @@ public class StateResource extends BaseNMSApplicationServerResource {
                     StringRepresentation sr = new StringRepresentation(data);
                     sr.setMediaType(MediaType.TEXT_XML);
                     result = sr;
-                }
-            }
-        }
-
-        return (result);
-    }
-
-    private State getState() {
-
-        State result = null;
-
-        NMS[] array = getNMS();
-        if ((array != null) && (array.length > 0)) {
-
-            result = array[0].getState();
-            if (result != null) {
-
-                for (int i = 1; i < array.length; i++) {
-
-                    result = result.merge(array[i].getState());
                 }
             }
         }

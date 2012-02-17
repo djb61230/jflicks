@@ -16,7 +16,9 @@
 */
 package org.jflicks.restlet.nms;
 
-import org.jflicks.tv.Task;
+import java.util.Date;
+
+import org.jflicks.tv.ShowAiring;
 
 import org.restlet.data.MediaType;
 import org.restlet.resource.Get;
@@ -27,21 +29,22 @@ import com.google.gson.Gson;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * This class will return the current tasks as XML or JSON.
+ * This class will return the current upcomings as XML or JSON.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class TaskResource extends BaseNMSApplicationServerResource {
+public class SearchResource extends BaseNMSApplicationServerResource {
 
     /**
      * Simple empty constructor.
      */
-    public TaskResource() {
+    public SearchResource() {
 
         XStream x = getXStream();
-        x.alias("tasks", Task[].class);
-        x.alias("task", Task.class);
+        x.alias("showairings", ShowAiring[].class);
+        x.alias("showairing", ShowAiring.class);
+        x.alias("date", Date.class);
     }
 
     @Get("xml|json")
@@ -51,7 +54,7 @@ public class TaskResource extends BaseNMSApplicationServerResource {
 
         if (isFormatJson()) {
 
-            Task[] array = getTasks();
+            ShowAiring[] array = getShowAirings(getTerm());
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -66,7 +69,7 @@ public class TaskResource extends BaseNMSApplicationServerResource {
 
         } else if (isFormatXml()) {
 
-            Task[] array = getTasks();
+            ShowAiring[] array = getShowAirings(getTerm());
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 

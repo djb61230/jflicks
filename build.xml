@@ -710,6 +710,15 @@
         />
 
         <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-restlet-nms.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
             classpath="${lib}/jdom.jar"
             eclipse="false"
             failok="false"
@@ -1170,9 +1179,34 @@
 
     </target>
 
+    <target name="test-wadl" depends="build">
+
+        <java classname="org.jflicks.restlet.nms.NMSApplication" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
     <target name="test-bundle-tree" depends="build">
 
         <java classname="org.jflicks.update.system.BundleTree" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-feedutil" depends="build">
+
+        <java classname="org.jflicks.ui.view.fe.screen.net.FeedUtil"
+            fork="true">
 
             <classpath>
                 <path refid="runtime.classpath"/>

@@ -16,14 +16,14 @@
 */
 package org.jflicks.restlet.nms;
 
-import java.util.ArrayList;
 import java.util.Date;
 
-import org.jflicks.nms.NMS;
 import org.jflicks.tv.Upcoming;
 
 import org.restlet.data.MediaType;
+import org.restlet.data.Status;
 import org.restlet.resource.Get;
+import org.restlet.resource.Put;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 
@@ -49,8 +49,8 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
         x.alias("date", Date.class);
     }
 
-    @Get
-    public Representation upcomings() {
+    @Get("xml|json")
+    public Representation get() {
 
         Representation result = null;
 
@@ -88,46 +88,18 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
         return (result);
     }
 
-    private Upcoming[] getUpcomings() {
+    @Put
+    public void put(String showId) {
 
-        Upcoming[] result = null;
+        if (showId != null) {
 
-        NMS[] array = getNMS();
-        if ((array != null) && (array.length > 0)) {
+            Upcoming u = getUpcomingByShowId(showId);
+            if (u != null) {
 
-            ArrayList<Upcoming> ulist = new ArrayList<Upcoming>();
-            for (int i = 0; i < array.length; i++) {
-
-                Upcoming[] uarray = getUpcomings(array[i]);
-                if ((uarray != null) && (uarray.length > 0)) {
-
-                    for (int j = 0; j < uarray.length; j++) {
-
-                        ulist.add(uarray[j]);
-                    }
-                }
-            }
-
-            if (ulist.size() > 0) {
-
-                result = ulist.toArray(new Upcoming[ulist.size()]);
+                overrideUpcoming(u);
+                setStatus(Status.SUCCESS_ACCEPTED);
             }
         }
-
-        return (result);
-    }
-
-    private Upcoming[] getUpcomings(NMS n) {
-
-        Upcoming[] result = null;
-
-        System.out.println("nms: " + n);
-        if (n != null) {
-
-            result = n.getUpcomings();
-        }
-
-        return (result);
     }
 
 }

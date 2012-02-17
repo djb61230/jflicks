@@ -18,8 +18,8 @@ package org.jflicks.restlet;
 
 import java.util.Map;
 
+import org.restlet.ext.wadl.WadlServerResource;
 import org.restlet.resource.ResourceException;
-import org.restlet.resource.ServerResource;
 
 import com.google.gson.Gson;
 import com.thoughtworks.xstream.XStream;
@@ -31,7 +31,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseServerResource extends ServerResource {
+public abstract class BaseServerResource extends WadlServerResource {
 
     public static final String JSON = "json";
     public static final String XML = "xml";

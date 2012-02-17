@@ -1822,8 +1822,11 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 for (int i = 0; i < array.length; i += 2) {
 
+                    // Only skip at the start of a commercial.  If it
+                    // skips too far then the user can't "fix it" by
+                    // skipping back a bit.
                     double start = array[i].doubleValue();
-                    double end = array[i + 1].doubleValue();
+                    double end = start + 7;
                     if (start > 0.0) {
 
                         if (isTimeToSkip(current, start, end)) {

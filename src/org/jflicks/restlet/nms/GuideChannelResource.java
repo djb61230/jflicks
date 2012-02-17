@@ -16,7 +16,7 @@
 */
 package org.jflicks.restlet.nms;
 
-import org.jflicks.tv.Task;
+import org.jflicks.tv.ShowAiring;
 
 import org.restlet.data.MediaType;
 import org.restlet.resource.Get;
@@ -27,21 +27,24 @@ import com.google.gson.Gson;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * This class will return the current tasks as XML or JSON.
+ * This class will return the current channels as XML or JSON.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class TaskResource extends BaseNMSApplicationServerResource {
+public class GuideChannelResource extends BaseNMSApplicationServerResource {
 
     /**
      * Simple empty constructor.
      */
-    public TaskResource() {
+    public GuideChannelResource() {
 
         XStream x = getXStream();
-        x.alias("tasks", Task[].class);
-        x.alias("task", Task.class);
+        x.alias("showairings", ShowAiring[].class);
+        x.alias("showairing", ShowAiring.class);
+
+        setName("Guide Information");
+        setDescription("The shows to be aired on a given channel.");
     }
 
     @Get("xml|json")
@@ -51,7 +54,8 @@ public class TaskResource extends BaseNMSApplicationServerResource {
 
         if (isFormatJson()) {
 
-            Task[] array = getTasks();
+            ShowAiring[] array =
+                getShowAiringsByChannel(getChannelById(getChannelId()));
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -66,7 +70,8 @@ public class TaskResource extends BaseNMSApplicationServerResource {
 
         } else if (isFormatXml()) {
 
-            Task[] array = getTasks();
+            ShowAiring[] array =
+                getShowAiringsByChannel(getChannelById(getChannelId()));
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 

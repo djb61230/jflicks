@@ -22,7 +22,7 @@ import org.jflicks.nms.NMS;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.restlet.Application;
+import org.restlet.ext.wadl.WadlApplication;
 
 /**
  * This class is a base implementation of a restlet application.
@@ -30,7 +30,7 @@ import org.restlet.Application;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseApplication extends Application {
+public abstract class BaseApplication extends WadlApplication {
 
     private BundleContext bundleContext;
     private ArrayList<NMS> nmsList;

@@ -16,15 +16,15 @@
 */
 package org.jflicks.restlet.nms;
 
-import java.util.ArrayList;
+import java.io.IOException;
 
-import org.jflicks.nms.NMS;
 import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Task;
 
 import org.restlet.data.MediaType;
 import org.restlet.resource.Get;
+import org.restlet.resource.Post;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 
@@ -52,8 +52,8 @@ public class RecordingRuleResource extends BaseNMSApplicationServerResource {
         x.alias("showairing", ShowAiring.class);
     }
 
-    @Get
-    public Representation recordingrules() {
+    @Get("xml|json")
+    public Representation get() {
 
         Representation result = null;
 
@@ -91,45 +91,62 @@ public class RecordingRuleResource extends BaseNMSApplicationServerResource {
         return (result);
     }
 
-    private RecordingRule[] getRecordingRules() {
+    @Post("json")
+    public void edit(Representation r) {
 
-        RecordingRule[] result = null;
+        Representation result = null;
 
-        NMS[] array = getNMS();
-        if ((array != null) && (array.length > 0)) {
+        Gson g = getGson();
+        if ((g != null) && (r != null)) {
 
-            ArrayList<RecordingRule> rlist = new ArrayList<RecordingRule>();
-            for (int i = 0; i < array.length; i++) {
+            try {
 
-                RecordingRule[] rarray = getRecordingRules(array[i]);
-                if ((rarray != null) && (rarray.length > 0)) {
+                String json = r.getText();
+                RecordingRule rr = g.fromJson(json, RecordingRule.class);
+                if (rr != null) {
 
-                    for (int j = 0; j < rarray.length; j++) {
+                    RecordingRule oldrr = getRecordingRuleById(getRuleId());
+                    if (oldrr != null) {
 
-                        rlist.add(rarray[j]);
+                        System.out.println("oldrr.getId(): " + oldrr.getId());
+
+                        // We really only care about 4 fields.
+                        int beginPadding = oldrr.getBeginPadding();
+                        if (contains(json, "beginPadding")) {
+
+                            beginPadding = rr.getBeginPadding();
+                        }
+
+                        int endPadding = oldrr.getEndPadding();
+                        if (contains(json, "endPadding")) {
+
+                            endPadding = rr.getEndPadding();
+                        }
+
+                        int type = oldrr.getType();
+                        if (contains(json, "type")) {
+                            type = rr.getType();
+                        }
+
+                        int priority = oldrr.getPriority();
+                        if (contains(json, "priority")) {
+                            priority = rr.getPriority();
+                        }
+
+                        oldrr.setBeginPadding(beginPadding);
+                        oldrr.setEndPadding(endPadding);
+                        oldrr.setType(type);
+                        oldrr.setPriority(priority);
+
+                        schedule(oldrr);
                     }
                 }
-            }
 
-            if (rlist.size() > 0) {
+            } catch (IOException ex) {
 
-                result = rlist.toArray(new RecordingRule[rlist.size()]);
+                System.out.println(ex.getMessage());
             }
         }
-
-        return (result);
-    }
-
-    private RecordingRule[] getRecordingRules(NMS n) {
-
-        RecordingRule[] result = null;
-
-        if (n != null) {
-
-            result = n.getRecordingRules();
-        }
-
-        return (result);
     }
 
 }

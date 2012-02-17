@@ -19,6 +19,7 @@ package org.jflicks.restlet.nms;
 import org.jflicks.restlet.BaseApplication;
 
 import org.restlet.Restlet;
+import org.restlet.resource.ClientResource;
 import org.restlet.routing.Router;
 
 /**
@@ -33,6 +34,11 @@ public class NMSApplication extends BaseApplication {
      * Simple empty constructor.
      */
     public NMSApplication() {
+
+        setName("RESTful jflicks media system");
+        setDescription("Access and control local jflicks server component.");
+        setOwner("jflicks.org");
+        setAuthor("Doug Barnum, copyright 2012");
     }
 
     @Override
@@ -40,22 +46,35 @@ public class NMSApplication extends BaseApplication {
 
         Router router = new Router(getContext());
 
-        router.attach("/nms/{version}/{lang}/recordings.{format}",
+        router.attach("/", RootResource.class);
+        router.attach("/{version}/{lang}/recordings.{format}",
             RecordingResource.class);
-        router.attach("/nms/{version}/{lang}/recordingrules.{format}",
+        router.attach("/{version}/{lang}/recording/{recordingId}/"
+            + "{allowRerecord}", DeleteRecordingResource.class);
+        router.attach("/{version}/{lang}/recordingrules.{format}",
             RecordingRuleResource.class);
-        router.attach("/nms/{version}/{lang}/state.{format}",
-            StateResource.class);
-        router.attach("/nms/{version}/{lang}/channels.{format}",
+        router.attach("/{version}/{lang}/recordingrule/{ruleId}",
+            RecordingRuleResource.class);
+        router.attach("/{version}/{lang}/state.{format}", StateResource.class);
+        router.attach("/{version}/{lang}/search.{format}/{term}",
+            SearchResource.class);
+        router.attach("/{version}/{lang}/channels.{format}",
             ChannelResource.class);
-        router.attach("/nms/{version}/{lang}/tasks.{format}",
-            TaskResource.class);
-        router.attach("/nms/{version}/{lang}/upcomings.{format}",
+        router.attach("/{version}/{lang}/tasks.{format}", TaskResource.class);
+        router.attach("/{version}/{lang}/upcomings.{format}",
             UpcomingResource.class);
-        router.attach("/nms/{version}/{lang}/videos.{format}",
-            VideoResource.class);
+        router.attach("/{version}/{lang}/upcoming", UpcomingResource.class);
+        router.attach("/{version}/{lang}/videos.{format}", VideoResource.class);
+        router.attach("/{version}/{lang}/guide.{format}/{channelId}",
+            GuideChannelResource.class);
 
         return (router);
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        ClientResource service = new ClientResource("http://localhost:8182/");
+        System.out.println(service.options().getText());
     }
 
 }

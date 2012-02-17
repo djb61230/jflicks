@@ -53,7 +53,7 @@ public class Activator extends BaseActivator {
             nmsTracker = new NMSTracker(bc, app);
             nmsTracker.open();
 
-            component.getDefaultHost().attachDefault(app);
+            component.getDefaultHost().attach("/nms", app);
             component.start();
 
         } catch (Exception ex) {

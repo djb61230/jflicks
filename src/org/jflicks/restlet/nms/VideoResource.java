@@ -16,9 +16,6 @@
 */
 package org.jflicks.restlet.nms;
 
-import java.util.ArrayList;
-
-import org.jflicks.nms.NMS;
 import org.jflicks.nms.Video;
 
 import org.restlet.data.MediaType;
@@ -47,8 +44,8 @@ public class VideoResource extends BaseNMSApplicationServerResource {
         x.alias("video", Video.class);
     }
 
-    @Get
-    public Representation videos() {
+    @Get("xml|json")
+    public Representation get() {
 
         Representation result = null;
 
@@ -81,47 +78,6 @@ public class VideoResource extends BaseNMSApplicationServerResource {
                     result = sr;
                 }
             }
-        }
-
-        return (result);
-    }
-
-    private Video[] getVideos() {
-
-        Video[] result = null;
-
-        NMS[] array = getNMS();
-        if ((array != null) && (array.length > 0)) {
-
-            ArrayList<Video> vlist = new ArrayList<Video>();
-            for (int i = 0; i < array.length; i++) {
-
-                Video[] varray = getVideos(array[i]);
-                if ((varray != null) && (varray.length > 0)) {
-
-                    for (int j = 0; j < varray.length; j++) {
-
-                        vlist.add(varray[j]);
-                    }
-                }
-            }
-
-            if (vlist.size() > 0) {
-
-                result = vlist.toArray(new Video[vlist.size()]);
-            }
-        }
-
-        return (result);
-    }
-
-    private Video[] getVideos(NMS n) {
-
-        Video[] result = null;
-
-        if (n != null) {
-
-            result = n.getVideos();
         }
 
         return (result);

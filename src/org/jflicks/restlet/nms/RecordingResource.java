@@ -16,14 +16,13 @@
 */
 package org.jflicks.restlet.nms;
 
-import java.util.ArrayList;
 import java.util.Date;
 
-import org.jflicks.nms.NMS;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 
 import org.restlet.data.MediaType;
+import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -51,8 +50,8 @@ public class RecordingResource extends BaseNMSApplicationServerResource {
         x.alias("date", Date.class);
     }
 
-    @Get
-    public Representation recordings() {
+    @Get("xml|json")
+    public Representation get() {
 
         Representation result = null;
 
@@ -83,64 +82,6 @@ public class RecordingResource extends BaseNMSApplicationServerResource {
                     StringRepresentation sr = new StringRepresentation(data);
                     sr.setMediaType(MediaType.TEXT_XML);
                     result = sr;
-                }
-            }
-        }
-
-        return (result);
-    }
-
-    private Recording[] getRecordings() {
-
-        Recording[] result = null;
-
-        NMS[] array = getNMS();
-        System.out.println("do we have nms: " + array);
-        if ((array != null) && (array.length > 0)) {
-
-            ArrayList<Recording> rlist = new ArrayList<Recording>();
-            for (int i = 0; i < array.length; i++) {
-
-                Recording[] rarray = getRecordings(array[i]);
-                if ((rarray != null) && (rarray.length > 0)) {
-
-                    for (int j = 0; j < rarray.length; j++) {
-
-                        rlist.add(rarray[j]);
-                    }
-                }
-            }
-            if (rlist.size() > 0) {
-
-                result = rlist.toArray(new Recording[rlist.size()]);
-            }
-        }
-
-        return (result);
-    }
-
-    private Recording[] getRecordings(NMS n) {
-
-        Recording[] result = null;
-
-        System.out.println("nms: " + n);
-        if (n != null) {
-
-            Recording[] array = n.getRecordings();
-            if ((array != null) && (array.length > 0)) {
-
-                ArrayList<Recording> l = new ArrayList<Recording>();
-                for (int i = 0; i < array.length; i++) {
-
-                    String surl = array[i].getStreamURL();
-                    if (surl != null) {
-
-                        l.add(array[i]);
-                    }
-                }
-
-                if (l.size() > 0) {
-                    result = l.toArray(new Recording[l.size()]);
                 }
             }
         }

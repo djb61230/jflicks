@@ -16,9 +16,6 @@
 */
 package org.jflicks.restlet.nms;
 
-import java.util.ArrayList;
-
-import org.jflicks.nms.NMS;
 import org.jflicks.tv.Channel;
 
 import org.restlet.data.MediaType;
@@ -45,10 +42,13 @@ public class ChannelResource extends BaseNMSApplicationServerResource {
         XStream x = getXStream();
         x.alias("channel", Channel.class);
         x.alias("channels", Channel[].class);
+
+        setName("Channel Information");
+        setDescription("The currently defined Channels that can be recorded");
     }
 
     @Get
-    public Representation channels() {
+    public Representation get() {
 
         Representation result = null;
 
@@ -81,47 +81,6 @@ public class ChannelResource extends BaseNMSApplicationServerResource {
                     result = sr;
                 }
             }
-        }
-
-        return (result);
-    }
-
-    private Channel[] getChannels() {
-
-        Channel[] result = null;
-
-        NMS[] array = getNMS();
-        if ((array != null) && (array.length > 0)) {
-
-            ArrayList<Channel> clist = new ArrayList<Channel>();
-            for (int i = 0; i < array.length; i++) {
-
-                Channel[] carray = getChannels(array[i]);
-                if ((carray != null) && (carray.length > 0)) {
-
-                    for (int j = 0; j < carray.length; j++) {
-
-                        clist.add(carray[j]);
-                    }
-                }
-            }
-
-            if (clist.size() > 0) {
-
-                result = clist.toArray(new Channel[clist.size()]);
-            }
-        }
-
-        return (result);
-    }
-
-    private Channel[] getChannels(NMS n) {
-
-        Channel[] result = null;
-
-        if (n != null) {
-
-            result = n.getRecordableChannels();
         }
 
         return (result);
