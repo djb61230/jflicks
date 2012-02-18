@@ -329,6 +329,9 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                 getSmallFont(), getMediumFont()));
             getVideoInfoPanel().setVisible(false);
 
+            setDefaultBackgroundImage(
+                Util.resize(getDefaultBackgroundImage(), width, height));
+
             // Create our blank panel.
             JXPanel blank = new JXPanel();
             MattePainter blankp = new MattePainter(Color.BLACK);

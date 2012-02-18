@@ -120,11 +120,7 @@ public final class FeedUtil {
             result.setDescription(e.getChildText("description"));
 
             // Our first possible poster image.
-            Element mainimage = parent.getChild("image");
-            if (mainimage != null) {
-
-                result.setPosterURL(mainimage.getChildText("url"));
-            }
+            result.setPosterURL(getGrandValue(parent, "image", "url"));
 
             Element enc = e.getChild("enclosure");
             if (enc != null) {
@@ -159,9 +155,21 @@ public final class FeedUtil {
                         value = tmp.getAttributeValue("href");
                         //result.setFanartURL(value);
 
+                    } else if (name.equals("thumbnail")) {
+
+                        String thumb = tmp.getAttributeValue("url");
+                        if ((thumb != null) && (thumb.length() > 0)) {
+
+                            result.setPosterURL(thumb);
+                        }
+
                     } else if (name.equals("content")) {
 
-                        result.setPosterURL(getThumbnail(tmp));
+                        String thumb = getThumbnail(tmp);
+                        if ((thumb != null) && (thumb.length() > 0)) {
+
+                            result.setPosterURL(thumb);
+                        }
 
                     } else if (name.equals("summary")) {
 
@@ -216,6 +224,64 @@ public final class FeedUtil {
                     if (name.equals("thumbnail")) {
 
                         result = tmp.getAttributeValue("url");
+                        if (result != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private static String getAttrValue(Element e, String child, String attr) {
+
+        String result = null;
+
+        if ((e != null) && (child != null) && (attr != null)) {
+
+            List all = e.getChildren();
+            for (int i = 0; i < all.size(); i++) {
+
+                Element tmp = (Element) all.get(i);
+                String name = tmp.getName();
+                String value = tmp.getTextTrim();
+                if (name != null) {
+
+                    if (name.equals(child)) {
+
+                        result = tmp.getAttributeValue(attr);
+                        if (result != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private static String getGrandValue(Element e, String child, String grand) {
+
+        String result = null;
+
+        if ((e != null) && (child != null) && (grand != null)) {
+
+            List all = e.getChildren();
+            for (int i = 0; i < all.size(); i++) {
+
+                Element tmp = (Element) all.get(i);
+                String name = tmp.getName();
+                String value = tmp.getTextTrim();
+                if (name != null) {
+
+                    if (name.equals(child)) {
+
+                        result = tmp.getChildText(grand);
+                        //System.out.println("<" + name + "><" + child + ">");
+                        //System.out.println("<" + grand + "><" + result + ">");
                         break;
                     }
                 }
@@ -225,10 +291,52 @@ public final class FeedUtil {
         return (result);
     }
 
+    private static String getValue(Element e, String child) {
+
+        String result = null;
+
+        if ((e != null) && (child != null)) {
+
+            List all = e.getChildren();
+            for (int i = 0; i < all.size(); i++) {
+
+                Element tmp = (Element) all.get(i);
+                String name = tmp.getName();
+                String value = tmp.getTextTrim();
+                if (name != null) {
+
+                    if (name.equals(child)) {
+
+                        result = value;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private static void dump(Element e) {
+
+        if (e != null) {
+
+            List all = e.getChildren();
+            for (int i = 0; i < all.size(); i++) {
+
+                Element tmp = (Element) all.get(i);
+                String name = tmp.getName();
+                String value = tmp.getTextTrim();
+                System.out.println("<" + name + "><" + value +">");
+            }
+        }
+    }
+
     public static void main(String[] args) {
 
-        String url = "http://revision3.com/tekzilla/feed/MP4-hd30";
+        //String url = "http://revision3.com/tekzilla/feed/MP4-hd30";
         //String url = "http://feeds.twit.tv/twit_video_hd.xml";
+        String url = "http://feeds.feedburner.com/computeractionshowvideo?format=xml";
 
         Video[] array = FeedUtil.toVideos(url);
         if (array != null) {

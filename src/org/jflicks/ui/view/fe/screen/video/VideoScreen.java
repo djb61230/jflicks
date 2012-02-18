@@ -303,6 +303,9 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                 getSmallFont(), getMediumFont()));
             getVideoInfoPanel().setVisible(false);
 
+            setDefaultBackgroundImage(
+                Util.resize(getDefaultBackgroundImage(), width, height));
+
             // Create our blank panel.
             JXPanel blank = new JXPanel();
             MattePainter blankp = new MattePainter(Color.BLACK);
