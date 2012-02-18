@@ -534,6 +534,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-ui-view-fe-screen-net.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-ui-view-fe-screen-ondemand.bnd"
             output="${bundle}"
         />
