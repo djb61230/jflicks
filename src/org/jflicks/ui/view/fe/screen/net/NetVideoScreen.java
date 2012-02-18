@@ -16,6 +16,7 @@
 */
 package org.jflicks.ui.view.fe.screen.net;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -37,8 +38,11 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 
 import org.jflicks.imagecache.ImageCache;
+import org.jflicks.job.JobEvent;
+import org.jflicks.job.JobListener;
 import org.jflicks.mvc.View;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
@@ -59,8 +63,10 @@ import org.jflicks.ui.view.fe.VideoDetailPanel;
 import org.jflicks.ui.view.fe.VideoListPanel;
 import org.jflicks.ui.view.fe.VideoInfoPanel;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.Busy;
 import org.jflicks.util.Util;
 
+import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.graphics.ReflectionRenderer;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -71,7 +77,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @author Doug Barnum
  * @version 1.0
  */
-public class NetVideoScreen extends PlayerScreen implements
+public class NetVideoScreen extends PlayerScreen implements JobListener,
     NMSProperty, ParameterProperty, PropertyChangeListener {
 
     private static final double HGAP = 0.02;
@@ -86,6 +92,7 @@ public class NetVideoScreen extends PlayerScreen implements
     private Properties properties;
     private boolean updatedParameter;
     private NMS[] nms;
+    private JXPanel waitPanel;
 
     /**
      * Simple empty constructor.
@@ -208,6 +215,14 @@ public class NetVideoScreen extends PlayerScreen implements
         }
     }
 
+    private JXPanel getWaitPanel() {
+        return (waitPanel);
+    }
+
+    private void setWaitPanel(JXPanel p) {
+        waitPanel = p;
+    }
+
     private PosterPanel getPosterPanel() {
         return (posterPanel);
     }
@@ -242,8 +257,20 @@ public class NetVideoScreen extends PlayerScreen implements
         super.setVisible(b);
         if (b) {
 
-            applyVideo();
-            updateLayout();
+            updateLayout(true);
+            Properties p = getProperties();
+            String s = getSelectedParameter();
+            if ((p != null) && (s != null)) {
+
+                String url = p.getProperty(s);
+                if (url != null) {
+
+                    FetchFeedJob job = new FetchFeedJob(this, url);
+                    Busy busy = new Busy(getLayeredPane(), job);
+                    busy.addJobListener(this);
+                    busy.execute();
+                }
+            }
         }
     }
 
@@ -257,7 +284,18 @@ public class NetVideoScreen extends PlayerScreen implements
 
             float alpha = (float) getPanelAlpha();
 
-            PosterPanel pp = new PosterPanel();
+            JXPanel panel = new JXPanel(new BorderLayout());
+            JXLabel l = new JXLabel("Getting feed data, please wait...");
+            l.setHorizontalTextPosition(SwingConstants.CENTER);
+            l.setHorizontalAlignment(SwingConstants.CENTER);
+            l.setFont(getLargeFont());
+            panel.add(l, BorderLayout.CENTER);
+            MattePainter p = new MattePainter(Color.BLACK);
+            panel.setBackgroundPainter(p);
+            panel.setBounds(0, 0, (int) d.getWidth(), (int) d.getHeight());
+            setWaitPanel(panel);
+
+            PosterPanel pp = new PosterPanel(5, 1.0);
             setEffects(isEffects());
             pp.setAlpha(alpha);
             pp.addPropertyChangeListener("SelectedVideo", this);
@@ -281,8 +319,7 @@ public class NetVideoScreen extends PlayerScreen implements
             int detailwidth = (int) (width - (2 * wspan));
             int detailheight = height - listheight - (hspan * 3);
 
-            pp.setBounds(wspan + wspan + sublistwidth, hspan, ppwidth,
-                listheight);
+            pp.setBounds(wspan, hspan, detailwidth, listheight);
             vdp.setBounds(wspan, hspan + hspan + listheight, detailwidth,
                 detailheight);
 
@@ -301,15 +338,24 @@ public class NetVideoScreen extends PlayerScreen implements
         }
     }
 
-    private void updateLayout() {
+    private void updateLayout(boolean wait) {
 
         PosterPanel pp = getPosterPanel();
         JLayeredPane pane = getLayeredPane();
         if ((pp != null) && (pane != null)) {
 
             pane.removeAll();
-            pane.add(pp, Integer.valueOf(100));
-            pane.add(getVideoDetailPanel(), Integer.valueOf(100));
+            if (wait) {
+
+                pane.add(getWaitPanel(), Integer.valueOf(100));
+
+            } else {
+
+                pane.add(pp, Integer.valueOf(100));
+                pane.add(getVideoDetailPanel(), Integer.valueOf(100));
+            }
+
+            repaint();
         }
     }
 
@@ -584,28 +630,9 @@ public class NetVideoScreen extends PlayerScreen implements
         updatedParameter = b;
     }
 
-    private Video[] getVideos() {
-
-        Video[] result = null;
-
-        Properties p = getProperties();
-        String s = getSelectedParameter();
-        if ((p != null) && (s != null)) {
-
-            String url = p.getProperty(s);
-            if (url != null) {
-
-                result = FeedUtil.toVideos(url);
-            }
-        }
-
-        return (result);
-    }
-
-    private void applyVideo() {
+    public void applyVideo(Video[] videos) {
 
         PosterPanel pp = getPosterPanel();
-        Video[] videos = getVideos();
         if ((pp != null) && (videos != null)) {
 
             BufferedImage[] images = getVideoPosters(videos);
@@ -774,29 +801,6 @@ public class NetVideoScreen extends PlayerScreen implements
         }
     }
 
-    private String computeVideoPath(Video v) {
-
-        String result = null;
-
-        if (v != null) {
-
-            result = v.getPath();
-
-            String streamURL = v.getStreamURL();
-            if (streamURL != null) {
-
-                File tmp = new File(result);
-                if ((tmp.exists()) && (tmp.isFile())) {
-                    result = streamURL;
-                } else {
-                    result = streamURL;
-                }
-            }
-        }
-
-        return (result);
-    }
-
     /**
      * We listen for button clicks from our play button panel.
      *
@@ -818,7 +822,7 @@ public class NetVideoScreen extends PlayerScreen implements
 
             if (v != null) {
 
-                String vidpath = computeVideoPath(v);
+                String vidpath = v.getStreamURL();
                 ButtonPanel pbp = getPlayButtonPanel();
                 if (PLAY.equals(pbp.getSelectedButton())) {
 
@@ -874,6 +878,14 @@ public class NetVideoScreen extends PlayerScreen implements
             }
         }
 
+    }
+
+    public void jobUpdate(JobEvent event) {
+
+        if (event.getType() == JobEvent.COMPLETE) {
+
+            updateLayout(false);
+        }
     }
 
     class LeftAction extends AbstractAction {

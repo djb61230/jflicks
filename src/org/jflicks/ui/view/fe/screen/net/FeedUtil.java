@@ -17,31 +17,20 @@
 package org.jflicks.ui.view.fe.screen.net;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
  
-import com.sun.syndication.feed.module.mediarss.MediaEntryModule;
-import com.sun.syndication.feed.module.mediarss.types.MediaContent;
-import com.sun.syndication.feed.module.mediarss.types.MediaGroup;
-import com.sun.syndication.feed.module.mediarss.types.Metadata;
-import com.sun.syndication.feed.module.mediarss.types.Thumbnail;
-import com.sun.syndication.feed.module.DCModule;
-import com.sun.syndication.feed.module.itunes.EntryInformation;
-import com.sun.syndication.feed.module.itunes.types.Duration;
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndEnclosure;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 
 import org.jflicks.nms.Video;
+import org.jflicks.util.Util;
 
 /**
  *
@@ -80,41 +69,104 @@ public final class FeedUtil {
 
         if (url != null) {
 
-            XmlReader reader = null;
+            SAXBuilder builder = new SAXBuilder();
+            builder.setValidation(false);
+            builder.setFeature("http://apache.org/xml/features/"
+                + "nonvalidating/load-external-dtd", false);
             try {
 
-                URL u = new URL(url);
-                reader = new XmlReader(u);
-                SyndFeed feed = new SyndFeedInput(false).build(reader);
-                //System.out.println("Feed Title: "+ feed.getTitle());
+                Document doc = builder.build(url);
+                Element root = doc.getRootElement();
+                Element channel = root.getChild("channel");
+                List items = channel.getChildren("item");
+                if ((items != null) && (items.size() > 0)) {
 
-                ArrayList<Video> vlist = new ArrayList<Video>();
-                for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
+                    ArrayList<Video> vlist = new ArrayList<Video>();
+                    for (int i = 0; i < items.size(); i++) {
 
-                    SyndEntry entry = (SyndEntry) i.next();
-                    //System.out.println(entry.getTitle());
-                    Video v = toVideo(entry);
-                    if (v != null) {
-                        vlist.add(v);
+                        Element item = (Element) items.get(i);
+                        Video v = toVideo(channel, item);
+                        if (v != null) {
+                            vlist.add(v);
+                        }
+                    }
+
+                    if (vlist.size() > 0) {
+
+                        result = vlist.toArray(new Video[vlist.size()]);
                     }
                 }
 
-                if (vlist.size() > 0) {
-
-                    result = vlist.toArray(new Video[vlist.size()]);
-                }
-
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 System.out.println(ex.getMessage());
-            } finally {
+            } catch (JDOMException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
 
-                try {
+        return (result);
+    }
 
-                    if (reader != null) {
-                        reader.close();
+    public static Video toVideo(Element parent, Element e) {
+
+        Video result = null;
+
+        if ((parent != null) && (e != null)) {
+
+            result = new Video();
+            result.setTitle(e.getChildText("title"));
+
+            // This will be overwritten later if itunes:summary exists.
+            result.setDescription(e.getChildText("description"));
+
+            // Our first possible poster image.
+            Element mainimage = parent.getChild("image");
+            if (mainimage != null) {
+
+                result.setPosterURL(mainimage.getChildText("url"));
+            }
+
+            Element enc = e.getChild("enclosure");
+            if (enc != null) {
+
+                result.setStreamURL(enc.getAttributeValue("url"));
+            }
+
+            result.setReleased(e.getChildText("pubDate"));
+
+            List all = e.getChildren();
+            for (int i =0; i < all.size(); i++) {
+
+                Element tmp = (Element) all.get(i);
+                String name = tmp.getName();
+                String value = tmp.getTextTrim();
+                if (name != null) {
+
+                    if (name.equals("duration")) {
+
+                        int index = value.indexOf(":");
+                        if (index == -1) {
+
+                            result.setDuration(Util.str2long(value, 0L));
+
+                        } else {
+
+                            result.setDuration(parseDuration(value));
+                        }
+
+                    } else if (name.equals("image")) {
+
+                        value = tmp.getAttributeValue("href");
+                        //result.setFanartURL(value);
+
+                    } else if (name.equals("content")) {
+
+                        result.setPosterURL(getThumbnail(tmp));
+
+                    } else if (name.equals("summary")) {
+
+                        result.setDescription(value);
                     }
-
-                } catch (IOException ex) {
                 }
             }
         }
@@ -122,76 +174,49 @@ public final class FeedUtil {
         return (result);
     }
 
-    public static Video toVideo(SyndEntry se) {
+    private static long parseDuration(String s) {
 
-        Video result = null;
+        long result = 0L;
 
-        if (se != null) {
+        if (s != null) {
 
-            result = new Video();
-            result.setTitle(se.getTitle());
-            SyndContent sc = se.getDescription();
-            if (sc != null) {
-
-                result.setDescription(sc.getValue());
-            }
-            List l = se.getEnclosures();
-            if ((l != null) && (l.size() > 0)) {
-
-                SyndEnclosure enc = (SyndEnclosure) l.get(0);
-                if (enc != null) {
-
-                    result.setStreamURL(enc.getUrl());
-                }
+            StringTokenizer st = new StringTokenizer(s, ":");
+            int hours = 0;
+            int mins = 0;
+            int secs = 0;
+            if (st.countTokens() == 3) {
+                hours = Util.str2int(st.nextToken(), 0);
+                mins = Util.str2int(st.nextToken(), 0);
+                secs = Util.str2int(st.nextToken(), 0);
+            } else if (st.countTokens() == 2) {
+                mins = Util.str2int(st.nextToken(), 0);
+                secs = Util.str2int(st.nextToken(), 0);
             }
 
-            Date pubdate = se.getPublishedDate();
-            result.setReleased(formatDate(pubdate));
-            List mlist = se.getModules();
-            if (mlist != null) {
+            result = (long) (hours * 60 * 60 + mins * 60 + secs);
+        }
 
-                System.out.println(mlist.size());
-                for (int i = 0; i < mlist.size(); i++) {
+        return (result);
+    }
 
-                    Object obj = mlist.get(i);
-                    System.out.println(obj.getClass());
-                    if (obj instanceof EntryInformation) {
+    private static String getThumbnail(Element e) {
 
-                        EntryInformation ei = (EntryInformation) obj;
-                        Duration dur = ei.getDuration();
-                        if (dur != null) {
+        String result = null;
 
-                            result.setDuration(dur.getMilliseconds());
-                        }
+        if (e != null) {
 
-                    } else if (obj instanceof DCModule) {
-                    } else if (obj instanceof MediaEntryModule) {
+            List all = e.getChildren();
+            for (int i = 0; i < all.size(); i++) {
 
-                        MediaEntryModule mec = (MediaEntryModule) obj;
-                        MediaContent[] mcarray = mec.getMediaContents();
-                        MediaGroup[] mgarray = mec.getMediaGroups();
-                        System.out.println("mcarray: " + mcarray);
-                        System.out.println("mgarray: " + mgarray);
-                        if ((mcarray != null) && (mcarray.length > 0)) {
+                Element tmp = (Element) all.get(i);
+                String name = tmp.getName();
+                String value = tmp.getTextTrim();
+                if (name != null) {
 
-                            System.out.println("Duration: " + mcarray[0].getDuration());
-                            Metadata m = mcarray[0].getMetadata();
-                            if (m != null) {
+                    if (name.equals("thumbnail")) {
 
-                                Thumbnail[] tarray = m.getThumbnail();
-                                if ((tarray != null) && (tarray.length > 0)) {
-
-                                    URI turi = tarray[0].getUrl();
-                                    if (turi != null) {
-                                        result.setPosterURL(turi.toString());
-                                    }
-                                }
-                            }
-                        }
-                        if (mgarray != null) {
-
-                            System.out.println("mgarray.length: " + mgarray.length);
-                        }
+                        result = tmp.getAttributeValue("url");
+                        break;
                     }
                 }
             }
@@ -211,6 +236,7 @@ public final class FeedUtil {
             System.out.println(array.length);
             for (int i = 0; i < array.length; i++) {
                 System.out.println(array[i].getDuration());
+                System.out.println(array[i].getFanartURL());
                 System.out.println(array[i].getPosterURL());
                 System.out.println(array[i].getStreamURL());
             }

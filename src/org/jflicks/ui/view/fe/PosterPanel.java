@@ -99,6 +99,12 @@ public class PosterPanel extends BaseCustomizePanel {
         setBufferedImageList(new ArrayList<BufferedImage>());
     }
 
+    public PosterPanel(int count, double aspect) {
+
+        this(count);
+        setAspectRatio(aspect);
+    }
+
     /**
      * We act upon a set of Video instances to allow the user
      * to select.

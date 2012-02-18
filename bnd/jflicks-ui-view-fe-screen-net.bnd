@@ -32,10 +32,5 @@ Import-Package:\
  org.jdesktop.swingx.painter;version="[1.0,2.0)",\
  javax.swing,\
  javax.imageio,\
- com.sun.syndication.feed.module,\
- com.sun.syndication.feed.module.itunes,\
- com.sun.syndication.feed.module.itunes.types,\
- com.sun.syndication.feed.module.mediarss,\
- com.sun.syndication.feed.module.mediarss.types,\
- com.sun.syndication.feed.synd,\
- com.sun.syndication.io
+ org.jdom,\
+ org.jdom.input
