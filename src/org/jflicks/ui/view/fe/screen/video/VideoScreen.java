@@ -49,6 +49,7 @@ import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
+import org.jflicks.ui.view.fe.PosterPanel;
 import org.jflicks.ui.view.fe.TextListPanel;
 import org.jflicks.ui.view.fe.TextIcon;
 import org.jflicks.ui.view.fe.VideoDetailPanel;

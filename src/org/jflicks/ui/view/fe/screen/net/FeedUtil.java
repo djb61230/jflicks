@@ -212,6 +212,7 @@ public final class FeedUtil {
             for (int i = 0; i < array.length; i++) {
                 System.out.println(array[i].getDuration());
                 System.out.println(array[i].getPosterURL());
+                System.out.println(array[i].getStreamURL());
             }
         }
     }
