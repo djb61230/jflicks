@@ -121,6 +121,10 @@ public final class FeedUtil {
 
             // Our first possible poster image.
             result.setPosterURL(getGrandValue(parent, "image", "url"));
+            if (result.getPosterURL() == null) {
+
+                result.setPosterURL(getAttrValue(parent, "image", "href"));
+            }
 
             Element enc = e.getChild("enclosure");
             if (enc != null) {
