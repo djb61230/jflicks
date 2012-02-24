@@ -114,10 +114,20 @@ public final class FeedUtil {
         if ((parent != null) && (e != null)) {
 
             result = new Video();
-            result.setTitle(e.getChildText("title"));
+            String title = e.getChildText("title");
+            if (title != null) {
+
+                title = title.trim();
+                result.setId("" + title.hashCode());
+            }
+            result.setTitle(title);
 
             // This will be overwritten later if itunes:summary exists.
-            result.setDescription(e.getChildText("description"));
+            String desc = e.getChildText("description");
+            if (desc != null) {
+                desc = desc.trim();
+            }
+            result.setDescription(desc);
 
             // Our first possible poster image.
             result.setPosterURL(getGrandValue(parent, "image", "url"));
@@ -140,6 +150,9 @@ public final class FeedUtil {
                 Element tmp = (Element) all.get(i);
                 String name = tmp.getName();
                 String value = tmp.getTextTrim();
+                if (value != null) {
+                    value = value.trim();
+                }
                 if (name != null) {
 
                     if (name.equals("duration")) {
