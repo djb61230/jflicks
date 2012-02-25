@@ -62,6 +62,15 @@ public interface ImageCache {
     BufferedImage getImage(String url, boolean keepInMemory);
 
     /**
+     * If the cache has the image pointed to by the given URL, then get it's
+     * modified date of the local cache file.
+     *
+     * @param url A URL to check in the cache.
+     * @return The last modified time if it exists.
+     */
+    long getLastModified(String url);
+
+    /**
      * Place the given image into the cache and return a URL String of where
      * the image is on disk.
      *

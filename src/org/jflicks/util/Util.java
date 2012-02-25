@@ -47,6 +47,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -1463,6 +1464,27 @@ public final class Util {
         } else {
 
             result = "";
+        }
+
+        return (result);
+    }
+
+    public static long lastModifiedURL(String urlstr) {
+
+        long result = 0L;
+
+        if (urlstr != null) {
+
+            try {
+
+                URL url = new URL(urlstr);
+                URLConnection conn = url.openConnection();
+                result = conn.getLastModified();
+
+            } catch (IOException ex) {
+
+                System.out.println(ex.getMessage());
+            }
         }
 
         return (result);

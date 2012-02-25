@@ -946,8 +946,15 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                 String turl = array[i].getPosterURL();
 
-                // First see if a scaled image exists...
-                BufferedImage bi = ic.getImage(turl + ".scaled.png", false);
+                BufferedImage bi = null;
+                long turltime = Util.lastModifiedURL(turl);
+                long scaletime = ic.getLastModified(turl + ".scaled.png");
+                if (scaletime >= turltime) {
+
+                    // Then we have a cached scaled image.
+                    bi = ic.getImage(turl + ".scaled.png", false);
+                }
+
                 if (bi == null) {
 
                     // Then put it in if the original exists...

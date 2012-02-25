@@ -124,34 +124,13 @@ public class SystemImageCache extends BaseImageCache {
         return (result);
     }
 
-    private long lastModifiedURL(String urlstr) {
-
-        long result = 0L;
-
-        if (urlstr != null) {
-
-            try {
-
-                URL url = new URL(urlstr);
-                URLConnection conn = url.openConnection();
-                result = conn.getLastModified();
-
-            } catch (IOException ex) {
-
-                log(WARNING, ex.getMessage());
-            }
-        }
-
-        return (result);
-    }
-
     private boolean isNewerURL(File f, String url) {
 
         boolean result = false;
 
         if ((f != null) && (url != null)) {
 
-            result = (f.lastModified() < lastModifiedURL(url));
+            result = (f.lastModified() < Util.lastModifiedURL(url));
         }
 
         return (result);
@@ -237,6 +216,34 @@ public class SystemImageCache extends BaseImageCache {
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getLastModified(String url) {
+
+        long result = -1L;
+
+        if (url != null) {
+
+            String hash = Util.toMD5(url);
+            if (hash != null) {
+
+                String ext = getExtension(url);
+                hash = hash + "." + ext;
+                File dir = getDirectoryFile();
+                if (dir != null) {
+
+                    File f = new File(dir, hash);
+                    if (f.exists()) {
+                        result = f.lastModified();
                     }
                 }
             }
