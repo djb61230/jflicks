@@ -397,110 +397,151 @@ public class MPlayer extends BasePlayer {
             setCompleted(false);
             setUserStop(false);
 
-            long position = 0L;
-            int time = 0;
-            int playStateTime = 0;
-            boolean bookmarkSeconds = false;
+            String mytype = getType();
+            if (PLAYER_VIDEO_STREAM_UDP.equals(mytype)) {
 
-            if (b != null) {
+                int port = 1234;
+                MPlayerUdpJob job = null;
+                if (isForceFullscreen()) {
 
-                playStateTime = b.getTime();
-                if (b.isPreferTime()) {
-
-                    bookmarkSeconds = true;
-                    time = playStateTime;
+                    job = new MPlayerUdpJob(this, null, getArgs(), port);
+                    setMPlayerJob(job);
 
                 } else {
 
-                    position = b.getPosition();
+                    MPlayerCanvas can = getCanvas();
+                    JDialog win = createWindow();
+                    setDialog(win);
+                    win.setVisible(true);
+
+                    long canid = Native.getComponentID(can);
+                    log(DEBUG, "canvas id: " + canid);
+                    String wid = "" + canid;
+
+                    job = new MPlayerUdpJob(this, wid, getArgs(), port);
+                    setMPlayerJob(job);
                 }
-            }
 
-            MPlayerJob job = null;
-            if (isForceFullscreen()) {
-
-                job = new MPlayerJob(this, null, getArgs(), position, time, url,
-                    isAutoSkip());
-                setMPlayerJob(job);
+                JobContainer jc = JobManager.getJobContainer(job);
+                setJobContainer(jc);
+                jc.start();
 
             } else {
 
-                Rectangle r = null;
-                if (isFullscreen()) {
+                long position = 0L;
+                int time = 0;
+                int playStateTime = 0;
+                boolean bookmarkSeconds = false;
 
-                    r = getFullscreenRectangle();
+                if (b != null) {
+
+                    playStateTime = b.getTime();
+                    if (b.isPreferTime()) {
+
+                        bookmarkSeconds = true;
+                        time = playStateTime;
+
+                    } else {
+
+                        position = b.getPosition();
+                    }
+                }
+
+                MPlayerJob job = null;
+                if (isForceFullscreen()) {
+
+                    job = new MPlayerJob(this, null, getArgs(), position,
+                        time, url, isAutoSkip());
+                    setMPlayerJob(job);
 
                 } else {
 
-                    r = getRectangle();
+                    MPlayerCanvas can = getCanvas();
+                    JDialog win = createWindow();
+                    setDialog(win);
+                    win.setVisible(true);
+
+                    final MPlayerCanvas fcan = can;
+                    Runnable doRun = new Runnable() {
+
+                        public void run() {
+
+                            System.out.println("Requesting focus 4 canvas....");
+                            fcan.requestFocus();
+                        }
+                    };
+                    SwingUtilities.invokeLater(doRun);
+
+                    long canid = Native.getComponentID(can);
+                    log(DEBUG, "canvas id: " + canid);
+                    String wid = "" + canid;
+
+                    job = new MPlayerJob(this, wid, getArgs(), position,
+                        time, url, isAutoSkip());
+                    setMPlayerJob(job);
                 }
 
-                int x = (int) r.getX();
-                int y = (int) r.getY();
-                int width = (int) r.getWidth();
-                int height = (int) r.getHeight();
-
-                JDialog win = new JDialog(getFrame());
-                win.setUndecorated(true);
-                win.setFocusable(true);
-                win.setBounds(x, y, width, height);
-                win.setBackground(Color.BLACK);
-                setDialog(win);
-
-                MPlayerCanvas can = getCanvas();
-                JPanel pan = getKeyPanel();
-                JLayeredPane lpane = new JLayeredPane();
-                setLayeredPane(lpane);
-                pan.setBounds(0, 0, width, height);
-
-                lpane.add(pan, Integer.valueOf(100));
-                win.add(lpane, BorderLayout.CENTER);
-
-                Cursor cursor = Util.getNoCursor();
-                if (cursor != null) {
-
-                    pan.setCursor(cursor);
-                    can.setCursor(cursor);
+                boolean preferTime = true;
+                if (mytype == PLAYER_VIDEO_TRANSPORT_STREAM) {
+                    preferTime = false;
                 }
+                PlayStateJob psj = new PlayStateJob(this, job, playStateTime,
+                    bookmarkSeconds, preferTime);
+                setPlayStateJob(psj);
 
-                win.setVisible(true);
+                JobContainer jc = JobManager.getJobContainer(psj);
+                setPlayStateJobContainer(jc);
+                jc.start();
 
-                final MPlayerCanvas fcan = can;
-                Runnable doRun = new Runnable() {
-
-                    public void run() {
-
-                        System.out.println("Requesting focus 4 canvas....");
-                        fcan.requestFocus();
-                    }
-                };
-                SwingUtilities.invokeLater(doRun);
-
-                long canid = Native.getComponentID(can);
-                log(DEBUG, "canvas id: " + canid);
-                String wid = "" + canid;
-
-                job = new MPlayerJob(this, wid, getArgs(), position, time, url,
-                    isAutoSkip());
-                setMPlayerJob(job);
+                jc = JobManager.getJobContainer(job);
+                setJobContainer(jc);
+                jc.start();
             }
-
-            boolean preferTime = true;
-            if (getType() == PLAYER_VIDEO_TRANSPORT_STREAM) {
-                preferTime = false;
-            }
-            PlayStateJob psj = new PlayStateJob(this, job, playStateTime,
-                bookmarkSeconds, preferTime);
-            setPlayStateJob(psj);
-
-            JobContainer jc = JobManager.getJobContainer(psj);
-            setPlayStateJobContainer(jc);
-            jc.start();
-
-            jc = JobManager.getJobContainer(job);
-            setJobContainer(jc);
-            jc.start();
         }
+    }
+
+    private JDialog createWindow() {
+
+        JDialog result = null;
+
+        Rectangle r = null;
+        if (isFullscreen()) {
+
+            r = getFullscreenRectangle();
+
+        } else {
+
+            r = getRectangle();
+        }
+
+        int x = (int) r.getX();
+        int y = (int) r.getY();
+        int width = (int) r.getWidth();
+        int height = (int) r.getHeight();
+
+        result = new JDialog(getFrame());
+        result.setUndecorated(true);
+        result.setFocusable(true);
+        result.setBounds(x, y, width, height);
+        result.setBackground(Color.BLACK);
+
+        MPlayerCanvas can = getCanvas();
+        JPanel pan = getKeyPanel();
+        JLayeredPane lpane = new JLayeredPane();
+        setLayeredPane(lpane);
+        pan.setBounds(0, 0, width, height);
+
+        lpane.add(pan, Integer.valueOf(100));
+        result.add(lpane, BorderLayout.CENTER);
+
+        Cursor cursor = Util.getNoCursor();
+        if (cursor != null) {
+
+            pan.setCursor(cursor);
+            can.setCursor(cursor);
+        }
+
+        return (result);
     }
 
     /**
@@ -511,7 +552,16 @@ public class MPlayer extends BasePlayer {
         setPaused(false);
         setPlaying(false);
         setUserStop(true);
-        command("stop\n");
+        if (PLAYER_VIDEO_STREAM_UDP.equals(getType())) {
+
+            kill();
+
+        } else {
+
+            command("stop\n");
+            kill();
+        }
+
         dispose();
     }
 
@@ -693,6 +743,16 @@ public class MPlayer extends BasePlayer {
 
             log(DEBUG, "send command to mplayer <" + s + ">");
             job.command(s);
+        }
+    }
+
+    private void kill() {
+
+        MPlayerJob job = getMPlayerJob();
+        if (job != null) {
+
+            log(DEBUG, "send stop to mplayer");
+            job.stop();
         }
     }
 

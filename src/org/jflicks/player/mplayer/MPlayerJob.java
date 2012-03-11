@@ -48,6 +48,9 @@ public class MPlayerJob extends AbstractJob implements JobListener {
     private FileWriter fileWriter;
     private String[] args;
 
+    public MPlayerJob() {
+    }
+
     /**
      * Constructor with three required arguments.  There are two ways to
      * begin playing at some point in the video and if either is non-zero
@@ -75,39 +78,39 @@ public class MPlayerJob extends AbstractJob implements JobListener {
         setAutoSkip(autoSkip);
     }
 
-    private MPlayer getMPlayer() {
+    public MPlayer getMPlayer() {
         return (mplayer);
     }
 
-    private void setMPlayer(MPlayer p) {
+    public void setMPlayer(MPlayer p) {
         mplayer = p;
     }
 
-    private String[] getArgs() {
+    public String[] getArgs() {
         return (args);
     }
 
-    private void setArgs(String[] array) {
+    public void setArgs(String[] array) {
         args = array;
     }
 
-    private SystemJob getSystemJob() {
+    public SystemJob getSystemJob() {
         return (systemJob);
     }
 
-    private void setSystemJob(SystemJob j) {
+    public void setSystemJob(SystemJob j) {
         systemJob = j;
     }
 
-    private JobContainer getJobContainer() {
+    public JobContainer getJobContainer() {
         return (jobContainer);
     }
 
-    private void setJobContainer(JobContainer j) {
+    public void setJobContainer(JobContainer j) {
         jobContainer = j;
     }
 
-    private void log(int level, String message) {
+    public void log(int level, String message) {
 
         MPlayer m = getMPlayer();
         if ((m != null) && (message != null)) {
@@ -300,7 +303,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
         return (result);
     }
 
-    private String getProgramName() {
+    public String getProgramName() {
 
         String result = "mplayer";
 
@@ -397,6 +400,16 @@ public class MPlayerJob extends AbstractJob implements JobListener {
         while (!isTerminate()) {
 
             JobManager.sleep(getSleepTime());
+        }
+
+        if (Util.isLinux()) {
+
+            log(MPlayer.INFO, "On Linux: doing a killall just for fun.");
+            JobManager.sleep(getSleepTime());
+            SystemJob job =
+                SystemJob.getInstance("killall " + getProgramName());
+            JobContainer jc = JobManager.getJobContainer(job);
+            jc.start();
         }
     }
 

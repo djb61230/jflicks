@@ -336,6 +336,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-player-mplayer-video-stream-udp.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-player-vlcj-video.bnd"
             output="${bundle}"
         />
@@ -1215,6 +1224,19 @@
     <target name="test-feedutil" depends="build">
 
         <java classname="org.jflicks.ui.view.fe.screen.net.FeedUtil"
+            fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-util" depends="build">
+
+        <java classname="org.jflicks.util.Util"
             fork="true">
 
             <classpath>

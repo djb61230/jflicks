@@ -60,6 +60,8 @@ import javax.swing.JDialog;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
+import com.sun.jna.platform.WindowUtils;
+
 /**
  * Some very basic methods that capture some common tasks.  Implemented here
  * so other classes can reduce duplicated code.
@@ -1490,6 +1492,14 @@ public final class Util {
         return (result);
     }
 
+    public static boolean isTranslucencySupported() {
+        return (WindowUtils.isWindowAlphaSupported());
+    }
+
+    public static void setWindowAlpha(Window w, float alpha) {
+        WindowUtils.setWindowAlpha(w, alpha);
+    }
+
     /**
      * Simple main method that dumps the system properties to stdout.
      *
@@ -1498,7 +1508,7 @@ public final class Util {
     public static void main(String[] args) {
 
         Util.dumpOSProperties();
-//        System.out.println("Translucent: " + Util.isTranslucencySupported());
+        System.out.println("Translucent: " + Util.isTranslucencySupported());
     }
 
 }
