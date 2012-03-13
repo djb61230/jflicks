@@ -156,33 +156,31 @@ public class LiveTVScreen extends PlayerScreen implements NMSProperty,
         Player p = getPlayer();
         if (p != null) {
 
-            if (p.isPlaying()) {
+            if (!p.isPlaying()) {
 
-                p.stop();
+                View v = getView();
+                if (v instanceof FrontEndView) {
+
+                    FrontEndView fev = (FrontEndView) v;
+                    p.setRectangle(fev.getPosition());
+                }
+
+                String hostaddr = Hostname.getHostAddress();
+                p.setFrame(Util.findFrame(this));
+
+                ChannelInfoPanel cip = getChannelInfoPanel();
+                if (cip != null) {
+                    cip.setPlayer(p);
+                }
+
+                RecordingInfoPanel rip = getRecordingInfoPanel();
+                if (rip != null) {
+                    rip.setPlayer(p);
+                }
+
+                System.out.println("udp://@" + hostaddr + ":1234");
+                p.play("udp://@" + hostaddr + ":1234");
             }
-
-            View v = getView();
-            if (v instanceof FrontEndView) {
-
-                FrontEndView fev = (FrontEndView) v;
-                p.setRectangle(fev.getPosition());
-            }
-
-            String hostaddr = Hostname.getHostAddress();
-            p.setFrame(Util.findFrame(this));
-
-            ChannelInfoPanel cip = getChannelInfoPanel();
-            if (cip != null) {
-                cip.setPlayer(p);
-            }
-
-            RecordingInfoPanel rip = getRecordingInfoPanel();
-            if (rip != null) {
-                rip.setPlayer(p);
-            }
-
-            System.out.println("udp://@" + hostaddr + ":1234");
-            p.play("udp://@" + hostaddr + ":1234");
         }
     }
 

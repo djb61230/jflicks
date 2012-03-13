@@ -68,6 +68,7 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
     private BufferedImage defaultBackgroundImage;
     private BufferedImage currentBackgroundImage;
     private View view;
+    private long lastCommandMillis;
 
     /**
      * This base class does the necessary OSGi Event code so we insist
@@ -369,6 +370,27 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
         return (result);
     }
 
+    public Player[] getPlayers() {
+
+        Player[] result = null;
+
+        ServiceTracker st = getPlayerServiceTracker();
+        if (st != null) {
+
+            Object[] array = st.getServices();
+            if ((array != null) && (array.length > 0)) {
+
+                result = new Player[array.length];
+                for (int i = 0; i < array.length; i++) {
+
+                    result[i] = (Player) array[i];
+                }
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * The Activator for the FrontEndView keeps us uptodate with the
      * current RC instance.  We don't expect more than one running or
@@ -405,6 +427,34 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
         imageCache = ic;
     }
 
+    private long getLastCommandMillis() {
+        return (lastCommandMillis);
+    }
+
+    private void setLastCommandMillis(long l) {
+        lastCommandMillis = l;
+    }
+
+    public long getLastActivityMillis() {
+
+        long result = getLastCommandMillis();
+
+        Player[] all = getPlayers();
+        if ((all != null) && (all.length > 0)) {
+
+            for (int i = 0; i < all.length; i++) {
+
+                if (all[i].isPlaying()) {
+
+                    result = System.currentTimeMillis();
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -417,6 +467,15 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
      */
     public void removeScreenListener(ScreenListener l) {
         screenList.remove(l);
+    }
+
+    /**
+     * Convenience method to fire an event with a certain type.
+     *
+     * @param type A given type.
+     */
+    public void fireScreenEvent(int type) {
+        processScreenEvent(new ScreenEvent(this, type));
     }
 
     /**
@@ -456,6 +515,7 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
             if (runtimeid.equals(RuntimeId.getInstance().getId())) {
 
                 commandReceived(command);
+                setLastCommandMillis(System.currentTimeMillis());
             }
         }
     }

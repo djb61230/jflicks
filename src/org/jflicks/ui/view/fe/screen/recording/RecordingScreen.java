@@ -1586,6 +1586,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     rllp.setControl(false);
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1610,6 +1612,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     rllp.setControl(true);
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1646,6 +1650,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1682,6 +1688,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1710,6 +1718,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1738,6 +1748,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1779,6 +1791,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 

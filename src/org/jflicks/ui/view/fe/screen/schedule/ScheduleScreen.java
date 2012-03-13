@@ -79,6 +79,7 @@ import org.jflicks.ui.view.fe.UpcomingListPanel;
 import org.jflicks.ui.view.fe.UpcomingDetailPanel;
 import org.jflicks.ui.view.fe.UpcomingProperty;
 import org.jflicks.ui.view.fe.screen.Screen;
+import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.util.Busy;
 import org.jflicks.util.Util;
 
@@ -1625,18 +1626,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     if (ggp != null) {
 
                         ggp.left();
-                        /*
-                        if (!ggp.left()) {
-
-                            if (getChannelState() == ALL_CHANNELS) {
-                                setChannelState(FAVORITE_CHANNELS);
-                            } else if (getChannelState() == FAVORITE_CHANNELS) {
-                                setChannelState(ALL_CHANNELS);
-                            }
-
-                            applyChannels();
-                        }
-                        */
                     }
 
                 } else if (isParameterUpcomingRecordings()) {
@@ -1654,6 +1643,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1730,6 +1721,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1781,6 +1774,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1832,6 +1827,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1875,6 +1872,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1918,6 +1917,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -2102,6 +2103,8 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
                 handleFavorite();
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
 
     }

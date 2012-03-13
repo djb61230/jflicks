@@ -57,6 +57,7 @@ import org.jflicks.ui.view.fe.VideoListPanel;
 import org.jflicks.ui.view.fe.VideoInfoPanel;
 import org.jflicks.ui.view.fe.VideoProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
@@ -1352,6 +1353,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1387,6 +1390,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1434,6 +1439,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1481,6 +1488,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1520,6 +1529,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -1559,6 +1570,8 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 

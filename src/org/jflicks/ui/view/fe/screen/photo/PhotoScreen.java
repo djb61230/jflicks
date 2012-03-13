@@ -46,6 +46,7 @@ import org.jflicks.ui.view.fe.MessagePanel;
 import org.jflicks.ui.view.fe.PhotoTagProperty;
 import org.jflicks.ui.view.fe.TagListPanel;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
@@ -592,6 +593,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     tlp.setControl(false);
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -623,6 +626,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -659,6 +664,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -695,6 +702,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -723,6 +732,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -751,6 +762,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     }
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -771,6 +784,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
                 popup(buts);
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -863,6 +878,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
                 updateStatus();
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
 
     }
@@ -924,6 +941,8 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
                 updateStatus();
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
 
     }

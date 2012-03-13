@@ -1104,6 +1104,7 @@ public class TextImagePanel extends BaseCustomizePanel
         public void actionPerformed(ActionEvent e) {
 
             deactivatePopup();
+            fireActionEvent(e);
         }
     }
 
@@ -1118,6 +1119,8 @@ public class TextImagePanel extends BaseCustomizePanel
 
                 activatePopup();
             }
+
+            fireActionEvent(e);
         }
     }
 
@@ -1159,6 +1162,8 @@ public class TextImagePanel extends BaseCustomizePanel
                     }
                 }
             }
+
+            fireActionEvent(e);
         }
     }
 
@@ -1185,6 +1190,8 @@ public class TextImagePanel extends BaseCustomizePanel
                     setSelectedIndex(0);
                 }
             }
+
+            fireActionEvent(e);
         }
     }
 
@@ -1245,6 +1252,8 @@ public class TextImagePanel extends BaseCustomizePanel
                     }
                 }
             }
+
+            fireActionEvent(e);
         }
     }
 

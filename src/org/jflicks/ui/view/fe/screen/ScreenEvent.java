@@ -53,6 +53,11 @@ public class ScreenEvent extends AWTEvent {
      */
     public static final int REMOVE_SCREEN = 5;
 
+    /**
+     * Status that a Screen has just acted upon some user input.
+     */
+    public static final int USER_INPUT = 6;
+
     private int type;
     private Recording recording;
     private Screen screen;

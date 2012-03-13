@@ -72,6 +72,7 @@ import org.jflicks.ui.view.fe.RecordingRulePanel;
 import org.jflicks.ui.view.fe.RecordingRuleProperty;
 import org.jflicks.ui.view.fe.ShowDetailPanel;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.util.Busy;
 import org.jflicks.util.Util;
 
@@ -1341,6 +1342,8 @@ public class DVRLiveTVScreen extends PlayerScreen implements NMSProperty,
                 unpopup();
             }
         }
+
+        fireScreenEvent(ScreenEvent.USER_INPUT);
     }
 
     /**

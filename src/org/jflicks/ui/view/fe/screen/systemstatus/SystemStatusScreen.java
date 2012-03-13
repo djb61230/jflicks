@@ -43,6 +43,7 @@ import org.jflicks.ui.view.fe.MessagePanel;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.ParameterProperty;
 import org.jflicks.ui.view.fe.screen.Screen;
+import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.update.Update;
 import org.jflicks.update.UpdateProperty;
 import org.jflicks.update.UpdateState;
@@ -595,7 +596,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            System.out.println("fred");
             if (isPopupEnabled()) {
 
                 ButtonPanel bp = getButtonPanel();
@@ -604,6 +604,8 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
                     bp.moveUp();
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -622,6 +624,8 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
                     bp.moveDown();
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 

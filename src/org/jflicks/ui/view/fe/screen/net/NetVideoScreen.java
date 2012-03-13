@@ -63,6 +63,7 @@ import org.jflicks.ui.view.fe.VideoDetailPanel;
 import org.jflicks.ui.view.fe.VideoListPanel;
 import org.jflicks.ui.view.fe.VideoInfoPanel;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.util.Busy;
 import org.jflicks.util.Util;
 
@@ -906,6 +907,8 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                     pp.prev();
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -924,6 +927,8 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                     pp.next();
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -942,6 +947,8 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                     bp.moveUp();
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -960,6 +967,8 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                     bp.moveDown();
                 }
             }
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 
@@ -978,6 +987,8 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
             blist.add(CANCEL);
 
             popup(blist.toArray(new String[blist.size()]));
+
+            fireScreenEvent(ScreenEvent.USER_INPUT);
         }
     }
 

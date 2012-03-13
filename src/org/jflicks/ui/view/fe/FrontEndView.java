@@ -40,7 +40,9 @@ import javax.swing.AbstractAction;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JWindow;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
@@ -89,6 +91,10 @@ public class FrontEndView extends JFlicksView implements ActionListener,
     private ArrayList<String> fromPathList;
     private ArrayList<String> toPathList;
     private Rectangle positionRectangle;
+    private Timer activityTimer;
+    private ActivityActionListener activityActionListener;
+    private JWindow blankWindow;
+    private long lastActivityMillis;
 
     /**
      * Default constructor.
@@ -99,6 +105,13 @@ public class FrontEndView extends JFlicksView implements ActionListener,
         setPathCount(-1);
         setFromPathList(new ArrayList<String>());
         setToPathList(new ArrayList<String>());
+
+        setLastActivityMillis(System.currentTimeMillis());
+        ActivityActionListener aal = new ActivityActionListener();
+        setActivityActionListener(aal);
+        Timer t = new Timer(60000, aal);
+        setActivityTimer(t);
+        t.start();
     }
 
     /**
@@ -159,6 +172,50 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
     private void setScreenList(ArrayList<Screen> l) {
         screenList = l;
+    }
+
+    private ActivityActionListener getActivityActionListener() {
+        return (activityActionListener);
+    }
+
+    private void setActivityActionListener(ActivityActionListener aal) {
+        activityActionListener = aal;
+    }
+
+    private Timer getActivityTimer() {
+        return (activityTimer);
+    }
+
+    private void setActivityTimer(Timer t) {
+        activityTimer = t;
+    }
+
+    private long getLastActivityMillis() {
+        return (lastActivityMillis);
+    }
+
+    private void setLastActivityMillis(long l) {
+        lastActivityMillis = l;
+    }
+
+    private boolean isBlanked() {
+
+        boolean result = false;
+
+        if (blankWindow != null) {
+
+            result = blankWindow.isVisible();
+        }
+
+        return (result);
+    }
+
+    private void setBlanked(boolean b) {
+
+        if (blankWindow != null) {
+
+            blankWindow.setVisible(b);
+        }
     }
 
     /**
@@ -480,6 +537,38 @@ public class FrontEndView extends JFlicksView implements ActionListener,
         return (positionRectangle);
     }
 
+    private boolean isBlankingEnabled() {
+
+        boolean result = false;
+
+        Properties p = getProperties();
+        if (p != null) {
+
+            result = Util.str2boolean(p.getProperty("blankingenabled"), result);
+        }
+
+        return (result);
+    }
+
+    private int getMaxInactivity() {
+
+        int result = 3;
+
+        Properties p = getProperties();
+        if (p != null) {
+
+            result = Util.str2int(p.getProperty("maxinactivity"), result);
+        }
+
+        return (result);
+    }
+
+    private long getMaxInactivityMillis() {
+
+        long mins = (long) getMaxInactivity();
+        return (mins * 60 * 1000);
+    }
+
     private boolean isUndecorated() {
 
         boolean result = true;
@@ -546,6 +635,15 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             frame.setUndecorated(isUndecorated());
             frame.setResizable(false);
             frame.setBounds(x, y, width, height);
+
+            blankWindow = new JWindow(frame);
+            blankWindow.setBounds(x, y, width, height);
+            JXPanel bwpanel = new JXPanel();
+            bwpanel.setBackground(Color.BLACK);
+            bwpanel.setBounds(0, 0, width, height);
+            bwpanel.setFocusable(false);
+            blankWindow.getLayeredPane().add(bwpanel);
+            blankWindow.getContentPane().setCursor(getNoCursor());
 
             JXPanel cards = new JXPanel(new CardLayout());
             cards.setBackground(Color.BLACK);
@@ -623,6 +721,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
             CardLayout cl = (CardLayout) cards.getLayout();
             cl.show(cards, "main");
+            setLastActivityMillis(System.currentTimeMillis());
 
             frame.setLayout(new BorderLayout());
             frame.add(cards, BorderLayout.CENTER);
@@ -872,11 +971,17 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
                             array[i].setAlpha(1.0f);
                             cl.show(panel, title);
+                            setLastActivityMillis(System.currentTimeMillis());
                         }
                         break;
                     }
                 }
             }
+        }
+
+        setLastActivityMillis(System.currentTimeMillis());
+        if (isBlanked()) {
+            setBlanked(false);
         }
     }
 
@@ -1110,27 +1215,6 @@ public class FrontEndView extends JFlicksView implements ActionListener,
         }
     }
 
-    private void focus(String s) {
-
-        TextImagePanel p = getTextImagePanel();
-        if ((p != null) && (s != null)) {
-
-            /*
-            JButton[] array = p.getButtons();
-            if (array != null) {
-
-                for (int i = 0; i < array.length; i++) {
-
-                    if (s.equals(array[i].getText())) {
-
-                        array[i].requestFocus();
-                    }
-                }
-            }
-            */
-        }
-    }
-
     /**
      * We need to listen for when screens are done so the main
      * UI component is displayed.
@@ -1148,8 +1232,6 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
                 CardLayout cl = (CardLayout) (p.getLayout());
                 TextImagePanel tip = getTextImagePanel();
-                //tip.setAlpha(0.0f);
-                //cl.show(p, "main");
                 if (isEffects()) {
 
                     TimingTarget tt = PropertySetter.getTarget(tip,
@@ -1163,8 +1245,8 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
                     tip.setAlpha(1.0f);
                     cl.show(p, "main");
+                    setLastActivityMillis(System.currentTimeMillis());
                 }
-                focus(screen.getTitle());
             }
         }
     }
@@ -1224,6 +1306,13 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                 }
             }
 
+            break;
+
+        case ScreenEvent.USER_INPUT:
+            setLastActivityMillis(System.currentTimeMillis());
+            if (isBlanked()) {
+                setBlanked(false);
+            }
             break;
         }
     }
@@ -1292,6 +1381,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             CardLayout cl = (CardLayout) panel.getLayout();
             screen.setAlpha(0.0f);
             cl.show(panel, title);
+            setLastActivityMillis(System.currentTimeMillis());
 
             TimingTarget tt = PropertySetter.getTarget(screen,
                 "alpha", Float.valueOf(0.0f), Float.valueOf(1.0f));
@@ -1317,6 +1407,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             TextImagePanel p = getTextImagePanel();
             p.setAlpha(0.0f);
             cl.show(panel, "main");
+            setLastActivityMillis(System.currentTimeMillis());
 
             TimingTarget tt = PropertySetter.getTarget(p,
                 "alpha", Float.valueOf(0.0f), Float.valueOf(1.0f));
@@ -1325,6 +1416,45 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             fadein.start();
         }
 
+    }
+
+    class ActivityActionListener implements ActionListener {
+
+        public ActivityActionListener() {
+        }
+
+        public void actionPerformed(ActionEvent event) {
+
+            if (isBlankingEnabled()) {
+
+                if (!isBlanked()) {
+
+                    // We do not ever unblank here so no need to do
+                    // anything unless the screen is active.
+                    long last = getLastActivityMillis();
+                    Screen[] all = getScreens();
+                    if ((all != null) && (all.length > 0)) {
+
+                        for (int i = 0; i < all.length; i++) {
+
+                            long tmp = all[i].getLastActivityMillis();
+                            if (tmp > last) {
+                                last = tmp;
+                            }
+                        }
+                    }
+
+                    setLastActivityMillis(last);
+                    long max = getMaxInactivityMillis();
+                    long now = System.currentTimeMillis();
+                    long inactivity = now - last;
+                    if (inactivity > max) {
+
+                        setBlanked(true);
+                    }
+                }
+            }
+        }
     }
 
 }
