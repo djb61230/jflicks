@@ -115,11 +115,11 @@ public class RecordJob extends BaseDeviceJob {
         // the HD-PVR as just a bit previously the channel was changed by
         // a script.  Obviously hard-wiring a value here is not the best
         // solution.
-        JobManager.sleep(4000);
+        JobManager.sleep(5000);
         jc.start();
 
         // End  a few seconds early...
-        long l = getDuration() - 5;
+        long l = getDuration() - 6;
         if (l == 0) {
 
             // This is just to record something...the duration was not set so

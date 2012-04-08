@@ -40,6 +40,7 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
+import org.jflicks.job.SystemJob;
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.PlayState;
@@ -539,6 +540,7 @@ public class MPlayer extends BasePlayer {
 
             pan.setCursor(cursor);
             can.setCursor(cursor);
+            result.setCursor(cursor);
         }
 
         return (result);
@@ -549,6 +551,7 @@ public class MPlayer extends BasePlayer {
      */
     public void stop() {
 
+        System.out.println("Stop being called.");
         setPaused(false);
         setPlaying(false);
         setUserStop(true);
@@ -559,7 +562,6 @@ public class MPlayer extends BasePlayer {
         } else {
 
             command("stop\n");
-            kill();
         }
 
         dispose();
@@ -696,7 +698,7 @@ public class MPlayer extends BasePlayer {
     /**
      * Clean up window resources.
      */
-    public void dispose() {
+    public synchronized void dispose() {
 
         JDialog w = getDialog();
         if (w != null) {
@@ -705,6 +707,15 @@ public class MPlayer extends BasePlayer {
             w.setVisible(false);
             w.dispose();
             setDialog(null);
+            if (Util.isLinux()) {
+
+                System.out.println("On Linux: doing a killall just for fun.");
+                log(MPlayer.INFO, "On Linux: doing a killall just for fun.");
+                SystemJob job =
+                    SystemJob.getInstance("killall " + getProgramName());
+                JobContainer jc = JobManager.getJobContainer(job);
+                jc.start();
+            }
         }
     }
 

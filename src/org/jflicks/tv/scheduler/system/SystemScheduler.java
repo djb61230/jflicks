@@ -494,7 +494,7 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
     /**
      * {@inheritDoc}
      */
-    public void updateRecording(Recording r) {
+    public synchronized void updateRecording(Recording r) {
 
         ObjectContainer oc = getRecordingObjectContainer();
         NMS n = getNMS();

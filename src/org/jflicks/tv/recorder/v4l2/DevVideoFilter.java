@@ -36,7 +36,7 @@ public class DevVideoFilter implements FilenameFilter {
      */
     public DevVideoFilter() {
 
-        setMax(4);
+        setMax(8);
     }
 
     /**

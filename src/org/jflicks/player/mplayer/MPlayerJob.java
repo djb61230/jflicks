@@ -401,16 +401,6 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
             JobManager.sleep(getSleepTime());
         }
-
-        if (Util.isLinux()) {
-
-            log(MPlayer.INFO, "On Linux: doing a killall just for fun.");
-            JobManager.sleep(getSleepTime());
-            SystemJob job =
-                SystemJob.getInstance("killall " + getProgramName());
-            JobContainer jc = JobManager.getJobContainer(job);
-            jc.start();
-        }
     }
 
     /**

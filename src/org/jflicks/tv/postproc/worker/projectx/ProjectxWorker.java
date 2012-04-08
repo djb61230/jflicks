@@ -21,6 +21,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.Recording;
+import org.jflicks.tv.postproc.RecordingLengthJob;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.WorkerEvent;
 
@@ -70,7 +71,14 @@ public class ProjectxWorker extends BaseWorker implements JobListener {
             log(INFO, "ProjectxWorker: completed");
             ProjectxJob job = (ProjectxJob) event.getSource();
             removeJobContainer(job);
-            fireWorkerEvent(WorkerEvent.COMPLETE, job.getRecording(), true);
+
+            Recording r = job.getRecording();
+            long seconds = RecordingLengthJob.getRecordingLength(r);
+            if (seconds != 0L) {
+                r.setDuration(seconds);
+            }
+
+            fireWorkerEvent(WorkerEvent.COMPLETE, r, true);
 
         } else {
 

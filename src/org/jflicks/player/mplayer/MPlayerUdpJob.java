@@ -171,15 +171,6 @@ public class MPlayerUdpJob extends MPlayerJob {
             } catch (Exception ex) {
             }
         }
-
-        if (Util.isLinux()) {
-
-            JobManager.sleep(getSleepTime());
-            SystemJob job =
-                SystemJob.getInstance("killall " + getProgramName());
-            JobContainer jc = JobManager.getJobContainer(job);
-            jc.start();
-        }
     }
 
     /**

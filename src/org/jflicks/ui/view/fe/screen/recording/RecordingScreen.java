@@ -741,6 +741,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             MattePainter blankp = new MattePainter(Color.BLACK);
             blank.setBackgroundPainter(blankp);
             blank.setBounds(0, 0, width, height);
+            blank.setCursor(Util.getNoCursor());
             setBlankPanel(blank);
         }
 
