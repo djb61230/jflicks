@@ -636,7 +636,7 @@ public class Recording implements Media, Serializable, Comparable<Recording> {
 
         if (r == null) {
 
-            throw new NullPointerException();
+            throw new NullPointerException("Given a null Recording to Compare");
         }
 
         if (r == this) {

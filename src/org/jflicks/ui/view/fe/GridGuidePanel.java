@@ -223,7 +223,12 @@ public class GridGuidePanel extends BaseCustomizePanel
     }
 
     private void setChannelIndex(int i) {
-        channelIndex = i;
+        
+        if (i < 0) {
+            channelIndex = 0;
+        } else {
+            channelIndex = i;
+        }
     }
 
     public boolean pageUp() {

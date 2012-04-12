@@ -89,6 +89,7 @@ public final class BundleTree {
             if (ws != null) {
 
                 result = (f.lastModified() < ws.getWhen());
+                /*
                 if (result) {
 
                     // Ok the file is newer.  But we want to assume the
@@ -105,6 +106,7 @@ public final class BundleTree {
                         result = Math.abs(f.length() - size) > 2L;
                     }
                 }
+                */
             }
         }
 
