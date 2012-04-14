@@ -19,6 +19,7 @@ package org.jflicks.tv.programdata.sd;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -1062,8 +1063,21 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
                 Status status = os.next();
                 status.setLastUpdate(status.getNextUpdate());
+
+                // We want to update next tomorrow at around the
+                // preferred update hour.
+                int hcount = 24;
+                int hour = getConfiguredUpdateHour();
+                Calendar now = Calendar.getInstance();
+                int hod = now.get(Calendar.HOUR_OF_DAY);
+                if (hour > hod) {
+                    hcount = 24 + (hour - hod);
+                } else if (hod > hour) {
+                    hcount = 24 - (hod - hour);
+                }
+
                 status.setNextUpdate(System.currentTimeMillis()
-                    + (1000 * 3600 * 24));
+                    + (1000 * 3600 * hcount));
                 purge(oc, Status.class);
                 oc.store(status);
                 oc.commit();

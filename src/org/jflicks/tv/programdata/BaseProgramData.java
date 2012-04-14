@@ -19,6 +19,10 @@ package org.jflicks.tv.programdata;
 import java.util.ArrayList;
 
 import org.jflicks.configure.BaseConfig;
+import org.jflicks.configure.Configuration;
+import org.jflicks.configure.NameValue;
+import org.jflicks.nms.NMSConstants;
+import org.jflicks.util.Util;
 
 /**
  * This class is a base implementation of the ProgramData interface.
@@ -54,6 +58,27 @@ public abstract class BaseProgramData extends BaseConfig
      */
     public void setTitle(String s) {
         title = s;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getConfiguredUpdateHour() {
+
+        int result = 4;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv =
+                c.findNameValueByName(NMSConstants.UPDATE_HOUR);
+            if (nv != null) {
+
+                result = Util.str2int(nv.getValue(), result);
+            }
+        }
+
+        return (result);
     }
 
     /**

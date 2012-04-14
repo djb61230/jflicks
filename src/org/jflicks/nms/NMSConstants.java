@@ -209,6 +209,12 @@ public final class NMSConstants {
     public static final String VIDEO_DIRECTORIES = "Video Directories";
 
     /**
+     * The Scheduler needs a preferred hour of the day for it to
+     * update.
+     */
+    public static final String UPDATE_HOUR = "Update Hour";
+
+    /**
      * The NMS needs a configuration of a set of one or more
      * video file name extensions that identify a video file.
      */

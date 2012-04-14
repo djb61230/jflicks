@@ -272,17 +272,62 @@ public class SystemSchedulerJob extends AbstractJob
                     removeRecording(r);
                     r.removePropertyChangeListener("Recording", this);
 
-                    // Now we want to do any indexing of the recording
-                    // if so configured.
-                    String iname = r.getIndexerName();
-                    log(SystemScheduler.INFO, "Indexing recording: " + iname);
-                    if (iname != null) {
+                    // At this point we COULD have a bad recording - that
+                    // it really didn't record properly.  In a perfect
+                    // world this would not happen but in reality it
+                    // actually does from time to time.  We want to
+                    // remove it and allow for re-recording.  To do that
+                    // we use the NMS.
+                    if (isBad(rec)) {
 
-                        ss.indexRecording(iname, rec);
+                        log(SystemScheduler.INFO, rec.getTitle()
+                            + " " + rec.getPath() + " was bad!!!");
+                        NMS nms = ss.getNMS();
+                        if (nms != null) {
+
+                            log(SystemScheduler.INFO, "Removing and"
+                                + " rescheduling " + rec);
+                            nms.removeRecording(rec, true);
+                        }
+
+                    } else {
+
+                        // Now we want to do any indexing of the recording
+                        // if so configured.
+                        String iname = r.getIndexerName();
+                        log(SystemScheduler.INFO, "Indexing recording: "
+                            + iname);
+                        if (iname != null) {
+
+                            ss.indexRecording(iname, rec);
+                        }
                     }
                 }
             }
         }
+    }
+
+    private boolean isBad(Recording r) {
+
+        boolean result = false;
+
+        if (r != null) {
+
+            File f = new File(r.getPath());
+            if (!f.exists()) {
+
+                result = true;
+
+            } else {
+
+                if (f.length() == 0L) {
+
+                    result = true;
+                }
+            }
+        }
+
+        return (result);
     }
 
     private void checkImports() {

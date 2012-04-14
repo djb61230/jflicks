@@ -484,6 +484,12 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
             if (os != null) {
 
                 result = os.toArray(new Recording[os.size()]);
+
+                // We sometimes get an array that has at least one null
+                // entry.  Seems like a bug in ObjectSet or perhaps we
+                // are doing something stupid.  Either way lets make sure
+                // none are null.
+                result = zap(result);
                 Arrays.sort(result);
             }
         }
@@ -916,6 +922,30 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
 
                     result = list.toArray(new ShowAiring[list.size()]);
                 }
+            }
+        }
+
+        return (result);
+    }
+
+    private Recording[] zap(Recording[] array) {
+
+        Recording[] result = array;
+
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<Recording> l = new ArrayList<Recording>();
+            for (int i = 0; i < array.length; i++) {
+
+                if (array[i] != null) {
+
+                    l.add(array[i]);
+                }
+            }
+
+            if (l.size() > 0) {
+
+                result = l.toArray(new Recording[l.size()]);
             }
         }
 
