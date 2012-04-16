@@ -82,11 +82,13 @@ public class SchedulesDirectProgramDataJob extends AbstractJob {
 
                     try {
 
+                        pd.setUpdatingNow(true);
                         SchedulesDirect sd = new SchedulesDirect();
                         Xtvd xtvd = sd.getXtvd();
                         if (xtvd != null) {
                             pd.process(xtvd);
                         }
+                        pd.setUpdatingNow(false);
 
                     } catch (DataDirectException ex) {
 

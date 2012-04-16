@@ -69,6 +69,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
     private ObjectContainer objectContainer;
     private Db4oService db4oService;
     private boolean overrideTimeToUpdate;
+    private boolean updatingNow;
 
     /**
      * Simple empty constructor.
@@ -76,6 +77,22 @@ public class SchedulesDirectProgramData extends BaseProgramData
     public SchedulesDirectProgramData() {
 
         setTitle("Schedules Direct");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean requestUpdate() {
+
+        boolean result = false;
+
+        if (!isUpdatingNow()) {
+
+            result = true;
+            setOverrideTimeToUpdate(true);
+        }
+
+        return (result);
     }
 
     /**
@@ -102,6 +119,14 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
     private void setOverrideTimeToUpdate(boolean b) {
         overrideTimeToUpdate = b;
+    }
+
+    public boolean isUpdatingNow() {
+        return (updatingNow);
+    }
+
+    public void setUpdatingNow(boolean b) {
+        updatingNow = b;
     }
 
     /**

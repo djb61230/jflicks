@@ -154,5 +154,12 @@ public interface ProgramData extends Config, DataUpdateable {
      * given pattern.
      */
     ShowAiring[] getShowAirings(String pattern, int searchType);
+
+    /**
+     * A request to update the guide data can be accepted or not.
+     *
+     * @return True if the request is accepted.
+     */
+    boolean requestUpdate();
 }
 

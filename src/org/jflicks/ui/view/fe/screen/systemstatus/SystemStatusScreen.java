@@ -63,12 +63,14 @@ import org.jdesktop.swingx.painter.MattePainter;
 public class SystemStatusScreen extends Screen implements ParameterProperty,
     NMSProperty, UpdateProperty, ActionListener, JobListener {
 
+    private static final String REQUEST_GUIDE_UPDATE = "Request Guide Update";
     private static final String RESTART = "Restart";
     private static final String SOFTWARE_UPDATE = "Software Update";
     private static final String STATISTICS = "Statistics";
     private static final String RSYNC_MESSAGE = "sending incremental file list";
     private static final long GIGABYTE = 1073741824L;
     private static final String CANCEL = "Cancel";
+    private static final String CERTAIN = "Are you certain?";
 
     private NMS[] nms;
     private String[] parameters;
@@ -93,6 +95,7 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
         String[] array = {
 
+            REQUEST_GUIDE_UPDATE,
             RESTART,
             SOFTWARE_UPDATE,
             STATISTICS
@@ -218,7 +221,12 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
         super.setVisible(b);
         if (b) {
 
-            if (isParameterSoftwareUpdate()) {
+            if (isParameterRequestGuideUpdate()) {
+
+                updateLayout(false);
+                popup(CERTAIN);
+
+            } else if (isParameterSoftwareUpdate()) {
 
                 updateLayout(true);
                 UpdateOpenJob job = new UpdateOpenJob(getUpdate());
@@ -354,7 +362,9 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
             } else {
 
-                if (isParameterSoftwareUpdate()) {
+                if (isParameterRequestGuideUpdate()) {
+                    pane.add(getMessagePanel(), Integer.valueOf(100));
+                } else if (isParameterSoftwareUpdate()) {
                     pane.add(getMessagePanel(), Integer.valueOf(100));
                 } else if (isParameterStatistics()) {
                     pane.add(getMessagePanel(), Integer.valueOf(100));
@@ -373,12 +383,50 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
             if (!CANCEL.equals(bp.getSelectedButton())) {
 
-                updateLayout(true);
-                UpdateJob job = new UpdateJob(getUpdate(), getUpdateState());
-                setUpdateJob(job);
-                Busy busy = new Busy(getLayeredPane(), job);
-                busy.addJobListener(this);
-                busy.execute();
+                if (isParameterSoftwareUpdate()) {
+
+                    updateLayout(true);
+                    UpdateJob job =
+                        new UpdateJob(getUpdate(), getUpdateState());
+                    setUpdateJob(job);
+                    Busy busy = new Busy(getLayeredPane(), job);
+                    busy.addJobListener(this);
+                    busy.execute();
+
+                } else if (isParameterRequestGuideUpdate()) {
+
+                    MessagePanel mp = getMessagePanel();
+                    StringBuilder sb = new StringBuilder();
+                    NMS[] narray = getNMS();
+                    if ((mp != null) && (sb != null) && (narray != null)
+                        && (narray.length > 0)) {
+
+                        int count = 0;
+                        for (int i = 0; i < narray.length; i++) {
+
+                            if (narray[i].requestProgramDataUpdate()) {
+                                count++;
+                            }
+                        }
+
+                        // At this point we have totals on our servers.
+                        if (narray.length > 1) {
+                            sb.append("You have " + narray.length + " jflicks"
+                                + " media system servers on your network.");
+                        } else {
+                            sb.append("You have 1 jflicks media system server"
+                                + " on your network.");
+                        }
+                        sb.append("\n\n");
+
+                        sb.append("And " + count + " of them will update"
+                            + "guide data.");
+
+                        mp.setLineWrap(true);
+                        mp.setMessage(sb.toString());
+                        updateLayout(false);
+                    }
+                }
             }
         }
 
@@ -487,6 +535,10 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
     private void setUpdateJob(UpdateJob j) {
         updateJob = j;
+    }
+
+    private boolean isParameterRequestGuideUpdate() {
+        return (REQUEST_GUIDE_UPDATE.equals(getSelectedParameter()));
     }
 
     private boolean isParameterRestart() {

@@ -106,6 +106,18 @@ public interface NMS extends Config {
     ProgramData[] getProgramData();
 
     /**
+     * An NMS can be asked to have it's ProgramData objects to update their
+     * guide data.  This allows clients to force new guide data.  This is a
+     * request to get the guide data at the earliest convenience.  So this
+     * will respond quickly as it will do the update later.  We return a
+     * boolean to signify it will be done or not.  Since it's a request we
+     * can refuse.
+     *
+     * @return True when the request is granted.
+     */
+    boolean requestProgramDataUpdate();
+
+    /**
      * We have one and only one Scheduler.  We track them normally so we
      * will use the latest one we find.
      *

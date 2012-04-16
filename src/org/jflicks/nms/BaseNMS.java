@@ -615,6 +615,28 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
+    public boolean requestProgramDataUpdate() {
+
+        boolean result = false;
+
+        ProgramData[] array = getProgramData();
+        if ((array != null) && (array.length > 0)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                boolean willdo = array[i].requestUpdate();
+                if (willdo) {
+                    result = true;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getHost() {
         return (host);
     }
