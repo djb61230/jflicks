@@ -1349,7 +1349,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     PosterPanel pp = getPosterPanel();
                     if (pp != null) {
 
-                        pp.prev();
+                        pp.next();
                     }
                 }
             }
@@ -1386,7 +1386,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     PosterPanel pp = getPosterPanel();
                     if (pp != null) {
 
-                        pp.next();
+                        pp.prev();
                     }
                 }
             }

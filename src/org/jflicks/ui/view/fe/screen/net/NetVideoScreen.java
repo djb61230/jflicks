@@ -904,7 +904,7 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                 PosterPanel pp = getPosterPanel();
                 if (pp != null) {
 
-                    pp.prev();
+                    pp.next();
                 }
             }
 
@@ -924,7 +924,7 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                 PosterPanel pp = getPosterPanel();
                 if (pp != null) {
 
-                    pp.next();
+                    pp.prev();
                 }
             }
 

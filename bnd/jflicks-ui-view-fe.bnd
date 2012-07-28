@@ -12,6 +12,7 @@ Include-Resource:\
  org/jflicks/ui/view/fe/dolby51.png=../resources/dolby51.png,\
  org/jflicks/ui/view/fe/video_1080.png=../resources/video_1080.png,\
  org/jflicks/ui/view/fe/video_720.png=../resources/video_720.png,\
+ org/jflicks/ui/view/fe/video_480.png=../resources/video_480.png,\
  org/jflicks/ui/view/fe/video_flagged.png=../resources/video_flagged.png,\
  org/jflicks/ui/view/fe/video_recording.png=../resources/video_recording.png,\
  org/jflicks/ui/view/fe/logo.png=../resources/logo.png

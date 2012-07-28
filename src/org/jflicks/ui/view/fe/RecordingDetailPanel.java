@@ -55,6 +55,7 @@ public class RecordingDetailPanel extends BaseCustomizePanel {
     private ImageIcon dolby51ImageIcon;
     private ImageIcon video1080ImageIcon;
     private ImageIcon video720ImageIcon;
+    private ImageIcon video480ImageIcon;
     private ImageIcon videoFlaggedImageIcon;
     private ImageIcon videoRecordingImageIcon;
     private SimpleDateFormat dateFormat;
@@ -88,6 +89,10 @@ public class RecordingDetailPanel extends BaseCustomizePanel {
             bi = ImageIO.read(getClass().getResource("video_720.png"));
             bi = rr.appendReflection(bi);
             setVideo720ImageIcon(new ImageIcon(bi));
+
+            bi = ImageIO.read(getClass().getResource("video_480.png"));
+            bi = rr.appendReflection(bi);
+            setVideo480ImageIcon(new ImageIcon(bi));
 
             bi = ImageIO.read(getClass().getResource("video_flagged.png"));
             bi = rr.appendReflection(bi);
@@ -187,6 +192,11 @@ public class RecordingDetailPanel extends BaseCustomizePanel {
 
             case NMSConstants.VIDEO_720P:
                 getVideoLabel().setIcon(getVideo720ImageIcon());
+                break;
+
+            case NMSConstants.VIDEO_480I:
+            case NMSConstants.VIDEO_480P:
+                getVideoLabel().setIcon(getVideo480ImageIcon());
                 break;
             }
 
@@ -380,6 +390,14 @@ public class RecordingDetailPanel extends BaseCustomizePanel {
 
     private void setVideo720ImageIcon(ImageIcon ii) {
         video720ImageIcon = ii;
+    }
+
+    private ImageIcon getVideo480ImageIcon() {
+        return (video480ImageIcon);
+    }
+
+    private void setVideo480ImageIcon(ImageIcon ii) {
+        video480ImageIcon = ii;
     }
 
     private ImageIcon getVideoFlaggedImageIcon() {
