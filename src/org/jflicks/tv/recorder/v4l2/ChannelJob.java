@@ -148,6 +148,15 @@ public class ChannelJob extends BaseDeviceJob {
             }
         }
 
+
+        // We sleep here because it might take some time to have
+        // the v4l2  device "sync-up" with it's source.  This
+        // was found when testing the HD-PVR as just a bit
+        // previously the channel was changed by a script.
+        // Obviously hard-wiring a value here is not the best
+        // solution.
+        JobManager.sleep(2000);
+
         fireJobEvent(JobEvent.COMPLETE);
     }
 

@@ -118,7 +118,7 @@ public class RecordJob extends BaseHDHRJob {
         jc.start();
 
         // End  a few seconds early...
-        long l = getDuration() - 5;
+        long l = getDuration() - 3;
         if (l == 0) {
 
             // This is just to record something...the duration was not set so

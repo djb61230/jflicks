@@ -54,7 +54,7 @@ import org.jflicks.ui.view.fe.TextListPanel;
 import org.jflicks.ui.view.fe.TextIcon;
 import org.jflicks.ui.view.fe.VideoDetailPanel;
 import org.jflicks.ui.view.fe.VideoListPanel;
-import org.jflicks.ui.view.fe.VideoInfoPanel;
+import org.jflicks.ui.view.fe.VideoInfoWindow;
 import org.jflicks.ui.view.fe.VideoProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.ui.view.fe.screen.ScreenEvent;
@@ -80,7 +80,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
     private VideoListPanel episodeVideoListPanel;
     private PosterPanel posterPanel;
     private TextListPanel subcategoryListPanel;
-    private VideoInfoPanel videoInfoPanel;
+    private VideoInfoWindow videoInfoWindow;
     private VideoDetailPanel videoDetailPanel;
     private Video[] videos;
     private String[] parameters;
@@ -211,12 +211,12 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         videoDetailPanel = p;
     }
 
-    private VideoInfoPanel getVideoInfoPanel() {
-        return (videoInfoPanel);
+    private VideoInfoWindow getVideoInfoWindow() {
+        return (videoInfoWindow);
     }
 
-    private void setVideoInfoPanel(VideoInfoPanel w) {
-        videoInfoPanel = w;
+    private void setVideoInfoWindow(VideoInfoWindow w) {
+        videoInfoWindow = w;
     }
 
     private boolean isParameterTV() {
@@ -299,10 +299,10 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                 detailheight);
 
             FrontEndView fev = (FrontEndView) getView();
-            setVideoInfoPanel(new VideoInfoPanel(fev.getPosition(),
+            setVideoInfoWindow(new VideoInfoWindow(fev.getPosition(),
                 8, getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont()));
-            getVideoInfoPanel().setVisible(false);
+            getVideoInfoWindow().setVisible(false);
 
             setDefaultBackgroundImage(
                 Util.resize(getDefaultBackgroundImage(), width, height));
@@ -436,7 +436,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
      */
     public void info() {
 
-        VideoInfoPanel w = getVideoInfoPanel();
+        VideoInfoWindow w = getVideoInfoWindow();
         if (w != null) {
 
             w.setVisible(!w.isVisible());
@@ -468,7 +468,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
         removeBlankPanel();
         controlKeyboard(true);
-        VideoInfoPanel w = getVideoInfoPanel();
+        VideoInfoWindow w = getVideoInfoWindow();
         if (w != null) {
 
             w.setVisible(false);
@@ -1243,11 +1243,12 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             if (v != null) {
 
                 String vidpath = computeVideoPath(v);
+                System.out.println("vidpath: " + vidpath);
                 ButtonPanel pbp = getPlayButtonPanel();
                 if (PLAY.equals(pbp.getSelectedButton())) {
 
                     p.addPropertyChangeListener("Completed", this);
-                    VideoInfoPanel w = getVideoInfoPanel();
+                    VideoInfoWindow w = getVideoInfoWindow();
                     if (w != null) {
 
                         w.setImageCache(getImageCache());
@@ -1291,7 +1292,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
 
                     p.addPropertyChangeListener("Completed", this);
-                    VideoInfoPanel w = getVideoInfoPanel();
+                    VideoInfoWindow w = getVideoInfoWindow();
                     if (w != null) {
 
                         w.setImageCache(getImageCache());

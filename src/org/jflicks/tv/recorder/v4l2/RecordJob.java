@@ -109,17 +109,10 @@ public class RecordJob extends BaseDeviceJob {
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);
         setJobContainer(jc);
-
-        // We sleep here because it might take some time to have the v4l2
-        // device "sync-up" with it's source.  This was found when testing
-        // the HD-PVR as just a bit previously the channel was changed by
-        // a script.  Obviously hard-wiring a value here is not the best
-        // solution.
-        JobManager.sleep(5000);
         jc.start();
 
         // End  a few seconds early...
-        long l = getDuration() - 6;
+        long l = getDuration() - 3;
         if (l == 0) {
 
             // This is just to record something...the duration was not set so

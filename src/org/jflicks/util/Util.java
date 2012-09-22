@@ -29,6 +29,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.RenderingHints;
@@ -60,7 +61,7 @@ import javax.swing.JDialog;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
-import com.sun.jna.platform.WindowUtils;
+import com.sun.awt.AWTUtilities;
 
 /**
  * Some very basic methods that capture some common tasks.  Implemented here
@@ -1492,12 +1493,53 @@ public final class Util {
         return (result);
     }
 
-    public static boolean isTranslucencySupported() {
-        return (WindowUtils.isWindowAlphaSupported());
+    public static boolean isShapedSupported() {
+
+        return (AWTUtilities.isTranslucencySupported(AWTUtilities.Translucency.PERPIXEL_TRANSLUCENT));
+        /*
+        return (false);
+        GraphicsEnvironment ge =
+            GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+
+        return (gd.isWindowTranslucencySupported(
+            GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT));
+        */
     }
 
-    public static void setWindowAlpha(Window w, float alpha) {
-        WindowUtils.setWindowAlpha(w, alpha);
+    public static boolean isTranslucencySupported() {
+
+        return (AWTUtilities.isTranslucencySupported(AWTUtilities.Translucency.TRANSLUCENT));
+
+        /*
+        return (false);
+        GraphicsEnvironment ge =
+            GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+
+        return (gd.isWindowTranslucencySupported(
+            GraphicsDevice.WindowTranslucency.TRANSLUCENT));
+        */
+    }
+
+    public static Shape getWindowShape(Window w) {
+
+        return (AWTUtilities.getWindowShape(w));
+    }
+
+    public static void setWindowShape(Window w, Shape s) {
+
+        AWTUtilities.setWindowShape(w, s);
+    }
+
+    public static float getWindowOpacity(Window w) {
+
+        return (AWTUtilities.getWindowOpacity(w));
+    }
+
+    public static void setWindowOpacity(Window w, float f) {
+
+        AWTUtilities.setWindowOpacity(w, f);
     }
 
     /**
@@ -1509,6 +1551,7 @@ public final class Util {
 
         Util.dumpOSProperties();
         System.out.println("Translucent: " + Util.isTranslucencySupported());
+        System.out.println("Shaped: " + Util.isShapedSupported());
     }
 
 }

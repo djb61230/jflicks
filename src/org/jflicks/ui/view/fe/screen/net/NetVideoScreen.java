@@ -61,7 +61,7 @@ import org.jflicks.ui.view.fe.TextListPanel;
 import org.jflicks.ui.view.fe.TextIcon;
 import org.jflicks.ui.view.fe.VideoDetailPanel;
 import org.jflicks.ui.view.fe.VideoListPanel;
-import org.jflicks.ui.view.fe.VideoInfoPanel;
+import org.jflicks.ui.view.fe.VideoInfoWindow;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.util.Busy;
@@ -85,7 +85,7 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
     private static final double VGAP = 0.05;
 
     private PosterPanel posterPanel;
-    private VideoInfoPanel videoInfoPanel;
+    private VideoInfoWindow videoInfoWindow;
     private VideoDetailPanel videoDetailPanel;
     private Video[] videos;
     private String[] parameters;
@@ -240,12 +240,12 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
         videoDetailPanel = p;
     }
 
-    private VideoInfoPanel getVideoInfoPanel() {
-        return (videoInfoPanel);
+    private VideoInfoWindow getVideoInfoWindow() {
+        return (videoInfoWindow);
     }
 
-    private void setVideoInfoPanel(VideoInfoPanel w) {
-        videoInfoPanel = w;
+    private void setVideoInfoWindow(VideoInfoWindow w) {
+        videoInfoWindow = w;
     }
 
     /**
@@ -325,10 +325,10 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                 detailheight);
 
             FrontEndView fev = (FrontEndView) getView();
-            setVideoInfoPanel(new VideoInfoPanel(fev.getPosition(),
+            setVideoInfoWindow(new VideoInfoWindow(fev.getPosition(),
                 8, getInfoColor(), getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont()));
-            getVideoInfoPanel().setVisible(false);
+            getVideoInfoWindow().setVisible(false);
 
             setDefaultBackgroundImage(
                 Util.resize(getDefaultBackgroundImage(), width, height));
@@ -438,7 +438,7 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
      */
     public void info() {
 
-        VideoInfoPanel w = getVideoInfoPanel();
+        VideoInfoWindow w = getVideoInfoWindow();
         if (w != null) {
 
             w.setVisible(!w.isVisible());
@@ -470,7 +470,7 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
 
         removeBlankPanel();
         controlKeyboard(true);
-        VideoInfoPanel w = getVideoInfoPanel();
+        VideoInfoWindow w = getVideoInfoWindow();
         if (w != null) {
 
             w.setVisible(false);
@@ -831,7 +831,7 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                 if (PLAY.equals(pbp.getSelectedButton())) {
 
                     p.addPropertyChangeListener("Completed", this);
-                    VideoInfoPanel w = getVideoInfoPanel();
+                    VideoInfoWindow w = getVideoInfoWindow();
                     if (w != null) {
 
                         w.setImageCache(getImageCache());
@@ -854,7 +854,7 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
 
                     p.addPropertyChangeListener("Completed", this);
-                    VideoInfoPanel w = getVideoInfoPanel();
+                    VideoInfoWindow w = getVideoInfoWindow();
                     if (w != null) {
 
                         w.setImageCache(getImageCache());

@@ -51,7 +51,7 @@ import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.RecordingListPanel;
 import org.jflicks.ui.view.fe.RecordingDetailPanel;
-import org.jflicks.ui.view.fe.RecordingInfoPanel;
+import org.jflicks.ui.view.fe.RecordingInfoWindow;
 import org.jflicks.ui.view.fe.RecordingProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.ui.view.fe.screen.ScreenEvent;
@@ -82,7 +82,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     private RecordingListPanel recordingListPanel;
     private RecordingDetailPanel recordingDetailPanel;
     private JXPanel screenShotPanel;
-    private RecordingInfoPanel recordingInfoPanel;
+    private RecordingInfoWindow recordingInfoWindow;
     private Integer[] timeline;
     private int currentGroupIndex;
     private int currentGroupStartIndex;
@@ -367,7 +367,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     rllp.updateRecording(r);
                 }
 
-                RecordingInfoPanel w = getRecordingInfoPanel();
+                RecordingInfoWindow w = getRecordingInfoWindow();
                 if (w != null) {
 
                     if (r.equals(w.getRecording())) {
@@ -536,12 +536,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         screenShotAnimator = a;
     }
 
-    private RecordingInfoPanel getRecordingInfoPanel() {
-        return (recordingInfoPanel);
+    private RecordingInfoWindow getRecordingInfoWindow() {
+        return (recordingInfoWindow);
     }
 
-    private void setRecordingInfoPanel(RecordingInfoPanel p) {
-        recordingInfoPanel = p;
+    private void setRecordingInfoWindow(RecordingInfoWindow w) {
+        recordingInfoWindow = w;
     }
 
     private int getCurrentGroupIndex() {
@@ -727,11 +727,11 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             pane.add(ssp, Integer.valueOf(100));
 
             FrontEndView fev = (FrontEndView) getView();
-            setRecordingInfoPanel(new RecordingInfoPanel(
+            setRecordingInfoWindow(new RecordingInfoWindow(
                 fev.getPosition(), 8, getInfoColor(),
                 getPanelColor(), (float) getPanelAlpha(),
                 getSmallFont(), getMediumFont()));
-            getRecordingInfoPanel().setVisible(false);
+            getRecordingInfoWindow().setVisible(false);
 
             setDefaultBackgroundImage(
                 Util.resize(getDefaultBackgroundImage(), width, height));
@@ -1184,10 +1184,10 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
      */
     public void info() {
 
-        RecordingInfoPanel p = getRecordingInfoPanel();
-        if (p != null) {
+        RecordingInfoWindow w = getRecordingInfoWindow();
+        if (w != null) {
 
-            p.setVisible(!p.isVisible());
+            w.setVisible(!w.isVisible());
         }
     }
 
@@ -1217,7 +1217,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         removeBlankPanel();
         controlKeyboard(true);
         setCurrentRecording(null);
-        RecordingInfoPanel w = getRecordingInfoPanel();
+        RecordingInfoWindow w = getRecordingInfoWindow();
         if (w != null) {
 
             w.setVisible(false);
@@ -1416,7 +1416,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
 
                     p.addPropertyChangeListener("Completed", this);
-                    RecordingInfoPanel w = getRecordingInfoPanel();
+                    RecordingInfoWindow w = getRecordingInfoWindow();
                     if (w != null) {
 
                         w.setVisible(false);
@@ -1457,7 +1457,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
 
                     p.addPropertyChangeListener("Completed", this);
-                    RecordingInfoPanel w = getRecordingInfoPanel();
+                    RecordingInfoWindow w = getRecordingInfoWindow();
                     if (w != null) {
 
                         w.setVisible(false);

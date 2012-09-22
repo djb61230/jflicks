@@ -244,6 +244,25 @@ public class Vlcj extends BasePlayer {
         embeddedMediaPlayer = p;
     }
 
+    @Override
+    public void setSize(Rectangle r) {
+
+        if (r != null) {
+
+            JDialog d = getDialog();
+            if (d != null) {
+
+                d.setBounds(r);
+            }
+
+            JPanel p = getKeyPanel();
+            if (p != null) {
+
+                p.setBounds(0, 0, r.width, r.height);
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -76,6 +76,7 @@ Import-Package:\
  org.jflicks.videomanager;version="1.0.0",\
  org.jflicks.wizard;version="1.0.0",\
  com.db4o.osgi,\
+ com.sun.awt,\
  com.sun.jna.platform,\
  org.osgi.framework;version="[1.3,2.0)",\
  org.osgi.service.event;version="[1.0,2.0)",\

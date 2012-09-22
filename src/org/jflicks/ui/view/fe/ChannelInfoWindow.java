@@ -18,48 +18,52 @@ package org.jflicks.ui.view.fe;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
-import java.awt.image.BufferedImage;
 import javax.swing.JLayeredPane;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import org.jflicks.tv.Channel;
+import org.jflicks.tv.Show;
+import org.jflicks.tv.ShowAiring;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXLabel;
-import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * This is our "banner" window showing the state of the currently running
- * screen that is playing either Web or set top box media.  It simply
- * displays basic text as there is not a way to really identify the playing
- * media since the control has been passed to the browser or set top box.
+ * live channel.
+ *
+ * The banner is not transparent to allow video bits to come through as
+ * a Java window functionality for this is not available until Java 7, or
+ * at least not in a public API.  The second issue with it is that
+ * "compositing" needs to be enabled to use it under Linux which may
+ * clash with VDPAU.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class SimpleInfoWindow extends JWindow implements ActionListener {
+public class ChannelInfoWindow extends JWindow implements ActionListener {
 
     private static final double HGAP = 0.02;
     private static final double VGAP = 0.02;
 
     private JXPanel panel;
+    private JXLabel channelLabel;
     private JXLabel titleLabel;
     private JXLabel descriptionLabel;
-    private String title;
-    private String description;
-    private BufferedImage bannerBufferedImage;
     private int seconds;
     private Timer timer;
     private int currentSeconds;
+    private Channel channel;
+    private ShowAiring showAiring;
 
     /**
      * Simple constructor with our required arguments.
@@ -74,16 +78,16 @@ public class SimpleInfoWindow extends JWindow implements ActionListener {
      * @param small A small font to use.
      * @param large A large font to use.
      */
-    public SimpleInfoWindow(Rectangle r, int seconds, Color normal,
+    public ChannelInfoWindow(Rectangle r, int seconds, Color normal,
         Color backlight, float alpha, Font small, Font large) {
 
         setCursor(Util.getNoCursor());
         setSeconds(seconds);
 
-        int loffset = (int) (r.width * 0.05);
-        int toffset = (int) (r.height * 0.05);
+        int loffset = (int) (r.width * 0.10);
+        int toffset = (int) (r.height - (r.height * 0.25));
         int width = r.width - (2 * loffset);
-        int height = (int) (width / 5.4);
+        int height = (int) (r.height / 5);
 
         setBounds(loffset + r.x, toffset + r.y, width, height);
 
@@ -105,47 +109,43 @@ public class SimpleInfoWindow extends JWindow implements ActionListener {
         JLayeredPane pane = new JLayeredPane();
         top.add(pane, BorderLayout.CENTER);
 
-        JXLabel titleLab = new JXLabel();
-        titleLab.setFont(large);
-        titleLab.setTextAlignment(JXLabel.TextAlignment.LEFT);
-        titleLab.setForeground(normal);
-        setTitleLabel(titleLab);
+        JXLabel title = new JXLabel();
+        title.setFont(large);
+        title.setTextAlignment(JXLabel.TextAlignment.LEFT);
+        title.setForeground(normal);
+        setTitleLabel(title);
 
-        JXLabel descriptionLab = new JXLabel();
-        descriptionLab.setFont(small);
-        descriptionLab.setTextAlignment(JXLabel.TextAlignment.LEFT);
-        descriptionLab.setVerticalAlignment(SwingConstants.TOP);
-        descriptionLab.setForeground(normal);
-        descriptionLab.setLineWrap(true);
-        setDescriptionLabel(descriptionLab);
+        JXLabel channelLab = new JXLabel();
+        channelLab.setFont(large);
+        channelLab.setTextAlignment(JXLabel.TextAlignment.LEFT);
+        channelLab.setForeground(normal);
+        setChannelLabel(channelLab);
 
-        ClockPanel cpanel = new ClockPanel(large, normal, backlight, alpha);
-        cpanel.setOpaque(false);
+        JXLabel description = new JXLabel();
+        description.setFont(small);
+        description.setTextAlignment(JXLabel.TextAlignment.LEFT);
+        description.setVerticalAlignment(SwingConstants.TOP);
+        description.setForeground(normal);
+        description.setLineWrap(true);
+        setDescriptionLabel(description);
 
-        double halfWidth = ((double) width) / 2.0;
+        double quarterWidth = ((double) width) / 4.0;
         double titleHeight = ((double) height) * 0.2;
-        double chanDateHeight = ((double) height) * 0.2;
-        double descriptionHeight = ((double) height) * 0.4;
-        double timelineHeight = ((double) height) * 0.2 - vgap;
+        double chanHeight = ((double) height) * 0.2;
+        double descHeight = ((double) height) * 0.8;
+        double chanTop = (((double) height) - chanHeight) / 2.0;
 
-        titleLab.setBounds((int) hgap, (int) vgap, (int) halfWidth,
-            (int) titleHeight);
-        descriptionLab.setBounds((int) hgap,
-            (int) (vgap + titleHeight + chanDateHeight),
-            (int) (width - hgap * 2.0), (int) descriptionHeight);
+        channelLab.setBounds((int) hgap, (int) chanTop,
+            (int) quarterWidth, (int) chanHeight);
+        title.setBounds((int) (hgap + quarterWidth), (int) vgap,
+            (int) (quarterWidth * 4), (int) titleHeight);
+        description.setBounds((int) (hgap + quarterWidth),
+            (int) (vgap + titleHeight + vgap),
+            (int) (quarterWidth * 4), (int) descHeight);
 
-        pane.add(titleLab, Integer.valueOf(100));
-        pane.add(descriptionLab, Integer.valueOf(100));
-
-        Dimension cpdim = cpanel.getPreferredSize();
-        if (cpdim != null) {
-
-            double x = width - cpdim.getWidth() - hgap - ClockPanel.FUDGE;
-            cpanel.setBounds((int) x, (int) vgap,
-                (int) (cpdim.getWidth() + ClockPanel.FUDGE),
-                (int) cpdim.getHeight());
-            pane.add(cpanel, Integer.valueOf(120));
-        }
+        pane.add(channelLab, Integer.valueOf(100));
+        pane.add(title, Integer.valueOf(100));
+        pane.add(description, Integer.valueOf(100));
 
         add(p);
         Timer t = new Timer(1000, this);
@@ -175,6 +175,14 @@ public class SimpleInfoWindow extends JWindow implements ActionListener {
 
     private void setPanel(JXPanel p) {
         panel = p;
+    }
+
+    private JXLabel getChannelLabel() {
+        return (channelLabel);
+    }
+
+    private void setChannelLabel(JXLabel l) {
+        channelLabel = l;
     }
 
     private JXLabel getTitleLabel() {
@@ -218,99 +226,88 @@ public class SimpleInfoWindow extends JWindow implements ActionListener {
     }
 
     /**
-     * We need a title property to display to the user.
+     * We need a Channel instance to be able to draw information useful
+     * to the user.
      *
-     * @return A String instance.
+     * @return A given Channel instance.
      */
-    public String getTitle() {
-        return (title);
+    public Channel getChannel() {
+        return (channel);
     }
 
     /**
-     * We need a title property to display to the user.
+     * We need a Channel instance to be able to draw information useful
+     * to the user.
      *
-     * @param s A String instance.
+     * @param c A given Channel instance.
      */
-    public void setTitle(String s) {
+    public void setChannel(Channel c) {
 
-        title = s;
+        channel = c;
 
         JXPanel p = getPanel();
-        if ((s != null) && (p != null)) {
+        if ((c != null) && (p != null)) {
 
-            JXLabel l = getTitleLabel();
+            JXLabel l = getChannelLabel();
             if (l != null) {
 
-                l.setText(s);
+                l.setText(c.toString());
             }
         }
     }
 
     /**
-     * We can display a banner image if the property is set.
+     * We need a ShowAiring instance to be able to draw information useful
+     * to the user.
      *
-     * @return A BufferedImage instance.
+     * @return A given ShowAiring instance.
      */
-    public BufferedImage getBannerBufferedImage() {
-        return (bannerBufferedImage);
+    public ShowAiring getShowAiring() {
+        return (showAiring);
     }
 
     /**
-     * We can display a banner image if the property is set.
+     * We need a ShowAiring instance to be able to draw information useful
+     * to the user.
      *
-     * @param bi A BufferedImage instance.
+     * @param sa A given ShowAiring instance.
      */
-    public void setBannerBufferedImage(BufferedImage bi) {
+    public void setShowAiring(ShowAiring sa) {
 
-        bannerBufferedImage = bi;
+        showAiring = sa;
 
         JXPanel p = getPanel();
-        if (p != null) {
+        if ((sa != null) && (p != null)) {
 
-            if (bi != null) {
+            Show s = sa.getShow();
+            if (s != null) {
 
-                int w = getWidth();
-                if (w > bi.getWidth()) {
+                JXLabel l = getTitleLabel();
+                if (l != null) {
 
-                    bi = Util.scaleLarger(w, bi);
+                    l.setText(s.getTitle());
                 }
 
-                ImagePainter painter = new ImagePainter(bi);
-                painter.setScaleToFit(true);
-                p.setBackgroundPainter(painter);
+                l = getDescriptionLabel();
+                if (l != null) {
 
-            } else {
+                    String sub = s.getSubtitle();
+                    String desc = s.getDescription();
+                    StringBuilder sb = new StringBuilder();
+                    if (sub != null) {
 
-                p.setBackgroundPainter(null);
-            }
-        }
-    }
+                        sb.append("\"");
+                        sb.append(sub);
+                        sb.append("\" ");
+                    }
 
-    /**
-     * We need a description property to display to the user.
-     *
-     * @return A String instance.
-     */
-    public String getDescription() {
-        return (description);
-    }
+                    if (desc != null) {
 
-    /**
-     * We need a description property to display to the user.
-     *
-     * @param s A String instance.
-     */
-    public void setDescription(String s) {
+                        sb.append(desc);
+                    }
 
-        description = s;
-
-        JXPanel p = getPanel();
-        if ((s != null) && (p != null)) {
-
-            JXLabel l = getDescriptionLabel();
-            if (l != null) {
-
-                l.setText(s);
+                    l.setText(sb.toString());
+                }
             }
         }
     }

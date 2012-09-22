@@ -168,6 +168,33 @@ public abstract class BaseVideoManager extends BaseConfig
     }
 
     /**
+     * Convenience method to get the configured http host in case the
+     * video files are being served by another machine.
+     *
+     * @return A host or IP.
+     */
+    public String getConfiguredHost() {
+
+        String result = getHost();
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(NMSConstants.HOST);
+            if (nv != null) {
+
+                String tmp = nv.getValue();
+                if ((tmp != null) && (tmp.length() > 0)) {
+
+                    result = tmp;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    /**
      * Convenience method to get the configured set of file extensions that
      * identify supported video files.
      *
@@ -194,7 +221,7 @@ public abstract class BaseVideoManager extends BaseConfig
 
         String result = null;
 
-        String h = getHost();
+        String h = getConfiguredHost();
         String[] array = getStreamPaths();
         if ((h != null) && (array != null) && (v != null)) {
 

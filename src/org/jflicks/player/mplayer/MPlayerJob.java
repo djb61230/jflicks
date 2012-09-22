@@ -292,11 +292,11 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
             if (m.isVideoTransportStreamType()) {
 
-                result = "-demuxer mpegts";
+                //result = "-demuxer mpegts";
 
             } else if (m.isVideoProgramStreamType()) {
 
-                result = "-demuxer mpegps";
+                //result = "-demuxer mpegps";
             }
         }
 

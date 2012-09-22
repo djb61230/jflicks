@@ -385,6 +385,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
      */
     public void info() {
 
+        /*
         StreamSession ss = getStreamSession();
         if (ss != null) {
 
@@ -395,13 +396,12 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                 n.command(ss, OnDemand.COMMAND_INFO);
             }
         }
-        /*
+        */
         SimpleInfoWindow w = getSimpleInfoWindow();
         if (w != null) {
 
             w.setVisible(!w.isVisible());
         }
-        */
     }
 
     /**
