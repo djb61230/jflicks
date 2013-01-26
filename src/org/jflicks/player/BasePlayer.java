@@ -502,6 +502,12 @@ public abstract class BasePlayer extends BaseLog implements Player {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public void sap() {
+    }
+
+    /**
      * This can be used by extensions to turn any action into an RC
      * event message.
      *
@@ -688,6 +694,17 @@ public abstract class BasePlayer extends BaseLog implements Player {
         public void actionPerformed(ActionEvent e) {
 
             commandEvent(RC.SKIPFORWARD_COMMAND);
+        }
+    }
+
+    protected class SapAction extends AbstractAction {
+
+        public SapAction() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            commandEvent(RC.SAP_COMMAND);
         }
     }
 

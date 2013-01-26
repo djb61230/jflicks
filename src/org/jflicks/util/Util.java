@@ -1529,7 +1529,9 @@ public final class Util {
 
     public static void setWindowShape(Window w, Shape s) {
 
-        AWTUtilities.setWindowShape(w, s);
+        if (!isMac()) {
+            AWTUtilities.setWindowShape(w, s);
+        }
     }
 
     public static float getWindowOpacity(Window w) {

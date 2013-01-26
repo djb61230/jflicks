@@ -262,6 +262,11 @@ public interface Player {
     void enter();
 
     /**
+     * Change the current SAP audio.
+     */
+    void sap();
+
+    /**
      * Change the current audiosync value by an offset value.  The player
      * maintains the current setting (0.0 as a default) and will use it to
      * adjust by the given offset.

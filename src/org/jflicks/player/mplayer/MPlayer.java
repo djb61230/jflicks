@@ -141,6 +141,10 @@ public class MPlayer extends BasePlayer {
         map.put(KeyStroke.getKeyStroke("X"), "x");
         pan.getActionMap().put("x", skipForwardAction);
 
+        SapAction sapAction = new SapAction();
+        map.put(KeyStroke.getKeyStroke("S"), "s");
+        pan.getActionMap().put("s", sapAction);
+
         AudioSyncPlusAction audioSyncPlusAction = new AudioSyncPlusAction();
         map.put(KeyStroke.getKeyStroke("N"), "n");
         pan.getActionMap().put("n", audioSyncPlusAction);
@@ -641,6 +645,15 @@ public class MPlayer extends BasePlayer {
     public void previous() {
 
         command("pt_step -1\n");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void sap() {
+
+        System.out.println("Yup at SAP mplayer");
+        command("switch_audio\n");
     }
 
     /**

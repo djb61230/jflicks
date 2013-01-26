@@ -474,6 +474,18 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
         }
     }
 
+    private void keyboardSap() {
+
+        LircRC rc = getLircRC();
+        Robot r = getRobot();
+        if ((rc != null) && (r != null)) {
+
+            System.out.println("SAPPPPPPPPPPPPPPPP");
+            r.keyPress(rc.getSapKeyEvent());
+            r.keyRelease(rc.getSapKeyEvent());
+        }
+    }
+
     private void keyboardAudiosyncPlus() {
 
         LircRC rc = getLircRC();
@@ -634,6 +646,10 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
 
     private void eventSkipForward() {
         command(RC.SKIPFORWARD_COMMAND);
+    }
+
+    private void eventSap() {
+        command(RC.SAP_COMMAND);
     }
 
     private void eventAudiosyncPlus() {
@@ -844,6 +860,17 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
         }
     }
 
+    private void sap() {
+
+        if (isKeyboardControl()) {
+            keyboardSap();
+        }
+
+        if (isEventControl()) {
+            eventSap();
+        }
+    }
+
     private void audiosyncplus() {
 
         if (isKeyboardControl()) {
@@ -957,6 +984,10 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
             } else if (command.equalsIgnoreCase(RC.SKIPFORWARD_COMMAND)) {
 
                 skipforward();
+
+            } else if (command.equalsIgnoreCase(RC.SAP_COMMAND)) {
+
+                sap();
 
             } else if (command.equalsIgnoreCase(RC.AUDIOSYNC_PLUS_COMMAND)) {
 

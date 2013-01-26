@@ -562,6 +562,10 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
 
                     enter();
 
+                } else if (s.equals(RC.SAP_COMMAND)) {
+
+                    p.sap();
+
                 } else if (s.equals(RC.AUDIOSYNC_PLUS_COMMAND)) {
 
                     p.audiosync(0.1);

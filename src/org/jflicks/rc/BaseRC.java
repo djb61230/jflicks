@@ -51,6 +51,7 @@ public abstract class BaseRC extends BaseLog implements RC {
     private int forwardKeyEvent;
     private int skipBackwardKeyEvent;
     private int skipForwardKeyEvent;
+    private int sapKeyEvent;
     private int audiosyncPlusKeyEvent;
     private int audiosyncMinusKeyEvent;
     private int guideKeyEvent;
@@ -76,6 +77,7 @@ public abstract class BaseRC extends BaseLog implements RC {
         setForwardKeyEvent(getDefaultForwardKeyEvent());
         setSkipBackwardKeyEvent(getDefaultSkipBackwardKeyEvent());
         setSkipForwardKeyEvent(getDefaultSkipForwardKeyEvent());
+        setSapKeyEvent(getDefaultSapKeyEvent());
         setAudiosyncPlusKeyEvent(getDefaultAudiosyncPlusKeyEvent());
         setAudiosyncMinusKeyEvent(getDefaultAudiosyncMinusKeyEvent());
         setGuideKeyEvent(getDefaultGuideKeyEvent());
@@ -259,6 +261,13 @@ public abstract class BaseRC extends BaseLog implements RC {
     /**
      * {@inheritDoc}
      */
+    public int getDefaultSapKeyEvent() {
+        return (KeyEvent.VK_S);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public int getDefaultAudiosyncPlusKeyEvent() {
         return (KeyEvent.VK_PLUS);
     }
@@ -385,6 +394,13 @@ public abstract class BaseRC extends BaseLog implements RC {
     /**
      * {@inheritDoc}
      */
+    public int getSapKeyEvent() {
+        return (sapKeyEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public int getAudiosyncPlusKeyEvent() {
         return (audiosyncPlusKeyEvent);
     }
@@ -506,6 +522,13 @@ public abstract class BaseRC extends BaseLog implements RC {
      */
     public void setSkipForwardKeyEvent(int i) {
         skipForwardKeyEvent = i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setSapKeyEvent(int i) {
+        sapKeyEvent = i;
     }
 
     /**

@@ -118,6 +118,12 @@ public interface RC {
     String SKIPFORWARD_COMMAND = "skipforward";
 
     /**
+     * The SAP command is a "player" command and will cycle through audio
+     * streams.
+     */
+    String SAP_COMMAND = "sap";
+
+    /**
      * The audiosync command is a "player" command and will adjust sound
      * and video syncing.
      */
@@ -293,6 +299,13 @@ public interface RC {
     int getDefaultSkipForwardKeyEvent();
 
     /**
+     * The default key event for sap.
+     *
+     * @return The sap key event.
+     */
+    int getDefaultSapKeyEvent();
+
+    /**
      * The default key event for audiosync plus.
      *
      * @return The audiosync plus key event.
@@ -419,6 +432,13 @@ public interface RC {
     int getSkipForwardKeyEvent();
 
     /**
+     * The current key event for sap.
+     *
+     * @return The sap key event.
+     */
+    int getSapKeyEvent();
+
+    /**
      * The current key event for audiosync plus.
      *
      * @return The audiosync plus key event.
@@ -543,6 +563,13 @@ public interface RC {
      * @param i The skip forward key event.
      */
     void setSkipForwardKeyEvent(int i);
+
+    /**
+     * The current key event for sap.
+     *
+     * @param i The sap key event.
+     */
+    void setSapKeyEvent(int i);
 
     /**
      * The current key event for audiosync plus.

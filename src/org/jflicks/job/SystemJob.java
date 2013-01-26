@@ -66,7 +66,8 @@ public final class SystemJob extends AbstractJob implements JobListener {
         boolean win = false;
         if (Util.isWindows()) {
             result = new SystemJob("cmd.exe", "/C", command);
-        } else if (Util.isLinux()) {
+        } else {
+        //} else if (Util.isLinux()) {
             result = new SystemJob("/bin/bash", "-c", command);
         }
 
