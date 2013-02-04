@@ -42,6 +42,7 @@ public class HDHRStreamJob extends AbstractJob implements JobListener {
 
     private HDHRRecorder hdhrRecorder;
     private FrequencyJob frequencyJob;
+    private StreamInfoJob streamInfoJob;
     private ProgramJob programJob;
     private StreamJob streamJob;
     private FrequencyJob noneFrequencyJob;
@@ -71,6 +72,14 @@ public class HDHRStreamJob extends AbstractJob implements JobListener {
 
     private void setFrequencyJob(FrequencyJob j) {
         frequencyJob = j;
+    }
+
+    private StreamInfoJob getStreamInfoJob() {
+        return (streamInfoJob);
+    }
+
+    private void setStreamInfoJob(StreamInfoJob j) {
+        streamInfoJob = j;
     }
 
     private ProgramJob getProgramJob() {
@@ -228,12 +237,19 @@ public class HDHRStreamJob extends AbstractJob implements JobListener {
         fj.setTuner(getTuner());
         fj.setFrequency(getFrequency());
 
+        StreamInfoJob sij = new StreamInfoJob();
+        setStreamInfoJob(sij);
+        sij.addJobListener(this);
+        sij.setId(getId());
+        sij.setTuner(getTuner());
+        sij.setProgram(getProgram());
+
         ProgramJob pj = new ProgramJob();
         setProgramJob(pj);
         pj.addJobListener(this);
         pj.setId(getId());
         pj.setTuner(getTuner());
-        pj.setProgram(getProgram());
+        //pj.setProgram(getProgram());
 
         StreamJob sj = new StreamJob();
         setStreamJob(sj);
@@ -299,8 +315,18 @@ public class HDHRStreamJob extends AbstractJob implements JobListener {
 
             if (event.getSource() == getFrequencyJob()) {
 
-                log(HDHRRecorder.DEBUG, "starting program job...");
-                JobContainer jc = JobManager.getJobContainer(getProgramJob());
+                log(HDHRRecorder.DEBUG, "starting streaminfo job...");
+                JobContainer jc =
+                    JobManager.getJobContainer(getStreamInfoJob());
+                setJobContainer(jc);
+                jc.start();
+
+            } else if (event.getSource() == getStreamInfoJob()) {
+
+                StreamInfoJob sij = (StreamInfoJob) event.getSource();
+                ProgramJob pj = getProgramJob();
+                pj.setProgram(sij.getProgramId());
+                JobContainer jc = JobManager.getJobContainer(pj);
                 setJobContainer(jc);
                 jc.start();
 

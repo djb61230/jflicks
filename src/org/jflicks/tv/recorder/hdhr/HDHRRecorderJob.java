@@ -45,6 +45,7 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
 
     private HDHRRecorder hdhrRecorder;
     private FrequencyJob frequencyJob;
+    private StreamInfoJob streamInfoJob;
     private ProgramJob programJob;
     private RecordJob recordJob;
     private FrequencyJob noneFrequencyJob;
@@ -74,6 +75,14 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
 
     private void setFrequencyJob(FrequencyJob j) {
         frequencyJob = j;
+    }
+
+    private StreamInfoJob getStreamInfoJob() {
+        return (streamInfoJob);
+    }
+
+    private void setStreamInfoJob(StreamInfoJob j) {
+        streamInfoJob = j;
     }
 
     private ProgramJob getProgramJob() {
@@ -235,12 +244,19 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
         fj.setFrequency(getFrequency());
         fj.setType(getFrequencyType());
 
+        StreamInfoJob sij = new StreamInfoJob();
+        setStreamInfoJob(sij);
+        sij.addJobListener(this);
+        sij.setId(getId());
+        sij.setTuner(getTuner());
+        sij.setProgram(getProgram());
+
         ProgramJob pj = new ProgramJob();
         setProgramJob(pj);
         pj.addJobListener(this);
         pj.setId(getId());
         pj.setTuner(getTuner());
-        pj.setProgram(getProgram());
+        //pj.setProgram(getProgramId());
 
         RecordJob rj = new RecordJob();
         setRecordJob(rj);
@@ -300,7 +316,17 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
 
             if (event.getSource() == getFrequencyJob()) {
 
-                JobContainer jc = JobManager.getJobContainer(getProgramJob());
+                JobContainer jc =
+                    JobManager.getJobContainer(getStreamInfoJob());
+                setJobContainer(jc);
+                jc.start();
+
+            } else if (event.getSource() == getStreamInfoJob()) {
+
+                StreamInfoJob sij = (StreamInfoJob) event.getSource();
+                ProgramJob pj = getProgramJob();
+                pj.setProgram(sij.getProgramId());
+                JobContainer jc = JobManager.getJobContainer(pj);
                 setJobContainer(jc);
                 jc.start();
 
