@@ -61,6 +61,7 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
         new ArrayList<ScreenListener>();
 
     private String title;
+    private boolean blocking;
     private boolean done;
     private ServiceTracker playerServiceTracker;
     private RC rc;
@@ -217,6 +218,17 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
         boolean old = done;
         done = b;
         firePropertyChange("Done", old, done);
+    }
+
+    public boolean isBlocking() {
+        return (blocking);
+    }
+
+    public void setBlocking(boolean b) {
+
+        boolean old = blocking;
+        blocking = b;
+        firePropertyChange("Blocking", old, blocking);
     }
 
     /**
@@ -599,8 +611,11 @@ public abstract class Screen extends BaseCustomizePanel implements RCProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            save();
-            setDone(true);
+            if (!isBlocking()) {
+
+                save();
+                setDone(true);
+            }
         }
     }
 

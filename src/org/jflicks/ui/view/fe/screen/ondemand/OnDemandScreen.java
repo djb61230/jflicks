@@ -331,6 +331,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
                             p.addPropertyChangeListener("Completed", this);
                             controlKeyboard(false);
                             p.setFrame(Util.findFrame(this));
+                            setBlocking(true);
                             p.play("udp://@" + hostaddr + ":1234");
                         }
 
@@ -624,6 +625,7 @@ public class OnDemandScreen extends PlayerScreen implements NMSProperty,
 
                 // If we get this property update, then it means the video
                 // finished playing on it's own.
+                setBlocking(false);
                 Boolean bobj = (Boolean) event.getNewValue();
                 if (bobj.booleanValue()) {
 

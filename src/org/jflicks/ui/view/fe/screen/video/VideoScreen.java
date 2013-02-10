@@ -1095,6 +1095,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
             // If we get this property update, then it means the video
             // finished playing on it's own.
+            setBlocking(false);
             Boolean bobj = (Boolean) event.getNewValue();
             if (bobj.booleanValue()) {
 
@@ -1271,6 +1272,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                             controlKeyboard(false);
                             p.setFrame(Util.findFrame(this));
                             addBlankPanel();
+                            setBlocking(true);
                             p.play(intropath, vidpath);
 
                         } else {
@@ -1278,6 +1280,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                             controlKeyboard(false);
                             p.setFrame(Util.findFrame(this));
                             addBlankPanel();
+                            setBlocking(true);
                             p.play(vidpath);
                         }
 
@@ -1286,6 +1289,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                         controlKeyboard(false);
                         p.setFrame(Util.findFrame(this));
                         addBlankPanel();
+                        setBlocking(true);
                         p.play(vidpath);
                     }
 
@@ -1309,6 +1313,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
                     controlKeyboard(false);
                     p.setFrame(Util.findFrame(this));
                     addBlankPanel();
+                    setBlocking(true);
                     p.play(vidpath, getBookmark(v.getId()));
 
                 } else if (CANCEL.equals(pbp.getSelectedButton())) {

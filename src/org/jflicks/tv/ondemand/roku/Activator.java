@@ -16,10 +16,15 @@
 */
 package org.jflicks.tv.ondemand.roku;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Properties;
 
+import org.jflicks.configure.BaseConfiguration;
 import org.jflicks.tv.ondemand.OnDemand;
 import org.jflicks.util.BaseActivator;
+import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
@@ -33,7 +38,8 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class Activator extends BaseActivator {
 
-    private RokuOnDemand rokuOnDemand;
+    private ArrayList<RokuOnDemand> rokuOnDemandList =
+        new ArrayList<RokuOnDemand>();;
     private ServiceTracker logServiceTracker;
 
     /**
@@ -42,17 +48,68 @@ public class Activator extends BaseActivator {
     public void start(BundleContext bc) {
 
         setBundleContext(bc);
-        RokuOnDemand rod = new RokuOnDemand();
-        setRokuOnDemand(rod);
 
-        Hashtable<String, String> dict = new Hashtable<String, String>();
-        dict.put(OnDemand.TITLE_PROPERTY, rod.getTitle());
+        // We settle for at least one if there is no conf file.
+        int count = 1;
+        ArrayList<String> nameList = new ArrayList<String>();
+        nameList.add("Roku");
 
-        bc.registerService(OnDemand.class.getName(), rod, dict);
+        // Check for a properties file...
+        File here = new File(".");
+        File conf = new File(here, "conf");
+        if ((conf.exists()) && (conf.isDirectory())) {
+
+            File prop = new File(conf, "roku.ondemand.properties");
+            if ((prop.exists() && (prop.isFile()))) {
+
+                Properties p = Util.findProperties(prop);
+                if (p != null) {
+
+                    int pcount = Util.str2int(p.getProperty("count"), 0);
+                    if (pcount > 0) {
+
+                        count = pcount;
+                        nameList.clear();
+                        for (int i = 0; i < count; i++) {
+
+                            String title = p.getProperty("title" + i);
+                            if (title == null) {
+
+                                title = "Roku";
+                            }
+
+                            nameList.add(title);
+                        }
+                    }
+                }
+            }
+        }
 
         logServiceTracker =
             new ServiceTracker(bc, LogService.class.getName(), null);
-        rod.setLogServiceTracker(logServiceTracker);
+
+        for (int i = 0; i < count; i++) {
+
+            RokuOnDemand rod = new RokuOnDemand();
+            rod.setTitle(nameList.get(i));
+            BaseConfiguration c =
+                (BaseConfiguration) rod.getDefaultConfiguration();
+            if (c != null) {
+
+                c.setSource(c.getSource() + " " + nameList.get(i));
+            }
+
+            rokuOnDemandList.add(rod);
+
+            Hashtable<String, String> dict = new Hashtable<String, String>();
+            dict.put(OnDemand.TITLE_PROPERTY, rod.getTitle());
+
+            System.out.println("registering ondemand");
+            bc.registerService(OnDemand.class.getName(), rod, dict);
+
+            rod.setLogServiceTracker(logServiceTracker);
+        }
+
         logServiceTracker.open();
     }
 
@@ -66,14 +123,6 @@ public class Activator extends BaseActivator {
             logServiceTracker.close();
             logServiceTracker = null;
         }
-    }
-
-    private RokuOnDemand getRokuOnDemand() {
-        return (rokuOnDemand);
-    }
-
-    private void setRokuOnDemand(RokuOnDemand rod) {
-        rokuOnDemand = rod;
     }
 
 }

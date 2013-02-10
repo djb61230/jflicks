@@ -76,6 +76,7 @@ public class LiveTVScreen extends BaseLiveTVScreen {
 
             String hostaddr = Hostname.getHostAddress();
             System.out.println("udp://@" + hostaddr + ":1234");
+            setBlocking(true);
             p.play("udp://@" + hostaddr + ":1234");
         }
     }

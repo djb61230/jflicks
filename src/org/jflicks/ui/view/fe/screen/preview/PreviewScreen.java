@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import javax.swing.JLayeredPane;
+import javax.swing.SwingUtilities;
 
 import org.jflicks.mvc.View;
 import org.jflicks.nms.NMS;
@@ -60,6 +61,8 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
         setTitle("Previews");
         BufferedImage bi = getImageByName("Previews");
         setDefaultBackgroundImage(bi);
+        setFocusable(true);
+        requestFocus();
     }
 
     /**
@@ -157,6 +160,29 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
         return (result);
     }
 
+    private void startPlayer() {
+
+        String[] urls = computeURLs();
+        if ((urls != null) && (urls.length > 0)) {
+
+            Player p = getPlayer();
+            if (p != null) {
+
+                View v = getView();
+                if (v instanceof FrontEndView) {
+
+                    FrontEndView fev = (FrontEndView) v;
+                    p.setRectangle(fev.getPosition());
+                }
+
+                p.addPropertyChangeListener("Playing", this);
+                p.setFrame(Util.findFrame(this));
+                setBlocking(true);
+                p.play(urls);
+            }
+        }
+    }
+
     /**
      * Override so we can start up the player.
      *
@@ -167,25 +193,16 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
         super.setVisible(b);
         if (b) {
 
-            String[] urls = computeURLs();
-            if ((urls != null) && (urls.length > 0)) {
+            controlKeyboard(false);
+            Runnable doRun = new Runnable() {
 
-                Player p = getPlayer();
-                if (p != null) {
+                public void run() {
 
-                    View v = getView();
-                    if (v instanceof FrontEndView) {
-
-                        FrontEndView fev = (FrontEndView) v;
-                        p.setRectangle(fev.getPosition());
-                    }
-
-                    p.addPropertyChangeListener("Playing", this);
-                    controlKeyboard(false);
-                    p.setFrame(Util.findFrame(this));
-                    p.play(urls);
+                    log(DEBUG, "Starting player...");
+                    startPlayer();
                 }
-            }
+            };
+            SwingUtilities.invokeLater(doRun);
         }
     }
 
@@ -246,6 +263,7 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
      */
     public void rewind() {
 
+        log(DEBUG, "rewind");
         Player p = getPlayer();
         if (p != null) {
 
@@ -258,6 +276,7 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
      */
     public void forward() {
 
+        log(DEBUG, "forward");
         Player p = getPlayer();
         if (p != null) {
 
@@ -346,7 +365,9 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
             Boolean bobj = (Boolean) event.getNewValue();
             if (!bobj.booleanValue()) {
 
+                setBlocking(false);
                 getPlayer().removePropertyChangeListener(this);
+                requestFocus();
                 setDone(true);
             }
         }

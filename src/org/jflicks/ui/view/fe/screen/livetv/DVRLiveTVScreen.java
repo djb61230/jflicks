@@ -127,6 +127,7 @@ public class DVRLiveTVScreen extends BaseLiveTVScreen {
                 t.transfer(r, getInitialTime(), getRestTime());
             log(DEBUG, "local: " + path);
             setMarkTime(System.currentTimeMillis());
+            setBlocking(true);
             p.play(path);
         }
     }

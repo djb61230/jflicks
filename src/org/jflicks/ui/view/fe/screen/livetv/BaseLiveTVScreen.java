@@ -1059,6 +1059,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
 
             // If we get this property update, then it means the video
             // finished playing on it's own.
+            setBlocking(false);
             Boolean bobj = (Boolean) event.getNewValue();
             if (bobj.booleanValue()) {
 

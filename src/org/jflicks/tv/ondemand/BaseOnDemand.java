@@ -127,6 +127,7 @@ public abstract class BaseOnDemand extends BaseConfig implements OnDemand {
 
         StreamSession result = null;
 
+        log(DEBUG, "openSession: title " + getTitle());
         log(DEBUG, "openSession: host " + host);
         log(DEBUG, "openSession: port " + port);
         if (host != null) {

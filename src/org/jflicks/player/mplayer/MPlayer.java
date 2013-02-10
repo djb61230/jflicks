@@ -22,6 +22,8 @@ import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -30,8 +32,7 @@ import javax.swing.KeyStroke;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.JDialog;
-import javax.swing.SwingUtilities;
+import javax.swing.JWindow;
 import javax.swing.Timer;
 
 import com.sun.jna.Native;
@@ -55,7 +56,7 @@ import org.jflicks.util.Util;
  */
 public class MPlayer extends BasePlayer {
 
-    private JDialog window;
+    private JWindow window;
     private JPanel keyPanel;
     private MPlayerCanvas canvas;
     private MPlayerJob mplayerJob;
@@ -193,11 +194,11 @@ public class MPlayer extends BasePlayer {
         }
     }
 
-    private JDialog getDialog() {
+    private JWindow getWindow() {
         return (window);
     }
 
-    private void setDialog(JDialog w) {
+    private void setWindow(JWindow w) {
         window = w;
     }
 
@@ -415,11 +416,19 @@ public class MPlayer extends BasePlayer {
                 } else {
 
                     MPlayerCanvas can = getCanvas();
-                    JDialog win = createWindow();
-                    setDialog(win);
+                    JWindow win = createWindow();
+                    setWindow(win);
                     win.setVisible(true);
 
-                    long canid = Native.getComponentID(can);
+                    long canid = -1;
+                    try {
+
+                        canid = Native.getComponentID(can);
+
+                    } catch (Exception ex) {
+                        log(DEBUG, ex.getMessage());
+                    }
+
                     log(DEBUG, "canvas id: " + canid);
                     String wid = "" + canid;
 
@@ -462,22 +471,19 @@ public class MPlayer extends BasePlayer {
                 } else {
 
                     MPlayerCanvas can = getCanvas();
-                    JDialog win = createWindow();
-                    setDialog(win);
+                    JWindow win = createWindow();
+                    setWindow(win);
                     win.setVisible(true);
 
-                    final MPlayerCanvas fcan = can;
-                    Runnable doRun = new Runnable() {
+                    long canid = -1;
+                    try {
 
-                        public void run() {
+                        canid = Native.getComponentID(can);
 
-                            System.out.println("Requesting focus 4 canvas....");
-                            fcan.requestFocus();
-                        }
-                    };
-                    SwingUtilities.invokeLater(doRun);
+                    } catch (Exception ex) {
+                        log(DEBUG, ex.getMessage());
+                    }
 
-                    long canid = Native.getComponentID(can);
                     log(DEBUG, "canvas id: " + canid);
                     String wid = "" + canid;
 
@@ -505,9 +511,9 @@ public class MPlayer extends BasePlayer {
         }
     }
 
-    private JDialog createWindow() {
+    private JWindow createWindow() {
 
-        JDialog result = null;
+        JWindow result = null;
 
         Rectangle r = null;
         if (isFullscreen()) {
@@ -524,8 +530,10 @@ public class MPlayer extends BasePlayer {
         int width = (int) r.getWidth();
         int height = (int) r.getHeight();
 
-        result = new JDialog(getFrame());
-        result.setUndecorated(true);
+        log(MPlayer.DEBUG, "getFrame: " + getFrame());
+        result = new JWindow(getFrame());
+        result.setFocusableWindowState(true);
+        //result.setUndecorated(true);
         result.setFocusable(true);
         result.setBounds(x, y, width, height);
         result.setBackground(Color.BLACK);
@@ -547,6 +555,14 @@ public class MPlayer extends BasePlayer {
             result.setCursor(cursor);
         }
 
+        result.addWindowFocusListener(new WindowAdapter() {
+
+            public void windowGainedFocus(WindowEvent e) {
+
+                log(MPlayer.DEBUG, "windowGainedFocus: ");
+                getKeyPanel().requestFocusInWindow();
+            }
+        });
         return (result);
     }
 
@@ -652,8 +668,10 @@ public class MPlayer extends BasePlayer {
      */
     public void sap() {
 
-        System.out.println("Yup at SAP mplayer");
-        command("switch_audio\n");
+        // mplayer2 chokes on this command so we just don't allow it.
+        if (!getProgramName().equals("mplayer2")) {
+            command("switch_audio\n");
+        }
     }
 
     /**
@@ -679,7 +697,7 @@ public class MPlayer extends BasePlayer {
 
         if (r != null) {
 
-            JDialog d = getDialog();
+            JWindow d = getWindow();
             if (d != null) {
 
                 d.setBounds(r);
@@ -713,13 +731,13 @@ public class MPlayer extends BasePlayer {
      */
     public synchronized void dispose() {
 
-        JDialog w = getDialog();
+        JWindow w = getWindow();
         if (w != null) {
 
             waitForFinish(getDisposeTimeout(), 10);
             w.setVisible(false);
             w.dispose();
-            setDialog(null);
+            setWindow(null);
             if (Util.isLinux()) {
 
                 System.out.println("On Linux: doing a killall just for fun.");

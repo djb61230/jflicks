@@ -115,7 +115,11 @@ public class ChromeJob extends AbstractJob implements JobListener {
         }
 
         SystemJob job = SystemJob.getInstance(prgname
+            + " " + getURL());
+        /*
+        SystemJob job = SystemJob.getInstance(prgname
             + " -kiosk " + getURL());
+        */
 
         log(Chrome.DEBUG, "started: " + job.getCommand());
         job.addJobListener(this);

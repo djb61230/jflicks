@@ -773,6 +773,7 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
 
             // If we get this property update, then it means the video
             // finished playing on it's own.
+            setBlocking(false);
             Boolean bobj = (Boolean) event.getNewValue();
             if (bobj.booleanValue()) {
 
@@ -849,6 +850,7 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                     controlKeyboard(false);
                     p.setFrame(Util.findFrame(this));
                     addBlankPanel();
+                    setBlocking(true);
                     p.play(vidpath);
 
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
@@ -871,6 +873,7 @@ public class NetVideoScreen extends PlayerScreen implements JobListener,
                     controlKeyboard(false);
                     p.setFrame(Util.findFrame(this));
                     addBlankPanel();
+                    setBlocking(true);
                     p.play(vidpath, getBookmark(v.getId()));
 
                 } else if (CANCEL.equals(pbp.getSelectedButton())) {

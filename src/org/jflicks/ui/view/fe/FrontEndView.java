@@ -1247,6 +1247,8 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                     cl.show(p, "main");
                     setLastActivityMillis(System.currentTimeMillis());
                 }
+
+                p.requestFocus();
             }
         }
     }

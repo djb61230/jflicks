@@ -73,8 +73,12 @@ import org.jdesktop.swingx.painter.MattePainter;
 public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     PropertyChangeListener {
 
+    private static final String AUTO_SKIP_PREFIX = "Auto Skip";
     private static final String AUTO_SKIP_IS_ON = "Auto Skip is On";
     private static final String AUTO_SKIP_IS_OFF = "Auto Skip is Off";
+    private static final String AUDIO_CONTROL_PREFIX = "Audio Control";
+    private static final String AUDIO_CONTROL_IS_ON = "Audio Control is On";
+    private static final String AUDIO_CONTROL_IS_OFF = "Audio Control is Off";
     private static final String CERTAIN = "Are you certain?";
 
     private Recording[] recordings;
@@ -95,6 +99,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     private Transfer transfer;
     private String streamType;
     private boolean autoSkip;
+    private boolean audioControl;
     private Timer autoSkipTimer;
     private AutoSkipActionListener autoSkipActionListener;
     private int lastScreenEvent;
@@ -592,6 +597,14 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         restoreState = b;
     }
 
+    private boolean isAudioControl() {
+        return (audioControl);
+    }
+
+    private void setAudioControl(boolean b) {
+        audioControl = b;
+    }
+
     private boolean isAutoSkip() {
         return (autoSkip);
     }
@@ -896,8 +909,10 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             // Default to the path property.
             result = r.getPath();
 
+            // Audio control is just on for transport streams so we dont
+            // append the extension unless audio control is off.
             String iext = r.getIndexedExtension();
-            if (iext != null) {
+            if ((iext != null) && (!isAudioControl())) {
 
                 File tmp = new File(result + "." + iext);
                 if ((tmp.exists()) && (tmp.isFile())) {
@@ -922,7 +937,17 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     if (iext != null) {
 
                         if (streamURL.endsWith(iext)) {
-                            System.out.println("saying video");
+
+                            if (isAudioControl()) {
+
+                                result = result.substring(0,
+                                    result.lastIndexOf("."));
+                                System.out.println("ts  - audio control on");
+                                System.out.println(result);
+
+                            } else {
+                                System.out.println("saying video");
+                            }
                         }
                     }
 
@@ -1158,6 +1183,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
             // If we get this property update, then it means the video
             // finished playing on it's own.
+            setBlocking(false);
             Boolean bobj = (Boolean) event.getNewValue();
             if (bobj.booleanValue()) {
 
@@ -1443,6 +1469,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                     p.setFrame(Util.findFrame(this));
                     addBlankPanel();
+                    setBlocking(true);
                     p.play(recpath);
 
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
@@ -1498,6 +1525,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         controlKeyboard(false);
                         p.setFrame(Util.findFrame(this));
                         addBlankPanel();
+                        setBlocking(true);
                         p.play(recpath, bm);
                     }
 
@@ -1534,17 +1562,37 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else {
 
-                    boolean old = isAutoSkip();
-                    setAutoSkip(!isAutoSkip());
-                    doUnpopup = false;
-                    String[] barray = pbp.getButtons();
-                    if ((barray != null) && (barray.length > 2)) {
-                        if (old) {
-                            barray[barray.length - 2] = AUTO_SKIP_IS_OFF;
-                        } else {
-                            barray[barray.length - 2] = AUTO_SKIP_IS_ON;
+                    String btext = pbp.getSelectedButton();
+                    if (btext.startsWith(AUTO_SKIP_PREFIX)) {
+
+                        boolean old = isAutoSkip();
+                        setAutoSkip(!isAutoSkip());
+                        doUnpopup = false;
+                        String[] barray = pbp.getButtons();
+                        if ((barray != null) && (barray.length > 2)) {
+                            if (old) {
+                                barray[barray.length - 2] = AUTO_SKIP_IS_OFF;
+                            } else {
+                                barray[barray.length - 2] = AUTO_SKIP_IS_ON;
+                            }
+                            pbp.setButtons(barray);
                         }
-                        pbp.setButtons(barray);
+
+                    } else if (btext.startsWith(AUDIO_CONTROL_PREFIX)) {
+
+                        boolean old = isAudioControl();
+                        setAudioControl(!isAudioControl());
+                        doUnpopup = false;
+                        String[] barray = pbp.getButtons();
+                        if ((barray != null) && (barray.length > 3)) {
+
+                            if (old) {
+                                barray[barray.length - 3] = AUDIO_CONTROL_IS_OFF;
+                            } else {
+                                barray[barray.length - 3] = AUDIO_CONTROL_IS_ON;
+                            }
+                            pbp.setButtons(barray);
+                        }
                     }
                 }
 
@@ -1779,6 +1827,11 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         } else {
                             blist.add(DELETE);
                             blist.add(DELETE_ALLOW_RERECORDING);
+                        }
+                        if (isAudioControl()) {
+                            blist.add(AUDIO_CONTROL_IS_ON);
+                        } else {
+                            blist.add(AUDIO_CONTROL_IS_OFF);
                         }
                         if (isAutoSkip()) {
                             blist.add(AUTO_SKIP_IS_ON);

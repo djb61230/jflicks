@@ -321,6 +321,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
 
                 // If we get this property update, then it means the slideshow
                 // finished playing on it's own.
+                setBlocking(false);
                 Boolean bobj = (Boolean) event.getNewValue();
                 if (bobj.booleanValue()) {
 
@@ -545,6 +546,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     p.addPropertyChangeListener("Completed", this);
                     p.setFrame(Util.findFrame(this));
                     addBlankPanel();
+                    setBlocking(true);
                     p.play("list.txt");
                 }
 
@@ -557,6 +559,7 @@ public class PhotoScreen extends PlayerScreen implements PhotoTagProperty,
                     p.addPropertyChangeListener("Completed", this);
                     p.setFrame(Util.findFrame(this));
                     addBlankPanel();
+                    setBlocking(true);
                     p.play("list.txt");
                 }
             }
