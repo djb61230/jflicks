@@ -40,7 +40,7 @@ public final class TheMovieDB {
     private static final String GET_INFO = "Movie.getInfo";
     private static final String LANGUAGE = "en";
     private static final String TYPE = "xml";
-    private static final String KEY = "FRED";
+    private static final String KEY = "ddfbd52df8841f7efe4d11d0117fa0c5";
 
     private static TheMovieDB instance = new TheMovieDB();
 
