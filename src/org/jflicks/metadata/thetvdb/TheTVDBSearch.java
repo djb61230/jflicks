@@ -74,7 +74,7 @@ import org.jdesktop.swingx.painter.ImagePainter;
 public class TheTVDBSearch extends SearchPanel implements ActionListener,
     ListSelectionListener, JobListener {
 
-    private static final String KEY = "FRED";
+    private static final String KEY = "DD342FB4D55DF7BB";
 
     private TheTVDB theTVDB;
 
