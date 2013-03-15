@@ -151,6 +151,13 @@ public class Chrome extends BasePlayer {
                 r.keyPress(KeyEvent.VK_F4);
                 r.keyRelease(KeyEvent.VK_F4);
                 r.keyRelease(KeyEvent.VK_ALT);
+
+            } else if (Util.isMac()) {
+
+                r.keyPress(KeyEvent.VK_META);
+                r.keyPress(KeyEvent.VK_Q);
+                r.keyRelease(KeyEvent.VK_Q);
+                r.keyRelease(KeyEvent.VK_META);
             }
 
         } catch (Exception ex) {

@@ -1181,12 +1181,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
         } else if ((event.getSource() == getPlayer()) && (!isDone())) {
 
-            // If we get this property update, then it means the video
-            // finished playing on it's own.
-            setBlocking(false);
             Boolean bobj = (Boolean) event.getNewValue();
             if (bobj.booleanValue()) {
 
+                // If we get this property update, then it means the video
+                // finished playing on it's own.
+                setBlocking(false);
                 getPlayer().removePropertyChangeListener(this);
                 RecordingListPanel rllp = getRecordingListPanel();
                 if (rllp != null) {
