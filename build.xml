@@ -59,8 +59,6 @@
             debug="on" includes="**/*.java" excludes="**/package-info.java*"
             includeantruntime="false">
 
-            <compilerarg value="-Xlint:unchecked"/>
-
         </javac>
 
         <jar destfile="${dist}/jflicks.jar" basedir="${build}"
@@ -901,36 +899,6 @@
             <fileset dir="${bundle}" includes="${vm.deploy}"/>
         </copy>
 
-        <java classname="org.jflicks.util.feature.FeatureGenerate" fork="true">
-
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
-
-            <arg value="-o"/>
-            <arg value="${felix.fe.home}/feature.xml"/>
-            <arg value="-dir"/>
-            <arg value="${felix.fe.home}/bundle"/>
-
-        </java>
-
-        <java classname="org.jflicks.util.feature.FeatureGenerate" fork="true">
-
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
-
-            <arg value="-o"/>
-            <arg value="${felix.fe.home}/thirdparty-feature.xml"/>
-            <arg value="-dir"/>
-            <arg value="${felix.fe.home}/thirdparty"/>
-            <arg value="-repository"/>
-            <arg value="Jflicks-thirdparty"/>
-            <arg value="-feature"/>
-            <arg value="jflicks-thirdparty"/>
-
-        </java>
-
     </target>
 
     <!--
@@ -1079,6 +1047,19 @@
     <target name="test-sd" depends="build">
 
         <java classname="org.jflicks.tv.programdata.sd.SchedulesDirect"
+            fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-tmdb" depends="build">
+
+        <java classname="org.jflicks.metadata.themoviedb.TheMovieDB"
             fork="true">
 
             <classpath>

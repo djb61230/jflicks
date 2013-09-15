@@ -22,4 +22,6 @@ Import-Package:\
  javax.swing.event,\
  javax.swing.filechooser,\
  org.jdesktop.swingx,\
- org.jdesktop.swingx.painter
+ org.jdesktop.swingx.painter,\
+ com.google.gson,\
+ com.google.gson.annotations

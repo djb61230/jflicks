@@ -16,9 +16,10 @@
 */
 package org.jflicks.metadata.themoviedb;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.jdom.Element;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * A Search object contains the results from a search to themoviedb.org.
@@ -26,26 +27,53 @@ import org.jdom.Element;
  * @author Doug Barnum
  * @version 1.0
  */
-public class Search extends BaseObject {
+public class Search implements Serializable {
 
-    private ArrayList<Movie> movieList;
+    private int page;
+    private ArrayList<Movie> results;
+    @SerializedName("total_pages")
+    private int totalPages;
+    @SerializedName("total_results")
+    private int totalResults;
 
     /**
-     * Constructor supplying an Element.
-     *
-     * @param e The given element that contains data for this object.
+     * Empty constructor.
      */
-    public Search(Element e) {
+    public Search() {
 
-        super(e);
+        setMovieList(new ArrayList<Movie>());
     }
 
-    private ArrayList<Movie> getMovieList() {
-        return (movieList);
+    public int getPage() {
+        return (page);
     }
 
-    private void setMovieList(ArrayList<Movie> l) {
-        movieList = l;
+    public void setPage(int i) {
+        page = i;
+    }
+
+    public int getTotalPage() {
+        return (totalPages);
+    }
+
+    public void setTotalPages(int i) {
+        totalPages = i;
+    }
+
+    public int getTotalResults() {
+        return (totalResults);
+    }
+
+    public void setTotalResults(int i) {
+        totalResults = i;
+    }
+
+    public ArrayList<Movie> getMovieList() {
+        return (results);
+    }
+
+    public void setMovieList(ArrayList<Movie> l) {
+        results = l;
     }
 
     private void addMovie(Movie m) {
@@ -93,7 +121,7 @@ public class Search extends BaseObject {
         return (result);
     }
 
-    private void setMovies(Movie[] array) {
+    public void setMovies(Movie[] array) {
 
         clear();
         if (array != null) {
@@ -140,23 +168,6 @@ public class Search extends BaseObject {
         }
 
         return (result);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void handle() {
-
-        setMovieList(new ArrayList<Movie>());
-
-        Element[] array = expectElements(getElement(), "movies", "movie");
-        if ((array != null) && (array.length > 0)) {
-
-            for (int i = 0; i < array.length; i++) {
-
-                addMovie(new Movie(array[i]));
-            }
-        }
     }
 
 }

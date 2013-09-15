@@ -139,7 +139,9 @@ public class StreamInfoJob extends BaseHDHRJob {
 
                         for (int i = 0; i < lines.length; i++) {
 
-                            if (lines[i].indexOf(getProgram()) != -1) {
+                            //if (lines[i].indexOf(getProgram()) != -1) {
+                            
+                            if (isProgramLine(lines[i])) {
 
                                 int cindex = lines[i].indexOf(":");
                                 if (cindex != -1) {
@@ -155,6 +157,30 @@ public class StreamInfoJob extends BaseHDHRJob {
                 stop();
             }
         }
+    }
+
+    private boolean isProgramLine(String line) {
+
+        boolean result = false;
+
+        if (line != null) {
+
+            int index = line.indexOf(":");
+            if (index != -1) {
+
+                // Get the "rest" of the line.
+                fireJobEvent(JobEvent.UPDATE, "line: <" + line + ">");
+                line = line.substring(index + 1);
+                fireJobEvent(JobEvent.UPDATE, "line now: <" + line + ">");
+                line = line.trim();
+                fireJobEvent(JobEvent.UPDATE, "line trim: <" + line + ">");
+                result = line.startsWith(getProgram());
+                fireJobEvent(JobEvent.UPDATE, "startsWith: <" + getProgram()
+                    + "> " + result);
+            }
+        }
+
+        return (result);
     }
 
 }

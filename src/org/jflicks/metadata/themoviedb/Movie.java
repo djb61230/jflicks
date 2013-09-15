@@ -16,11 +16,10 @@
 */
 package org.jflicks.metadata.themoviedb;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.net.URI;
 
-import org.jflicks.util.Util;
-
-import org.jdom.Element;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * This is an object that encapsulates the information about a movie
@@ -29,511 +28,227 @@ import org.jdom.Element;
  * @author Doug Barnum
  * @version 1.0
  */
-public class Movie extends BaseObject {
+public class Movie implements Serializable {
 
-    private double score;
-    private int popularity;
-    private String name;
-    private String alternativeName;
-    private String type;
-    private String id;
+    private boolean adult;
+    @SerializedName("backdrop_path")
+    private URI backdropPath;
+    private int id;
+    @SerializedName("original_title")
+    private String originalTitle;
+    @SerializedName("release_date")
+    private String releaseDate;
+    @SerializedName("poster_path")
+    private URI posterPath;
+    private double popularity;
+    private String title;
+    @SerializedName("vote_average")
+    private double voteAverage;
+    @SerializedName("vote_count")
+    private int voteCount;
+    @SerializedName("belongs_to_collection")
+    private String belongsToCollection;
+    private int budget;
+    private String homepage;
+    @SerializedName("imdb_id")
     private String imdbId;
-    private String url;
-    private double rating;
     private String overview;
-    private String released;
-    private String genre;
+    private int revenue;
     private int runtime;
-    private ArrayList<Image> imageList;
+    private String status;
+    private String tagline;
+    private Genre[] genres;
+    private Artwork artwork;
 
     /**
-     * Constructor with the required argument.
-     *
-     * @param e The element that will be examined for data.
+     * Empty constructor.
      */
-    public Movie(Element e) {
-
-        super(e);
+    public Movie() {
     }
 
-    /**
-     * A movie has a score property.
-     *
-     * @return The score as a double value.
-     */
-    public double getScore() {
-        return (score);
+    public boolean isAdult() {
+        return (adult);
     }
 
-    private void setScore(double d) {
-        score = d;
+    public void setAdult(boolean b) {
+        adult = b;
     }
 
-    /**
-     * A movie has a popularity property.
-     *
-     * @return The popularity as an int value.
-     */
-    public int getPopularity() {
-        return (popularity);
+    public URI getBackdropPath() {
+        return (backdropPath);
     }
 
-    private void setPopularity(int i) {
-        popularity = i;
+    public void setBackdropPath(URI s) {
+        backdropPath = s;
     }
 
-    /**
-     * A movie has a name property.
-     *
-     * @return The name as a String value.
-     */
-    public String getName() {
-        return (name);
-    }
-
-    private void setName(String s) {
-        name = s;
-    }
-
-    /**
-     * A movie has a alternative name property.
-     *
-     * @return The alternative name as a String value.
-     */
-    public String getAlternativeName() {
-        return (alternativeName);
-    }
-
-    private void setAlternativeName(String s) {
-        alternativeName = s;
-    }
-
-    /**
-     * A movie has a type property.
-     *
-     * @return The type as a String value.
-     */
-    public String getType() {
-        return (type);
-    }
-
-    private void setType(String s) {
-        type = s;
-    }
-
-    /**
-     * A movie has an ID property.
-     *
-     * @return The ID as a String value.
-     */
-    public String getId() {
+    public int getId() {
         return (id);
     }
 
-    private void setId(String s) {
-        id = s;
+    public void setId(int i) {
+        id = i;
     }
 
-    /**
-     * A movie has an ImdbID property.
-     *
-     * @return The ImdbID as a String value.
-     */
+    public String getOriginalTitle() {
+        return (originalTitle);
+    }
+
+    public void setOriginalTitle(String s) {
+        originalTitle = s;
+    }
+
+    public String getReleaseDate() {
+        return (releaseDate);
+    }
+
+    public void setReleaseDate(String s) {
+        releaseDate = s;
+    }
+
+    public URI getPosterPath() {
+        return (posterPath);
+    }
+
+    public void setPosterPath(URI s) {
+        posterPath = s;
+    }
+
+    public double getPopularity() {
+        return (popularity);
+    }
+
+    public void setPopularity(double d) {
+        popularity = d;
+    }
+
+    public String getTitle() {
+        return (title);
+    }
+
+    public void setTitle(String s) {
+        title = s;
+    }
+
+    public double getVoteAverage() {
+        return (voteAverage);
+    }
+
+    public void setVoteAverage(double d) {
+        voteAverage = d;
+    }
+
+    public int getVoteCount() {
+        return (voteCount);
+    }
+
+    public void setVoteCount(int i) {
+        voteCount = i;
+    }
+
+    public String getBelongsToCollection() {
+        return (belongsToCollection);
+    }
+
+    public void setBelongsToCollection(String s) {
+        belongsToCollection = s;
+    }
+
+    public int getBudget() {
+        return (budget);
+    }
+
+    public void setBudget(int i) {
+        budget = i;
+    }
+
+    public String getHomepage() {
+        return (homepage);
+    }
+
+    public void setHomepage(String s) {
+        homepage = s;
+    }
+
     public String getImdbId() {
         return (imdbId);
     }
 
-    private void setImdbId(String s) {
+    public void setImdbId(String s) {
         imdbId = s;
     }
 
-    /**
-     * A movie has an URL property.
-     *
-     * @return The URL as a String value.
-     */
-    public String getUrl() {
-        return (url);
-    }
-
-    private void setUrl(String s) {
-        url = s;
-    }
-
-    /**
-     * A movie has a rating property.
-     *
-     * @return The rating as a double value.
-     */
-    public double getRating() {
-        return (rating);
-    }
-
-    private void setRating(double d) {
-        rating = d;
-    }
-
-    /**
-     * A movie has an overview property.
-     *
-     * @return The overview as a String value.
-     */
     public String getOverview() {
         return (overview);
     }
 
-    private void setOverview(String s) {
+    public void setOverview(String s) {
         overview = s;
     }
 
-    /**
-     * A movie has a released property.
-     *
-     * @return The released as a String value.
-     */
-    public String getReleased() {
-        return (released);
+    public int getRevenue() {
+        return (revenue);
     }
 
-    private void setReleased(String s) {
-        released = s;
+    public void setRevenue(int i) {
+        revenue = i;
     }
 
-    /**
-     * A movie has a genre property.  The web site has a notion of
-     * categories and we will stick the first one we find that is a genre
-     * in this property.  The problem is movies can be in multiple genres.
-     *
-     * @return The genre as a String value.
-     */
-    public String getGenre() {
-        return (genre);
-    }
-
-    private void setGenre(String s) {
-        genre = s;
-    }
-
-    /**
-     * A movie has a runtime property.  This is the number of minutes the
-     * movie runs.
-     *
-     * @return The runtime as an int value.
-     */
     public int getRuntime() {
         return (runtime);
     }
 
-    private void setRuntime(int i) {
+    public void setRuntime(int i) {
         runtime = i;
     }
 
-    private ArrayList<Image> getImageList() {
-        return (imageList);
+    public String getStatus() {
+        return (status);
     }
 
-    private void setImageList(ArrayList<Image> l) {
-        imageList = l;
+    public void setStatus(String s) {
+        status = s;
     }
 
-    private void addImage(Image m) {
-
-        ArrayList<Image> l = getImageList();
-        if ((l != null) && (m != null)) {
-
-            l.add(m);
-        }
+    public String getTagline() {
+        return (tagline);
     }
 
-    private void removeImage(Image p) {
-
-        ArrayList<Image> l = getImageList();
-        if ((l != null) && (p != null)) {
-
-            l.remove(p);
-        }
+    public void setTagline(String s) {
+        tagline = s;
     }
 
-    private void clear() {
-
-        ArrayList<Image> l = getImageList();
-        if (l != null) {
-
-            l.clear();
-        }
+    public Genre[] getGenres() {
+        return (genres);
     }
 
-    /**
-     * A movie has a set of images associated with it.
-     *
-     * @return An array of Image instances.
-     */
-    public Image[] getImages() {
-
-        Image[] result = null;
-
-        ArrayList<Image> l = getImageList();
-        if ((l != null) && (l.size() > 0)) {
-
-            result = l.toArray(new Image[l.size()]);
-        }
-
-        return (result);
+    public void setGenres(Genre[] array) {
+        genres = array;
     }
 
-    private void setImages(Image[] array) {
-
-        clear();
-        if (array != null) {
-
-            for (int i = 0; i < array.length; i++) {
-
-                addImage(array[i]);
-            }
-        }
+    public Artwork getArtwork() {
+        return (artwork);
     }
 
-    /**
-     * Convenience method to find the Image count.
-     *
-     * @return The number of Images for this movie.
-     */
-    public int getImageCount() {
-
-        int result = 0;
-
-        ArrayList<Image> l = getImageList();
-        if ((l != null) && (l.size() > 0)) {
-
-            result = l.size();
-        }
-
-        return (result);
+    public void setArtwork(Artwork a) {
+        artwork = a;
     }
 
-    /**
-     * Convenience method to get an Image at a given index.
-     *
-     * @param index A given index.
-     * @return The Image if it exists at the given index.
-     */
-    public Image getImageAt(int index) {
-
-        Image result = null;
-
-        ArrayList<Image> l = getImageList();
-        if ((l != null) && (l.size() > index)) {
-
-            result = l.get(index);
-        }
-
-        return (result);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void handle() {
-
-        setScore(Util.str2double(expectElement(getElement(), "score"), 0.0));
-        setPopularity(Util.str2int(expectElement(getElement(), "popularity"),
-            0));
-        setName(expectElement(getElement(), "name"));
-        setAlternativeName(expectElement(getElement(), "alternative_name"));
-        setType(expectElement(getElement(), "type"));
-        setId(expectElement(getElement(), "id"));
-        setImdbId(expectElement(getElement(), "imdb_id"));
-        setUrl(expectElement(getElement(), "url"));
-        setScore(Util.str2double(expectElement(getElement(), "rating"), 0.0));
-        setOverview(expectElement(getElement(), "overview"));
-        setReleased(expectElement(getElement(), "released"));
-
-        Element[] cats = expectElements(getElement(), "categories", "category");
-        if ((cats != null) && (cats.length > 0)) {
-
-            for (int i = 0; i < cats.length; i++) {
-
-                String ctype = cats[i].getAttributeValue("type");
-                if ((ctype != null) && (ctype.equalsIgnoreCase("genre"))) {
-
-                    setGenre(cats[i].getAttributeValue("name"));
-                    break;
-                }
-            }
-        }
-
-        setRuntime(Util.str2int(expectElement(getElement(), "runtime"), 0));
-
-        setImageList(new ArrayList<Image>());
-
-        Element[] array = expectElements(getElement(), "images", "image");
-        if ((array != null) && (array.length > 0)) {
-
-            for (int i = 0; i < array.length; i++) {
-
-                addImage(new Image(array[i]));
-            }
-        }
-    }
-
-    /**
-     * Only the Images that are thumbnails are returned.
-     *
-     * @return An array of thumbnail images.
-     */
-    public Image[] getThumbnailImages() {
-
-        Image[] result = null;
-
-        Image[] all = getImages();
-        if (all != null) {
-
-            ArrayList<Image> l = new ArrayList<Image>();
-            for (int i = 0; i < all.length; i++) {
-
-                Image tmp = all[i];
-                if ((tmp != null) && (tmp.isThumbSize())) {
-                    l.add(tmp);
-                }
-            }
-
-            if (l.size() > 0) {
-
-                result = l.toArray(new Image[l.size()]);
-            }
-        }
-
-        return (result);
-    }
-
-    /**
-     * Given an ID find the Image that is "poster" sized.
-     *
-     * @param id The given Image ID.
-     * @return An Image instance.
-     */
-    public Image getPosterSizeImageById(String id) {
-
-        Image result = null;
-
-        Image[] all = getImages();
-        if ((all != null) && (id != null)) {
-
-            for (int i = 0; i < all.length; i++) {
-
-                Image tmp = all[i];
-                if ((tmp != null) && (tmp.isPosterSize())
-                    && (id.equalsIgnoreCase(tmp.getId()))) {
-
-                    result = tmp;
-                    break;
-                }
-            }
-        }
-
-        return (result);
-    }
-
-    /**
-     * Given an ID find the Image that is "original" sized.
-     *
-     * @param id The given Image ID.
-     * @return An Image instance.
-     */
-    public Image getOriginalSizeImageById(String id) {
-
-        Image result = null;
-
-        Image[] all = getImages();
-        if ((all != null) && (id != null)) {
-
-            for (int i = 0; i < all.length; i++) {
-
-                Image tmp = all[i];
-                if ((tmp != null) && (tmp.isOriginalSize())
-                    && (id.equalsIgnoreCase(tmp.getId()))) {
-
-                    result = tmp;
-                    break;
-                }
-            }
-        }
-
-        return (result);
-    }
-
-    /**
-     * Given an ID find the Image that is "mid" sized.
-     *
-     * @param id The given Image ID.
-     * @return An Image instance.
-     */
-    public Image getMidSizeImageById(String id) {
-
-        Image result = null;
-
-        Image[] all = getImages();
-        if ((all != null) && (id != null)) {
-
-            for (int i = 0; i < all.length; i++) {
-
-                Image tmp = all[i];
-                if ((tmp != null) && (tmp.isMidSize())
-                    && (id.equalsIgnoreCase(tmp.getId()))) {
-
-                    result = tmp;
-                    break;
-                }
-            }
-        }
-
-        return (result);
-    }
-
-    /**
-     * Given an ID find the Image that is "cover" sized.
-     *
-     * @param id The given Image ID.
-     * @return An Image instance.
-     */
-    public Image getCoverSizeImageById(String id) {
-
-        Image result = null;
-
-        Image[] all = getImages();
-        if ((all != null) && (id != null)) {
-
-            for (int i = 0; i < all.length; i++) {
-
-                Image tmp = all[i];
-                if ((tmp != null) && (tmp.isCoverSize())
-                    && (id.equalsIgnoreCase(tmp.getId()))) {
-
-                    result = tmp;
-                    break;
-                }
-            }
-        }
-
-        return (result);
-    }
-
-    /**
-     * Does this Movie have thumbnail images?.
-     *
-     * @return True if at least one thumbnail image exists.
-     */
     public boolean hasThumbnails() {
-        return (getThumbnailImages() != null);
+
+        boolean result = false;
+
+        Artwork art = getArtwork();
+        if (art != null) {
+
+            result = (art.getPosters() != null) || (art.getBackdrops() != null);
+        }
+
+        return (result);
     }
 
-    /**
-     * Override this method to return the name property.
-     *
-     * @return The name property as a String.
-     */
     public String toString() {
-        return (getName());
+        return (getTitle());
     }
 
 }

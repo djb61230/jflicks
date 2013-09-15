@@ -1211,9 +1211,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     public void info() {
 
         RecordingInfoWindow w = getRecordingInfoWindow();
+        System.out.println("RecordingInfoWindow " + w);
         if (w != null) {
 
+            System.out.println("RecordingInfoWindow " + w.isVisible());
             w.setVisible(!w.isVisible());
+            System.out.println("RecordingInfoWindow " + w.isVisible());
         }
     }
 

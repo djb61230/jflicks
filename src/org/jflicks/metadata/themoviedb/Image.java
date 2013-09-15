@@ -16,7 +16,9 @@
 */
 package org.jflicks.metadata.themoviedb;
 
-import org.jdom.Element;
+import java.io.Serializable;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * This class captures the Image information available from themoviedb.org.
@@ -24,212 +26,116 @@ import org.jdom.Element;
  * @author Doug Barnum
  * @version 1.0
  */
-public class Image extends BaseObject {
+public class Image {
 
     private String type;
+    private String urlThumb;
     private String url;
-    private String size;
-    private String id;
+    @SerializedName("file_path")
+    private String filePath;
+    private int width;
+    private int height;
+    @SerializedName("aspect_ratio")
+    private double aspectRatio;
+    @SerializedName("vote_average")
+    private double voteAverage;
+    @SerializedName("vote_count")
+    private int voteCount;
 
     /**
-     * Constructor with the required argument.
-     *
-     * @param e The element that will be examined for data.
+     * Empty constructor.
      */
-    public Image(Element e) {
-
-        super(e);
+    public Image() {
     }
 
-    /**
-     * An image has a type property.
-     *
-     * @return The type as a String value.
-     */
     public String getType() {
         return (type);
     }
 
-    private void setType(String s) {
+    public void setType(String s) {
         type = s;
     }
 
-    /**
-     * An image has an URL property.
-     *
-     * @return The URL as a String value.
-     */
     public String getUrl() {
         return (url);
     }
 
-    private void setUrl(String s) {
+    public void setUrl(String s) {
         url = s;
     }
 
+    public String getUrlThumb() {
+        return (urlThumb);
+    }
+
+    public void setUrlThumb(String s) {
+        urlThumb = s;
+    }
+
+    public String getFilePath() {
+        return (filePath);
+    }
+
+    public void setFilePath(String s) {
+        filePath = s;
+    }
+
+    public int getWidth() {
+        return (width);
+    }
+
+    public void setWidth(int i) {
+        width = i;
+    }
+
+    public int getHeight() {
+        return (height);
+    }
+
+    public void setHeight(int i) {
+        height = i;
+    }
+
+    public double getAspectRatio() {
+        return (aspectRatio);
+    }
+
+    public void setAspectRatio(double d) {
+        aspectRatio = d;
+    }
+
+    public double getVoteAverage() {
+        return (voteAverage);
+    }
+
+    public void setVoteAverage(double d) {
+        voteAverage = d;
+    }
+
+    public int getVoteCount() {
+        return (voteCount);
+    }
+
+    public void setVoteCount(int i) {
+        voteCount = i;
+    }
+
     /**
-     * An image has a size property.
+     * Override this method to return the file path property.
      *
-     * @return The size as a String value.
-     */
-    public String getSize() {
-        return (size);
-    }
-
-    private void setSize(String s) {
-        size = s;
-    }
-
-    /**
-     * An image has an ID property.
-     *
-     * @return The ID as a String value.
-     */
-    public String getId() {
-        return (id);
-    }
-
-    private void setId(String s) {
-        id = s;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void handle() {
-
-        setType(expectAttribute(getElement(), "type"));
-        setUrl(expectAttribute(getElement(), "url"));
-        setSize(expectAttribute(getElement(), "size"));
-        setId(expectAttribute(getElement(), "id"));
-    }
-
-    /**
-     * Is this Image a "thumbnail" size?
-     *
-     * @return True if it is a thumbnail.
-     */
-    public boolean isThumbSize() {
-
-        boolean result = false;
-
-        String s = getSize();
-        if ((s != null) && (s.equalsIgnoreCase("thumb"))) {
-            result = true;
-        }
-
-        return (result);
-    }
-
-    /**
-     * Is this Image a "cover" size?
-     *
-     * @return True if it is a cover.
-     */
-    public boolean isCoverSize() {
-
-        boolean result = false;
-
-        String s = getSize();
-        if ((s != null) && (s.equalsIgnoreCase("cover"))) {
-            result = true;
-        }
-
-        return (result);
-    }
-
-    /**
-     * Is this Image a "mid" size?
-     *
-     * @return True if it is a mid.
-     */
-    public boolean isMidSize() {
-
-        boolean result = false;
-
-        String s = getSize();
-        if ((s != null) && (s.equalsIgnoreCase("mid"))) {
-            result = true;
-        }
-
-        return (result);
-    }
-
-    /**
-     * Is this Image an "original" size?
-     *
-     * @return True if it is a original.
-     */
-    public boolean isOriginalSize() {
-
-        boolean result = false;
-
-        String s = getSize();
-        if ((s != null) && (s.equalsIgnoreCase("original"))) {
-            result = true;
-        }
-
-        return (result);
-    }
-
-    /**
-     * Is this Image a "poster" size?
-     *
-     * @return True if it is a poster.
-     */
-    public boolean isPosterSize() {
-
-        boolean result = false;
-
-        String s = getSize();
-        if ((s != null) && (s.equalsIgnoreCase("poster"))) {
-            result = true;
-        }
-
-        return (result);
-    }
-
-    /**
-     * Is this Image a "backdrop" type?
-     *
-     * @return True if it is a backdrop.
-     */
-    public boolean isBackdropType() {
-
-        boolean result = false;
-
-        String s = getType();
-        if ((s != null) && (s.equalsIgnoreCase("backdrop"))) {
-            result = true;
-        }
-
-        return (result);
-    }
-
-    /**
-     * Is this Image a "poster" type?
-     *
-     * @return True if it is a poster.
-     */
-    public boolean isPosterType() {
-
-        boolean result = false;
-
-        String s = getType();
-        if ((s != null) && (s.equalsIgnoreCase("poster"))) {
-            result = true;
-        }
-
-        return (result);
-    }
-
-    /**
-     * Override this method to return the type and ID properties.
-     *
-     * @return The type and ID properties as a String.
+     * @return The file path as a String.
      */
     public String toString() {
-        return (getType() + " - " + getId());
+
+        String result = "Unknown";
+
+        if (filePath != null) {
+
+            result = getType() + " - "
+                + filePath.substring(1, filePath.indexOf("."));
+        }
+
+        return (result);
     }
 
 }

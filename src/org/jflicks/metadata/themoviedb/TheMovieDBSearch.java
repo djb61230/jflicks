@@ -413,7 +413,7 @@ public class TheMovieDBSearch extends SearchPanel implements ActionListener,
         HashMap<String, BufferedImage> hm = getHashMap();
         if ((hm != null) && (image != null)) {
 
-            String urlstr = image.getUrl();
+            String urlstr = image.getUrlThumb();
             if (urlstr != null) {
 
                 result = hm.get(urlstr);
@@ -604,6 +604,47 @@ public class TheMovieDBSearch extends SearchPanel implements ActionListener,
                 JList imagel = getImageList();
                 if ((imagel != null) && (movie.hasThumbnails())) {
 
+                    imagel.setModel(new DefaultListModel());
+                    Artwork art = movie.getArtwork();
+                    if (art != null) {
+
+                        ArrayList<Image> ilist = new ArrayList<Image>();
+                        Image[] posters = art.getPosters();
+                        if (posters != null) {
+
+                            JComboBox poster = getPosterComboBox();
+                            if (poster != null) {
+
+                                poster.removeAllItems();
+                                for (int i = 0; i < posters.length; i++) {
+
+                                    ilist.add(posters[i]);
+                                    poster.addItem(posters[i]);
+                                }
+                            }
+                        }
+                        Image[] backs = art.getBackdrops();
+                        if (backs != null) {
+
+                            JComboBox fanart = getFanartComboBox();
+                            if (fanart != null) {
+
+                                fanart.removeAllItems();
+                                for (int i = 0; i < backs.length; i++) {
+
+                                    ilist.add(backs[i]);
+                                    fanart.addItem(backs[i]);
+                                }
+                            }
+                        }
+                        if (ilist.size() > 0) {
+
+                            Image[] array =
+                                ilist.toArray(new Image[ilist.size()]);
+                            imagel.setListData(array);
+                        }
+                    }
+                    /*
                     Image[] thumbs = movie.getThumbnailImages();
                     if (thumbs != null) {
 
@@ -637,6 +678,7 @@ public class TheMovieDBSearch extends SearchPanel implements ActionListener,
 
                         imagel.setModel(new DefaultListModel());
                     }
+                    */
 
                 } else {
 
@@ -675,11 +717,11 @@ public class TheMovieDBSearch extends SearchPanel implements ActionListener,
             Movie m = mi.getMovie();
             if (m != null) {
 
-                h.setId(m.getImdbId());
+                h.setId("" + m.getId());
                 h.setMetadataTitle("TheMovieDB.org");
-                h.setTitle(m.getName());
+                h.setTitle(m.getTitle());
                 h.setDescription(m.getOverview());
-                h.setReleased(m.getReleased());
+                h.setReleased(m.getReleaseDate());
 
                 JComboBox cb = getPosterComboBox();
                 if (cb != null) {
@@ -687,8 +729,9 @@ public class TheMovieDBSearch extends SearchPanel implements ActionListener,
                     Image img = (Image) cb.getSelectedItem();
                     if (img != null) {
 
-                        String id = img.getId();
                         //Image real = m.getCoverSizeImageById(id);
+                        /*
+                        int myid = img.getId();
                         Image real = m.getOriginalSizeImageById(id);
                         if (real != null) {
                             h.setPosterURL(real.getUrl());
@@ -701,6 +744,7 @@ public class TheMovieDBSearch extends SearchPanel implements ActionListener,
                                 h.setPosterURL(img.getUrl());
                             }
                         }
+                        */
                     }
                 }
 
@@ -710,7 +754,8 @@ public class TheMovieDBSearch extends SearchPanel implements ActionListener,
                     Image img = (Image) cb.getSelectedItem();
                     if (img != null) {
 
-                        String id = img.getId();
+                        /*
+                        int myid = img.getId();
                         Image real = m.getOriginalSizeImageById(id);
                         if (real != null) {
                             h.setFanartURL(real.getUrl());
@@ -723,6 +768,7 @@ public class TheMovieDBSearch extends SearchPanel implements ActionListener,
                                 h.setFanartURL(img.getUrl());
                             }
                         }
+                        */
                     }
                 }
             }

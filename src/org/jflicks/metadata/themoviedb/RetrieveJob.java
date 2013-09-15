@@ -27,24 +27,24 @@ import org.jflicks.job.JobEvent;
  */
 public class RetrieveJob extends AbstractJob {
 
-    private String id;
+    private int id;
 
     /**
      * Constructor with our required argument.
      *
      * @param id The supplied search terms to use.
      */
-    public RetrieveJob(String id) {
+    public RetrieveJob(int id) {
 
         setId(id);
     }
 
-    private String getId() {
+    private int getId() {
         return (id);
     }
 
-    private void setId(String s) {
-        id = s;
+    private void setId(int i) {
+        id = i;
     }
 
     /**
@@ -61,12 +61,9 @@ public class RetrieveJob extends AbstractJob {
 
         Movie movie = null;
 
-        String s = getId();
-        if (s != null) {
-
-            TheMovieDB tmdb = TheMovieDB.getInstance();
-            movie = tmdb.retrieve(s);
-        }
+        int theid = getId();
+        TheMovieDB tmdb = TheMovieDB.getInstance();
+        movie = tmdb.retrieve(theid);
 
         fireJobEvent(JobEvent.COMPLETE, movie);
     }

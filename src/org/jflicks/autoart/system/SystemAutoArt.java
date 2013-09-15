@@ -23,6 +23,8 @@ import java.util.List;
 import org.jflicks.autoart.BaseAutoArt;
 import org.jflicks.autoart.SearchItem;
 import org.jflicks.db.DbWorker;
+import org.jflicks.metadata.themoviedb.Artwork;
+import org.jflicks.metadata.themoviedb.Genre;
 import org.jflicks.metadata.themoviedb.Image;
 import org.jflicks.metadata.themoviedb.Movie;
 import org.jflicks.metadata.themoviedb.Search;
@@ -322,41 +324,31 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
 
                                 // Set the overview and released info....
                                 si.setOverview(m.getOverview());
-                                si.setReleased(m.getReleased());
-                                si.setGenre(m.getGenre());
+                                si.setReleased(m.getReleaseDate());
                                 si.setRuntime(m.getRuntime() * 60);
+                                Genre[] garray = m.getGenres();
+                                if ((garray != null) && (garray.length > 0)) {
+                                    si.setGenre(garray[0].getName());
+                                }
 
-                                Image[] iarray = m.getImages();
-                                if ((iarray != null) && (iarray.length > 0)) {
+                                Artwork art = m.getArtwork();
+                                if (art != null) {
 
                                     String url = null;
+                                    Image[] posters = art.getPosters();
+                                    if ((posters != null)
+                                        && (posters.length > 0)) {
 
-                                    // First find the first poster.
-                                    for (int i = 0; i < iarray.length; i++) {
-
-                                        if (iarray[i].isPosterType()) {
-
-                                            url = findMovieImageURL(m,
-                                                iarray[i]);
-                                            break;
-                                        }
+                                        url = posters[0].getUrl();
                                     }
-
                                     if (url != null) {
                                         si.setPosterURL(url);
                                     }
-
                                     url = null;
+                                    Image[] backs = art.getBackdrops();
+                                    if ((backs != null) && (backs.length > 0)) {
 
-                                    // Next find the first fanart.
-                                    for (int i = 0; i < iarray.length; i++) {
-
-                                        if (iarray[i].isBackdropType()) {
-
-                                            url = findMovieImageURL(m,
-                                                iarray[i]);
-                                            break;
-                                        }
+                                        url = backs[0].getUrl();
                                     }
 
                                     if (url != null) {
@@ -369,30 +361,6 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
                 }
             }
         }
-    }
-
-    private String findMovieImageURL(Movie movie, Image image) {
-
-        String result = null;
-
-        if ((movie != null) && (image != null)) {
-
-            String id = image.getId();
-            Image real = movie.getOriginalSizeImageById(id);
-            if (real != null) {
-                result = real.getUrl();
-            } else {
-
-                real = movie.getMidSizeImageById(id);
-                if (real != null) {
-                    result = real.getUrl();
-                } else {
-                    result = image.getUrl();
-                }
-            }
-        }
-
-        return (result);
     }
 
     /**

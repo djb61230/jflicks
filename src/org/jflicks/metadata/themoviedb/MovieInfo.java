@@ -218,12 +218,12 @@ public class MovieInfo extends JPanel {
 
         if (movie != null) {
 
-            getNameTextField().setText(movie.getName());
+            getNameTextField().setText(movie.getTitle());
             getOverviewTextArea().setText(movie.getOverview());
             getOverviewTextArea().setCaretPosition(0);
-            getScoreTextField().setText("" + movie.getScore());
+            getScoreTextField().setText("" + movie.getVoteAverage());
             getPopularityTextField().setText("" + movie.getPopularity());
-            getReleasedTextField().setText(movie.getReleased());
+            getReleasedTextField().setText(movie.getReleaseDate());
 
         } else {
 
