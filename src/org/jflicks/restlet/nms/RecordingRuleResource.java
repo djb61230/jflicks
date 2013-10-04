@@ -106,8 +106,6 @@ public class RecordingRuleResource extends BaseNMSApplicationServerResource {
                     RecordingRule oldrr = getRecordingRuleById(getRuleId());
                     if (oldrr != null) {
 
-                        System.out.println("oldrr.getId(): " + oldrr.getId());
-
                         // We really only care about 4 fields.
                         int beginPadding = oldrr.getBeginPadding();
                         if (contains(json, "beginPadding")) {
