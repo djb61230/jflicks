@@ -3,11 +3,11 @@ custom=true
 Bundle-Version: 1.0.0
 
 Include-Resource:\
- ../lib/platform.jar
+ ../lib/platform-3.5.2.jar
 
 Bundle-ClassPath:\
  .,\
- platform.jar
+ platform-3.5.2.jar
 
 Export-Package:\
  com.sun.jna.platform;version="1.0.0"

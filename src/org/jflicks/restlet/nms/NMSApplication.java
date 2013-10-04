@@ -47,25 +47,26 @@ public class NMSApplication extends BaseApplication {
         Router router = new Router(getContext());
 
         router.attach("/", RootResource.class);
-        router.attach("/{version}/{lang}/recordings.{format}",
+        router.attach("/{version}/recordings.{format}",
             RecordingResource.class);
-        router.attach("/{version}/{lang}/recording/{recordingId}/"
+        router.attach("/{version}/recording/{recordingId}/"
             + "{allowRerecord}", DeleteRecordingResource.class);
-        router.attach("/{version}/{lang}/recordingrules.{format}",
+        router.attach("/{version}/recordingrules.{format}",
             RecordingRuleResource.class);
-        router.attach("/{version}/{lang}/recordingrule/{ruleId}",
+        router.attach("/{version}/recordingrule/{ruleId}",
             RecordingRuleResource.class);
-        router.attach("/{version}/{lang}/state.{format}", StateResource.class);
-        router.attach("/{version}/{lang}/search.{format}/{term}",
+        router.attach("/{version}/state.{format}", StateResource.class);
+        router.attach("/{version}/search/{term}.{format}",
             SearchResource.class);
-        router.attach("/{version}/{lang}/channels.{format}",
+        router.attach("/{version}/channels.{format}",
             ChannelResource.class);
-        router.attach("/{version}/{lang}/tasks.{format}", TaskResource.class);
-        router.attach("/{version}/{lang}/upcomings.{format}",
+        router.attach("/{version}/schedule", ScheduleResource.class);
+        router.attach("/{version}/tasks.{format}", TaskResource.class);
+        router.attach("/{version}/upcomings.{format}",
             UpcomingResource.class);
-        router.attach("/{version}/{lang}/upcoming", UpcomingResource.class);
-        router.attach("/{version}/{lang}/videos.{format}", VideoResource.class);
-        router.attach("/{version}/{lang}/guide.{format}/{channelId}",
+        router.attach("/{version}/upcoming", UpcomingResource.class);
+        router.attach("/{version}/videos.{format}", VideoResource.class);
+        router.attach("/{version}/guide/{channelId}.{format}",
             GuideChannelResource.class);
 
         return (router);

@@ -364,6 +364,7 @@ public class Vlcj extends BasePlayer {
 
             win.setVisible(true);
 
+            log(DEBUG, "vlc url <" + url + ">");
             String[] vlcArgs = getArgs();
             log(DEBUG, "vlcargs " + (vlcArgs != null));
             if (vlcArgs != null) {
@@ -377,13 +378,13 @@ public class Vlcj extends BasePlayer {
             MediaPlayerFactory mpf = new MediaPlayerFactory(vlcArgs);
             setMediaPlayerFactory(mpf);
 
-            EmbeddedMediaPlayer mediaPlayer = mpf.newMediaPlayer(null);
+            EmbeddedMediaPlayer mediaPlayer = mpf.newEmbeddedMediaPlayer();
             mediaPlayer.addMediaPlayerEventListener(
                 new MyMediaPlayerEventAdapter());
             //mediaPlayer.setPlaySubItems(true);
             mediaPlayer.setEnableKeyInputHandling(false);
             mediaPlayer.setEnableMouseInputHandling(false);
-            mediaPlayer.setVideoSurface(getCanvas());
+            mediaPlayer.setVideoSurface(mpf.newVideoSurface(getCanvas()));
             setEmbeddedMediaPlayer(mediaPlayer);
 
             mediaPlayer.playMedia(url);

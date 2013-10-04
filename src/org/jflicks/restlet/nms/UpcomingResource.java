@@ -16,6 +16,7 @@
 */
 package org.jflicks.restlet.nms;
 
+import java.io.IOException;
 import java.util.Date;
 
 import org.jflicks.tv.Upcoming;
@@ -89,17 +90,64 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
     }
 
     @Put
-    public void put(String showId) {
+    public void override(Representation r) {
 
-        if (showId != null) {
+        System.out.println("we r <" + r + ">");
+        if (r != null) {
 
-            Upcoming u = getUpcomingByShowId(showId);
-            if (u != null) {
+            try {
 
-                overrideUpcoming(u);
-                setStatus(Status.SUCCESS_ACCEPTED);
+                String showId = r.getText();
+                System.out.println("we showId <" + showId + ">");
+                if (showId != null) {
+
+                    Upcoming u = getUpcomingByShowId(showId);
+                    System.out.println("we u <" + u + ">");
+                    if (u != null) {
+
+                        overrideUpcoming(u);
+                        setStatus(Status.SUCCESS_ACCEPTED);
+                    }
+                }
+
+            } catch (IOException ex) {
+
+                System.out.println(ex.getMessage());
             }
         }
+
+        /*
+        Gson g = getGson();
+        if ((g != null) && (r != null)) {
+
+            try {
+
+                String json = r.getText();
+                System.out.println("we got <" + json + ">");
+                Upcoming up = g.fromJson(json, Upcoming.class);
+                System.out.println("up <" + up + ">");
+                if (up != null) {
+
+                    String showId = up.getShowId();
+                    System.out.println("showId <" + showId + ">");
+                    if (showId != null) {
+
+                        Upcoming u = getUpcomingByShowId(showId);
+                        System.out.println("u <" + u + ">");
+                        if (u != null) {
+
+                            overrideUpcoming(u);
+                            setStatus(Status.SUCCESS_ACCEPTED);
+                        }
+                    }
+                }
+
+            } catch (IOException ex) {
+
+                System.out.println(ex.getMessage());
+            }
+        }
+        */
     }
 
 }

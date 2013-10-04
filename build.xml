@@ -694,6 +694,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-tv-ondemand-appletv.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-tv-ondemand-roku.bnd"
             output="${bundle}"
         />
@@ -744,7 +753,7 @@
         />
 
         <bnd
-            classpath="${lib}/jna.jar"
+            classpath="${lib}/jna-3.5.2.jar"
             eclipse="false"
             failok="false"
             exceptions="true"
@@ -753,7 +762,7 @@
         />
 
         <bnd
-            classpath="${lib}/platform.jar"
+            classpath="${lib}/platform-3.5.2.jar"
             eclipse="false"
             failok="false"
             exceptions="true"
@@ -803,6 +812,15 @@
             failok="false"
             exceptions="true"
             files="${bnd}/jflicks-sqlitejdbc.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${lib}/org.restlet.jar:${lib}/org.jsslutils.jar:${lib}/org.restlet.ext.simple.jar:${lib}/org.restlet.ext.ssl.jar:${lib}/org.simpleframework.jar:${lib}/org.restlet.ext.wadl.jar:${lib}/org.restlet.ext.xml.jar:${lib}/org.restlet.ext.slf4j.jar"
+            eclipse="false"
+            failok="true"
+            exceptions="true"
+            files="${bnd}/iota-restlet-all.bnd"
             output="${bundle}"
         />
 

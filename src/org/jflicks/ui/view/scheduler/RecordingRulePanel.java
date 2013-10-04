@@ -341,6 +341,7 @@ public class RecordingRulePanel extends JPanel implements ActionListener,
                 for (int i = 0; i < tasks.length; i++) {
 
                     System.out.println("title: " + tasks[i].getTitle());
+                    System.out.println("defaultRun: " + tasks[i].isDefaultRun());
                     if (tasks[i].isSelectable()) {
 
                         JCheckBox b = new JCheckBox(tasks[i].getDescription());

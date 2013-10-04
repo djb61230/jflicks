@@ -3,11 +3,11 @@ custom=true
 Bundle-Version: 1.0.0
 
 Include-Resource:\
- ../lib/jna.jar
+ ../lib/jna-3.5.2.jar
 
 Bundle-ClassPath:\
  .,\
- jna.jar
+ jna-3.5.2.jar
 
 Export-Package:\
  com.sun.jna;version="1.0.0",\

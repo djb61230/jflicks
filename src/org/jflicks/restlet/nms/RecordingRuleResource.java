@@ -94,8 +94,6 @@ public class RecordingRuleResource extends BaseNMSApplicationServerResource {
     @Post("json")
     public void edit(Representation r) {
 
-        Representation result = null;
-
         Gson g = getGson();
         if ((g != null) && (r != null)) {
 

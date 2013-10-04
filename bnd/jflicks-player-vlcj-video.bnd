@@ -4,11 +4,11 @@ custom=true
 Bundle-Version: 1.0.0
 
 Include-Resource:\
- ../lib/vlcj-1.1.5.jar
+ ../lib/vlcj-2.4.1.jar
 
 Bundle-ClassPath:\
  .,\
- vlcj-1.1.5.jar
+ vlcj-2.4.1.jar
 
 Bundle-Activator: ${module}.ActivatorVideo
 

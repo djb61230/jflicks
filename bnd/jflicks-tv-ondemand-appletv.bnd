@@ -1,0 +1,23 @@
+module=org.jflicks.tv.ondemand.appletv
+custom=true
+
+Bundle-Version: 1.0.0
+
+Bundle-Activator: ${module}.Activator
+
+Include-Resource:\
+ org/jflicks/tv/ondemand/appletv/default.properties=../conf/ondemand.appletv.default.properties
+
+Import-Package:\
+ org.jflicks.configure;version="1.0.0",\
+ org.jflicks.tv;version="1.0.0",\
+ org.jflicks.tv.ondemand;version="1.0.0",\
+ org.jflicks.util;version="1.0.0",\
+ org.osgi.framework;version="[1.3,2.0)",\
+ org.osgi.service.log;version="[1.0,4.0)",\
+ org.osgi.util.tracker;version="[1.3,2.0)",\
+ javax.net,\
+ javax.net.ssl
+
+Export-Package:\
+ ${module}
