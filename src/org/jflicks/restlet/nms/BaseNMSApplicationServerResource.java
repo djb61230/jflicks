@@ -17,6 +17,7 @@
 package org.jflicks.restlet.nms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.jflicks.tv.Channel;
@@ -51,6 +52,7 @@ public abstract class BaseNMSApplicationServerResource
     private String channelId;
     private String showId;
     private String term;
+    private String title;
 
     /**
      * Simple empty constructor.
@@ -95,6 +97,7 @@ public abstract class BaseNMSApplicationServerResource
             setChannelId((String) map.get("channelId"));
             setShowId((String) map.get("showId"));
             setTerm((String) map.get("term"));
+            setTitle((String) map.get("title"));
         }
     }
 
@@ -144,6 +147,14 @@ public abstract class BaseNMSApplicationServerResource
 
     private void setTerm(String s) {
         term = s;
+    }
+
+    public String getTitle() {
+        return (title);
+    }
+
+    private void setTitle(String s) {
+        title = s;
     }
 
     public Channel[] getChannels() {
@@ -249,6 +260,68 @@ public abstract class BaseNMSApplicationServerResource
         if ((n != null) && (c != null)) {
 
             result = n.getShowAiringsByChannel(c);
+        }
+
+        return (result);
+    }
+
+    public String[] getRecordingTitles() {
+
+        String[] result = null;
+
+        NMS[] array = getNMS();
+        System.out.println("do we have nms: " + array);
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<String> tlist = new ArrayList<String>();
+            for (int i = 0; i < array.length; i++) {
+
+                Recording[] rarray = getRecordings(array[i]);
+                if ((rarray != null) && (rarray.length > 0)) {
+
+                    for (int j = 0; j < rarray.length; j++) {
+
+                        String title = rarray[j].getTitle();
+                        if (!tlist.contains(title)) {
+
+                            tlist.add(title);
+                        }
+                    }
+                }
+            }
+            if (tlist.size() > 0) {
+
+                result = tlist.toArray(new String[tlist.size()]);
+                Arrays.sort(result);
+            }
+        }
+
+        return (result);
+    }
+
+    public Recording[] getRecordingsByTitle(String s) {
+
+        Recording[] result = null;
+
+        if (s != null) {
+
+            Recording[] array = getRecordings();
+            if ((array != null) && (array.length > 0)) {
+
+                ArrayList<Recording> rlist = new ArrayList<Recording>();
+                for (int i = 0; i < array.length; i++) {
+
+                    if (s.equals(array[i].getTitle())) {
+
+                        rlist.add(array[i]);
+                    }
+                }
+
+                if (rlist.size() > 0) {
+
+                    result = rlist.toArray(new Recording[rlist.size()]);
+                }
+            }
         }
 
         return (result);

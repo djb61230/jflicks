@@ -49,6 +49,10 @@ public class NMSApplication extends BaseApplication {
         router.attach("/", RootResource.class);
         router.attach("/{version}/recordings.{format}",
             RecordingResource.class);
+        router.attach("/{version}/recordings/{title}.{format}",
+            RecordingByTitleResource.class);
+        router.attach("/{version}/recording/titles.{format}",
+            RecordingTitleResource.class);
         router.attach("/{version}/recording/{recordingId}/"
             + "{allowRerecord}", DeleteRecordingResource.class);
         router.attach("/{version}/recordingrules.{format}",
