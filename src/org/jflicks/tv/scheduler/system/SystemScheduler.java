@@ -226,6 +226,22 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
             if (os != null) {
 
                 result = os.toArray(new RecordingRule[os.size()]);
+                if (isUpdateRecordingRules()) {
+
+                    if (result != null) {
+
+                        for (int i = 0; i < result.length; i++) {
+
+                            addRecordingRule(result[i]);
+                        }
+                    }
+                    os = oc.queryByExample(RecordingRule.class);
+                    if (os != null) {
+
+                        result = os.toArray(new RecordingRule[os.size()]);
+                    }
+                }
+
                 Arrays.sort(result);
 
                 // At this point we should reconcile the current
@@ -484,6 +500,22 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
             if (os != null) {
 
                 result = os.toArray(new Recording[os.size()]);
+
+                if (isUpdateRecordings()) {
+
+                    if (result != null) {
+
+                        for (int i = 0; i < result.length; i++) {
+
+                            addRecording(result[i]);
+                        }
+                    }
+                    os = oc.queryByExample(Recording.class);
+                    if (os != null) {
+
+                        result = os.toArray(new Recording[os.size()]);
+                    }
+                }
 
                 // We sometimes get an array that has at least one null
                 // entry.  Seems like a bug in ObjectSet or perhaps we
@@ -950,6 +982,20 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
         }
 
         return (result);
+    }
+
+    private boolean isUpdateRecordingRules() {
+
+        File f = new File("updateRecordingRules");
+
+        return (f.exists());
+    }
+
+    private boolean isUpdateRecordings() {
+
+        File f = new File("updateRecordings");
+
+        return (f.exists());
     }
 
     static class TaskByDescription implements Comparator<Task>, Serializable {
