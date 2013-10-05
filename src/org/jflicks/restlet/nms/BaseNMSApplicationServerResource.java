@@ -332,21 +332,26 @@ public abstract class BaseNMSApplicationServerResource
         Recording[] result = null;
 
         NMS[] array = getNMS();
-        System.out.println("do we have nms: " + array);
+        log(NMSApplication.DEBUG, "NMS array null = " + (array == null));
         if ((array != null) && (array.length > 0)) {
 
             ArrayList<Recording> rlist = new ArrayList<Recording>();
             for (int i = 0; i < array.length; i++) {
 
                 Recording[] rarray = getRecordings(array[i]);
+                log(NMSApplication.DEBUG, "recording array null = "
+                    + (rarray == null));
                 if ((rarray != null) && (rarray.length > 0)) {
 
+                    log(NMSApplication.DEBUG, "rarray.length " + rarray.length);
                     for (int j = 0; j < rarray.length; j++) {
 
                         rlist.add(rarray[j]);
                     }
                 }
             }
+
+            log(NMSApplication.DEBUG, "rlist.size() " + rlist.size());
             if (rlist.size() > 0) {
 
                 result = rlist.toArray(new Recording[rlist.size()]);
@@ -715,6 +720,15 @@ public abstract class BaseNMSApplicationServerResource
         }
 
         return (result);
+    }
+
+    public void log(int level, String message) {
+
+        NMSApplication app = getNMSApplication();
+        if (app != null) {
+
+            app.log(level, message);
+        }
     }
 
 }

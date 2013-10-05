@@ -21,6 +21,8 @@ import org.jflicks.restlet.NMSTracker;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 import org.restlet.Component;
 import org.restlet.data.Protocol;
 
@@ -34,6 +36,7 @@ public class Activator extends BaseActivator {
 
     private Component component;
     private NMSTracker nmsTracker;
+    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -52,6 +55,11 @@ public class Activator extends BaseActivator {
             RecordingResource.setNMSApplication(app);
             nmsTracker = new NMSTracker(bc, app);
             nmsTracker.open();
+
+            logServiceTracker =
+                new ServiceTracker(bc, LogService.class.getName(), null);
+            app.setLogServiceTracker(logServiceTracker);
+            logServiceTracker.open();
 
             component.getDefaultHost().attach("/nms", app);
             component.start();

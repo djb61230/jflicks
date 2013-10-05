@@ -18,10 +18,13 @@ package org.jflicks.restlet;
 
 import java.util.ArrayList;
 
+import org.jflicks.log.Log;
 import org.jflicks.nms.NMS;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 import org.restlet.ext.wadl.WadlApplication;
 
 /**
@@ -30,8 +33,9 @@ import org.restlet.ext.wadl.WadlApplication;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseApplication extends WadlApplication {
+public abstract class BaseApplication extends WadlApplication implements Log {
 
+    private ServiceTracker logServiceTracker;
     private BundleContext bundleContext;
     private ArrayList<NMS> nmsList;
 
@@ -41,6 +45,36 @@ public abstract class BaseApplication extends WadlApplication {
     public BaseApplication() {
 
         setNMSList(new ArrayList<NMS>());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ServiceTracker getLogServiceTracker() {
+        return (logServiceTracker);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLogServiceTracker(ServiceTracker st) {
+        logServiceTracker = st;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void log(int level, String message) {
+
+        ServiceTracker st = getLogServiceTracker();
+        if ((st != null) && (message != null)) {
+
+            LogService ls = (LogService) st.getService();
+            if (ls != null) {
+
+                ls.log(level, message);
+            }
+        }
     }
 
     public BundleContext getBundleContext() {
