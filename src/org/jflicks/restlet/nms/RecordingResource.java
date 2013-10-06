@@ -55,9 +55,13 @@ public class RecordingResource extends BaseNMSApplicationServerResource {
 
         Representation result = null;
 
+        log(NMSApplication.DEBUG, "GET recordings.");
         if (isFormatJson()) {
 
+            log(NMSApplication.DEBUG, "User wants JSON.");
             Recording[] array = getRecordings();
+            log(NMSApplication.DEBUG, "getRecordings array null = "
+                + (array == null));
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -72,7 +76,10 @@ public class RecordingResource extends BaseNMSApplicationServerResource {
 
         } else if (isFormatXml()) {
 
+            log(NMSApplication.DEBUG, "User wants XML.");
             Recording[] array = getRecordings();
+            log(NMSApplication.DEBUG, "getRecordings array null = "
+                + (array == null));
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 
