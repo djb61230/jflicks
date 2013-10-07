@@ -1378,9 +1378,11 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         Recording[] result = null;
 
         Scheduler s = getScheduler();
+        log(DEBUG, "getRecordings: scheduler <" + s + ">");
         if (s != null) {
 
             result = s.getRecordings();
+            log(DEBUG, "getRecordings: result from scheduler <" + result + ">");
 
             // We should update the image URLs for the client.  Persisting
             // the URLs is not a good idea because the URL could change.

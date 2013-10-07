@@ -494,12 +494,15 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
         Recording[] result = null;
 
         ObjectContainer oc = getRecordingObjectContainer();
+        log(DEBUG, "getRecordings ObjectContainer " + oc);
         if (oc != null) {
 
             ObjectSet<Recording> os = oc.queryByExample(Recording.class);
+            log(DEBUG, "getRecordings ObjectSet " + os);
             if (os != null) {
 
                 result = os.toArray(new Recording[os.size()]);
+                log(DEBUG, "getRecordings ObjectSet " + os);
 
                 if (isUpdateRecordings()) {
 
@@ -521,7 +524,9 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                 // entry.  Seems like a bug in ObjectSet or perhaps we
                 // are doing something stupid.  Either way lets make sure
                 // none are null.
+                log(DEBUG, "getRecordings before result " + result);
                 result = zap(result);
+                log(DEBUG, "getRecordings after result " + result);
                 Arrays.sort(result);
             }
         }
