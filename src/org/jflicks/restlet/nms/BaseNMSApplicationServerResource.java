@@ -376,11 +376,7 @@ public abstract class BaseNMSApplicationServerResource
                 ArrayList<Recording> l = new ArrayList<Recording>();
                 for (int i = 0; i < array.length; i++) {
 
-                    //String surl = array[i].getStreamURL();
-                    //if (surl != null) {
-
-                        l.add(array[i]);
-                    //}
+                    l.add(array[i]);
                 }
 
                 if (l.size() > 0) {
