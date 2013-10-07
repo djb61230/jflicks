@@ -365,20 +365,22 @@ public abstract class BaseNMSApplicationServerResource
 
         Recording[] result = null;
 
-        System.out.println("nms: " + n);
+        log(NMSApplication.DEBUG, "NMS null = " + (n == null));
         if (n != null) {
 
             Recording[] array = n.getRecordings();
+            log(NMSApplication.DEBUG, "array null = " + (array == null));
             if ((array != null) && (array.length > 0)) {
 
+                log(NMSApplication.DEBUG, "array length = " + array.length);
                 ArrayList<Recording> l = new ArrayList<Recording>();
                 for (int i = 0; i < array.length; i++) {
 
-                    String surl = array[i].getStreamURL();
-                    if (surl != null) {
+                    //String surl = array[i].getStreamURL();
+                    //if (surl != null) {
 
                         l.add(array[i]);
-                    }
+                    //}
                 }
 
                 if (l.size() > 0) {
