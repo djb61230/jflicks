@@ -16,6 +16,7 @@
 */
 package org.jflicks.ui.view.fe.screen.recording;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -37,6 +38,8 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.jflicks.imagecache.ImageCache;
@@ -60,6 +63,7 @@ import org.jflicks.util.Util;
 import org.jdesktop.core.animation.timing.Animator;
 import org.jdesktop.core.animation.timing.PropertySetter;
 import org.jdesktop.core.animation.timing.TimingTarget;
+import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -750,7 +754,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 Util.resize(getDefaultBackgroundImage(), width, height));
 
             // Create our blank panel.
-            JXPanel blank = new JXPanel();
+            JXPanel blank = new JXPanel(new BorderLayout());
+            JXLabel l = new JXLabel("Preparing to play, please wait...");
+            l.setHorizontalTextPosition(SwingConstants.CENTER);
+            l.setHorizontalAlignment(SwingConstants.CENTER);
+            l.setFont(getLargeFont());
+            blank.add(l, BorderLayout.CENTER);
             MattePainter blankp = new MattePainter(Color.BLACK);
             blank.setBackgroundPainter(blankp);
             blank.setBounds(0, 0, width, height);
@@ -959,7 +968,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     Transfer t = getTransfer();
                     if ((t != null) && (r.isCurrentlyRecording())) {
 
-                        result = t.transfer(r, 5, 20);
+                        result = t.transfer(r, -30, 20);
                         setMarkTime(r.getRealStart());
                     }
                 }
@@ -1435,102 +1444,120 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 ButtonPanel pbp = getPlayButtonPanel();
                 if (PLAY.equals(pbp.getSelectedButton())) {
 
-                    String recpath = computeRecordingPath(r);
-                    p = getPlayer();
-                    View v = getView();
-                    if (v instanceof FrontEndView) {
-
-                        FrontEndView fev = (FrontEndView) v;
-                        p.setRectangle(fev.getPosition());
-                    }
-
-                    p.addPropertyChangeListener("Completed", this);
-                    RecordingInfoWindow w = getRecordingInfoWindow();
-                    if (w != null) {
-
-                        w.setVisible(false);
-                        w.setImageCache(getImageCache());
-                        w.setRecording(r);
-                        w.setPlayer(p);
-                    }
-
-                    setTimeline(Commercial.timeline(r.getCommercials()));
-                    setCurrentRecording(r);
-                    updateLengthHint(r, p);
-                    controlKeyboard(false);
-
-                    if (isAutoSkip()) {
-
-                        AutoSkipActionListener asal = getAutoSkipActionListener();
-                        Timer timer = getAutoSkipTimer();
-                        if ((asal != null) && (timer != null)) {
-
-                            asal.setRecording(r);
-                            timer.start();
-                        }
-                    }
-
-                    p.setFrame(Util.findFrame(this));
+                    final Recording myr = r;
+                    final RecordingScreen myscreen = this;
                     addBlankPanel();
-                    setBlocking(true);
-                    p.play(recpath);
+                    Runnable doRun = new Runnable() {
+
+                        public void run() {
+
+                            String recpath = computeRecordingPath(myr);
+                            Player p = getPlayer();
+                            View v = getView();
+                            if (v instanceof FrontEndView) {
+
+                                FrontEndView fev = (FrontEndView) v;
+                                p.setRectangle(fev.getPosition());
+                            }
+
+                            p.addPropertyChangeListener("Completed", myscreen);
+                            RecordingInfoWindow w = getRecordingInfoWindow();
+                            if (w != null) {
+
+                                w.setVisible(false);
+                                w.setImageCache(getImageCache());
+                                w.setRecording(myr);
+                                w.setPlayer(p);
+                            }
+
+                            setTimeline(Commercial.timeline(myr.getCommercials()));
+                            setCurrentRecording(myr);
+                            updateLengthHint(myr, p);
+                            controlKeyboard(false);
+
+                            if (isAutoSkip()) {
+
+                                AutoSkipActionListener asal = getAutoSkipActionListener();
+                                Timer timer = getAutoSkipTimer();
+                                if ((asal != null) && (timer != null)) {
+
+                                    asal.setRecording(myr);
+                                    timer.start();
+                                }
+                            }
+
+                            p.setFrame(Util.findFrame(myscreen));
+                            setBlocking(true);
+                            p.play(recpath);
+                        }
+                    };
+                    SwingUtilities.invokeLater(doRun);
 
                 } else if (PLAY_FROM_BOOKMARK.equals(pbp.getSelectedButton())) {
 
-                    String recpath = computeRecordingPath(r);
-                    p = getPlayer();
-                    View v = getView();
-                    if (v instanceof FrontEndView) {
+                    final Recording myr = r;
+                    final RecordingScreen myscreen = this;
+                    addBlankPanel();
+                    Runnable doRun = new Runnable() {
 
-                        FrontEndView fev = (FrontEndView) v;
-                        p.setRectangle(fev.getPosition());
-                    }
+                        public void run() {
 
-                    p.addPropertyChangeListener("Completed", this);
-                    RecordingInfoWindow w = getRecordingInfoWindow();
-                    if (w != null) {
+                            String recpath = computeRecordingPath(myr);
+                            Player p = getPlayer();
+                            View v = getView();
+                            if (v instanceof FrontEndView) {
 
-                        w.setVisible(false);
-                        w.setImageCache(getImageCache());
-                        w.setRecording(r);
-                        w.setPlayer(p);
-                    }
+                                FrontEndView fev = (FrontEndView) v;
+                                p.setRectangle(fev.getPosition());
+                            }
 
-                    setTimeline(Commercial.timeline(r.getCommercials()));
-                    setCurrentRecording(r);
-                    updateLengthHint(r, p);
+                            p.addPropertyChangeListener("Completed", myscreen);
+                            RecordingInfoWindow w = getRecordingInfoWindow();
+                            if (w != null) {
 
-                    Bookmark bm = getBookmark(r.getId());
-                    if (bm != null) {
+                                w.setVisible(false);
+                                w.setImageCache(getImageCache());
+                                w.setRecording(myr);
+                                w.setPlayer(p);
+                            }
 
-                        if (isPlayingVideo()) {
+                            setTimeline(Commercial.timeline(myr.getCommercials()));
+                            setCurrentRecording(myr);
+                            updateLengthHint(myr, p);
 
-                            bm.setPreferTime(true);
+                            Bookmark bm = getBookmark(myr.getId());
+                            if (bm != null) {
 
-                        } else {
+                                if (isPlayingVideo()) {
 
-                            bm.setPreferTime(false);
-                        }
+                                    bm.setPreferTime(true);
 
-                        if (isAutoSkip()) {
+                                } else {
+
+                                    bm.setPreferTime(false);
+                                }
+
+                                if (isAutoSkip()) {
 
 
-                            AutoSkipActionListener asal =
-                                getAutoSkipActionListener();
-                            Timer timer = getAutoSkipTimer();
-                            if ((asal != null) && (timer != null)) {
+                                    AutoSkipActionListener asal =
+                                        getAutoSkipActionListener();
+                                    Timer timer = getAutoSkipTimer();
+                                    if ((asal != null) && (timer != null)) {
 
-                                asal.setRecording(r);
-                                timer.start();
+                                        asal.setRecording(myr);
+                                        timer.start();
+                                    }
+                                }
+
+                                controlKeyboard(false);
+                                p.setFrame(Util.findFrame(myscreen));
+                                setBlocking(true);
+                                p.play(recpath, bm);
                             }
                         }
-
-                        controlKeyboard(false);
-                        p.setFrame(Util.findFrame(this));
-                        addBlankPanel();
-                        setBlocking(true);
-                        p.play(recpath, bm);
-                    }
+                    };
+                    SwingUtilities.invokeLater(doRun);
 
                 } else if (DELETE.equals(pbp.getSelectedButton())) {
 

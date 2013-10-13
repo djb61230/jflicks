@@ -242,6 +242,11 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                     }
                 }
 
+                // We have to make sure all of out RecordingRule instances
+                // in out array is set to sortByName.
+                for (int i = 0; i < result.length; i++) {
+                    result[i].setSortBy(RecordingRule.SORT_BY_NAME);
+                }
                 Arrays.sort(result);
 
                 // At this point we should reconcile the current

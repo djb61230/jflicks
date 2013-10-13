@@ -45,6 +45,7 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
     private Timer timer;
     private String maxRate;
     private long minSize;
+    private boolean firstDone;
 
     /**
      * Default empty constructor.
@@ -91,6 +92,14 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
         jobContainer = j;
     }
 
+    private boolean isFirstDone() {
+        return (firstDone);
+    }
+
+    private void setFirstDone(boolean b) {
+        firstDone = b;
+    }
+
     private Timer getTimer() {
         return (timer);
     }
@@ -126,6 +135,8 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
 
         if (r != null) {
 
+            setFirstDone(false);
+
             // Now start up the new one.
             File local = toFile(r);
             if (local != null) {
@@ -151,25 +162,40 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
                 // Now we want to block until we have a file with some
                 // data.
                 boolean done = false;
-                int waits = 0;
-                while (!done) {
 
-                    if ((local.exists()) && (local.isFile())
-                        && (local.length() > getMinSize())) {
+                if (initial > 0) {
 
-                        done = true;
-                        log(INFO, "Blocked for " + waits + " seconds!");
+                    int waits = 0;
+                    while (!done) {
 
-                    } else {
+                        if ((local.exists()) && (local.isFile())
+                            && (local.length() > getMinSize())) {
 
-                        waits++;
-                        if (waits < initial) {
-                            JobManager.sleep(1000);
-                        } else {
-                            log(INFO, "Blocked for " + initial
-                                + " seconds but gave up!");
                             done = true;
+                            log(INFO, "Blocked for " + waits + " seconds!");
+
+                        } else {
+
+                            waits++;
+                            if (waits < initial) {
+                                JobManager.sleep(1000);
+                            } else {
+                                log(INFO, "Blocked for " + initial
+                                    + " seconds but gave up!");
+                                done = true;
+                            }
                         }
+                    }
+
+                } else {
+
+                    // We are to block until wget runs at least once.
+                    // This could cause quite a delay...
+                    int loops = initial * -1;
+                    while ((!isFirstDone()) && (loops > 0)) {
+
+                        loops--;
+                        JobManager.sleep(1000);
                     }
                 }
             }
@@ -266,11 +292,13 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
 
             setWgetTransferJob(null);
             setJobContainer(null);
+            setFirstDone(true);
             log(DEBUG, "wget job done!!");
 
         } else if (event.getType() == JobEvent.UPDATE) {
 
             log(DEBUG, event.getMessage());
+            setFirstDone(getWgetTransferJob().isFirstDone());
         }
     }
 

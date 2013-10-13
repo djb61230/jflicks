@@ -43,6 +43,7 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
     private File file;
     private String maxRate;
     private int restSeconds;
+    private boolean firstDone;
 
     /**
      * Simple one argument constructor.
@@ -58,6 +59,7 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
         setFile(f);
         setMaxRate(s);
         setRestSeconds(i);
+        setFirstDone(false);
     }
 
     /**
@@ -129,6 +131,14 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
         restSeconds = i;
     }
 
+    public boolean isFirstDone() {
+        return (firstDone);
+    }
+
+    private void setFirstDone(boolean b) {
+        firstDone = b;
+    }
+
     private SystemJob getSystemJob() {
         return (systemJob);
     }
@@ -180,7 +190,8 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
 
                 continueString = "-c ";
             }
-            SystemJob job = SystemJob.getInstance("wget --limit-rate="
+            SystemJob job = SystemJob.getInstance(
+                "wget --limit-rate="
                 + getMaxRate() + " " + continueString
                 + " " + r.getStreamURL() + " -O " + f.getPath());
             fireJobEvent(JobEvent.UPDATE,
@@ -248,6 +259,9 @@ public class WgetTransferJob extends AbstractJob implements JobListener {
                 // finished.  We can tell we have the whole file when
                 // we have received a message in the output text.
                 if (!isFinished(job.getOutputText())) {
+
+                    setFirstDone(true);
+                    fireJobEvent(JobEvent.UPDATE, "First transfer done.");
 
                     // Let's sleep a few seconds and try to get more data.
                     JobManager.sleep(getRestSeconds() * 1000);
