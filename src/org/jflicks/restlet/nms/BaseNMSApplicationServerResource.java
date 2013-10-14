@@ -157,7 +157,7 @@ public abstract class BaseNMSApplicationServerResource
 
             } catch (Exception ex) {
 
-                log(NMSApplication.DEBUG, "User wants XML.");
+                log(NMSApplication.DEBUG, ex.getMessage());
             }
         }
     }
@@ -168,6 +168,18 @@ public abstract class BaseNMSApplicationServerResource
 
     private void setTitle(String s) {
         title = s;
+
+        if (title != null) {
+
+            try {
+
+                title = URLDecoder.decode(title, "UTF-8");
+
+            } catch (Exception ex) {
+
+                log(NMSApplication.DEBUG, ex.getMessage());
+            }
+        }
     }
 
     public Channel[] getChannels() {
