@@ -16,6 +16,7 @@
 */
 package org.jflicks.restlet.nms;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -147,6 +148,18 @@ public abstract class BaseNMSApplicationServerResource
 
     private void setTerm(String s) {
         term = s;
+
+        if (term != null) {
+
+            try {
+
+                term = URLDecoder.decode(term, "UTF-8");
+
+            } catch (Exception ex) {
+
+                log(NMSApplication.DEBUG, "User wants XML.");
+            }
+        }
     }
 
     public String getTitle() {
