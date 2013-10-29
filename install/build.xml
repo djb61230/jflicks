@@ -232,6 +232,10 @@
         <!-- Now do aspirin side. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-jna.jar"
+            todir="aspirin/bundle"/>
+        <copy file="${bundle}/jflicks-platform.jar"
+            todir="aspirin/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
             todir="aspirin/bundle"/>
         <copy file="${bundle}/jflicks-nms-remote.jar"
@@ -254,6 +258,10 @@
         <!-- Now do advanced side. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="advanced/bundle"/>
+        <copy file="${bundle}/jflicks-jna.jar"
+            todir="advanced/bundle"/>
+        <copy file="${bundle}/jflicks-platform.jar"
+            todir="advanced/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
             todir="advanced/bundle"/>
         <copy file="${bundle}/jflicks-nms-remote.jar"
@@ -268,6 +276,10 @@
         <!-- Now do ez. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="ez/bundle"/>
+        <copy file="${bundle}/jflicks-jna.jar"
+            todir="ez/bundle"/>
+        <copy file="${bundle}/jflicks-platform.jar"
+            todir="ez/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
             todir="ez/bundle"/>
         <copy file="${bundle}/jflicks-nms-remote.jar"
@@ -281,6 +293,10 @@
 
         <!-- Now do scheduler side. -->
         <copy file="${bundle}/jflicks-base.jar"
+            todir="scheduler/bundle"/>
+        <copy file="${bundle}/jflicks-jna.jar"
+            todir="scheduler/bundle"/>
+        <copy file="${bundle}/jflicks-platform.jar"
             todir="scheduler/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
             todir="scheduler/bundle"/>
@@ -366,6 +382,10 @@
         <!-- Now do metadata side. -->
         <copy file="${bundle}/jflicks-base.jar"
             todir="metadata/bundle"/>
+        <copy file="${bundle}/jflicks-jna.jar"
+            todir="metadata/bundle"/>
+        <copy file="${bundle}/jflicks-platform.jar"
+            todir="metadata/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
             todir="metadata/bundle"/>
         <copy file="${bundle}/jflicks-nms-remote.jar"
@@ -387,6 +407,10 @@
 
         <!-- Now do vm app. -->
         <copy file="${bundle}/jflicks-base.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-jna.jar"
+            todir="vm/bundle"/>
+        <copy file="${bundle}/jflicks-platform.jar"
             todir="vm/bundle"/>
         <copy file="${bundle}/jflicks-swingx.jar"
             todir="vm/bundle"/>
