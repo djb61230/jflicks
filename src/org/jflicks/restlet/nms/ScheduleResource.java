@@ -55,17 +55,42 @@ public class ScheduleResource extends BaseNMSApplicationServerResource {
                 RecordingRule rr = g.fromJson(json, RecordingRule.class);
                 if (rr != null) {
 
-                    RecordingRule myrr = new RecordingRule();
-                    myrr.setShowAiring(rr.getShowAiring());
-                    myrr.setType(rr.getType());
-                    myrr.setName(rr.getName());
-                    myrr.setShowId(rr.getShowId());
-                    myrr.setSeriesId(rr.getSeriesId());
-                    myrr.setChannelId(rr.getChannelId());
-                    myrr.setListingId(rr.getListingId());
-                    myrr.setDuration(rr.getDuration());
-                    myrr.setPriority(rr.getPriority());
-                    myrr.setTasks(rr.getTasks());
+                    RecordingRule myrr = null;
+                    RecordingRule old = getRecordingRuleById(rr.getId());
+
+                    if (old != null) {
+
+                        // Copy old rule and then overwrite with the
+                        // users settings.
+                        myrr = new RecordingRule(old);
+                        myrr.setShowAiring(rr.getShowAiring());
+                        myrr.setType(rr.getType());
+                        myrr.setName(rr.getName());
+                        myrr.setShowId(rr.getShowId());
+                        myrr.setSeriesId(rr.getSeriesId());
+                        myrr.setChannelId(rr.getChannelId());
+                        myrr.setListingId(rr.getListingId());
+                        myrr.setDuration(rr.getDuration());
+                        myrr.setPriority(rr.getPriority());
+                        myrr.setTasks(rr.getTasks());
+
+                    } else {
+
+                        // Should be a new rule unless they have mucked
+                        // things up.
+                        myrr = new RecordingRule();
+                        myrr.setHostPort(rr.getHostPort());
+                        myrr.setShowAiring(rr.getShowAiring());
+                        myrr.setType(rr.getType());
+                        myrr.setName(rr.getName());
+                        myrr.setShowId(rr.getShowId());
+                        myrr.setSeriesId(rr.getSeriesId());
+                        myrr.setChannelId(rr.getChannelId());
+                        myrr.setListingId(rr.getListingId());
+                        myrr.setDuration(rr.getDuration());
+                        myrr.setPriority(rr.getPriority());
+                        myrr.setTasks(rr.getTasks());
+                    }
 
                     schedule(myrr);
                 }
