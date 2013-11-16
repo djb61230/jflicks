@@ -212,11 +212,14 @@ public class SystemPostProc extends BasePostProc {
                             wr.setWorker(w);
                             wr.setRecording(r);
                             if (w.isHeavy()) {
-                                log(INFO, "Time to queue up a heavy worker..."
+
+                                log(INFO, "Time to queue a heavy worker..."
                                     + w.getTitle());
                                 addHeavyWorkerRecording(wr);
+
                             } else {
-                                log(INFO, "Time to queue up a light worker..."
+
+                                log(INFO, "Time to queue a light worker..."
                                     + w.getTitle());
                                 addLightWorkerRecording(wr);
                             }

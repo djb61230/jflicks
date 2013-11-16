@@ -60,7 +60,10 @@ public class Busy implements JobListener, Jobable {
         setLayeredPane(p);
         setJob(job);
         init();
-        job.addJobListener(this);
+        if (job != null) {
+
+            job.addJobListener(this);
+        }
     }
 
     private JLayeredPane getLayeredPane() {
@@ -219,6 +222,29 @@ public class Busy implements JobListener, Jobable {
         }
     }
 
+    public void finish(String message) {
+
+        JXBusyLabel bl = getBusyLabel();
+        if (bl != null) {
+
+            bl.setBusy(false);
+            JLayeredPane p = getLayeredPane();
+            if (p != null) {
+
+                p.remove(p.getIndexOf(bl));
+                p.repaint();
+            }
+        }
+
+        if (message != null) {
+
+            // We assume we need to alert the user on some problem.
+            JOptionPane.showMessageDialog(Util.findWindow(getLayeredPane()),
+                "Error: " + message, "alert",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     /**
      * We need to know the status of the running job.  If it's done
      * we finish and dispose of our dialog box.
@@ -229,26 +255,7 @@ public class Busy implements JobListener, Jobable {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            JXBusyLabel bl = getBusyLabel();
-            if (bl != null) {
-
-                bl.setBusy(false);
-                JLayeredPane p = getLayeredPane();
-                if (p != null) {
-
-                    p.remove(p.getIndexOf(bl));
-                    p.repaint();
-                }
-            }
-
-            String message = event.getMessage();
-            if (message != null) {
-
-                // We assume we need to alert the user on some problem.
-                JOptionPane.showMessageDialog(Util.findWindow(getLayeredPane()),
-                    "Error: " + message, "alert",
-                    JOptionPane.ERROR_MESSAGE);
-            }
+            finish(event.getMessage());
         }
 
         fireJobEvent(event);

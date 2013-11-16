@@ -578,6 +578,13 @@ public interface NMS extends Config {
     String getDocumentRoot();
 
     /**
+     * An NMS needs to know the port of the local server streaming video.
+     *
+     * @return An int value.
+     */
+    int getStreamPort();
+
+    /**
      * Just get the names of the available OnDemand services running.
      *
      * @return An array of names.

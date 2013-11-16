@@ -16,6 +16,7 @@
 */
 package org.jflicks.job;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.jflicks.util.Util;
@@ -32,6 +33,7 @@ public final class SystemJob extends AbstractJob implements JobListener {
     private String shell;
     private String shellSwitch;
     private String command;
+    private File working;
     private String outputText;
 
     private Process process;
@@ -44,11 +46,13 @@ public final class SystemJob extends AbstractJob implements JobListener {
     private SystemJob() {
     }
 
-    private SystemJob(String shell, String shellSwitch, String command) {
+    private SystemJob(String shell, String shellSwitch, String command,
+        File working) {
 
         setShell(shell);
         setShellSwitch(shellSwitch);
         setCommand(command);
+        setWorking(working);
     }
 
     /**
@@ -65,10 +69,33 @@ public final class SystemJob extends AbstractJob implements JobListener {
 
         boolean win = false;
         if (Util.isWindows()) {
-            result = new SystemJob("cmd.exe", "/C", command);
+            result = new SystemJob("cmd.exe", "/C", command, null);
         } else {
         //} else if (Util.isLinux()) {
-            result = new SystemJob("/bin/bash", "-c", command);
+            result = new SystemJob("/bin/bash", "-c", command, null);
+        }
+
+        return (result);
+    }
+
+    /**
+     * We control the instances of these jobs because they are configured
+     * differently based upon platform.  This insulates the user from
+     * worrying about these details.
+     *
+     * @param command The command line arguments (including program name).
+     * @return A SystemJob instance that can be controlled with a JobContainer.
+     */
+    public static SystemJob getInstance(String command, File working) {
+
+        SystemJob result = null;
+
+        boolean win = false;
+        if (Util.isWindows()) {
+            result = new SystemJob("cmd.exe", "/C", command, working);
+        } else {
+        //} else if (Util.isLinux()) {
+            result = new SystemJob("/bin/bash", "-c", command, working);
         }
 
         return (result);
@@ -101,6 +128,19 @@ public final class SystemJob extends AbstractJob implements JobListener {
 
     private void setCommand(String s) {
         command = s;
+    }
+
+    /**
+     * The input command defining the system call.
+     *
+     * @return The command string.
+     */
+    public File getWorking() {
+        return (working);
+    }
+
+    private void setWorking(File f) {
+        working = f;
     }
 
     /**
@@ -174,6 +214,12 @@ public final class SystemJob extends AbstractJob implements JobListener {
         if (pb != null) {
 
             try {
+
+                File dir = getWorking();
+                if (dir != null) {
+
+                    pb.directory(dir);
+                }
 
                 pb.redirectErrorStream(true);
                 setProcess(pb.start());

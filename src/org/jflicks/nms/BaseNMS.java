@@ -769,6 +769,13 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
+    public int getStreamPort() {
+        return (getConfiguredStreamPort());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Configuration getConfigurationBySource(String s) {
 
         Configuration result = null;
@@ -944,6 +951,28 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             if (nv != null) {
 
                 result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * Convenience method to get the configured value of STREAM_PORT.
+     *
+     * @return An int value.
+     */
+    public int getConfiguredStreamPort() {
+
+        int result = 80;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(NMSConstants.STREAM_PORT);
+            if (nv != null) {
+
+                result = Util.str2int(nv.getValue(), result);
             }
         }
 
@@ -1422,6 +1451,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         String result = null;
 
         String h = getHost();
+        int streamport = getStreamPort();
         String[] array = getConfiguredStreamPaths();
         if ((h != null) && (array != null) && (path != null)) {
 
@@ -1440,9 +1470,9 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             if ((found) && (path != null)) {
 
                 if (path.startsWith("/")) {
-                    result = "http://" + h + path;
+                    result = "http://" + h + ":" + streamport + path;
                 } else {
-                    result = "http://" + h + "/" + path;
+                    result = "http://" + h + ":" + streamport + "/" + path;
                 }
             }
         }
@@ -1455,6 +1485,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         String result = null;
 
         String h = getHost();
+        int streamport = getStreamPort();
         String[] array = getConfiguredStreamPaths();
         if ((h != null) && (array != null) && (p != null)) {
 
@@ -1477,9 +1508,9 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             if ((found) && (path != null)) {
 
                 if (path.startsWith("/")) {
-                    result = "http://" + h + path;
+                    result = "http://" + h + ":" + streamport + path;
                 } else {
-                    result = "http://" + h + "/" + path;
+                    result = "http://" + h + ":" + streamport + "/" + path;
                 }
             }
         }
@@ -1492,6 +1523,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         String result = null;
 
         String h = getHost();
+        int streamport = getStreamPort();
         String[] array = getConfiguredStreamPaths();
         if ((h != null) && (array != null) && (l != null)) {
 
@@ -1514,9 +1546,9 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             if ((found) && (path != null)) {
 
                 if (path.startsWith("/")) {
-                    result = "http://" + h + path;
+                    result = "http://" + h + ":" + streamport + path;
                 } else {
-                    result = "http://" + h + "/" + path;
+                    result = "http://" + h + ":" + streamport + "/" + path;
                 }
             }
         }
@@ -1529,6 +1561,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         String result = null;
 
         String h = getHost();
+        int streamport = getStreamPort();
         if ((h != null) && (r != null)) {
 
             // We have a recording that is finished, we will let
@@ -1567,9 +1600,9 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 if ((found) && (path != null)) {
 
                     if (path.startsWith("/")) {
-                        result = "http://" + h + path;
+                        result = "http://" + h + ":" + streamport + path;
                     } else {
-                        result = "http://" + h + "/" + path;
+                        result = "http://" + h + ":" + streamport + "/" + path;
                     }
                 }
             }

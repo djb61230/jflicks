@@ -46,6 +46,9 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
     public ComskipJob(Recording r, BaseWorker bw) {
 
         super(r, bw);
+
+        // Check the recording for completion every minute.
+        setSleepTime(60000);
     }
 
     /**
@@ -58,7 +61,7 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
 
             SystemJob job = null;
 
-            if (Util.isLinux()) {
+            if (Util.isLinux() || Util.isMac()) {
 
                 job = SystemJob.getInstance("wine bin/comskip "
                     + "--ini=conf/comskip.ini " + r.getPath());
@@ -73,8 +76,7 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
             setSystemJob(job);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
-            jc.start();
-            log(BaseWorker.INFO, "started: " + job.getCommand());
+            log(BaseWorker.INFO, "will start: " + job.getCommand());
             setTerminate(false);
 
         } else {
@@ -88,9 +90,33 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
      */
     public void run() {
 
+        boolean begun = false;
         while (!isTerminate()) {
 
             JobManager.sleep(getSleepTime());
+            if (!begun) {
+
+                Recording r = getRecording();
+                if (!r.isCurrentlyRecording()) {
+
+                    File ts = new File(r.getPath());
+                    if (ts.exists()) {
+
+                        JobContainer jc = getJobContainer();
+                        if (jc != null) {
+
+                            jc.start();
+                            begun = true;
+                            log(BaseWorker.INFO, "Kicked off comskip");
+                        }
+                    }
+                }
+
+            } else {
+
+                log(BaseWorker.INFO, "Recording still seems to be on. "
+                    + "Waiting until finished to work.");
+            }
         }
 
         fireJobEvent(JobEvent.COMPLETE);

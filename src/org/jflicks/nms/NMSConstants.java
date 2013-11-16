@@ -579,6 +579,11 @@ public final class NMSConstants {
     public static final String PORT = "Port";
 
     /**
+     * A constant for services that may need to define a stream port property.
+     */
+    public static final String STREAM_PORT = "StreamPort";
+
+    /**
      * A constant for services that may need to do work every once in
      * a while.
      */
