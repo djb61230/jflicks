@@ -94,7 +94,12 @@ public final class FileFind {
                             String name = tmp.getName();
                             if (ef.accept(parent, name)) {
 
-                                filter.add(tmp);
+                                // We do not want "hidden" files, files with
+                                // a "dot" directory in it's path.
+                                if (!isHidden(tmp)) {
+
+                                    filter.add(tmp);
+                                }
                             }
                         }
                     }
@@ -107,6 +112,26 @@ public final class FileFind {
                 } else {
 
                     result = l.toArray(new File[l.size()]);
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private boolean isHidden(File f) {
+
+        boolean result = false;
+
+        if (f != null) {
+
+            String path = f.getAbsolutePath();
+            if (path != null) {
+
+                String str = File.separator + ".";
+                if (path.indexOf(str) != -1) {
+
+                    result = true;
                 }
             }
         }
