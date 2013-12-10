@@ -252,6 +252,21 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                             }
                             result[i].setHostPort(hp);
                             result[i].setStreamURL(computeStreamURL(result[i]));
+
+                            // We also want to check that the "added"
+                            // property is set.  We added the "added"
+                            // property later on in development so this
+                            // is a bit of hack code to update
+                            // the DB to match the file time.
+                            if (result[i].getAdded() == 0L) {
+
+                                File f = new File(result[i].getPath());
+                                if ((f.exists()) && (f.isFile())) {
+
+                                    result[i].setAdded(f.lastModified());
+                                    addVideo(result[i]);
+                                }
+                            }
                         }
                     }
                 }

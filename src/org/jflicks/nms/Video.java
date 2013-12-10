@@ -47,6 +47,7 @@ public class Video implements Media, Serializable, Comparable<Video> {
     private boolean playIntro;
     private boolean hidden;
     private String hostPort;
+    private long added;
     private StringBuilder stringBuilder;
 
     /**
@@ -84,6 +85,7 @@ public class Video implements Media, Serializable, Comparable<Video> {
         setHidden(v.isHidden());
         setAspectRatio(v.getAspectRatio());
         setPlayIntro(v.isPlayIntro());
+        setAdded(v.getAdded());
     }
 
     /**
@@ -344,6 +346,24 @@ public class Video implements Media, Serializable, Comparable<Video> {
      */
     public void setAspectRatio(String s) {
         aspectRatio = s;
+    }
+
+    /**
+     * When the Video was added to the library.
+     *
+     * @return A long value.
+     */
+    public long getAdded() {
+        return (added);
+    }
+
+    /**
+     * When the Video was added to the library.
+     *
+     * @param l A long value.
+     */
+    public void setAdded(long l) {
+        added = l;
     }
 
     /**
