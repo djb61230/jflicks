@@ -499,15 +499,12 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
         Recording[] result = null;
 
         ObjectContainer oc = getRecordingObjectContainer();
-        log(DEBUG, "getRecordings ObjectContainer " + oc);
         if (oc != null) {
 
             ObjectSet<Recording> os = oc.queryByExample(Recording.class);
-            log(DEBUG, "getRecordings ObjectSet " + os);
             if (os != null) {
 
                 result = os.toArray(new Recording[os.size()]);
-                log(DEBUG, "getRecordings ObjectSet " + os);
 
                 if (isUpdateRecordings()) {
 
@@ -529,9 +526,7 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                 // entry.  Seems like a bug in ObjectSet or perhaps we
                 // are doing something stupid.  Either way lets make sure
                 // none are null.
-                log(DEBUG, "getRecordings before result " + result);
                 result = zap(result);
-                log(DEBUG, "getRecordings after result " + result);
                 Arrays.sort(result);
             }
         }
@@ -560,8 +555,12 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                 // There is a chance that the user has deleted it underneath us
                 // and we are putting a bogus object.  This is less likely but
                 // still a good check.
-                File ondisk = new File(r.getPath());
-                if ((ondisk.exists()) && (ondisk.isFile())) {
+                String path = r.getPath();
+                String hlspath = path.substring(0, path.lastIndexOf("."));
+                hlspath = hlspath + ".m3u8";
+                File hlsdisk = new File(hlspath);
+                File ondisk = new File(path);
+                if ((ondisk.exists()) || (hlsdisk.exists())) {
 
                     oc.store(new Recording(r));
                     oc.commit();

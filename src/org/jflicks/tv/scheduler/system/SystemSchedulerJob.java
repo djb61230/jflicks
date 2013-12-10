@@ -313,7 +313,8 @@ public class SystemSchedulerJob extends AbstractJob
 
         if (r != null) {
 
-            File f = new File(r.getPath());
+            String path = r.getPath();
+            File f = new File(path);
             if (!f.exists()) {
 
                 result = true;
@@ -324,6 +325,17 @@ public class SystemSchedulerJob extends AbstractJob
 
                     result = true;
                 }
+            }
+
+            if (result) {
+
+                // OK something wrong with the TS file.  Check for an
+                // HLS file in case this is how it's being recorded.
+                path = path.substring(0, path.lastIndexOf("."));
+                path = path + ".m3u8";
+                f = new File(path);
+
+                result = !f.exists();
             }
         }
 

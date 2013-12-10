@@ -265,5 +265,43 @@ public abstract class BaseWorkerJob extends AbstractJob {
         }
     }
 
+    /**
+     * This method will return a String pointing to the Recording file
+     * but take into account if this Recording is being done using HLS.
+     * If it is HLS then the Recording.getPath() may not exist at this
+     * point in time.  So we want it to return a path String to a segment.
+     *
+     * @param index The segment index to check for in case the Recording
+     * path doesn't exist.
+     * @return A String path to the Recording file to work on.
+     */
+    public String getRecordingPath(int index) {
+
+        String result = null;
+
+        if (index < 0) {
+            index = 0;
+        }
+
+        Recording r = getRecording();
+        if (r != null) {
+
+            String path = r.getPath();
+            File f = new File(path);
+            if (f.exists()) {
+
+                result = path;
+
+            } else {
+
+                path = path.substring(0, path.lastIndexOf("."));
+                String indexstr = String.format("%06d", index);
+                result = path + "." + indexstr + ".ts";
+            }
+        }
+
+        return (result);
+    }
+
 }
 

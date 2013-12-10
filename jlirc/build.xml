@@ -86,6 +86,25 @@
 
         </exec>
 
+        <!--
+        <exec executable="gcc">
+
+            <arg value="-m32"/>
+            <arg value="-shared"/>
+            <arg value="-fpic"/>
+            <arg value="-I"/>
+            <arg value="${env.JAVA_HOME}/include"/>
+            <arg value="-I"/>
+            <arg value="${env.JAVA_HOME}/include/linux"/>
+            <arg value="-I"/>
+            <arg value="${build}"/>
+            <arg value="-o"/>
+            <arg value="${dist}/libjunixsocket32.so"/>
+            <arg value="${src}/org/lirc/socket/junixsocket.c"/>
+
+        </exec>
+        -->
+
     </target>
 
     <target name="deploy" depends="build"

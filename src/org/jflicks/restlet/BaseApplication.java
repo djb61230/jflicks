@@ -20,11 +20,15 @@ import java.util.ArrayList;
 
 import org.jflicks.log.Log;
 import org.jflicks.nms.NMS;
+import org.jflicks.restlet.servercomponent.ServerComponent;
+import org.jflicks.restlet.servercomponent.ServerComponentNotify;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
+import org.restlet.Application;
+import org.restlet.Component;
 import org.restlet.ext.wadl.WadlApplication;
 
 /**
@@ -33,11 +37,15 @@ import org.restlet.ext.wadl.WadlApplication;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseApplication extends WadlApplication implements Log {
+public abstract class BaseApplication extends WadlApplication implements Log,
+    ServerComponentNotify {
 
+    private boolean attached;
+    private ServerComponent serverComponent;
     private ServiceTracker logServiceTracker;
     private BundleContext bundleContext;
     private ArrayList<NMS> nmsList;
+    private String alias;
 
     /**
      * Simple empty constructor.
@@ -45,6 +53,92 @@ public abstract class BaseApplication extends WadlApplication implements Log {
     public BaseApplication() {
 
         setNMSList(new ArrayList<NMS>());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ServerComponent getServerComponent() {
+        return (serverComponent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setServerComponent(ServerComponent c) {
+
+        serverComponent = c;
+
+        if (serverComponent != null) {
+
+            attach();
+
+        } else {
+
+            // The server component "has gone away" so flag that
+            // we will need to reattach if it comes back.
+            setAttached(false);
+        }
+    }
+
+    /**
+     * Run time property to signify is our application has been attached
+     * to a Restlet server component.
+     *
+     * @return True when attached.
+     */
+    public boolean isAttached() {
+        return (attached);
+    }
+
+    private void setAttached(boolean b) {
+        attached = b;
+    }
+
+    /**
+     * An application has an alias so it's URLs will be unique.
+     *
+     * @return A String instance.
+     */
+    public String getAlias() {
+        return (alias);
+    }
+
+    /**
+     * An application has an alias so it's URLs will be unique.
+     *
+     * @param s A String instance.
+     */
+    public void setAlias(String s) {
+        alias = s;
+    }
+
+    private void attach() {
+
+        if (!isAttached()) {
+
+            // We are not attached so we will try as long as we have valid
+            // ServerComponent instance.
+            ServerComponent sc = getServerComponent();
+            if (sc != null) {
+
+                Component c = sc.getComponent();
+                if (c != null) {
+
+                    try {
+
+                        setAttached(true);
+                        String att = "/jflicks/" + getAlias();
+                        c.getDefaultHost().attach(att, (Application) this);
+                        c.start();
+
+                    } catch (Exception ex) {
+
+                        log(DEBUG, ex.getMessage());
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -133,6 +227,19 @@ public abstract class BaseApplication extends WadlApplication implements Log {
                 newArray = l.toArray(new NMS[l.size()]);
             }
         }
+    }
+
+    public String getBaseURI() {
+
+        String result = null;
+
+        ServerComponent sc = getServerComponent();
+        if (sc != null) {
+
+            result = sc.getBaseURI() + "/jflicks/" + getAlias();
+        }
+
+        return (result);
     }
 
 }

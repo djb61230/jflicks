@@ -71,9 +71,12 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
         if (r != null) {
 
             String path = r.getPath();
+            String inputpath = getRecordingPath(3);
             SystemJob job = SystemJob.getInstance("ffmpeg -itsoffset -00:00:45"
-                + " -y -i " + path + " -vcodec png -vframes 1 -an -f "
+                + " -y -i " + inputpath + " -vcodec png -vframes 1 -an -f "
                 + "rawvideo -s 534x300 " + path + ".png");
+            fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand()
+                + ">");
 
             // Don't run until this time because there won't be video to
             // grab the screen shot!  We tack on 50 seconds just to be safe.

@@ -16,6 +16,8 @@
 */
 package org.jflicks.tv.postproc.worker.projectx;
 
+import java.io.File;
+
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
@@ -23,6 +25,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.RecordingLengthJob;
 import org.jflicks.tv.postproc.worker.BaseWorker;
+import org.jflicks.tv.postproc.worker.ConcatJob;
 import org.jflicks.tv.postproc.worker.WorkerEvent;
 
 /**
@@ -32,6 +35,9 @@ import org.jflicks.tv.postproc.worker.WorkerEvent;
  * @version 1.0
  */
 public class ProjectxWorker extends BaseWorker implements JobListener {
+
+    private ConcatJob concatJob;
+    private Recording recording;
 
     /**
      * Simple default constructor.
@@ -46,6 +52,22 @@ public class ProjectxWorker extends BaseWorker implements JobListener {
         setIndexer(true);
     }
 
+    private ConcatJob getConcatJob() {
+        return (concatJob);
+    }
+
+    private void setConcatJob(ConcatJob j) {
+        concatJob = j;
+    }
+
+    private Recording getRecording() {
+        return (recording);
+    }
+
+    private void setRecording(Recording r) {
+        recording = r;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -53,11 +75,34 @@ public class ProjectxWorker extends BaseWorker implements JobListener {
 
         if (r != null) {
 
-            ProjectxJob job = new ProjectxJob(r, this);
-            job.addJobListener(this);
-            JobContainer jc = JobManager.getJobContainer(job);
-            addJobContainer(jc);
-            jc.start();
+            setRecording(r);
+
+            // If the recording was created via HLS, then we first
+            // have to concat all the streams together.  We can know
+            // if this is needed because the Recording path will not
+            // currently exist.  However if it does exist, then we
+            // just move along and do our indexing.
+            File f = new File(r.getPath());
+            if (f.exists()) {
+
+                ProjectxJob job = new ProjectxJob(r, this);
+                job.addJobListener(this);
+                JobContainer jc = JobManager.getJobContainer(job);
+                addJobContainer(jc);
+                jc.start();
+
+            } else {
+
+                // First we take all the HLS files and make one ts file.
+                File dir = f.getParentFile();
+                String prefix = f.getName();
+                prefix = prefix.substring(0, prefix.lastIndexOf("."));
+                ConcatJob job = new ConcatJob(prefix, dir);
+                job.addJobListener(this);
+                setConcatJob(job);
+                JobContainer jc = JobManager.getJobContainer(job);
+                jc.start();
+            }
         }
     }
 
@@ -68,17 +113,28 @@ public class ProjectxWorker extends BaseWorker implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            log(INFO, "ProjectxWorker: completed");
-            ProjectxJob job = (ProjectxJob) event.getSource();
-            removeJobContainer(job);
+            if (event.getSource() == getConcatJob()) {
 
-            Recording r = job.getRecording();
-            long seconds = RecordingLengthJob.getRecordingLength(r);
-            if (seconds != 0L) {
-                r.setDuration(seconds);
+                ProjectxJob job = new ProjectxJob(getRecording(), this);
+                job.addJobListener(this);
+                JobContainer jc = JobManager.getJobContainer(job);
+                addJobContainer(jc);
+                jc.start();
+
+            } else {
+
+                log(INFO, "ProjectxWorker: completed");
+                ProjectxJob job = (ProjectxJob) event.getSource();
+                removeJobContainer(job);
+
+                Recording r = job.getRecording();
+                long seconds = RecordingLengthJob.getRecordingLength(r);
+                if (seconds != 0L) {
+                    r.setDuration(seconds);
+                }
+
+                fireWorkerEvent(WorkerEvent.COMPLETE, r, true);
             }
-
-            fireWorkerEvent(WorkerEvent.COMPLETE, r, true);
 
         } else {
 

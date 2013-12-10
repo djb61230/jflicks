@@ -79,8 +79,14 @@ public class SystemPostProcHeavyJob extends SystemPostProcJob {
                             String path = r.getPath();
                             if (path != null) {
 
+                                // We also need to check an HLS path too.
+                                String hlspath =
+                                    path.substring(0, path.lastIndexOf("."));
+                                hlspath = hlspath + ".000000.ts";
+
+                                File hlsfile = new File(hlspath);
                                 File file = new File(path);
-                                if (file.exists()) {
+                                if (file.exists() || hlsfile.exists()) {
 
                                     log(SystemPostProc.INFO, "We have work!!");
                                     w.addWorkerListener(this);

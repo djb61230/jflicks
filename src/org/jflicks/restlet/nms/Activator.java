@@ -18,13 +18,12 @@ package org.jflicks.restlet.nms;
 
 import org.jflicks.util.BaseActivator;
 import org.jflicks.restlet.NMSTracker;
+import org.jflicks.restlet.servercomponent.ServerComponentTracker;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
-import org.restlet.Component;
-import org.restlet.data.Protocol;
 
 /**
  * Simple activater that starts our NMS restlet.
@@ -34,8 +33,8 @@ import org.restlet.data.Protocol;
  */
 public class Activator extends BaseActivator {
 
-    private Component component;
     private NMSTracker nmsTracker;
+    private ServerComponentTracker serverComponentTracker;
     private ServiceTracker logServiceTracker;
 
     /**
@@ -45,29 +44,19 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
-        try {
+        NMSApplication app = new NMSApplication();
+        RecordingResource.setNMSApplication(app);
 
-            component = new Component();
-            component.getServers().add(Protocol.HTTP, 8182);
+        nmsTracker = new NMSTracker(bc, app);
+        nmsTracker.open();
 
-            // Here we attach our restlet application.
-            NMSApplication app = new NMSApplication();
-            RecordingResource.setNMSApplication(app);
-            nmsTracker = new NMSTracker(bc, app);
-            nmsTracker.open();
+        serverComponentTracker = new ServerComponentTracker(bc, app);
+        serverComponentTracker.open();
 
-            logServiceTracker =
-                new ServiceTracker(bc, LogService.class.getName(), null);
-            app.setLogServiceTracker(logServiceTracker);
-            logServiceTracker.open();
-
-            component.getDefaultHost().attach("/nms", app);
-            component.start();
-
-        } catch (Exception ex) {
-
-            System.out.println(ex.getMessage());
-        }
+        logServiceTracker =
+            new ServiceTracker(bc, LogService.class.getName(), null);
+        app.setLogServiceTracker(logServiceTracker);
+        logServiceTracker.open();
     }
 
     /**
@@ -75,24 +64,22 @@ public class Activator extends BaseActivator {
      */
     public void stop(BundleContext context) {
 
-        if (component != null) {
-
-            try {
-
-                component.stop();
-
-            } catch (Exception ex) {
-
-                System.out.println(ex.getMessage());
-            }
-
-            component = null;
-        }
-
         if (nmsTracker != null) {
 
             nmsTracker.close();
             nmsTracker = null;
+        }
+
+        if (logServiceTracker != null) {
+
+            logServiceTracker.close();
+            logServiceTracker = null;
+        }
+
+        if (serverComponentTracker != null) {
+
+            serverComponentTracker.close();
+            serverComponentTracker = null;
         }
     }
 

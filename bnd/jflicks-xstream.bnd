@@ -1,0 +1,8 @@
+custom=true
+
+Bundle-Version: 1.0.0
+
+Export-Package: *
+
+Import-Package: *;resolution:=optional
+

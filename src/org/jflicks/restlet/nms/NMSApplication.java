@@ -39,6 +39,7 @@ public class NMSApplication extends BaseApplication {
         setDescription("Access and control local jflicks server component.");
         setOwner("jflicks.org");
         setAuthor("Doug Barnum, copyright 2012");
+        setAlias("nms");
     }
 
     @Override

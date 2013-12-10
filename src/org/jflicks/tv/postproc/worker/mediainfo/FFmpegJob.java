@@ -63,7 +63,10 @@ public class FFmpegJob extends BaseWorkerJob implements JobListener {
         Recording r = getRecording();
         if (r != null) {
 
-            SystemJob job = SystemJob.getInstance("ffmpeg -i " + r.getPath());
+            String path = getRecordingPath(0);
+            SystemJob job = SystemJob.getInstance("ffmpeg -i " + path);
+            fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand()
+                + ">");
 
             // Don't run until this time because there won't be video to
             // grab the screen shot!  We tack on 30 seconds just to be safe.

@@ -24,6 +24,7 @@
 
         <fileset dir="${dist}" includes="*.jar" />
         <fileset dir="${lib}" includes="*.jar" />
+        <fileset dir="${env.JAVA_HOME}/jre/lib" includes="jfxrt.jar" />
 
     </path>
 
@@ -32,6 +33,7 @@
         <fileset dir="${dist}" includes="jflicks-test.jar" />
         <fileset dir="${lib}" includes="*.jar" />
         <fileset dir="${bundle}" includes="*.jar" />
+        <fileset dir="${env.JAVA_HOME}/jre/lib" includes="jfxrt.jar" />
 
     </path>
 
@@ -79,6 +81,17 @@
             <manifest>
                 <attribute name="Main-Class"
                     value="org.jflicks.stb.directvweb.DirectvWeb"/>
+            </manifest>
+
+        </jar>
+
+        <jar destfile="${dist}/teststreamjob.jar" basedir="${build}"
+            excludes="**/test/*.class"
+            includes="**/recorder/*.class,**/job/*.class,**/util/*.class">
+
+            <manifest>
+                <attribute name="Main-Class"
+                    value="org.jflicks.tv.recorder.StreamJob"/>
             </manifest>
 
         </jar>
@@ -739,6 +752,33 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-restlet-base.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-restlet-servercomponent-system.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-restlet-admin.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-restlet-nms.bnd"
             output="${bundle}"
         />
@@ -816,11 +856,20 @@
         />
 
         <bnd
-            classpath="${lib}/org.restlet.jar:${lib}/org.jsslutils.jar:${lib}/org.restlet.ext.simple.jar:${lib}/org.restlet.ext.ssl.jar:${lib}/org.simpleframework.jar:${lib}/org.restlet.ext.wadl.jar:${lib}/org.restlet.ext.xml.jar:${lib}/org.restlet.ext.slf4j.jar"
+            classpath="${lib}/xstream-1.4.2.jar"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-xstream.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${lib}/org.restlet.jar:${lib}/org.restlet.ext.wadl.jar:${lib}/org.restlet.ext.xml.jar:${lib}/org.restlet.ext.freemarker.jar:${lib}/org.freemarker.jar"
             eclipse="false"
             failok="true"
             exceptions="true"
-            files="${bnd}/iota-restlet-all.bnd"
+            files="${bnd}/jflicks-restlet-all.bnd"
             output="${bundle}"
         />
 
@@ -1109,13 +1158,57 @@
         <java classname="org.jflicks.tv.recorder.StreamJob" fork="true">
 
             <arg value="-i"/>
+            <arg value="/Users/djb/Movies/witches.ts"/>
+            <!--
+            <arg value="/Users/djb/bin/movie.ts"/>
             <arg value="/dev/video2"/>
+            -->
             <arg value="-h"/>
-            <arg value="192.168.2.2"/>
+            <arg value="127.0.0.1"/>
+            <!--
+            <arg value="192.168.2.3"/>
+            <arg value="244.1.1.1"/>
+            -->
             <arg value="-p"/>
             <arg value="1234"/>
             <arg value="-s"/>
             <arg value="300"/>
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-concat" depends="build">
+
+        <java classname="org.jflicks.tv.recorder.ConcatJob" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-hls" depends="build">
+
+        <java classname="org.jflicks.tv.recorder.HlsJob" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-jfx" depends="build">
+
+        <java classname="org.jflicks.util.jfx.VideoPlayer" fork="true">
+
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>
