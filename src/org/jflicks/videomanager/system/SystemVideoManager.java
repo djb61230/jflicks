@@ -19,7 +19,10 @@ package org.jflicks.videomanager.system;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -269,6 +272,9 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                             }
                         }
                     }
+
+                    // Now we want to sort them by the "added" property.
+                    Arrays.sort(result, new VideoSortByAdded());
                 }
             }
         }
@@ -619,10 +625,20 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                     File f = new File(path);
                     if (!f.exists()) {
 
-                        log(INFO, "Will hide <" + title
-                            + "> with path <" + path + ">");
-                        array[i].setHidden(true);
-                        addVideo(array[i]);
+                        // Check to see if we should set it hidden or
+                        // purge it from the DB.
+                        File vpurge = new File("vpurge");
+                        if (vpurge.exists()) {
+
+                            removeVideoFromDB(array[i]);
+
+                        } else {
+
+                            log(INFO, "Will hide <" + title
+                                + "> with path <" + path + ">");
+                            array[i].setHidden(true);
+                            addVideo(array[i]);
+                        }
                     }
                 }
             }
@@ -742,6 +758,20 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
         }
 
         return (result);
+    }
+
+    static class VideoSortByAdded implements Comparator<Video>, Serializable {
+
+        public VideoSortByAdded() {
+        }
+
+        public int compare(Video v0, Video v1) {
+
+            Long l0 = Long.valueOf(v0.getAdded());
+            Long l1 = Long.valueOf(v1.getAdded());
+
+            return (l1.compareTo(l0));
+        }
     }
 
 }
