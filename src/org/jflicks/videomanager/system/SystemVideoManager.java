@@ -413,7 +413,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
 
             try {
 
-                File tmp = File.createTempFile("generate", ".png");
+                File tmp = File.createTempFile("generate", ".jpg");
                 ThumbnailerJob job =
                     new ThumbnailerJob(v.getPath(), tmp.getPath(), seconds);
                 JobContainer jc = JobManager.getJobContainer(job);
@@ -463,6 +463,9 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                             bi = Util.resize(bi, 1280, 720);
                         }
 
+                        log(DEBUG, "after width: " + bi.getWidth());
+                        log(DEBUG, "after height: " + bi.getHeight());
+
                         int height = bi.getHeight();
 
                         String sid = null;
@@ -482,13 +485,22 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
 
                         // At this point our image should be 1280x720 which
                         // will be our fanart.  Next we make a poster by
-                        // doing a center cut.
-                        BufferedImage pbi = bi.getSubimage(360, 0, 495, height);
-                        File fanart = File.createTempFile("fanart", ".png");
-                        ImageIO.write(bi, "PNG", fanart);
+                        // doing a center cut.  First make it an image
+                        // type that works in OpenJDK.  Also should work in
+                        // Oracle.
+                        BufferedImage fanbi = new BufferedImage(bi.getWidth(),
+                            bi.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+                        int[] oldData = bi.getRGB(0, 0, bi.getWidth(), bi.getHeight(),
+                            null, 0, bi.getWidth());
+                        fanbi.setRGB(0, 0, bi.getWidth(), bi.getHeight(), oldData,
+                            0, bi.getWidth());
 
-                        File poster = File.createTempFile("poster", ".png");
-                        ImageIO.write(pbi, "PNG", poster);
+                        File fanart = File.createTempFile("fanart", ".jpg");
+                        ImageIO.write(fanbi, "jpg", fanart);
+
+                        BufferedImage pbi = fanbi.getSubimage(360, 0, 495, height);
+                        File poster = File.createTempFile("poster", ".jpg");
+                        ImageIO.write(pbi, "jpg", poster);
 
                         String uri = fanart.toURI().toString();
                         n.save(NMSConstants.FANART_IMAGE_TYPE, uri, sid);
@@ -499,6 +511,8 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                 }
 
             } catch (IOException ex) {
+
+                log(DEBUG, ex.getMessage());
             }
         }
     }

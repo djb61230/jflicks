@@ -18,6 +18,7 @@ package org.jflicks.util;
 
 import java.awt.AlphaComposite;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dialog;
@@ -58,6 +59,7 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
@@ -1543,6 +1545,26 @@ public final class Util {
 
         AWTUtilities.setWindowOpacity(w, f);
     }
+
+    public static Point findInFrame(Container c) {
+
+        Point result = null;
+
+        if (c != null) {
+
+            result = c.getLocation();
+            c = c.getParent();
+            while (!(c instanceof JFrame)) {
+
+                Point tmp = c.getLocation();
+                result.x += tmp.x;
+                result.y += tmp.y;
+                c = c.getParent();
+            }
+        }
+
+        return (result);
+    }   
 
     /**
      * Simple main method that dumps the system properties to stdout.
