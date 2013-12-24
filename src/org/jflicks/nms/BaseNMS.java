@@ -1577,6 +1577,16 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                         File tmp = new File(path + "." + iext);
                         if (tmp.exists()) {
+
+                            path = tmp.getPath();
+                        }
+
+                    } else {
+
+                        String trunk = path.substring(0, path.lastIndexOf("."));
+                        File tmp = new File(trunk + ".m3u8");
+                        if (tmp.exists()) {
+
                             path = tmp.getPath();
                         }
                     }

@@ -561,6 +561,29 @@ public abstract class BaseServerResource extends WadlServerResource {
         }
     }
 
+    public void stopRecording(String id) {
+
+        NMS[] array = getNMS();
+        if ((id != null) && (array != null) && (array.length > 0)) {
+
+            NMS n = null;
+            Recording r = null;
+            for (int i = 0; i < array.length; i++) {
+
+                r = array[i].getRecordingById(id);
+                if (r != null) {
+
+                    n = array[i];
+                    break;
+                }
+            }
+
+            if ((n != null) && (r != null)) {
+                n.stopRecording(r);
+            }
+        }
+    }
+
     public String processDelete(String id, boolean b) {
 
         String result = "\n";

@@ -53,6 +53,7 @@ public class HDHRRecorderHlsJob extends AbstractJob implements JobListener {
     private HlsJob hlsJob;
     private FrequencyJob noneFrequencyJob;
     private JobContainer jobContainer;
+    private JobContainer hlsJobContainer;
 
     /**
      * This job supports the HDHRRecorder plugin.
@@ -118,6 +119,14 @@ public class HDHRRecorderHlsJob extends AbstractJob implements JobListener {
 
     private void setJobContainer(JobContainer jc) {
         jobContainer = jc;
+    }
+
+    private JobContainer getHlsJobContainer() {
+        return (hlsJobContainer);
+    }
+
+    private void setHlsJobContainer(JobContainer jc) {
+        hlsJobContainer = jc;
     }
 
     private HDHRRecorder getHDHRRecorder() {
@@ -333,6 +342,9 @@ public class HDHRRecorderHlsJob extends AbstractJob implements JobListener {
             String prefix = f.getName();
             prefix = prefix.substring(0, prefix.lastIndexOf("."));
             HlsJob hjob = new HlsJob(url, prefix, parent, getDuration());
+            //hjob.setVideoCodec("libx264 -preset superfast -tune zerolatency  -threads 2 -s 1280x720 -flags -global_header");
+            hjob.setAudioCodec("libfdk_aac");
+            hjob.setOptional("-async 1 -ss 00:00:05");
             hjob.addJobListener(this);
             setHlsJob(hjob);
 
@@ -344,6 +356,7 @@ public class HDHRRecorderHlsJob extends AbstractJob implements JobListener {
             nfj.setFrequency(-1);
 
             JobContainer jc = JobManager.getJobContainer(getHlsJob());
+            setHlsJobContainer(jc);
             jc.start();
 
             jc = JobManager.getJobContainer(fj);
@@ -371,6 +384,10 @@ public class HDHRRecorderHlsJob extends AbstractJob implements JobListener {
 
         setTerminate(true);
         JobContainer jc = getJobContainer();
+        if (jc != null) {
+            jc.stop();
+        }
+        jc = getHlsJobContainer();
         if (jc != null) {
             jc.stop();
         }

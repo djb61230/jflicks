@@ -72,6 +72,7 @@ public class HDHRRecorder extends BaseRecorder {
             setRecordingLiveTV(live);
 
             HDHRRecorderJob job = new HDHRRecorderJob(this);
+            //HDHRRecorderHlsJob job = new HDHRRecorderHlsJob(this);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
             jc.start();

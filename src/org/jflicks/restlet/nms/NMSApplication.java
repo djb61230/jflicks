@@ -56,6 +56,8 @@ public class NMSApplication extends BaseApplication {
             RecordingTitleResource.class);
         router.attach("/{version}/recording/{recordingId}/"
             + "{allowRerecord}", DeleteRecordingResource.class);
+        router.attach("/{version}/recording/stop/{recordingId}",
+            StopRecordingResource.class);
         router.attach("/{version}/recordingrules.{format}",
             RecordingRuleResource.class);
         router.attach("/{version}/recordingrule/{ruleId}",

@@ -91,6 +91,7 @@ public class V4l2Recorder extends BaseRecorder {
             setRecordingLiveTV(live);
 
             V4l2RecorderJob job = new V4l2RecorderJob(this);
+            //V4l2RecorderHlsJob job = new V4l2RecorderHlsJob(this);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
             jc.start();

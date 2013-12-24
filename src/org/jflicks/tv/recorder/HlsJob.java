@@ -37,6 +37,9 @@ public class HlsJob extends AbstractJob implements JobListener {
     private JobContainer jobContainer;
     private String input;
     private String output;
+    private String videoCodec;
+    private String audioCodec;
+    private String optional;
     private File directory;
     private long duration;
 
@@ -51,6 +54,9 @@ public class HlsJob extends AbstractJob implements JobListener {
         setOutput(output);
         setDirectory(directory);
         setDuration(duration);
+        setVideoCodec("copy");
+        setAudioCodec("libfdk_aac");
+        setOptional("");
     }
 
     /**
@@ -105,6 +111,30 @@ public class HlsJob extends AbstractJob implements JobListener {
         duration = l;
     }
 
+    public String getVideoCodec() {
+        return (videoCodec);
+    }
+
+    public void setVideoCodec(String s) {
+        videoCodec = s;
+    }
+
+    public String getAudioCodec() {
+        return (audioCodec);
+    }
+
+    public void setAudioCodec(String s) {
+        audioCodec = s;
+    }
+
+    public String getOptional() {
+        return (optional);
+    }
+
+    public void setOptional(String s) {
+        optional = s;
+    }
+
     private SystemJob getSystemJob() {
         return (systemJob);
     }
@@ -139,9 +169,17 @@ public class HlsJob extends AbstractJob implements JobListener {
         String outStr = getOutput();
         if ((f != null) && (inStr != null) && (outStr != null)) {
 
+            if (inStr.startsWith("udp")) {
+
+                inStr = "'" + inStr + "?fifo_size=1000000&overrun_nonfatal=1'";
+            }
+
             String command = "ffmpeg -i"
                 + " " + inStr
-                + " -c copy -map 0 -f segment -segment_list"
+                + " -vcodec " + getVideoCodec()
+                + " -acodec " + getAudioCodec()
+                + " " + getOptional()
+                + " -map 0 -f segment -segment_list"
                 + " " + outStr + ".m3u8"
                 + " -segment_time 10 -segment_list_flags +live"
                 + " " + outStr + ".%06d.ts";
