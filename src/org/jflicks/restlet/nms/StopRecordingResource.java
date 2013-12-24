@@ -46,6 +46,7 @@ public class StopRecordingResource extends BaseNMSApplicationServerResource {
     public void stopRecording() {
 
         String rid = getRecordingId();
+        System.out.println("stopRecording: " + rid);
         if (rid != null) {
 
             stopRecording(rid);
