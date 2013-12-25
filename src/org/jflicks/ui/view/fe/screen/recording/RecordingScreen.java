@@ -898,6 +898,11 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                         int ilength = iext.length() + 1;
                         surl = surl.substring(0, surl.length() - ilength);
+
+                    } else if (surl.endsWith(".m3u8")) {
+
+                        surl = surl.substring(0, surl.length() - 5);
+                        surl = surl + ".ts";
                     }
 
                     System.out.println("streamurl GERN BLANK <" + surl + ">");

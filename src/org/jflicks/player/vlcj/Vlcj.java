@@ -17,12 +17,16 @@
 package org.jflicks.player.vlcj;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.Arrays;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
@@ -35,7 +39,8 @@ import javax.swing.Timer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
+import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
 
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
@@ -54,12 +59,14 @@ public class Vlcj extends BasePlayer {
 
     private JDialog dialog;
     private MediaPlayerFactory mediaPlayerFactory;
-    private EmbeddedMediaPlayer embeddedMediaPlayer;
-    private JPanel keyPanel;
-    private Canvas canvas;
+    private DirectMediaPlayer directMediaPlayer;
+    private ImagePanel keyPanel;
     private String[] args;
     private String[] urls;
     private int urlIndex;
+    private BufferedImage bufferedImage;
+    private FrameRenderCallback frameRenderCallback;
+
 
     /**
      * Simple constructor.
@@ -69,7 +76,8 @@ public class Vlcj extends BasePlayer {
         setType(PLAYER_VIDEO_STREAM_UDP);
         setTitle("Vlcj");
 
-        JPanel pan = new JPanel(new BorderLayout());
+        ImagePanel pan = new ImagePanel();
+        pan.setLayout(new BorderLayout());
         pan.setFocusable(true);
         InputMap map = pan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 
@@ -141,13 +149,7 @@ public class Vlcj extends BasePlayer {
         map.put(KeyStroke.getKeyStroke("M"), "m");
         pan.getActionMap().put("m", audioSyncMinusAction);
 
-        Canvas can = new Canvas();
-        can.setBackground(Color.BLACK);
-        can.setFocusable(true);
-        pan.add(can, BorderLayout.CENTER);
-
         setKeyPanel(pan);
-        setCanvas(can);
 
         String[] vlcArgs = {
             "--no-video-title-show",
@@ -212,20 +214,12 @@ public class Vlcj extends BasePlayer {
         dialog = d;
     }
 
-    private JPanel getKeyPanel() {
+    private ImagePanel getKeyPanel() {
         return (keyPanel);
     }
 
-    private void setKeyPanel(JPanel p) {
+    private void setKeyPanel(ImagePanel p) {
         keyPanel = p;
-    }
-
-    private Canvas getCanvas() {
-        return (canvas);
-    }
-
-    private void setCanvas(Canvas c) {
-        canvas = c;
     }
 
     private MediaPlayerFactory getMediaPlayerFactory() {
@@ -236,12 +230,12 @@ public class Vlcj extends BasePlayer {
         mediaPlayerFactory = f;
     }
 
-    private EmbeddedMediaPlayer getEmbeddedMediaPlayer() {
-        return (embeddedMediaPlayer);
+    private DirectMediaPlayer getDirectMediaPlayer() {
+        return (directMediaPlayer);
     }
 
-    private void setEmbeddedMediaPlayer(EmbeddedMediaPlayer p) {
-        embeddedMediaPlayer = p;
+    private void setDirectMediaPlayer(DirectMediaPlayer p) {
+        directMediaPlayer = p;
     }
 
     @Override
@@ -255,7 +249,7 @@ public class Vlcj extends BasePlayer {
                 d.setBounds(r);
             }
 
-            JPanel p = getKeyPanel();
+            ImagePanel p = getKeyPanel();
             if (p != null) {
 
                 p.setBounds(0, 0, r.width, r.height);
@@ -346,11 +340,17 @@ public class Vlcj extends BasePlayer {
             win.setBounds(x, y, width, height);
             setDialog(win);
 
-            Canvas can = getCanvas();
-            JPanel pan = getKeyPanel();
+            ImagePanel pan = getKeyPanel();
             JLayeredPane lpane = new JLayeredPane();
             setLayeredPane(lpane);
             pan.setBounds(0, 0, width, height);
+
+            bufferedImage = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice().getDefaultConfiguration()
+                .createCompatibleImage(width, height);
+            frameRenderCallback = new FrameRenderCallback(bufferedImage);
+
+            pan.setBufferedImage(bufferedImage);
 
             lpane.add(pan, Integer.valueOf(100));
             win.add(lpane, BorderLayout.CENTER);
@@ -359,7 +359,6 @@ public class Vlcj extends BasePlayer {
             if (cursor != null) {
 
                 pan.setCursor(cursor);
-                can.setCursor(cursor);
             }
 
             win.setVisible(true);
@@ -378,14 +377,12 @@ public class Vlcj extends BasePlayer {
             MediaPlayerFactory mpf = new MediaPlayerFactory(vlcArgs);
             setMediaPlayerFactory(mpf);
 
-            EmbeddedMediaPlayer mediaPlayer = mpf.newEmbeddedMediaPlayer();
+            DirectMediaPlayer mediaPlayer =
+                mpf.newDirectMediaPlayer(width, height, frameRenderCallback);
             mediaPlayer.addMediaPlayerEventListener(
                 new MyMediaPlayerEventAdapter());
             //mediaPlayer.setPlaySubItems(true);
-            mediaPlayer.setEnableKeyInputHandling(false);
-            mediaPlayer.setEnableMouseInputHandling(false);
-            mediaPlayer.setVideoSurface(mpf.newVideoSurface(getCanvas()));
-            setEmbeddedMediaPlayer(mediaPlayer);
+            setDirectMediaPlayer(mediaPlayer);
 
             mediaPlayer.playMedia(url);
             if (b != null) {
@@ -405,12 +402,12 @@ public class Vlcj extends BasePlayer {
         setPaused(false);
         setPlaying(false);
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             p.stop();
             p.release();
-            setEmbeddedMediaPlayer(null);
+            setDirectMediaPlayer(null);
         }
 
         MediaPlayerFactory f = getMediaPlayerFactory();
@@ -446,7 +443,7 @@ public class Vlcj extends BasePlayer {
         setPaused(b);
         if (getType() != PLAYER_VIDEO_STREAM_UDP) {
 
-            EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+            DirectMediaPlayer p = getDirectMediaPlayer();
             if (p != null) {
 
                 p.setPause(b);
@@ -459,7 +456,7 @@ public class Vlcj extends BasePlayer {
      */
     public void seek(int seconds) {
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             log(DEBUG, "seek length: " + p.getLength());
@@ -497,7 +494,7 @@ public class Vlcj extends BasePlayer {
      */
     public void guide() {
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             p.menuActivate();
@@ -509,7 +506,7 @@ public class Vlcj extends BasePlayer {
      */
     public void up() {
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             p.menuUp();
@@ -521,7 +518,7 @@ public class Vlcj extends BasePlayer {
      */
     public void down() {
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             p.menuDown();
@@ -533,7 +530,7 @@ public class Vlcj extends BasePlayer {
      */
     public void left() {
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             p.menuLeft();
@@ -545,7 +542,7 @@ public class Vlcj extends BasePlayer {
      */
     public void right() {
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             p.menuRight();
@@ -559,7 +556,7 @@ public class Vlcj extends BasePlayer {
 
         if (getType() == PLAYER_VIDEO_DVD) {
 
-            EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+            DirectMediaPlayer p = getDirectMediaPlayer();
             if (p != null) {
 
                 p.menuActivate();
@@ -572,7 +569,7 @@ public class Vlcj extends BasePlayer {
      */
     public void next() {
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             p.nextChapter();
@@ -584,7 +581,7 @@ public class Vlcj extends BasePlayer {
      */
     public void previous() {
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             p.previousChapter();
@@ -596,7 +593,7 @@ public class Vlcj extends BasePlayer {
      */
     public void audiosync(double offset) {
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             // Convert to microseconds...
@@ -615,7 +612,7 @@ public class Vlcj extends BasePlayer {
 
         PlayState result = new PlayState();
 
-        EmbeddedMediaPlayer p = getEmbeddedMediaPlayer();
+        DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
             if (p.getLength() > 0) {
@@ -641,6 +638,53 @@ public class Vlcj extends BasePlayer {
         }
 
         return (result);
+    }
+
+    class FrameRenderCallback extends RenderCallbackAdapter {
+
+        private BufferedImage bufferedImage;
+
+        public FrameRenderCallback(BufferedImage image) {
+
+            super(((DataBufferInt) image.getRaster().getDataBuffer()).getData());
+            bufferedImage = image;
+        }
+
+        @Override
+        public void onDisplay(DirectMediaPlayer mediaPlayer, int[] data) {
+
+            ImagePanel p = getKeyPanel();
+            if (p != null) {
+
+                p.repaint();
+            }
+        }
+    }
+
+    class ImagePanel extends JPanel {
+
+        private BufferedImage bufferedImage;
+
+        public ImagePanel() {
+        }
+
+        public BufferedImage getBufferedImage() {
+            return (bufferedImage);
+        }
+
+        public void setBufferedImage(BufferedImage bi) {
+            bufferedImage = bi;
+        }
+
+        @Override
+        public void paint(Graphics g) {
+
+            Graphics2D g2 = (Graphics2D) g;
+            if (bufferedImage != null) {
+                g2.drawImage(bufferedImage, null, 0, 0);
+            }
+        }
+
     }
 
     class MyMediaPlayerEventAdapter extends MediaPlayerEventAdapter {
