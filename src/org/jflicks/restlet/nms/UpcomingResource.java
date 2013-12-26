@@ -101,6 +101,12 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
                 System.out.println("we showId <" + showId + ">");
                 if (showId != null) {
 
+                    int index = showId.indexOf("=");
+                    if (index != -1) {
+
+                        showId = showId.substring(index + 1);
+                    }
+
                     Upcoming u = getUpcomingByShowId(showId);
                     System.out.println("we u <" + u + ">");
                     if (u != null) {
