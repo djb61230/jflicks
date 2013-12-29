@@ -75,6 +75,8 @@ public class ScheduleResource extends BaseNMSApplicationServerResource {
                         myrr.setListingId(rr.getListingId());
                         myrr.setDuration(rr.getDuration());
                         myrr.setPriority(rr.getPriority());
+                        myrr.setBeginPadding(rr.getBeginPadding());
+                        myrr.setEndPadding(rr.getEndPadding());
                         myrr.setTasks(rr.getTasks());
 
                     } else {
@@ -92,6 +94,8 @@ public class ScheduleResource extends BaseNMSApplicationServerResource {
                         myrr.setListingId(rr.getListingId());
                         myrr.setDuration(rr.getDuration());
                         myrr.setPriority(rr.getPriority());
+                        myrr.setBeginPadding(rr.getBeginPadding());
+                        myrr.setEndPadding(rr.getEndPadding());
                         myrr.setTasks(rr.getTasks());
                     }
 
