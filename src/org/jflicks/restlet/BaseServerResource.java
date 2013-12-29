@@ -69,6 +69,7 @@ public abstract class BaseServerResource extends WadlServerResource {
     private String showId;
     private String term;
     private String title;
+    private boolean unique;
 
     public abstract NMS[] getNMS();
     public abstract String getBaseURI();
@@ -166,6 +167,14 @@ public abstract class BaseServerResource extends WadlServerResource {
         title = s;
     }
 
+    public boolean isUnique() {
+        return (unique);
+    }
+
+    public void setUnique(boolean b) {
+        unique = b;
+    }
+
     public Gson getGson() {
         return (gson);
     }
@@ -208,6 +217,7 @@ public abstract class BaseServerResource extends WadlServerResource {
             setShowId(decode((String) map.get("showId")));
             setTerm(decode((String) map.get("term")));
             setTitle(decode((String) map.get("title")));
+            setUnique(Util.str2boolean(decode((String) map.get("unique")), false));
         }
     }
 
@@ -668,7 +678,7 @@ public abstract class BaseServerResource extends WadlServerResource {
         return (result);
     }
 
-    public ShowAiring[] getShowAiringsByLetter(String letter) {
+    public ShowAiring[] getShowAiringsByLetter(String letter, boolean unique) {
 
         ShowAiring[] result = null;
 
@@ -679,7 +689,7 @@ public abstract class BaseServerResource extends WadlServerResource {
             for (int i = 0; i < array.length; i++) {
 
                 ShowAiring[] sarray =
-                    getShowAiringsByLetter(array[i], letter);
+                    getShowAiringsByLetter(array[i], letter, unique);
                 if ((sarray != null) && (sarray.length > 0)) {
 
                     for (int j = 0; j < sarray.length; j++) {
@@ -699,7 +709,8 @@ public abstract class BaseServerResource extends WadlServerResource {
         return (result);
     }
 
-    public ShowAiring[] getShowAiringsByLetter(NMS n, String letter) {
+    public ShowAiring[] getShowAiringsByLetter(NMS n, String letter,
+        boolean unique) {
 
         ShowAiring[] result = null;
 
@@ -710,6 +721,8 @@ public abstract class BaseServerResource extends WadlServerResource {
             if ((channels != null) && (channels.length > 0)) {
 
                 ArrayList<ShowAiring> l = new ArrayList<ShowAiring>();
+                ArrayList<ShowAiring> chanlist = new ArrayList<ShowAiring>();
+                ArrayList<String> showlist = new ArrayList<String>();
                 for (int i = 0; i < channels.length; i++) {
 
                     log(BaseApplication.DEBUG, "Processing: " + channels[i]);
@@ -721,18 +734,44 @@ public abstract class BaseServerResource extends WadlServerResource {
                             Show s = array[j].getShow();
                             if (s != null) {
 
-                                String title = s.getTitle();
-                                title = Util.toSortableTitle(title);
-                                title = title.toLowerCase();
-                                if ((title != null)
-                                    && (title.startsWith(letter))) {
+                                if (unique) {
 
-                                    log(BaseApplication.DEBUG,
-                                        "Added: " + array[j]);
-                                    l.add(array[j]);
+                                    String showId = s.getId();
+                                    if (!showlist.contains(showId)) {
+
+                                        String title = s.getTitle();
+                                        title = Util.toSortableTitle(title);
+                                        title = title.toLowerCase();
+                                        if ((title != null)
+                                            && (title.startsWith(letter))) {
+
+                                            log(BaseApplication.DEBUG,
+                                                "Added: " + array[j]);
+                                            chanlist.add(array[j]);
+                                            showlist.add(showId);
+                                        }
+                                    }
+
+                                } else {
+
+                                    String title = s.getTitle();
+                                    title = Util.toSortableTitle(title);
+                                    title = title.toLowerCase();
+                                    if ((title != null)
+                                        && (title.startsWith(letter))) {
+
+                                        log(BaseApplication.DEBUG,
+                                            "Added: " + array[j]);
+                                        chanlist.add(array[j]);
+                                        showlist.add(showId);
+                                    }
                                 }
                             }
                         }
+
+                        l.addAll(chanlist);
+                        chanlist.clear();
+                        showlist.clear();
                     }
                 }
 

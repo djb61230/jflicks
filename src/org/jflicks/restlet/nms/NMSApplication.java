@@ -65,7 +65,7 @@ public class NMSApplication extends BaseApplication {
         router.attach("/{version}/state.{format}", StateResource.class);
         router.attach("/{version}/search/{term}.{format}",
             SearchResource.class);
-        router.attach("/{version}/searchtitlestartswith/{term}.{format}",
+        router.attach("/{version}/searchtitlestartswith/{unique}/{term}.{format}",
             SearchTitleStartsWithResource.class);
         router.attach("/{version}/channels.{format}",
             ChannelResource.class);

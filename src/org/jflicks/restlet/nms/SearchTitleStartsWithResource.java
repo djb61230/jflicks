@@ -56,7 +56,7 @@ public class SearchTitleStartsWithResource extends
 
         if (isFormatJson()) {
 
-            ShowAiring[] array = getShowAiringsByLetter(getTerm());
+            ShowAiring[] array = getShowAiringsByLetter(getTerm(), isUnique());
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -71,7 +71,7 @@ public class SearchTitleStartsWithResource extends
 
         } else if (isFormatXml()) {
 
-            ShowAiring[] array = getShowAiringsByLetter(getTerm());
+            ShowAiring[] array = getShowAiringsByLetter(getTerm(), isUnique());
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 
