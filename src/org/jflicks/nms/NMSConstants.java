@@ -539,6 +539,11 @@ public final class NMSConstants {
     public static final int SEARCH_TITLE_DESCRIPTION = 3;
 
     /**
+     * A search defined to only examine the title starting with some String.
+     */
+    public static final int SEARCH_TITLE_STARTS_WITH = 4;
+
+    /**
      * Status of an upcoming recording when it has been done previously.
      */
     public static final String PREVIOUSLY_RECORDED = "Previously Recorded";

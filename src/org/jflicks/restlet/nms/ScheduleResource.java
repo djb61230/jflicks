@@ -52,11 +52,14 @@ public class ScheduleResource extends BaseNMSApplicationServerResource {
             try {
 
                 String json = r.getText();
+                log(NMSApplication.DEBUG, json);
                 RecordingRule rr = g.fromJson(json, RecordingRule.class);
+                log(NMSApplication.DEBUG, "after gson: " + rr);
                 if (rr != null) {
 
                     RecordingRule myrr = null;
                     RecordingRule old = getRecordingRuleById(rr.getId());
+                    log(NMSApplication.DEBUG, "old rule: " + old);
 
                     if (old != null) {
 
@@ -92,6 +95,7 @@ public class ScheduleResource extends BaseNMSApplicationServerResource {
                         myrr.setTasks(rr.getTasks());
                     }
 
+                    log(NMSApplication.DEBUG, "new rule: " + myrr);
                     schedule(myrr);
                 }
 

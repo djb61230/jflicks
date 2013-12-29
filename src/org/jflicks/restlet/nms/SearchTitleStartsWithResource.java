@@ -16,8 +16,6 @@
 */
 package org.jflicks.restlet.nms;
 
-import java.util.Date;
-
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.ShowAiring;
 
@@ -30,22 +28,25 @@ import com.google.gson.Gson;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * This class will return the current upcomings as XML or JSON.
+ * This class will return the current channels as XML or JSON.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class SearchResource extends BaseNMSApplicationServerResource {
+public class SearchTitleStartsWithResource extends
+    BaseNMSApplicationServerResource {
 
     /**
      * Simple empty constructor.
      */
-    public SearchResource() {
+    public SearchTitleStartsWithResource() {
 
         XStream x = getXStream();
         x.alias("showairings", ShowAiring[].class);
         x.alias("showairing", ShowAiring.class);
-        x.alias("date", Date.class);
+
+        setName("Search By Title start string");
+        setDescription("The shows that title starts with a given string.");
     }
 
     @Get("xml|json")
@@ -55,8 +56,7 @@ public class SearchResource extends BaseNMSApplicationServerResource {
 
         if (isFormatJson()) {
 
-            ShowAiring[] array =
-                getShowAirings(getTerm(), NMSConstants.SEARCH_TITLE);
+            ShowAiring[] array = getShowAiringsByLetter(getTerm());
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -71,8 +71,7 @@ public class SearchResource extends BaseNMSApplicationServerResource {
 
         } else if (isFormatXml()) {
 
-            ShowAiring[] array =
-                getShowAirings(getTerm(), NMSConstants.SEARCH_TITLE);
+            ShowAiring[] array = getShowAiringsByLetter(getTerm());
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 

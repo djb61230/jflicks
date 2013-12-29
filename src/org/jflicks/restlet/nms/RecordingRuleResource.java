@@ -134,6 +134,11 @@ public class RecordingRuleResource extends BaseNMSApplicationServerResource {
                         oldrr.setType(type);
                         oldrr.setPriority(priority);
 
+                        Task[] tasks = rr.getTasks();
+                        if (tasks != null) {
+                            oldrr.setTasks(tasks);
+                        }
+
                         schedule(oldrr);
                     }
                 }

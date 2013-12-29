@@ -620,6 +620,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
                     default:
                     case NMSConstants.SEARCH_TITLE:
+                    case NMSConstants.SEARCH_TITLE_STARTS_WITH:
                         search = s.getTitle();
                         break;
 
@@ -637,7 +638,11 @@ public class SchedulesDirectProgramData extends BaseProgramData
                         if (search.length() > 0) {
 
                             search = search.toLowerCase();
-                            result = search.indexOf(pat) != -1;
+                            if (type == NMSConstants.SEARCH_TITLE_STARTS_WITH) {
+                                result = search.startsWith(pat);
+                            } else {
+                                result = search.indexOf(pat) != -1;
+                            }
                         }
                     }
 

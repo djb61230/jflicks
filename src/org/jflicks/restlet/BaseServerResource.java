@@ -16,16 +16,19 @@
 */
 package org.jflicks.restlet;
 
+import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Map;
 
 import org.jflicks.log.Log;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.RecordingRule;
+import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Task;
 import org.jflicks.tv.Upcoming;
@@ -623,7 +626,7 @@ public abstract class BaseServerResource extends WadlServerResource {
         return (result);
     }
 
-    public ShowAiring[] getShowAirings(String term) {
+    public ShowAiring[] getShowAirings(String term, int searchType) {
 
         ShowAiring[] result = null;
 
@@ -633,7 +636,8 @@ public abstract class BaseServerResource extends WadlServerResource {
             ArrayList<ShowAiring> slist = new ArrayList<ShowAiring>();
             for (int i = 0; i < array.length; i++) {
 
-                ShowAiring[] sarray = getShowAirings(array[i], term);
+                ShowAiring[] sarray =
+                    getShowAirings(array[i], term, searchType);
                 if ((sarray != null) && (sarray.length > 0)) {
 
                     for (int j = 0; j < sarray.length; j++) {
@@ -652,13 +656,91 @@ public abstract class BaseServerResource extends WadlServerResource {
         return (result);
     }
 
-    private ShowAiring[] getShowAirings(NMS n, String term) {
+    private ShowAiring[] getShowAirings(NMS n, String term, int searchType) {
 
         ShowAiring[] result = null;
 
         if ((term != null) && (n != null)) {
 
-            result = n.getShowAirings(term, NMSConstants.SEARCH_TITLE);
+            result = n.getShowAirings(term, searchType);
+        }
+
+        return (result);
+    }
+
+    public ShowAiring[] getShowAiringsByLetter(String letter) {
+
+        ShowAiring[] result = null;
+
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<ShowAiring> slist = new ArrayList<ShowAiring>();
+            for (int i = 0; i < array.length; i++) {
+
+                ShowAiring[] sarray =
+                    getShowAiringsByLetter(array[i], letter);
+                if ((sarray != null) && (sarray.length > 0)) {
+
+                    for (int j = 0; j < sarray.length; j++) {
+
+                        slist.add(sarray[j]);
+                    }
+                }
+            }
+
+            if (slist.size() > 0) {
+
+                log(BaseApplication.DEBUG, "Found: " + slist.size());
+                result = slist.toArray(new ShowAiring[slist.size()]);
+                Arrays.sort(result, new ShowAiringSortByTitle());
+            }
+        }
+        return (result);
+    }
+
+    public ShowAiring[] getShowAiringsByLetter(NMS n, String letter) {
+
+        ShowAiring[] result = null;
+
+        if ((letter != null) && (n != null)) {
+
+            letter = letter.toLowerCase();
+            Channel[] channels = getChannels(n);
+            if ((channels != null) && (channels.length > 0)) {
+
+                ArrayList<ShowAiring> l = new ArrayList<ShowAiring>();
+                for (int i = 0; i < channels.length; i++) {
+
+                    log(BaseApplication.DEBUG, "Processing: " + channels[i]);
+                    ShowAiring[] array = getShowAiringsByChannel(n, channels[i]);
+                    if ((array != null) && (array.length > 0)) {
+
+                        for (int j = 0; j < array.length; j++) {
+
+                            Show s = array[j].getShow();
+                            if (s != null) {
+
+                                String title = s.getTitle();
+                                title = Util.toSortableTitle(title);
+                                title = title.toLowerCase();
+                                if ((title != null)
+                                    && (title.startsWith(letter))) {
+
+                                    log(BaseApplication.DEBUG,
+                                        "Added: " + array[j]);
+                                    l.add(array[j]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (l.size() > 0) {
+
+                    result = l.toArray(new ShowAiring[l.size()]);
+                }
+            }
         }
 
         return (result);
@@ -841,6 +923,18 @@ public abstract class BaseServerResource extends WadlServerResource {
         }
 
         return (result);
+    }
+
+    static class ShowAiringSortByTitle implements Comparator<ShowAiring>,
+        Serializable {
+
+        public int compare(ShowAiring sa0, ShowAiring sa1) {
+
+            String title0 = Util.toSortableTitle(sa0.getShow().getTitle());
+            String title1 = Util.toSortableTitle(sa1.getShow().getTitle());
+
+            return (title0.compareTo(title1));
+        }
     }
 
 }
