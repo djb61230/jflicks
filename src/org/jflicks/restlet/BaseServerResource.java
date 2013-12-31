@@ -734,36 +734,27 @@ public abstract class BaseServerResource extends WadlServerResource {
                             Show s = array[j].getShow();
                             if (s != null) {
 
-                                if (unique) {
+                                String title = s.getTitle();
+                                title = Util.toSortableTitle(title);
+                                title = title.toLowerCase();
+                                if ((title != null)
+                                    && (title.startsWith(letter))) {
 
-                                    String showId = s.getId();
-                                    if (!showlist.contains(showId)) {
+                                    if (unique) {
 
-                                        String title = s.getTitle();
-                                        title = Util.toSortableTitle(title);
-                                        title = title.toLowerCase();
-                                        if ((title != null)
-                                            && (title.startsWith(letter))) {
+                                        if (!showlist.contains(title)) {
 
                                             log(BaseApplication.DEBUG,
                                                 "Added: " + array[j]);
                                             chanlist.add(array[j]);
-                                            showlist.add(showId);
+                                            showlist.add(title);
                                         }
-                                    }
 
-                                } else {
-
-                                    String title = s.getTitle();
-                                    title = Util.toSortableTitle(title);
-                                    title = title.toLowerCase();
-                                    if ((title != null)
-                                        && (title.startsWith(letter))) {
+                                    } else {
 
                                         log(BaseApplication.DEBUG,
                                             "Added: " + array[j]);
                                         chanlist.add(array[j]);
-                                        showlist.add(showId);
                                     }
                                 }
                             }

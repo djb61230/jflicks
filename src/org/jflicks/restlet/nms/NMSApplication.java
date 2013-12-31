@@ -77,6 +77,8 @@ public class NMSApplication extends BaseApplication {
         router.attach("/{version}/videos.{format}", VideoResource.class);
         router.attach("/{version}/guide/{channelId}.{format}",
             GuideChannelResource.class);
+        router.attach("/{version}/guide/{term}/{channelId}.{format}",
+            GuideTitleChannelResource.class);
 
         return (router);
     }
