@@ -784,6 +784,15 @@
         />
 
         <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-restlet-x10.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
             classpath="${lib}/jdom.jar"
             eclipse="false"
             failok="false"
@@ -865,7 +874,7 @@
         />
 
         <bnd
-            classpath="${lib}/org.restlet.jar:${lib}/org.restlet.ext.wadl.jar:${lib}/org.restlet.ext.xml.jar:${lib}/org.restlet.ext.freemarker.jar:${lib}/org.freemarker.jar"
+            classpath="${lib}/org.restlet.jar:${lib}/org.restlet.ext.wadl.jar:${lib}/org.restlet.ext.xml.jar:${lib}/org.restlet.ext.freemarker.jar:${lib}/org.freemarker.jar:${lib}/org.restlet.ext.json.jar:${lib}/org.json.jar"
             eclipse="false"
             failok="true"
             exceptions="true"
@@ -1361,6 +1370,20 @@
         <java classname="org.jflicks.util.Util"
             fork="true">
 
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-from" depends="build">
+
+        <java classname="org.jflicks.util.frommpeg2.FromMpeg2"
+            fork="true">
+
+            <arg value="/Users/djb/Movies"/>
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>

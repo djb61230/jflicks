@@ -23,6 +23,7 @@ import org.jflicks.tv.Upcoming;
 
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
+import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.Put;
 import org.restlet.representation.Representation;
@@ -64,8 +65,7 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
                 String data = g.toJson(array);
                 if (data != null) {
 
-                    StringRepresentation sr = new StringRepresentation(data);
-                    sr.setMediaType(MediaType.APPLICATION_JSON);
+                    JsonRepresentation sr = new JsonRepresentation(data);
                     result = sr;
                 }
             }
@@ -85,6 +85,8 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
                 }
             }
         }
+
+        log(NMSApplication.DEBUG, "Finished getting upcomings.");
 
         return (result);
     }
@@ -121,39 +123,6 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
                 System.out.println(ex.getMessage());
             }
         }
-
-        /*
-        Gson g = getGson();
-        if ((g != null) && (r != null)) {
-
-            try {
-
-                String json = r.getText();
-                System.out.println("we got <" + json + ">");
-                Upcoming up = g.fromJson(json, Upcoming.class);
-                System.out.println("up <" + up + ">");
-                if (up != null) {
-
-                    String showId = up.getShowId();
-                    System.out.println("showId <" + showId + ">");
-                    if (showId != null) {
-
-                        Upcoming u = getUpcomingByShowId(showId);
-                        System.out.println("u <" + u + ">");
-                        if (u != null) {
-
-                            overrideUpcoming(u);
-                            setStatus(Status.SUCCESS_ACCEPTED);
-                        }
-                    }
-                }
-
-            } catch (IOException ex) {
-
-                System.out.println(ex.getMessage());
-            }
-        }
-        */
     }
 
 }

@@ -19,6 +19,7 @@ package org.jflicks.restlet.nms;
 import org.jflicks.tv.Channel;
 
 import org.restlet.data.MediaType;
+import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -61,9 +62,8 @@ public class ChannelResource extends BaseNMSApplicationServerResource {
                 String data = g.toJson(array);
                 if (data != null) {
 
-                    StringRepresentation sr = new StringRepresentation(data);
-                    sr.setMediaType(MediaType.APPLICATION_JSON);
-                    result = sr;
+                    JsonRepresentation jr = new JsonRepresentation(data);
+                    result = jr;
                 }
             }
 

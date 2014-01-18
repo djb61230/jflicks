@@ -22,6 +22,7 @@ import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 
 import org.restlet.data.MediaType;
+import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.representation.Representation;
@@ -64,9 +65,8 @@ public class RecordingByTitleResource extends BaseNMSApplicationServerResource {
                 String data = g.toJson(array);
                 if (data != null) {
 
-                    StringRepresentation sr = new StringRepresentation(data);
-                    sr.setMediaType(MediaType.APPLICATION_JSON);
-                    result = sr;
+                    JsonRepresentation jr = new JsonRepresentation(data);
+                    result = jr;
                 }
             }
 

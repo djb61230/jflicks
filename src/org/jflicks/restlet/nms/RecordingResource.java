@@ -22,6 +22,7 @@ import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 
 import org.restlet.data.MediaType;
+import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.representation.Representation;
@@ -66,11 +67,17 @@ public class RecordingResource extends BaseNMSApplicationServerResource {
             if ((g != null) && (array != null)) {
 
                 String data = g.toJson(array);
+                log(NMSApplication.DEBUG, "JSON data null = " + (data == null));
                 if (data != null) {
 
+                    JsonRepresentation sr = new JsonRepresentation(data);
+                    result = sr;
+
+                    /*
                     StringRepresentation sr = new StringRepresentation(data);
                     sr.setMediaType(MediaType.APPLICATION_JSON);
                     result = sr;
+                    */
                 }
             }
 
@@ -92,6 +99,8 @@ public class RecordingResource extends BaseNMSApplicationServerResource {
                 }
             }
         }
+
+        log(NMSApplication.DEBUG, "Finished getting recordings.");
 
         return (result);
     }

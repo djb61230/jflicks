@@ -1573,6 +1573,20 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 if (path != null) {
 
                     String iext = r.getIndexedExtension();
+
+                    // First see if we have an mp4 file.
+                    File mp4tmp = new File(path + ".mp4");
+                    if (mp4tmp.exists()) {
+
+                        // We do so override the extension in the DB.
+                        // We are doing this because we are in the process
+                        // of going h264/mp4 exclusively and we can update
+                        // old recordings when we have a chance.  Yeah this
+                        // is hackish.
+                        iext = "mp4";
+                        r.setIndexedExtension(iext);
+                    }
+
                     if ((iext != null) && (iext.length() > 0)) {
 
                         File tmp = new File(path + "." + iext);

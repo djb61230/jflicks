@@ -20,6 +20,7 @@ import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.ShowAiring;
 
 import org.restlet.data.MediaType;
+import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -63,9 +64,8 @@ public class SearchTitleStartsWithResource extends
                 String data = g.toJson(array);
                 if (data != null) {
 
-                    StringRepresentation sr = new StringRepresentation(data);
-                    sr.setMediaType(MediaType.APPLICATION_JSON);
-                    result = sr;
+                    JsonRepresentation jr = new JsonRepresentation(data);
+                    result = jr;
                 }
             }
 
