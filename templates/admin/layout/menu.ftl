@@ -1,13 +1,13 @@
 <div class="large-12 columns">
-    <div class="nav-bar right">
-        <ul class="button-group">
-            <#assign i = 0>
-            <#list menus as menu>
-                <li><a href="${menu_urls[i]}" class="button">${menu}</a></li>
-                <#assign i = i + 1>
-            </#list>
-        </ul>
+   <img src="/jflicks/admin/1.0/images/JflicksLogo.png"> 
+<div class="newline"></div>
+    <div class="nav">
+        <ul>
+            <li><a href="/jflicks/admin/1.0/home.html" class="home">Home</a></li>
+            <li><a href="/jflicks/admin/1.0/recordings.html" class="button">Recordings</a></li>
+            <li><a href="/jflicks/admin/1.0/config.html" class="config">Config</a></li>
+            
+		</ul>
     </div>
-    <h1>jflicks media system<small> just the way you want it.</small></h1>
     <hr />
 </div>

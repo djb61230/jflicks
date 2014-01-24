@@ -4,13 +4,14 @@
   <#assign i = 0>
   <#list recordings as recording>
     <div>
+
     <table border="1">
     <tr>
-    <td><h3>${recording.title}</h3></td>
+    <th><h3>${recording.title}</h3></th>
     <#if recording.subtitle??>
-      <td><h4>${recording.subtitle}</h4></td>
+      <th><h4>${recording.subtitle}</h4></th>
     <#else>
-      <td><h4>No subtitle</h4></td>
+      <th><h4>No subtitle</h4></th>
     </#if>
     </tr>
     <tr>

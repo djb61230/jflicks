@@ -6,9 +6,8 @@
         ${title}
       </title>
     </head>
-    <body style="width:100%;height:100%">
+    <body >
 <!-- Nav Bar -->
- 
   <div class="row">
     <#include "menu.ftl"/>
   </div>
