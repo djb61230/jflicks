@@ -2,6 +2,7 @@ package org.jflicks.restlet.admin;
 
 import java.util.HashMap;
 
+import org.jflicks.nms.State;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.restlet.data.MediaType;
@@ -41,8 +42,13 @@ public class HomeResource extends BaseAdminServerResource {
         if (c != null) {
 
             HashMap<String, Object> root = new HashMap<String, Object>();
-            root.put("menus", getMenus());
-            root.put("menu_urls", getMenuURLs());
+            
+            
+            State state = getState();
+            
+            if(state != null){
+                root.put("status",state);
+            }
             Template temp = TemplateRepresentation.getTemplate(c, "home.ftl");
             TemplateRepresentation rep = new TemplateRepresentation(temp,
                 root, MediaType.TEXT_HTML); 

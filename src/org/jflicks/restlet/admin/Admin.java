@@ -82,6 +82,7 @@ public class Admin extends BaseApplication {
 
         // Attach the resources to the router
         router.attach("/{ver}/home.html", HomeResource.class);
+        router.attach("/{ver}/config.html", ConfigResource.class);
         router.attach("/{ver}/recordings.html", RecordingsResource.class);
 
         File templates = new File("templates");

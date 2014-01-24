@@ -46,6 +46,7 @@ public class Activator extends BaseActivator {
 
         Admin app = new Admin();
         HomeResource.setAdmin(app);
+        ConfigResource.setAdmin(app);
         RecordingsResource.setAdmin(app);
 
         nmsTracker = new NMSTracker(bc, app);
