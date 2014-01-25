@@ -24,7 +24,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
+import org.jflicks.configure.Configuration;
 import org.jflicks.log.Log;
+import org.jflicks.nms.NMS;
+import org.jflicks.nms.NMSConstants;
+import org.jflicks.nms.NMSUtil;
+import org.jflicks.nms.State;
+import org.jflicks.nms.Video;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.RecordingRule;
@@ -32,11 +38,6 @@ import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Task;
 import org.jflicks.tv.Upcoming;
-import org.jflicks.nms.NMS;
-import org.jflicks.nms.NMSConstants;
-import org.jflicks.nms.NMSUtil;
-import org.jflicks.nms.State;
-import org.jflicks.nms.Video;
 import org.jflicks.util.Util;
 
 import org.restlet.ext.wadl.WadlServerResource;
@@ -835,6 +836,48 @@ public abstract class BaseServerResource extends WadlServerResource {
         if (n != null) {
 
             result = n.getTasks();
+        }
+
+        return (result);
+    }
+
+    public Configuration[] getConfigurations() {
+
+        Configuration[] result = null;
+
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            ArrayList<Configuration> clist = new ArrayList<Configuration>();
+            for (int i = 0; i < array.length; i++) {
+
+                Configuration[] carray = getConfigurations(array[i]);
+                if ((carray != null) && (carray.length > 0)) {
+
+                    for (int j = 0; j < carray.length; j++) {
+
+                        clist.add(carray[j]);
+                    }
+                }
+            }
+
+            if (clist.size() > 0) {
+
+                result = clist.toArray(new Configuration[clist.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    private Configuration[] getConfigurations(NMS n) {
+
+        Configuration[] result = null;
+
+        System.out.println("nms: " + n);
+        if (n != null) {
+
+            result = n.getConfigurations();
         }
 
         return (result);
