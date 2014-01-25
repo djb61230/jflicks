@@ -73,8 +73,17 @@ body {
 	border-bottom: 1px solid aqua;
 
 }
+#sidebar{
+    background: #E69E9E;
+    border: 1px solid #947575;
+    float: right;
+    width: 24%;
+}
+#content{
+    width:75%;
+    padding-bottom: 15px;
 
-	
+}
 
 /* replace with .no-boxshadow body if you have modernizr available */
 .ie6 body,
@@ -139,6 +148,7 @@ img {
 	margin-top: 1.5em;
 	padding: 1em;
 	min-height: 1em;
+    
 }
 
 .footer a {
@@ -208,52 +218,21 @@ img {
 	text-decoration: underline;
 }
 
-.nav a.home, .nav a.list, .nav a.userList, .nav a.create, .nav a.userCreate, .nav a.config, .nav a.user, .nav a.sources, .nav a.configEdit, .nav a.createUser, .nav a.search{
+.nav a.home,.nav a.config,.nav a.record{
 	background-position: 0.7em center;
 	background-repeat: no-repeat;
 	text-indent: 25px;
 }
 
-.nav a.userList{
-	background-image: url(../images/iconset/vcard.png)
+.nav a.record{
+	background-image: url(../images/skin/vintage_tv.png);
 }
-
-.nav a.createUser{
-	background-image: url(../images/skin/user_add.png);
-}
-.nav a.sources{
-	
-background-image: url(../images/iconset/database.png);	
-}
-.nav a.search{
-	
-background-image: url(../images/iconset/zoom.png);	
-}
-
-.nav a.user{
-/* 	background-image: url(../images/skin/user.gif); */
-	background-image: url(../images/iconset/user.png);
-	
-}
-
 .nav a.config{
-	background-image: url(../images/iconset/cog.png);
+	background-image: url(../images/skin/cog.png);
 }
 
-.nav a.configEdit {
-	background-image: url(../images/skin/cog_edit.png);
-}
-	
 .nav a.home {
 	background-image: url(../images/skin/house.png);
-}
-
-.nav a.list {
-	background-image: url(../images/skin/database_table.png);
-}
-
-.nav a.create {
-	background-image: url(../images/iconset/database_add.png);
 }
 
 /* CREATE/EDIT FORMS AND SHOW PAGES */

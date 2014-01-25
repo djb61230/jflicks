@@ -17,21 +17,7 @@
  
   <!-- Main Page Content and Sidebar -->
  
-  <div class="row">
- 
-    <!-- Main Blog Content -->
-    <div class="large-9 columns" role="content">
- 
-        <#nested/>
-
-    </div>
- 
-    <!-- End Main Content -->
- 
- 
-    <!-- Sidebar -->
- 
-    <aside class="large-3 columns">
+   <div id="sidebar"> 
  
       <div class="panel">
         <h5>About</h5>
@@ -41,10 +27,22 @@
  
       <#include "sidebar-cats.ftl"/>
 
-    </aside>
+    </div>
+  <div id="content">
+ 
+    <!-- Main Blog Content -->
+ 
+        <#nested/>
+
+ 
+    <!-- End Main Content -->
+ 
+</div> 
+    <!-- Sidebar -->
+ 
  
     <!-- End Sidebar -->
-  </div>
+  
  
   <!-- End Main Content and Sidebar -->
  

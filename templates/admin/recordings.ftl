@@ -15,16 +15,20 @@
     </#if>
     </tr>
     <tr>
+    <td style="width:49%;">
     <#if recording.description??>
-      <td><p>${recording.description}</p></td>
+      <p>${recording.description}</p>
     <#else>
-      <td><h4>No description</h4></td>
+      <h4>No description</h4>
     </#if>
+    </td>
+    <td style="width:49%;">
     <#if screenshots[i]??>
-      <td><img src="${screenshots[i]}" alt="Missing" width="534" height="300"></td>
+      <img src="${screenshots[i]}" alt="Missing" width="534" height="300">
     <#else>
-      <td><h4>no screenshot</h4></td>
+      <h4>no screenshot</h4>
     </#if>
+    </td>
     </tr>
     </table>
     </div>

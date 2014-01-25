@@ -4,7 +4,7 @@
     <div class="nav">
         <ul>
             <li><a href="/jflicks/admin/1.0/home.html" class="home">Home</a></li>
-            <li><a href="/jflicks/admin/1.0/recordings.html" class="button">Recordings</a></li>
+            <li><a href="/jflicks/admin/1.0/recordings.html" class="record">Recordings</a></li>
             <li><a href="/jflicks/admin/1.0/config.html" class="config">Config</a></li>
             
 		</ul>
