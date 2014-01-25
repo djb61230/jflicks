@@ -16,6 +16,9 @@
 */
 package org.jflicks.restlet.nms;
 
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
+
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.resource.Delete;
@@ -31,7 +34,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class DeleteRecordingResource extends BaseNMSApplicationServerResource {
+public class DeleteRecordingResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -49,7 +52,8 @@ public class DeleteRecordingResource extends BaseNMSApplicationServerResource {
         String rid = getRecordingId();
         if (rid != null) {
 
-            processDelete(rid, isAllowRerecord());
+            NMSSupport nsup = NMSSupport.getInstance();
+            nsup.processDelete(rid, isAllowRerecord());
             setStatus(Status.SUCCESS_ACCEPTED);
         }
     }

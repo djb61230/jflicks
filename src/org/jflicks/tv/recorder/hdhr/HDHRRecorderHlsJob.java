@@ -298,6 +298,32 @@ public class HDHRRecorderHlsJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private String getVideoTranscodeOptions() {
+
+        String result = null;
+
+        HDHRRecorder r = getHDHRRecorder();
+        if (r != null) {
+
+            result = r.getConfiguredVideoTranscodeOptions();
+        }
+
+        return (result);
+    }
+
+    private String getAudioTranscodeOptions() {
+
+        String result = null;
+
+        HDHRRecorder r = getHDHRRecorder();
+        if (r != null) {
+
+            result = r.getAudioTranscodeOptions();
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -342,9 +368,9 @@ public class HDHRRecorderHlsJob extends AbstractJob implements JobListener {
             String prefix = f.getName();
             prefix = prefix.substring(0, prefix.lastIndexOf("."));
             HlsJob hjob = new HlsJob(url, prefix, parent, getDuration());
+            hjob.setVideoCodec(getVideoTranscodeOptions());
             //hjob.setVideoCodec("libx264 -preset superfast -tune zerolatency  -threads 2 -s 1280x720 -flags -global_header");
-            hjob.setAudioCodec("libfdk_aac");
-            hjob.setOptional("-async 1 -ss 00:00:05");
+            hjob.setAudioCodec(getAudioTranscodeOptions());
             hjob.addJobListener(this);
             setHlsJob(hjob);
 

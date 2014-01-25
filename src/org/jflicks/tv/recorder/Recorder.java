@@ -71,6 +71,21 @@ public interface Recorder extends Config {
     String getIndexerName();
 
     /**
+     * A Recorder may need some audio transcode optional arguments as
+     * the native audio format may be to be altered at recording time.
+     *
+     * @return A String instance.
+     */
+    String getAudioTranscodeOptions();
+
+    /**
+     * Should the Recorder save video in HLS mode.
+     *
+     * @return True if recordings are save in HLS format.
+     */
+    boolean isHlsMode();
+
+    /**
      * When the Recording was started.
      *
      * @return The time the recorder started recording it's most recent

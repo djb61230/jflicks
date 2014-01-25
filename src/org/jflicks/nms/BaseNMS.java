@@ -2153,6 +2153,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 result.setHostPort(getHost() + ":" + getPort());
                 result.setStreamURL(computeStreamURL(result));
+                log(DEBUG, "STREAM URL SET TO: " + result.getStreamURL());
             }
         }
 
@@ -2174,6 +2175,8 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 result.setHostPort(getHost() + ":" + getPort());
                 result.setStreamURL(computeStreamURL(result));
+                log(DEBUG, "STREAM URL SET TO: " + result.getStreamURL());
+                System.out.println("STREAM URL SET TO: " + result.getStreamURL());
             }
         }
 

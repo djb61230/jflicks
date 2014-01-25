@@ -38,7 +38,7 @@ public class NMSApplication extends BaseApplication {
         setName("RESTful jflicks media system");
         setDescription("Access and control local jflicks server component.");
         setOwner("jflicks.org");
-        setAuthor("Doug Barnum, copyright 2012");
+        setAuthor("Doug Barnum, copyright 2014");
         setAlias("nms");
     }
 
@@ -81,12 +81,6 @@ public class NMSApplication extends BaseApplication {
             GuideTitleChannelResource.class);
 
         return (router);
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        ClientResource service = new ClientResource("http://localhost:8182/");
-        System.out.println(service.options().getText());
     }
 
 }

@@ -16,6 +16,9 @@
 */
 package org.jflicks.restlet.nms;
 
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
+
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.resource.Put;
@@ -31,7 +34,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class StopRecordingResource extends BaseNMSApplicationServerResource {
+public class StopRecordingResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -49,7 +52,8 @@ public class StopRecordingResource extends BaseNMSApplicationServerResource {
         System.out.println("stopRecording: " + rid);
         if (rid != null) {
 
-            stopRecording(rid);
+            NMSSupport nsup = NMSSupport.getInstance();
+            nsup.stopRecording(rid);
             setStatus(Status.SUCCESS_ACCEPTED);
         }
     }

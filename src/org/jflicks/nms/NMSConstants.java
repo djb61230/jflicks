@@ -136,6 +136,17 @@ public final class NMSConstants {
     public static final String RECORDING_INDEXER_NAME = "Recording Indexer";
 
     /**
+     * The configuration to control audio transcoding during recording.
+     */
+    public static final String AUDIO_TRANSCODE_OPTIONS =
+        "Audio Transcode Options";
+
+    /**
+     * The configuration to signal HLS recording mode.
+     */
+    public static final String HLS_MODE = "HLS Mode";
+
+    /**
      * A Recorder can have a custom Channel list associated with it.  Using
      * this a user can say a particular Recorder only supports a subset
      * of Channels from a ProgramData listing.

@@ -65,7 +65,7 @@ public class Activator extends BaseActivator {
 
             playerfilter = "(|(Player-Handle="
                 + Player.PLAYER_VIDEO_TRANSPORT_STREAM + ")"
-                + "(Player-Handle=" + Player.PLAYER_VIDEO_PROGRAM_STREAM + "))";
+                + "(Player-Handle=" + Player.PLAYER_VIDEO + "))";
             DVRLiveTVScreen dvr = new DVRLiveTVScreen();
             dvr.setInitialTime(getInitialTime());
             dvr.setRestTime(getRestTime());

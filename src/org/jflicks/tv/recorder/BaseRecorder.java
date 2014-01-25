@@ -28,6 +28,7 @@ import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.Recording;
+import org.jflicks.util.Util;
 
 /**
  * This class is a base implementation of the Recorder interface.
@@ -193,6 +194,47 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
             if (nv != null) {
 
                 result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getAudioTranscodeOptions() {
+
+        String result = "copy";
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(
+                NMSConstants.AUDIO_TRANSCODE_OPTIONS);
+            if (nv != null) {
+
+                result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isHlsMode() {
+
+        boolean result = false;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(NMSConstants.HLS_MODE);
+            if (nv != null) {
+
+                result = Util.str2boolean(nv.getValue(), result);
             }
         }
 

@@ -299,6 +299,23 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
                         ccnv.setType(NameValue.STRING_TYPE);
                         bc.addNameValue(ccnv);
 
+                        // Audio Transcode Options
+                        NameValue ato = new NameValue();
+                        ato.setName(NMSConstants.AUDIO_TRANSCODE_OPTIONS);
+                        ato.setDescription(
+                            NMSConstants.AUDIO_TRANSCODE_OPTIONS);
+                        ato.setType(NameValue.STRING_TYPE);
+                        ato.setValue("copy");
+                        bc.addNameValue(ato);
+
+                        // HLS Mode
+                        NameValue hls = new NameValue();
+                        hls.setName(NMSConstants.HLS_MODE);
+                        hls.setDescription(NMSConstants.HLS_MODE);
+                        hls.setType(NameValue.BOOLEAN_TYPE);
+                        hls.setValue("false");
+                        bc.addNameValue(hls);
+
                         // A recording indexer.
                         NameValue rinv = new NameValue();
                         rinv.setName(NMSConstants.RECORDING_INDEXER_NAME);

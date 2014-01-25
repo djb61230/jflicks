@@ -17,6 +17,8 @@
 package org.jflicks.restlet.nms;
 
 import org.jflicks.nms.Video;
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 
 import org.restlet.data.MediaType;
 import org.restlet.ext.json.JsonRepresentation;
@@ -33,7 +35,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class VideoResource extends BaseNMSApplicationServerResource {
+public class VideoResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -50,9 +52,11 @@ public class VideoResource extends BaseNMSApplicationServerResource {
 
         Representation result = null;
 
+        NMSSupport nsup = NMSSupport.getInstance();
+
         if (isFormatJson()) {
 
-            Video[] array = getVideos();
+            Video[] array = nsup.getVideos();
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -66,7 +70,7 @@ public class VideoResource extends BaseNMSApplicationServerResource {
 
         } else if (isFormatXml()) {
 
-            Video[] array = getVideos();
+            Video[] array = nsup.getVideos();
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 

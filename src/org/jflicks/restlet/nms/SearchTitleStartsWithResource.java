@@ -17,6 +17,8 @@
 package org.jflicks.restlet.nms;
 
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.ShowAiring;
 
 import org.restlet.data.MediaType;
@@ -34,8 +36,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class SearchTitleStartsWithResource extends
-    BaseNMSApplicationServerResource {
+public class SearchTitleStartsWithResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -55,9 +56,12 @@ public class SearchTitleStartsWithResource extends
 
         Representation result = null;
 
+        NMSSupport nsup = NMSSupport.getInstance();
+
         if (isFormatJson()) {
 
-            ShowAiring[] array = getShowAiringsByLetter(getTerm(), isUnique());
+            ShowAiring[] array =
+                nsup.getShowAiringsByLetter(getTerm(), isUnique());
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -71,7 +75,8 @@ public class SearchTitleStartsWithResource extends
 
         } else if (isFormatXml()) {
 
-            ShowAiring[] array = getShowAiringsByLetter(getTerm(), isUnique());
+            ShowAiring[] array =
+                nsup.getShowAiringsByLetter(getTerm(), isUnique());
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 

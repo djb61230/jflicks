@@ -270,7 +270,9 @@ public class LiveTV implements Serializable {
      * @return True when in streaming mode.
      */
     public boolean isStreaming() {
-        return (getDestinationHost() != null);
+
+        return (false);
+        //return (getDestinationHost() != null);
     }
 
 }

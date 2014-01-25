@@ -16,6 +16,8 @@
 */
 package org.jflicks.restlet.nms;
 
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.ShowAiring;
 
 import org.restlet.data.MediaType;
@@ -33,7 +35,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class GuideChannelResource extends BaseNMSApplicationServerResource {
+public class GuideChannelResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -53,17 +55,19 @@ public class GuideChannelResource extends BaseNMSApplicationServerResource {
 
         Representation result = null;
 
+        NMSSupport nsup = NMSSupport.getInstance();
+
         if (isFormatJson()) {
 
-            ShowAiring[] array =
-                getShowAiringsByChannel(getChannelById(getChannelId()));
-            log(NMSApplication.DEBUG, "getShowAiringsByChannel array null = "
+            ShowAiring[] array = nsup.getShowAiringsByChannel(
+                nsup.getChannelById(getChannelId()));
+            nsup.log(NMSSupport.DEBUG, "getShowAiringsByChannel array null = "
                 + (array == null));
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
                 String data = g.toJson(array);
-                log(NMSApplication.DEBUG, "json data null = " + (data == null));
+                nsup.log(NMSSupport.DEBUG, "json data null = " + (data == null));
                 if (data != null) {
 
                     JsonRepresentation jr = new JsonRepresentation(data);
@@ -73,8 +77,8 @@ public class GuideChannelResource extends BaseNMSApplicationServerResource {
 
         } else if (isFormatXml()) {
 
-            ShowAiring[] array =
-                getShowAiringsByChannel(getChannelById(getChannelId()));
+            ShowAiring[] array = nsup.getShowAiringsByChannel(
+                nsup.getChannelById(getChannelId()));
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 
@@ -88,7 +92,7 @@ public class GuideChannelResource extends BaseNMSApplicationServerResource {
             }
         }
 
-        log(NMSApplication.DEBUG, "Finished getting guide by channel.");
+        log(NMSSupport.DEBUG, "Finished getting guide by channel.");
 
         return (result);
     }

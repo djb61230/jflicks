@@ -562,6 +562,35 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
 
         log(INFO, "Time to scan for video files...");
 
+        // First we are going to see if the DB video has been
+        // changed to an mp4 extension.  This is really hack code
+        // and we should remove later.  What we will do is if the
+        // file path doesn't exist, but an mp4 version does, then
+        // we will update the database.
+        Video[] currentVids = getVideos();
+        if ((currentVids != null) && (currentVids.length > 0)) {
+
+            for (int i = 0; i < currentVids.length; i++) {
+
+                Video v = currentVids[i];
+                String path = v.getPath();
+                File vfile = new File(path);
+                if (!vfile.exists()) {
+
+                    // It's gone.  See if there is an mp4 version.
+                    path = path.substring(0, path.lastIndexOf("."));
+                    path = path + ".mp4";
+                    vfile = new File(path);
+                    if (vfile.exists()) {
+
+                        v.setPath(path);
+                        v.setFilename(vfile.getName());
+                        addVideo(v);
+                    }
+                }
+            }
+        }
+
         String[] array = getConfiguredVideoDirectories();
         if (array != null) {
 

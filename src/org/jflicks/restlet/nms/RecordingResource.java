@@ -18,6 +18,8 @@ package org.jflicks.restlet.nms;
 
 import java.util.Date;
 
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 
@@ -37,7 +39,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class RecordingResource extends BaseNMSApplicationServerResource {
+public class RecordingResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -56,11 +58,13 @@ public class RecordingResource extends BaseNMSApplicationServerResource {
 
         Representation result = null;
 
+        NMSSupport nsup = NMSSupport.getInstance();
+
         log(NMSApplication.DEBUG, "GET recordings.");
         if (isFormatJson()) {
 
             log(NMSApplication.DEBUG, "User wants JSON.");
-            Recording[] array = getRecordings();
+            Recording[] array = nsup.getRecordings();
             log(NMSApplication.DEBUG, "getRecordings array null = "
                 + (array == null));
             Gson g = getGson();
@@ -72,19 +76,13 @@ public class RecordingResource extends BaseNMSApplicationServerResource {
 
                     JsonRepresentation sr = new JsonRepresentation(data);
                     result = sr;
-
-                    /*
-                    StringRepresentation sr = new StringRepresentation(data);
-                    sr.setMediaType(MediaType.APPLICATION_JSON);
-                    result = sr;
-                    */
                 }
             }
 
         } else if (isFormatXml()) {
 
             log(NMSApplication.DEBUG, "User wants XML.");
-            Recording[] array = getRecordings();
+            Recording[] array = nsup.getRecordings();
             log(NMSApplication.DEBUG, "getRecordings array null = "
                 + (array == null));
             XStream x = getXStream();

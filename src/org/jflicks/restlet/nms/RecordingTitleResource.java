@@ -18,6 +18,8 @@ package org.jflicks.restlet.nms;
 
 import java.util.Date;
 
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 
@@ -37,7 +39,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class RecordingTitleResource extends BaseNMSApplicationServerResource {
+public class RecordingTitleResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -54,9 +56,11 @@ public class RecordingTitleResource extends BaseNMSApplicationServerResource {
 
         Representation result = null;
 
+        NMSSupport nsup = NMSSupport.getInstance();
+
         if (isFormatJson()) {
 
-            String[] array = getRecordingTitles();
+            String[] array = nsup.getRecordingTitles();
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -70,7 +74,7 @@ public class RecordingTitleResource extends BaseNMSApplicationServerResource {
 
         } else if (isFormatXml()) {
 
-            String[] array = getRecordingTitles();
+            String[] array = nsup.getRecordingTitles();
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 

@@ -3,6 +3,8 @@ package org.jflicks.restlet.admin;
 import java.util.HashMap;
 
 import org.jflicks.nms.State;
+import org.jflicks.restlet.NMSSupport;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.restlet.data.MediaType;
@@ -43,8 +45,9 @@ public class HomeResource extends BaseAdminServerResource {
 
             HashMap<String, Object> root = new HashMap<String, Object>();
             
+            NMSSupport nsup = NMSSupport.getInstance();
             
-            State state = getState();
+            State state = nsup.getState();
             
             if(state != null){
                 root.put("status",state);

@@ -153,6 +153,9 @@ public abstract class BaseApplication extends WadlApplication implements Log,
      */
     public void setLogServiceTracker(ServiceTracker st) {
         logServiceTracker = st;
+
+        NMSSupport nsup = NMSSupport.getInstance();
+        nsup.setLogServiceTracker(logServiceTracker);
     }
 
     /**
@@ -227,6 +230,12 @@ public abstract class BaseApplication extends WadlApplication implements Log,
                 newArray = l.toArray(new NMS[l.size()]);
             }
         }
+
+        LiveTVSupport ltv = LiveTVSupport.getInstance();
+        ltv.setNMS(getNMS());
+
+        NMSSupport ns = NMSSupport.getInstance();
+        ns.setNMS(getNMS());
     }
 
     public String getBaseURI() {

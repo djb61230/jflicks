@@ -223,6 +223,19 @@ public class V4l2RecorderJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private String getAudioTranscodeOptions() {
+
+        String result = null;
+
+        V4l2Recorder r = getV4l2Recorder();
+        if (r != null) {
+
+            result = r.getAudioTranscodeOptions();
+        }
+
+        return (result);
+    }
+
     private long getDuration() {
 
         long result = -1;
@@ -275,6 +288,7 @@ public class V4l2RecorderJob extends AbstractJob implements JobListener {
         RecordJob rj = new RecordJob();
         setRecordJob(rj);
         rj.addJobListener(this);
+        rj.setAudioTranscodeOptions(getAudioTranscodeOptions());
         rj.setDevice(getDevice());
         rj.setFile(getFile());
         rj.setDuration(getDuration());

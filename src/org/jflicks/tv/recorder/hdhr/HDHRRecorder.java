@@ -26,6 +26,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.recorder.BaseRecorder;
+import org.jflicks.util.Util;
 
 /**
  * Class that can record from an HDHR.
@@ -35,6 +36,9 @@ import org.jflicks.tv.recorder.BaseRecorder;
  */
 public class HDHRRecorder extends BaseRecorder {
 
+    private static final String VIDEO_TRANSCODE_OPTIONS =
+        "Video Transcode Options";
+    private static final String TRANSCODE_MODE = "Transcode Mode";
     private static final String FREQUENCY_TYPE = "Frequency Type";
     private static final String AUTO = "auto";
     private static final String US_BCAST = "us-bcast";
@@ -45,6 +49,7 @@ public class HDHRRecorder extends BaseRecorder {
     private JobContainer jobContainer;
     private boolean useScanFile;
     private ScanFile scanFile;
+    private String ipAddress;
 
     /**
      * Simple default constructor.
@@ -54,6 +59,28 @@ public class HDHRRecorder extends BaseRecorder {
         setTitle("HDHomerun");
         setExtension("ts");
         setQuickTunable(false);
+    }
+
+    /**
+     * Modern HDHR devices can be streamed using their I{P address rather
+     * than using hdhomerun_config and the device Id.  This new way is
+     * preferred if the hardware is capable or HLS recording is turned on.
+     *
+     * @return An IP address as a String.
+     */
+    public String getIpAddress() {
+        return (ipAddress);
+    }
+
+    /**
+     * Modern HDHR devices can be streamed using their I{P address rather
+     * than using hdhomerun_config and the device Id.  This new way is
+     * preferred if the hardware is capable or HLS recording is turned on.
+     *
+     * @param s An IP address as a String.
+     */
+    public void setIpAddress(String s) {
+        ipAddress = s;
     }
 
     /**
@@ -71,11 +98,42 @@ public class HDHRRecorder extends BaseRecorder {
             setRecording(true);
             setRecordingLiveTV(live);
 
-            HDHRRecorderJob job = new HDHRRecorderJob(this);
-            //HDHRRecorderHlsJob job = new HDHRRecorderHlsJob(this);
-            JobContainer jc = JobManager.getJobContainer(job);
-            setJobContainer(jc);
-            jc.start();
+            if (isHlsMode()) {
+
+                if (isConfiguredTranscodeMode()) {
+
+                    HDHRRecorderTranscodeHlsJob job =
+                        new HDHRRecorderTranscodeHlsJob(this);
+                    JobContainer jc = JobManager.getJobContainer(job);
+                    setJobContainer(jc);
+                    jc.start();
+
+                } else {
+
+                    HDHRRecorderHlsJob job = new HDHRRecorderHlsJob(this);
+                    JobContainer jc = JobManager.getJobContainer(job);
+                    setJobContainer(jc);
+                    jc.start();
+                }
+
+            } else {
+
+                if (isConfiguredTranscodeMode()) {
+
+                    HDHRRecorderTranscodeJob job =
+                        new HDHRRecorderTranscodeJob(this);
+                    JobContainer jc = JobManager.getJobContainer(job);
+                    setJobContainer(jc);
+                    jc.start();
+
+                } else {
+
+                    HDHRRecorderJob job = new HDHRRecorderJob(this);
+                    JobContainer jc = JobManager.getJobContainer(job);
+                    setJobContainer(jc);
+                    jc.start();
+                }
+            }
         }
     }
 
@@ -356,6 +414,51 @@ public class HDHRRecorder extends BaseRecorder {
                         break;
                     }
                 }
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * If the HDHR hardware is a new type it can transcode to h264.  Of
+     * course its optional but desirable if the hardware can do it.
+     *
+     * @return True when transcoding is on.
+     */
+    public boolean isConfiguredTranscodeMode() {
+
+        boolean result = false;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(TRANSCODE_MODE);
+            if (nv != null) {
+
+                result = Util.str2boolean(nv.getValue(), result);
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * Convenience method to see the configured video transcode options.
+     *
+     * @return The setting as a String.
+     */
+    public String getConfiguredVideoTranscodeOptions() {
+
+        String result = "copy";
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv = c.findNameValueByName(VIDEO_TRANSCODE_OPTIONS);
+            if (nv != null) {
+
+                result = nv.getValue();
             }
         }
 

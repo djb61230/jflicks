@@ -32,6 +32,7 @@ import org.jflicks.tv.LiveTV;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.RecorderInformation;
 import org.jflicks.tv.scheduler.Scheduler;
+import org.jflicks.util.StartsWithFilter;
 
 /**
  * This class is a base implementation of the Live interface.
@@ -281,11 +282,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
         if ((l != null) && (c != null)) {
 
-            if (l.isStreaming()) {
-                result = changeChannelStreaming(l, c);
-            } else {
-                result = changeChannelRecording(l, c);
-            }
+            result = changeChannelRecording(l, c);
         }
 
         return (result);
@@ -306,14 +303,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
                     log(DEBUG, "stop recording");
                     old.stopRecording();
-                    File output = old.getDestination();
-                    if (output != null) {
-
-                        if (!output.delete()) {
-
-                            log(WARNING, "Failed to delete live file.");
-                        }
-                    }
+                    cleanup(l);
                 }
 
                 Recorder r = computeRecorder(s, c);
@@ -335,8 +325,36 @@ public abstract class BaseLive extends BaseConfig implements Live {
                         log(DEBUG, "recording to file <" + output + ">");
                         s.setCurrentRecorder(r);
                         r.startRecording(c, 60 * 60 * 4, output, true);
-                        l.setPath(output.getPath());
+
+                        String hls = output.getPath();
+                        hls = hls.substring(0, hls.lastIndexOf("."));
+                        hls = hls + ".m3u8";
+                        l.setPath(hls);
+
                         l.setCurrentChannel(c);
+
+                        // We are going to block here until we
+                        // have a valid files.  Things take time
+                        // to spin up.
+                        File m3u8 = new File(hls);
+                        int loops = 0;
+                        boolean done = false;
+                        while (!done) {
+
+                            loops++;
+                            done = count(l) >= 3;
+                            if (!done) {
+
+                                done = loops > 30;
+                            }
+
+                            try {
+
+                                Thread.sleep(500);
+
+                            } catch (Exception ex) {
+                            }
+                        }
 
                     } else {
 
@@ -357,82 +375,52 @@ public abstract class BaseLive extends BaseConfig implements Live {
         return (l);
     }
 
-    private LiveTV changeChannelStreaming(LiveTV l, Channel c) {
+    private int count(LiveTV l) {
 
-        if ((l != null) && (c != null)) {
+        int result = 0;
 
-            Session s = findSession(l);
-            if (s != null) {
+        File file = new File(l.getPath());
+        File parent = file.getParentFile();
+        String fname = file.getName();
+        if ((parent != null) && (fname != null)) {
 
-                // Assume quickTune is out of the mix...
-                boolean doQuickTune = false;
+            // This really should get everything.
+            fname = fname.substring(0, fname.lastIndexOf("."));
+            File[] array =
+                parent.listFiles(new StartsWithFilter(fname));
+            if (array != null) {
 
-                Recorder old = s.getCurrentRecorder();
-                Recorder r = computeRecorder(s, c);
-                if (old != null) {
-
-                    // If we are switching recorders, then we have to stop
-                    // the current stream - no question.
-                    if (!old.equals(r)) {
-
-                        log(DEBUG, "stop streaming - changing recorders");
-                        old.stopStreaming();
-
-                    } else {
-
-                        // We have the same recorder but have to check if
-                        // quick tuning is possible...
-                        if (r.isQuickTunable()) {
-
-                            doQuickTune = true;
-
-                        } else {
-
-                            log(DEBUG, "stop streaming because no quick tune");
-                            old.stopStreaming();
-                        }
-                    }
-                }
-
-                log(DEBUG, "channel: " + c);
-                log(DEBUG, "recorder: " + r);
-                if (r != null) {
-
-                    s.setCurrentRecorder(r);
-
-                    if (doQuickTune) {
-
-                        log(DEBUG, "already streaming - do quicktune....");
-                        r.quickTune(c);
-
-                    } else {
-
-                        if (!r.isRecording()) {
-
-                            log(DEBUG, "starting to stream...");
-                            r.startStreaming(c, l.getDestinationHost(),
-                                l.getDestinationPort());
-                        }
-                    }
-
-                    l.setCurrentChannel(c);
-
-                } else {
-
-                    l.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
-                    l.setMessage("No Available Recorders!");
-                    log(DEBUG, "No Available Recorders!");
-                }
-
-            } else {
-
-                l.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
-                l.setMessage("Invalid session!");
-                log(DEBUG, "Invalid session!");
+                result = array.length;
             }
         }
 
-        return (l);
+        return (result);
+    }
+
+    private void cleanup(LiveTV l) {
+
+        if (l != null) {
+
+            File file = new File(l.getPath());
+            File parent = file.getParentFile();
+            String fname = file.getName();
+            if ((parent != null) && (fname != null)) {
+
+                // This really should get everything.
+                fname = fname.substring(0, fname.lastIndexOf("."));
+                File[] array =
+                    parent.listFiles(new StartsWithFilter(fname));
+                if (array != null) {
+
+                    for (int i = 0; i < array.length; i++) {
+
+                        if (!array[i].delete()) {
+                            log(WARNING, array[i].getPath() + " del fail");
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -442,31 +430,15 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
         if (l != null) {
 
-            boolean streaming = l.isStreaming();
             Session s = findSession(l);
             if (s != null) {
 
                 Recorder r = s.getCurrentRecorder();
                 if (r != null) {
 
-                    if (streaming) {
-
-                        r.stopStreaming();
-                        log(DEBUG, "closeSession: stopStreaming");
-
-                    } else {
-
-                        r.stopRecording();
-                        File output = r.getDestination();
-                        log(DEBUG, "closeSession: " + output);
-                        if (output != null) {
-
-                            if (!output.delete()) {
-
-                                log(WARNING, "Failed to delete live file.");
-                            }
-                        }
-                    }
+                    r.stopRecording();
+                    cleanup(l);
+                    log(DEBUG, "closeSession: stopRecording");
                 }
             }
         }
@@ -517,7 +489,23 @@ public abstract class BaseLive extends BaseConfig implements Live {
             Scheduler s = n.getScheduler();
             if (s != null) {
 
-                result = s.getConfiguredRecorders();
+                Recorder[] array = s.getConfiguredRecorders();
+                if ((array != null) && (array.length > 0)) {
+
+                    ArrayList<Recorder> rlist = new ArrayList<Recorder>();
+                    for (int i = 0; i < array.length; i++) {
+
+                        if (array[i].isHlsMode()) {
+
+                            rlist.add(array[i]);
+                        }
+                    }
+
+                    if (rlist.size() > 0) {
+
+                        result = rlist.toArray(new Recorder[rlist.size()]);
+                    }
+                }
             }
         }
 

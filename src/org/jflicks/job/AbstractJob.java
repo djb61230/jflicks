@@ -88,7 +88,11 @@ public abstract class AbstractJob implements Job, Jobable {
      * {@inheritDoc}
      */
     public void removeJobListener(JobListener l) {
-        jobList.remove(l);
+
+        if (l != null) {
+
+            jobList.remove(l);
+        }
     }
 
     /**

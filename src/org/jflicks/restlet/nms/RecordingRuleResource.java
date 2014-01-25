@@ -18,6 +18,8 @@ package org.jflicks.restlet.nms;
 
 import java.io.IOException;
 
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Task;
@@ -38,7 +40,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class RecordingRuleResource extends BaseNMSApplicationServerResource {
+public class RecordingRuleResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -58,9 +60,11 @@ public class RecordingRuleResource extends BaseNMSApplicationServerResource {
 
         Representation result = null;
 
+        NMSSupport nsup = NMSSupport.getInstance();
+
         if (isFormatJson()) {
 
-            RecordingRule[] array = getRecordingRules();
+            RecordingRule[] array = nsup.getRecordingRules();
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -74,7 +78,7 @@ public class RecordingRuleResource extends BaseNMSApplicationServerResource {
 
         } else if (isFormatXml()) {
 
-            RecordingRule[] array = getRecordingRules();
+            RecordingRule[] array = nsup.getRecordingRules();
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 
@@ -103,7 +107,9 @@ public class RecordingRuleResource extends BaseNMSApplicationServerResource {
                 RecordingRule rr = g.fromJson(json, RecordingRule.class);
                 if (rr != null) {
 
-                    RecordingRule oldrr = getRecordingRuleById(getRuleId());
+                    NMSSupport nsup = NMSSupport.getInstance();
+                    RecordingRule oldrr =
+                        nsup.getRecordingRuleById(getRuleId());
                     if (oldrr != null) {
 
                         // We really only care about 4 fields.
@@ -139,7 +145,7 @@ public class RecordingRuleResource extends BaseNMSApplicationServerResource {
                             oldrr.setTasks(tasks);
                         }
 
-                        schedule(oldrr);
+                        nsup.schedule(oldrr);
                     }
                 }
 

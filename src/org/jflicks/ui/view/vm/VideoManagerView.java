@@ -44,6 +44,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.metadata.Metadata;
 import org.jflicks.nms.NMS;
+import org.jflicks.nms.Video;
 import org.jflicks.ui.view.JFlicksView;
 import org.jflicks.util.ProgressBar;
 import org.jflicks.util.Util;
@@ -228,6 +229,9 @@ public class VideoManagerView extends JFlicksView implements ActionListener {
             VideoScanAction vsa = new VideoScanAction();
             fileMenu.add(vsa);
 
+            VideoRemoveAction vma = new VideoRemoveAction();
+            fileMenu.add(vma);
+
             ExitAction exitAction = new ExitAction();
             fileMenu.addSeparator();
             fileMenu.add(exitAction);
@@ -355,6 +359,44 @@ public class VideoManagerView extends JFlicksView implements ActionListener {
                     new ProgressBar(getVideoPanel(), "Scanning...", vsj);
                 pbar.addJobListener(this);
                 pbar.execute();
+            }
+        }
+    }
+
+    class VideoRemoveAction extends AbstractAction implements JobListener {
+
+        public VideoRemoveAction() {
+
+            putValue(NAME, "Remove Video");
+            putValue(SHORT_DESCRIPTION, "Remove Video");
+        }
+
+        public void jobUpdate(JobEvent event) {
+
+            if (event.getType() == JobEvent.COMPLETE) {
+
+                VideoPanel vp = getVideoPanel();
+                if (vp != null) {
+                    vp.setNMS(getSelectedNMS());
+                }
+            }
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            NMS n = getSelectedNMS();
+            VideoPanel vp = getVideoPanel();
+            if ((n != null) && (vp != null)) {
+
+                Video v = vp.getSelectedVideo();
+                if (v != null) {
+
+                    VideoRemoveJob vmj = new VideoRemoveJob(n, v);
+                    ProgressBar pbar = new ProgressBar(getVideoPanel(),
+                        "Remove and scan...", vmj);
+                    pbar.addJobListener(this);
+                    pbar.execute();
+                }
             }
         }
     }

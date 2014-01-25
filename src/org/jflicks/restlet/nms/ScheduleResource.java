@@ -18,6 +18,8 @@ package org.jflicks.restlet.nms;
 
 import java.io.IOException;
 
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.Task;
 
@@ -33,7 +35,7 @@ import com.google.gson.Gson;
  * @author Doug Barnum
  * @version 1.0
  */
-public class ScheduleResource extends BaseNMSApplicationServerResource {
+public class ScheduleResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -45,6 +47,8 @@ public class ScheduleResource extends BaseNMSApplicationServerResource {
     public void schedule(Representation r) {
 
         Representation result = null;
+
+        NMSSupport nsup = NMSSupport.getInstance();
 
         Gson g = getGson();
         if ((g != null) && (r != null)) {
@@ -58,7 +62,7 @@ public class ScheduleResource extends BaseNMSApplicationServerResource {
                 if (rr != null) {
 
                     RecordingRule myrr = null;
-                    RecordingRule old = getRecordingRuleById(rr.getId());
+                    RecordingRule old = nsup.getRecordingRuleById(rr.getId());
                     log(NMSApplication.DEBUG, "old rule: " + old);
 
                     if (old != null) {
@@ -100,12 +104,12 @@ public class ScheduleResource extends BaseNMSApplicationServerResource {
                     }
 
                     log(NMSApplication.DEBUG, "new rule: " + myrr);
-                    schedule(myrr);
+                    nsup.schedule(myrr);
                 }
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log(NMSApplication.DEBUG, ex.getMessage());
             }
         }
     }

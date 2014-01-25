@@ -134,6 +134,11 @@ public final class FromMpeg2 implements JobListener {
      */
     public static void main(String[] args) {
 
+        String ffhome = System.getProperty("ffhome");
+        if (ffhome == null) {
+            ffhome = "ffmpeg";
+        }
+
         FromMpeg2 from = new FromMpeg2();
         File[] array = from.findMkvs(args);
         if ((array != null) && (array.length > 0)) {
@@ -152,7 +157,7 @@ public final class FromMpeg2 implements JobListener {
                 File fred = new File(parent, "fred.mp4");
                 fred.deleteOnExit();
                 File dest = new File(parent, destname);
-                String command0 = "ffmpeg -y -i " + f.getPath()
+                String command0 = ffhome + " -y -i " + f.getPath()
                     + " -vcodec libx264"
                     + " -preset superfast"
                     + " -tune zerolatency"
@@ -165,7 +170,7 @@ public final class FromMpeg2 implements JobListener {
                     + " " + fred.getPath();
                 from.systemJobs[index++] = SystemJob.getInstance(command0);
 
-                String command1 = "ffmpeg -y -i " + fred.getPath()
+                String command1 = ffhome + " -y -i " + fred.getPath()
                     + " -vcodec copy"
                     + " -acodec libfdk_aac"
                     + " " + dest.getPath();

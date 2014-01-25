@@ -16,6 +16,8 @@
 */
 package org.jflicks.restlet.nms;
 
+import org.jflicks.restlet.BaseServerResource;
+
 import org.restlet.data.MediaType;
 import org.restlet.ext.wadl.DocumentationInfo;
 import org.restlet.ext.wadl.MethodInfo;
@@ -30,7 +32,7 @@ import org.restlet.resource.ResourceException;
  * @author Doug Barnum
  * @version 1.0
  */
-public class RootResource extends BaseNMSApplicationServerResource {
+public class RootResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.

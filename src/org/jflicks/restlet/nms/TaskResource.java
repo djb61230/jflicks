@@ -16,6 +16,8 @@
 */
 package org.jflicks.restlet.nms;
 
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.Task;
 
 import org.restlet.data.MediaType;
@@ -33,7 +35,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class TaskResource extends BaseNMSApplicationServerResource {
+public class TaskResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -50,9 +52,11 @@ public class TaskResource extends BaseNMSApplicationServerResource {
 
         Representation result = null;
 
+        NMSSupport nsup = NMSSupport.getInstance();
+
         if (isFormatJson()) {
 
-            Task[] array = getTasks();
+            Task[] array = nsup.getTasks();
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -66,7 +70,7 @@ public class TaskResource extends BaseNMSApplicationServerResource {
 
         } else if (isFormatXml()) {
 
-            Task[] array = getTasks();
+            Task[] array = nsup.getTasks();
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 

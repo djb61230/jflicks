@@ -250,6 +250,19 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private String getAudioTranscodeOptions() {
+
+        String result = null;
+
+        V4l2Recorder r = getV4l2Recorder();
+        if (r != null) {
+
+            result = r.getAudioTranscodeOptions();
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -281,6 +294,7 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
             prefix = prefix.substring(0, prefix.lastIndexOf("."));
             HlsJob hjob =
                 new HlsJob(getDevice(), prefix, parent, getDuration());
+            hjob.setAudioCodec(getAudioTranscodeOptions());
             hjob.addJobListener(this);
             setHlsJob(hjob);
 

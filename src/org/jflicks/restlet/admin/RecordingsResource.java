@@ -2,6 +2,7 @@ package org.jflicks.restlet.admin;
 
 import java.util.HashMap;
 
+import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.Recording;
 
 import freemarker.template.Configuration;
@@ -39,6 +40,8 @@ public class RecordingsResource extends BaseAdminServerResource {
 
         Representation result = null;
 
+        NMSSupport nsup = NMSSupport.getInstance();
+
         Configuration c = getConfiguration();  
         if (c != null) {
 
@@ -49,9 +52,9 @@ public class RecordingsResource extends BaseAdminServerResource {
             String title = getQuery().getValues("title");
             System.out.println("FFFFFFFFFFFF: " + title);
             if (title != null) {
-                recs = getRecordingsByTitle(title);
+                recs = nsup.getRecordingsByTitle(title);
             } else {
-                recs = getRecordings();
+                recs = nsup.getRecordings();
             }
             if (recs != null) {
 
@@ -82,7 +85,7 @@ public class RecordingsResource extends BaseAdminServerResource {
                 root.put("screenshots", shots);
 
                 // Now handle categories.
-                String[] titles = getRecordingTitles();
+                String[] titles = nsup.getRecordingTitles();
                 String[] urls = getRecordingTitleUrls(titles);
                 root.put("category_title", "Recordings By Title");
                 root.put("category_urls", urls);

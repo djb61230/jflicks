@@ -19,6 +19,8 @@ package org.jflicks.restlet.nms;
 import java.io.IOException;
 import java.util.Date;
 
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.Upcoming;
 
 import org.restlet.data.MediaType;
@@ -38,7 +40,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class UpcomingResource extends BaseNMSApplicationServerResource {
+public class UpcomingResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -56,9 +58,11 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
 
         Representation result = null;
 
+        NMSSupport nsup = NMSSupport.getInstance();
+
         if (isFormatJson()) {
 
-            Upcoming[] array = getUpcomings();
+            Upcoming[] array = nsup.getUpcomings();
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -72,7 +76,7 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
 
         } else if (isFormatXml()) {
 
-            Upcoming[] array = getUpcomings();
+            Upcoming[] array = nsup.getUpcomings();
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 
@@ -94,13 +98,11 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
     @Put
     public void override(Representation r) {
 
-        System.out.println("we r <" + r + ">");
         if (r != null) {
 
             try {
 
                 String showId = r.getText();
-                System.out.println("we showId <" + showId + ">");
                 if (showId != null) {
 
                     int index = showId.indexOf("=");
@@ -109,18 +111,18 @@ public class UpcomingResource extends BaseNMSApplicationServerResource {
                         showId = showId.substring(index + 1);
                     }
 
-                    Upcoming u = getUpcomingByShowId(showId);
-                    System.out.println("we u <" + u + ">");
+                    NMSSupport nsup = NMSSupport.getInstance();
+                    Upcoming u = nsup.getUpcomingByShowId(showId);
                     if (u != null) {
 
-                        overrideUpcoming(u);
+                        nsup.overrideUpcoming(u);
                         setStatus(Status.SUCCESS_ACCEPTED);
                     }
                 }
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                log(NMSApplication.WARNING, ex.getMessage());
             }
         }
     }

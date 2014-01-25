@@ -18,6 +18,8 @@ package org.jflicks.restlet.nms;
 
 import java.util.ArrayList;
 
+import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
 
@@ -36,7 +38,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Doug Barnum
  * @version 1.0
  */
-public class GuideTitleChannelResource extends BaseNMSApplicationServerResource {
+public class GuideTitleChannelResource extends BaseServerResource {
 
     /**
      * Simple empty constructor.
@@ -56,10 +58,12 @@ public class GuideTitleChannelResource extends BaseNMSApplicationServerResource 
 
         Representation result = null;
 
+        NMSSupport nsup = NMSSupport.getInstance();
+
         if (isFormatJson()) {
 
-            ShowAiring[] array =
-                getShowAiringsByChannel(getChannelById(getChannelId()));
+            ShowAiring[] array = nsup.getShowAiringsByChannel(
+                nsup.getChannelById(getChannelId()));
             array = filter(getTerm(), array);
             Gson g = getGson();
             if ((g != null) && (array != null)) {
@@ -74,8 +78,8 @@ public class GuideTitleChannelResource extends BaseNMSApplicationServerResource 
 
         } else if (isFormatXml()) {
 
-            ShowAiring[] array =
-                getShowAiringsByChannel(getChannelById(getChannelId()));
+            ShowAiring[] array = nsup.getShowAiringsByChannel(
+                nsup.getChannelById(getChannelId()));
             array = filter(getTerm(), array);
             XStream x = getXStream();
             if ((x != null) && (array != null)) {

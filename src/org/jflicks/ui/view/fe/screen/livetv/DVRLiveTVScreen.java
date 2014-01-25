@@ -79,8 +79,9 @@ public class DVRLiveTVScreen extends BaseLiveTVScreen {
     public void startPlayer(LiveTV l) {
 
         Player p = getPlayer();
-        Transfer t = getTransfer();
-        if ((p != null) && (t != null) && (l != null)) {
+        //Transfer t = getTransfer();
+        //if ((p != null) && (t != null) && (l != null)) {
+        if ((p != null) && (l != null)) {
 
             if (p.isPlaying()) {
 
@@ -88,10 +89,12 @@ public class DVRLiveTVScreen extends BaseLiveTVScreen {
                 p.stop();
             }
 
+            System.out.println("LIVE PATH = " + l.getPath());
+
             // Now we have to get the right player in case we switched
             // stream types.
-            if (l.getPath().endsWith("mpg")) {
-                setStreamType(Player.PLAYER_VIDEO_PROGRAM_STREAM);
+            if (l.getPath().endsWith("m3u8")) {
+                setStreamType(Player.PLAYER_VIDEO);
             } else if (l.getPath().endsWith("ts")) {
                 setStreamType(Player.PLAYER_VIDEO_TRANSPORT_STREAM);
             }
@@ -123,12 +126,18 @@ public class DVRLiveTVScreen extends BaseLiveTVScreen {
 
             p.addPropertyChangeListener("Completed", this);
 
-            String path =
-                t.transfer(r, getInitialTime(), getRestTime());
-            log(DEBUG, "local: " + path);
+            //String path =
+            //    t.transfer(r, getInitialTime(), getRestTime());
+            //log(DEBUG, "local: " + path);
             setMarkTime(System.currentTimeMillis());
             setBlocking(true);
-            p.play(path);
+            //p.play(path);
+            System.out.println("FRED: " + r.getStreamURL());
+            try {
+                //Thread.sleep(15000);
+            } catch (Exception ex) {
+            }
+            p.play(r.getStreamURL());
         }
     }
 

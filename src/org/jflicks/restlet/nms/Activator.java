@@ -45,7 +45,6 @@ public class Activator extends BaseActivator {
         setBundleContext(bc);
 
         NMSApplication app = new NMSApplication();
-        RecordingResource.setNMSApplication(app);
 
         nmsTracker = new NMSTracker(bc, app);
         nmsTracker.open();

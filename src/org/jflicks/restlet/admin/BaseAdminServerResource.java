@@ -58,18 +58,6 @@ public abstract class BaseAdminServerResource extends BaseServerResource {
         return (result);
     }
 
-    public NMS[] getNMS() {
-
-        NMS[] result = null;
-
-        if (admin != null) {
-
-            result = admin.getNMS();
-        }
-
-        return (result);
-    }
-
     public String getBaseURI() {
 
         String result = null;
@@ -80,15 +68,6 @@ public abstract class BaseAdminServerResource extends BaseServerResource {
         }
 
         return (result);
-    }
-
-    public void log(int level, String message) {
-
-        Admin app = getAdmin();
-        if (app != null) {
-
-            app.log(level, message);
-        }
     }
 
     public String[] getMenuURLs() {

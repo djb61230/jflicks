@@ -33,6 +33,7 @@ import org.jflicks.job.SystemJob;
 public class DiscoverJob extends BaseHDHRJob {
 
     private ArrayList<String> idList;
+    private ArrayList<String> ipList;
 
     /**
      * Simple no argument constructor.
@@ -40,6 +41,7 @@ public class DiscoverJob extends BaseHDHRJob {
     public DiscoverJob() {
 
         setIdList(new ArrayList<String>());
+        setIpList(new ArrayList<String>());
     }
 
     private ArrayList<String> getIdList() {
@@ -74,11 +76,43 @@ public class DiscoverJob extends BaseHDHRJob {
         }
     }
 
+    private ArrayList<String> getIpList() {
+        return (ipList);
+    }
+
+    private void setIpList(ArrayList<String> l) {
+        ipList = l;
+    }
+
+    private void addIp(String s) {
+
+        ArrayList<String> l = getIpList();
+        if ((l != null) && (s != null)) {
+            l.add(s);
+        }
+    }
+
+    private void removeIp(String s) {
+
+        ArrayList<String> l = getIpList();
+        if ((l != null) && (s != null)) {
+            l.remove(s);
+        }
+    }
+
+    private void clearIpList() {
+
+        ArrayList<String> l = getIpList();
+        if (l != null) {
+            l.clear();
+        }
+    }
+
     /**
      * The array of HDHR ID values found on the network.  There will be one
      * ID for each HDHR found.
      *
-     * @return An array od String instances representing HDHR ID values.
+     * @return An array of String instances representing HDHR ID values.
      */
     public String[] getIds() {
 
@@ -94,12 +128,32 @@ public class DiscoverJob extends BaseHDHRJob {
     }
 
     /**
+     * The array of HDHR IP addresses found on the network.  There will be one
+     * IP address for each HDHR found.
+     *
+     * @return An array of String instances representing HDHR IP addresses.
+     */
+    public String[] getIps() {
+
+        String[] result = null;
+
+        ArrayList<String> l = getIpList();
+        if (l != null) {
+
+            result = l.toArray(new String[l.size()]);
+        }
+
+        return (result);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void start() {
 
         setTerminate(false);
         clearIdList();
+        clearIpList();
     }
 
     /**
@@ -163,6 +217,9 @@ public class DiscoverJob extends BaseHDHRJob {
                                  st.nextToken();
                                  st.nextToken();
                                  addId(st.nextToken());
+                                 st.nextToken();
+                                 st.nextToken();
+                                 addIp(st.nextToken());
                              }
                          }
                      }

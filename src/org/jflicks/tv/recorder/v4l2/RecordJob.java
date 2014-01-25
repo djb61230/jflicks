@@ -22,7 +22,7 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.recorder.BaseDeviceJob;
-import org.jflicks.tv.recorder.CopyJob;
+//import org.jflicks.tv.recorder.CopyJob;
 
 /**
  * After finding, setting a channel, it's time to record from a v4l2
@@ -36,11 +36,30 @@ public class RecordJob extends BaseDeviceJob {
 
     private File file;
     private long duration;
+    private String audioTranscodeOptions;
 
     /**
      * Simple no argument constructor.
      */
     public RecordJob() {
+    }
+
+    /**
+     * Audio options to pass to ffmpeg.
+     *
+     * @return A String instance.
+     */
+    public String getAudioTranscodeOptions() {
+        return (audioTranscodeOptions);
+    }
+
+    /**
+     * Audio options to pass to ffmpeg.
+     *
+     * @param s A String instance.
+     */
+    public void setAudioTranscodeOptions(String s) {
+        audioTranscodeOptions = s;
     }
 
     /**
@@ -105,11 +124,19 @@ public class RecordJob extends BaseDeviceJob {
      */
     public void run() {
 
+        DeviceJob job = new DeviceJob(getDevice(), fileToString());
+        job.setAudioCodec(getAudioTranscodeOptions());
+        job.addJobListener(this);
+        JobContainer jc = JobManager.getJobContainer(job);
+        setJobContainer(jc);
+        jc.start();
+        /*
         CopyJob job = new CopyJob(getDevice(), fileToString());
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);
         setJobContainer(jc);
         jc.start();
+        */
 
         // End  a few seconds early...
         long l = getDuration() - 3;
@@ -157,10 +184,16 @@ public class RecordJob extends BaseDeviceJob {
         if (jc != null) {
 
             // First lets stop listening since we are stopping it ourselves.
+            DeviceJob dj = (DeviceJob) jc.getJob();
+            dj.removeJobListener(this);
+            jc.stop();
+            setJobContainer(null);
+            /*
             CopyJob cj = (CopyJob) jc.getJob();
             cj.removeJobListener(this);
             jc.stop();
             setJobContainer(null);
+            */
         }
     }
 
