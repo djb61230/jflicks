@@ -67,6 +67,7 @@ public abstract class BaseServerResource extends WadlServerResource {
     private String ruleId;
     private String channelId;
     private String showId;
+    private String liveTVId;
     private String term;
     private String title;
     private boolean unique;
@@ -147,6 +148,14 @@ public abstract class BaseServerResource extends WadlServerResource {
         showId = s;
     }
 
+    public String getLiveTVId() {
+        return (liveTVId);
+    }
+
+    public void setLiveTVId(String s) {
+        liveTVId = s;
+    }
+
     public String getTerm() {
         return (term);
     }
@@ -213,7 +222,9 @@ public abstract class BaseServerResource extends WadlServerResource {
             setShowId(decode((String) map.get("showId")));
             setTerm(decode((String) map.get("term")));
             setTitle(decode((String) map.get("title")));
-            setUnique(Util.str2boolean(decode((String) map.get("unique")), false));
+            setUnique(Util.str2boolean(decode((String) map.get("unique")),
+                false));
+            setLiveTVId(decode((String) map.get("liveTVId")));
         }
     }
 

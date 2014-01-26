@@ -24,13 +24,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jflicks.nms.NMS;
+import org.jflicks.nms.NMSUtil;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.Listing;
+import org.jflicks.tv.LiveTV;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.live.Live;
 import org.jflicks.tv.programdata.ProgramData;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.Scheduler;
+import org.jflicks.util.Util;
 
 /**
  * This class is a singleton to handle state of LiveTV support
@@ -43,10 +46,14 @@ public final class LiveTVSupport extends BaseSupport {
 
     private static LiveTVSupport instance = new LiveTVSupport();
 
+    private HashMap<String, LiveTV> map;
+
     /**
      * Default empty constructor.
      */
     private LiveTVSupport() {
+
+        setMap(new HashMap<String, LiveTV>());
     }
 
     /**
@@ -56,6 +63,105 @@ public final class LiveTVSupport extends BaseSupport {
      */
     public static LiveTVSupport getInstance() {
         return (instance);
+    }
+
+    private HashMap<String, LiveTV> getMap() {
+        return (map);
+    }
+
+    private void setMap(HashMap<String, LiveTV> m) {
+        map = m;
+    }
+
+    private LiveTV getLiveTVById(String id) {
+
+        LiveTV result = null;
+
+        if (id != null) {
+
+            result = map.get(id);
+        }
+
+        return (result);
+    }
+
+    private void addLiveTV(String id, LiveTV ltv) {
+
+        if ((id != null) && (ltv != null)) {
+            map.put(id, ltv);
+        }
+    }
+
+    private LiveTV removeLiveTV(String id) {
+
+        LiveTV result = null;
+
+        if (id != null) {
+
+            result = map.get(id);
+            map.remove(result);
+        }
+
+        return (result);
+    }
+
+    public LiveTVBean openSession(String channelId) {
+
+        LiveTVBean result = null;
+
+        LiveTVItem item = getLiveTVItemByChannelId(channelId);
+        log(DEBUG, "item: <" + item + ">");
+        if (item != null) {
+
+            Channel c = item.getChannel();
+            log(DEBUG, "channel: <" + c + ">");
+            log(DEBUG, "hostPort: <" + item.getHostPort() + ">");
+            NMS n = NMSUtil.select(getNMS(), item.getHostPort());
+            log(DEBUG, "nms: <" + n + ">");
+            if ((c != null) && (n != null)) {
+
+                LiveTV ltv = n.openSession(c.getNumber());
+                if (ltv != null) {
+
+                    addLiveTV(ltv.getId(), ltv);
+                    result = new LiveTVBean(ltv);
+
+                } else {
+                     result = new LiveTVBean("Could not open session!");
+                }
+
+            } else {
+
+                if (c == null) {
+                     result = new LiveTVBean("Channel not available!");
+                } else {
+                     result = new LiveTVBean("Server not available!");
+                }
+            }
+
+        } else {
+
+            result = new LiveTVBean("Channel not available!");
+        }
+
+        return (result);
+    }
+
+    public void closeSession(String liveId) {
+
+        log(DEBUG, "closeSession liveId: <" + liveId + ">");
+        LiveTV ltv = getLiveTVById(liveId);
+        log(DEBUG, "closeSession liveTV: <" + ltv + ">");
+        if (ltv != null) {
+
+            NMS n = NMSUtil.select(getNMS(), ltv.getHostPort());
+            if (n != null) {
+
+                n.closeSession(ltv);
+            }
+
+            removeLiveTV(liveId);
+        }
     }
 
     /**
@@ -72,7 +178,8 @@ public final class LiveTVSupport extends BaseSupport {
 
             // First get all unique channels.
             HashMap<NMS, Channel[]> map = new HashMap<NMS, Channel[]>();
-            for (int i = 0; i < narray.length; i++) {
+            //for (int i = 0; i < narray.length; i++) {
+            for (int i = 0; i < 1; i++) {
 
                 System.out.println("gern: " + narray[i]);
                 if (supportsLive(narray[i])) {
@@ -238,6 +345,47 @@ public final class LiveTVSupport extends BaseSupport {
                 }
             }
         }
+
+        return (result);
+    }
+
+    private LiveTVItem getLiveTVItemByChannelId(String channelId) {
+
+        LiveTVItem result = null;
+
+        if (channelId != null) {
+
+            int cid = Util.str2int(channelId, -1);
+            if (cid != -1) {
+
+                LiveTVItem[] all = getLiveTVItems();
+                if ((all != null) && (all.length > 0)) {
+
+                    for (int i = 0; i < all.length; i++) {
+
+                        Channel c = all[i].getChannel();
+                        if (c != null) {
+
+                            if (cid == c.getId()) {
+
+                                result = all[i];
+                                break;
+                            }
+                        }
+                    }
+
+                } else {
+
+                    log(DEBUG, "No channels available for recording now!");
+                }
+
+            } else {
+
+                log(DEBUG, "bad channel id: <" + channelId + ">");
+            }
+        }
+
+        log(DEBUG, "LiveTVItem to use null = " + (result == null));
 
         return (result);
     }
