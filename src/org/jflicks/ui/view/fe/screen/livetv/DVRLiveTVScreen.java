@@ -17,6 +17,7 @@
 package org.jflicks.ui.view.fe.screen.livetv;
 
 import java.awt.Rectangle;
+import java.io.File;
 import javax.swing.SwingUtilities;
 
 import org.jflicks.mvc.View;
@@ -134,10 +135,16 @@ public class DVRLiveTVScreen extends BaseLiveTVScreen {
             //p.play(path);
             System.out.println("FRED: " + r.getStreamURL());
             try {
-                //Thread.sleep(15000);
+                Thread.sleep(3000);
             } catch (Exception ex) {
             }
-            p.play(r.getStreamURL());
+
+            File fpath = new File(r.getPath());
+            if (fpath.exists()) {
+                p.play(r.getPath());
+            } else {
+                p.play(r.getStreamURL());
+            }
         }
     }
 

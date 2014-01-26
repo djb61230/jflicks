@@ -178,8 +178,8 @@ public final class LiveTVSupport extends BaseSupport {
 
             // First get all unique channels.
             HashMap<NMS, Channel[]> map = new HashMap<NMS, Channel[]>();
-            //for (int i = 0; i < narray.length; i++) {
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < narray.length; i++) {
+            //for (int i = 0; i < 1; i++) {
 
                 System.out.println("gern: " + narray[i]);
                 if (supportsLive(narray[i])) {
@@ -233,6 +233,12 @@ public final class LiveTVSupport extends BaseSupport {
                     result = llist.toArray(new LiveTVItem[llist.size()]);
                 }
             }
+        }
+
+        if (result == null) {
+
+            // We will resturn an empty array.
+            result = new LiveTVItem[0];
         }
 
         return (result);
