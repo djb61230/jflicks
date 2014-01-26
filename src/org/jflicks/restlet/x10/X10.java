@@ -61,48 +61,4 @@ public class X10 extends BaseApplication {
         return (router);
     }
 
-    public void openTheater() {
-
-        String[] array = {
-
-            "bin/x10-theater-open.sh",
-        };
-
-        Heyu heyu = new Heyu(array);
-        heyu.process();
-    }
-
-    public void closeTheater() {
-
-        String[] array = {
-
-            "bin/x10-theater-close.sh",
-        };
-
-        Heyu heyu = new Heyu(array);
-        heyu.process();
-    }
-
-    public void startMovie() {
-
-        String[] array = {
-
-            "bin/x10-movie-start.sh",
-        };
-
-        Heyu heyu = new Heyu(array);
-        heyu.process();
-    }
-
-    public void stopMovie() {
-
-        String[] array = {
-
-            "bin/x10-movie-stop.sh",
-        };
-
-        Heyu heyu = new Heyu(array);
-        heyu.process();
-    }
-
 }

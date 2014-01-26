@@ -72,8 +72,7 @@ public final class LiveTVSupport extends BaseSupport {
 
             // First get all unique channels.
             HashMap<NMS, Channel[]> map = new HashMap<NMS, Channel[]>();
-            //for (int i = 0; i < narray.length; i++) {
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < narray.length; i++) {
 
                 System.out.println("gern: " + narray[i]);
                 if (supportsLive(narray[i])) {

@@ -1,5 +1,7 @@
 package org.jflicks.restlet.x10;
 
+import org.jflicks.restlet.BaseServerResource;
+
 import org.restlet.resource.Get;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -9,7 +11,7 @@ import org.restlet.representation.StringRepresentation;
  * @author Doug Barnum
  * @version 3.0
  */
-public class CloseResource extends BaseX10ServerResource {
+public class CloseResource extends BaseServerResource {
 
     /**
      * Simple default constructor.
@@ -30,7 +32,13 @@ public class CloseResource extends BaseX10ServerResource {
 
         Representation result = new StringRepresentation("OK");
 
-        closeTheater();
+        String[] array = {
+
+            "bin/x10-theater-close.sh",
+        };
+
+        Heyu heyu = new Heyu(array);
+        heyu.process();
 
         return (result);
     }

@@ -45,7 +45,6 @@ public class Activator extends BaseActivator {
         setBundleContext(bc);
 
         X10 app = new X10();
-        OpenResource.setX10(app);
 
         nmsTracker = new NMSTracker(bc, app);
         nmsTracker.open();
