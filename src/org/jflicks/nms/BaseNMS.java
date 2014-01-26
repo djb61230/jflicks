@@ -2135,6 +2135,16 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
             s.rebuildCache();
             s.requestRescheduling();
+
+            Channel[] all = getRecordableChannels();
+            if ((all != null) && (all.length > 0)) {
+
+                for (int i = 0; i < all.length; i++) {
+
+                    ShowAiring[] sas = getShowAiringsByChannel(all[i]);
+                    log(DEBUG, "Cached ShowAirings for: " + all[i]);
+                }
+            }
         }
     }
 

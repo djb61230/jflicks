@@ -48,12 +48,9 @@ import org.osgi.util.tracker.ServiceTracker;
  * @author Doug Barnum
  * @version 1.0
  */
-public final class NMSSupport implements Log {
+public final class NMSSupport extends BaseSupport {
 
     private static NMSSupport instance = new NMSSupport();
-
-    private ServiceTracker logServiceTracker;
-    private NMS[] nms;
 
     /**
      * Default empty constructor.
@@ -68,54 +65,6 @@ public final class NMSSupport implements Log {
      */
     public static NMSSupport getInstance() {
         return (instance);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ServiceTracker getLogServiceTracker() {
-        return (logServiceTracker);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setLogServiceTracker(ServiceTracker st) {
-        logServiceTracker = st;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void log(int level, String message) {
-
-        ServiceTracker st = getLogServiceTracker();
-        if ((st != null) && (message != null)) {
-
-            LogService ls = (LogService) st.getService();
-            if (ls != null) {
-
-                ls.log(level, message);
-            }
-        }
-    }
-
-    /**
-     * We need to have the known NMS instances to do anything.
-     *
-     * @return An array of NMS instances.
-     */
-    public NMS[] getNMS() {
-        return (nms);
-    }
-
-    /**
-     * We need to have the known NMS instances to do anything.
-     *
-     * @param array An array of NMS instances.
-     */
-    public void setNMS(NMS[] array) {
-        nms = array;
     }
 
     public Channel[] getChannels() {

@@ -79,6 +79,8 @@ public class NMSApplication extends BaseApplication {
             GuideChannelResource.class);
         router.attach("/{version}/guide/{term}/{channelId}.{format}",
             GuideTitleChannelResource.class);
+        router.attach("/{version}/livetvitems.{format}",
+            LiveTVItemResource.class);
 
         return (router);
     }
