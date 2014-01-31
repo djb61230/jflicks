@@ -17,7 +17,12 @@
 package org.jflicks.tv.recorder.v4l2;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.jflicks.configure.NameValue;
 import org.jflicks.job.AbstractJob;
@@ -25,8 +30,10 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
+import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.recorder.HlsJob;
+import org.jflicks.tv.recorder.StreamJob;
 
 /**
  * This job supports the V4l2 recorder.  There are several steps to recording
@@ -41,7 +48,9 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
     private ControlJob controlJob;
     private ChannelJob channelJob;
     private HlsJob hlsJob;
+    private StreamJob streamJob;
     private JobContainer jobContainer;
+    private JobContainer readJobContainer;
 
     /**
      * This job supports the V4l2Recorder plugin.
@@ -77,12 +86,28 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
         hlsJob = j;
     }
 
+    private StreamJob getStreamJob() {
+        return (streamJob);
+    }
+
+    private void setStreamJob(StreamJob j) {
+        streamJob = j;
+    }
+
     private JobContainer getJobContainer() {
         return (jobContainer);
     }
 
     private void setJobContainer(JobContainer jc) {
         jobContainer = jc;
+    }
+
+    private JobContainer getReadJobContainer() {
+        return (readJobContainer);
+    }
+
+    private void setReadJobContainer(JobContainer jc) {
+        readJobContainer = jc;
     }
 
     private V4l2Recorder getV4l2Recorder() {
@@ -263,6 +288,90 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private String getReadMode() {
+
+        String result = NMSConstants.READ_MODE_COPY_ONLY;
+
+        V4l2Recorder r = getV4l2Recorder();
+        if (r != null) {
+
+            result = r.getConfiguredReadMode();
+        }
+
+        return (result);
+    }
+
+    private boolean isReadModeCopyOnly() {
+
+        return (NMSConstants.READ_MODE_COPY_ONLY.equals(getReadMode()));
+    }
+
+    private boolean isReadModeUdp() {
+
+        return (NMSConstants.READ_MODE_UDP.equals(getReadMode()));
+    }
+
+    private boolean isReadModeFFmpegDirect() {
+
+        return (NMSConstants.READ_MODE_FFMPEG_DIRECT.equals(getReadMode()));
+    }
+
+    private boolean available(int port) {
+
+        boolean result = false;
+
+        ServerSocket ss = null;
+        DatagramSocket ds = null;
+        try {
+
+            ss = new ServerSocket(port);
+            ss.setReuseAddress(true);
+            ds = new DatagramSocket(port);
+            ds.setReuseAddress(true);
+            result = true;
+
+        } catch (IOException e) {
+        } finally {
+            if (ds != null) {
+                ds.close();
+            }
+
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                    /* should not be thrown */
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private int computeStreamPort() {
+
+        int result = -1;
+
+        boolean found = false;
+        for (int i = 4888; i < 5000; i++) {
+
+            if (available(i)) {
+
+                result = i;
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            fireJobEvent(JobEvent.UPDATE, "Using valid port " + result);
+        } else {
+            fireJobEvent(JobEvent.UPDATE, "Could not find a valid port!");
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -292,11 +401,37 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
             File parent = f.getParentFile();
             String prefix = f.getName();
             prefix = prefix.substring(0, prefix.lastIndexOf("."));
-            HlsJob hjob =
-                new HlsJob(getDevice(), prefix, parent, getDuration());
-            hjob.setAudioCodec(getAudioTranscodeOptions());
-            hjob.addJobListener(this);
-            setHlsJob(hjob);
+
+            if ((isReadModeCopyOnly()) || (isReadModeFFmpegDirect())) {
+
+                // Well HLS can't use Copy Only so we have to use
+                // ffmpeg to read from the device, which is not ideal.
+                HlsJob hjob =
+                    new HlsJob(getDevice(), prefix, parent, getDuration());
+                hjob.setAudioCodec(getAudioTranscodeOptions());
+                hjob.addJobListener(this);
+                setHlsJob(hjob);
+                setStreamJob(null);
+
+            } else if (isReadModeUdp()) {
+
+                int sport = computeStreamPort();
+
+                // Build the proper URL.
+                String url = "'udp://localhost:" + sport
+                    + "?fifo_size=1000000&overrun_nonfatal=1'";
+                HlsJob hjob = new HlsJob(url, prefix, parent, getDuration());
+                hjob.setAudioCodec(getAudioTranscodeOptions());
+                hjob.addJobListener(this);
+                setHlsJob(hjob);
+
+                StreamJob sjob = new StreamJob();
+                sjob.setDevice(getDevice());
+                sjob.setHost("localhost");
+                sjob.setPort(sport);
+                sjob.addJobListener(this);
+                setStreamJob(sjob);
+            }
 
             JobContainer jc = JobManager.getJobContainer(conj);
             setJobContainer(jc);
@@ -328,6 +463,12 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
             jc.stop();
         }
 
+        jc = getReadJobContainer();
+        if (jc != null) {
+
+            jc.stop();
+        }
+
         V4l2Recorder r = getV4l2Recorder();
         if (r != null) {
 
@@ -354,6 +495,13 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
                 setJobContainer(jc);
                 jc.start();
 
+                StreamJob sjob = getStreamJob();
+                if (sjob != null) {
+
+                    Timer timer = new Timer();
+                    timer.schedule(new StreamJobTask(), 1000);
+                }
+
             } else if (event.getSource() == getHlsJob()) {
 
                 log(V4l2Recorder.INFO, "recording done at "
@@ -367,4 +515,21 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
         }
     }
 
+    class StreamJobTask extends TimerTask {
+
+        public StreamJobTask() {
+        }
+
+        public void run() {
+
+            StreamJob job = getStreamJob();
+            if (job != null) {
+
+                JobContainer jc = JobManager.getJobContainer(job);
+                setReadJobContainer(jc);
+                jc.start();
+            }
+        }
+
+    }
 }
