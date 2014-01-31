@@ -183,17 +183,7 @@ public class DeviceJob extends AbstractJob implements JobListener {
         SystemJob job = getSystemJob();
         if ((jc != null) && (job != null)) {
 
-            String byestr = "q\n";
-            byte[] bye = byestr.getBytes();
-            try {
-
-                job.write(bye, 0, bye.length);
-
-            } catch (Exception ex) {
-
-                jc.stop();
-            }
-
+            jc.stop();
             job.removeJobListener(this);
             setJobContainer(null);
             setSystemJob(null);
