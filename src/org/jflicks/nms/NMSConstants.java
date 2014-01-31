@@ -142,6 +142,31 @@ public final class NMSConstants {
         "Audio Transcode Options";
 
     /**
+     * The configuration to define READ_MODE.
+     */
+    public static final String READ_MODE = "Read Mode";
+
+    /**
+     * The configuration to define READ_MODE_COPY_ONLY.
+     */
+    public static final String READ_MODE_COPY_ONLY = "Read Mode Copy Only";
+
+    /**
+     * The configuration to define READ_MODE_COPY_TEMP.
+     */
+    public static final String READ_MODE_COPY_TEMP = "Read Mode Copy Temp";
+
+    /**
+     * The configuration to define READ_MODE_UDP.
+     */
+    public static final String READ_MODE_UDP = "Read Mode UDP";
+
+    /**
+     * The configuration to define READ_MODE_FFMPEG_DIRECT.
+     */
+    public static final String READ_MODE_FFMPEG_DIRECT = "Read Mode FFmpeg Direct";
+
+    /**
      * The configuration to signal HLS recording mode.
      */
     public static final String HLS_MODE = "HLS Mode";

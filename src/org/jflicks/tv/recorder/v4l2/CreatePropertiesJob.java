@@ -308,6 +308,23 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
                         ato.setValue("copy");
                         bc.addNameValue(ato);
 
+                        // Read Mode.
+                        NameValue rm = new NameValue();
+                        rm.setName(NMSConstants.READ_MODE);
+                        rm.setDescription(NMSConstants.READ_MODE);
+                        rm.setType(NameValue.STRING_FROM_CHOICE_TYPE);
+                        rm.setDefaultValue(NMSConstants.READ_MODE_COPY_ONLY);
+                        rm.setValue(NMSConstants.READ_MODE_COPY_ONLY);
+                        String[] rchoices = new String[] {
+
+                            NMSConstants.READ_MODE_COPY_ONLY,
+                            NMSConstants.READ_MODE_COPY_TEMP,
+                            NMSConstants.READ_MODE_UDP,
+                            NMSConstants.READ_MODE_FFMPEG_DIRECT
+                        };
+                        rm.setChoices(rchoices);
+                        bc.addNameValue(rm);
+
                         // HLS Mode
                         NameValue hls = new NameValue();
                         hls.setName(NMSConstants.HLS_MODE);

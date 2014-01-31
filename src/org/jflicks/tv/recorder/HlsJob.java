@@ -151,6 +151,18 @@ public class HlsJob extends AbstractJob implements JobListener {
         jobContainer = j;
     }
 
+    private boolean isV4l2(String s) {
+
+        boolean result = false;
+
+        if (s != null) {
+
+            result = s.startsWith("/dev/video");
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -174,7 +186,14 @@ public class HlsJob extends AbstractJob implements JobListener {
                 inStr = "'" + inStr + "?fifo_size=1000000&overrun_nonfatal=1'";
             }
 
+            String prefix = "";
+            if (isV4l2(inStr)) {
+
+                prefix = "-f v4l2";
+            }
+
             String command = "ffmpeg -i"
+                + " " + prefix
                 + " " + inStr
                 + " -vcodec " + getVideoCodec()
                 + " -acodec " + getAudioCodec()

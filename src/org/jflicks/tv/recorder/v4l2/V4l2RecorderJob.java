@@ -25,6 +25,7 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
+import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 
 /**
@@ -206,6 +207,19 @@ public class V4l2RecorderJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private String getReadMode() {
+
+        String result = NMSConstants.READ_MODE_COPY_ONLY;
+
+        V4l2Recorder r = getV4l2Recorder();
+        if (r != null) {
+
+            result = r.getConfiguredReadMode();
+        }
+
+        return (result);
+    }
+
     private String getChannel() {
 
         String result = null;
@@ -292,6 +306,7 @@ public class V4l2RecorderJob extends AbstractJob implements JobListener {
         rj.setDevice(getDevice());
         rj.setFile(getFile());
         rj.setDuration(getDuration());
+        rj.setReadMode(getReadMode());
 
         JobContainer jc = JobManager.getJobContainer(conj);
         setJobContainer(jc);

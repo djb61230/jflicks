@@ -111,6 +111,18 @@ public class DeviceJob extends AbstractJob implements JobListener {
         jobContainer = j;
     }
 
+    private boolean isV4l2(String s) {
+
+        boolean result = false;
+
+        if (s != null) {
+
+            result = s.startsWith("/dev/video");
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -128,12 +140,20 @@ public class DeviceJob extends AbstractJob implements JobListener {
         String outStr = getOutput();
         if ((inStr != null) && (outStr != null)) {
 
+            String prefix = "";
+            if (isV4l2(inStr)) {
+
+                prefix = "-f v4l2";
+            }
+
             String command = "ffmpeg -y -i"
+                + " " + prefix
                 + " " + inStr
                 + " -vcodec " + getVideoCodec()
                 + " -acodec " + getAudioCodec()
-                + " -ss 00:00:03"
                 + " " + outStr;
+
+                //+ " -ss 00:00:03"
 
             SystemJob job = SystemJob.getInstance(command);
             fireJobEvent(JobEvent.UPDATE,
@@ -163,8 +183,18 @@ public class DeviceJob extends AbstractJob implements JobListener {
         SystemJob job = getSystemJob();
         if ((jc != null) && (job != null)) {
 
+            String byestr = "q\n";
+            byte[] bye = byestr.getBytes();
+            try {
+
+                job.write(bye, 0, bye.length);
+
+            } catch (Exception ex) {
+
+                jc.stop();
+            }
+
             job.removeJobListener(this);
-            jc.stop();
             setJobContainer(null);
             setSystemJob(null);
         }

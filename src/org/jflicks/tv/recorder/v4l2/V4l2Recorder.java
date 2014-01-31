@@ -484,5 +484,45 @@ public class V4l2Recorder extends BaseRecorder {
         return (result);
     }
 
+    /**
+     * Convenience method to get the read mode for this v4l2 device.
+     *
+     * @return A String defining the read mode from NMSConstants.
+     */
+    public String getConfiguredReadMode() {
+
+        String result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue[] array = c.getNameValues();
+            if (array != null) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    String name = array[i].getName();
+                    if ((name != null) && (name.equals(
+                        NMSConstants.READ_MODE))) {
+
+                        result = array[i].getValue();
+                        if (result != null) {
+
+                            result = result.trim();
+                        }
+
+                        if ((result != null) && (result.length() == 0)) {
+                            result = null;
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
 }
 

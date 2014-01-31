@@ -17,12 +17,18 @@
 package org.jflicks.tv.recorder.v4l2;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
+import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.recorder.BaseDeviceJob;
-//import org.jflicks.tv.recorder.CopyJob;
+import org.jflicks.tv.recorder.CopyJob;
+import org.jflicks.tv.recorder.StreamJob;
+import org.jflicks.util.Util;
 
 /**
  * After finding, setting a channel, it's time to record from a v4l2
@@ -37,6 +43,8 @@ public class RecordJob extends BaseDeviceJob {
     private File file;
     private long duration;
     private String audioTranscodeOptions;
+    private JobContainer readJobContainer;
+    private String readMode;
 
     /**
      * Simple no argument constructor.
@@ -98,6 +106,32 @@ public class RecordJob extends BaseDeviceJob {
         file = f;
     }
 
+    /**
+     * The read mode of the device.
+     *
+     * @return A String from NMSConstants.
+     */
+    public String getReadMode() {
+        return (readMode);
+    }
+
+    /**
+     * The read mode of the device.
+     *
+     * @param s A String from NMSConstants.
+     */
+    public void setReadMode(String s) {
+        readMode = s;
+    }
+
+    private JobContainer getReadJobContainer() {
+        return (readJobContainer);
+    }
+
+    private void setReadJobContainer(JobContainer jc) {
+        readJobContainer = jc;
+    }
+
     private String fileToString() {
 
         String result = "/tmp/tmp.mpg";
@@ -109,6 +143,57 @@ public class RecordJob extends BaseDeviceJob {
         }
 
         return (result);
+    }
+
+    private String fileToTempString() {
+
+        String result = "/tmp/tmp.mpg";
+
+        File f = getFile();
+        if (f != null) {
+
+            String front = f.getPath();
+            String back = front.substring(front.lastIndexOf("."));
+            front = front.substring(0, front.lastIndexOf("."));
+            result = front + ".temp" + back;
+        }
+
+        return (result);
+    }
+
+    private int computeStreamPort() {
+
+        int result = 4888;
+
+        String dev = getDevice();
+        if (dev != null) {
+
+            int index = dev.indexOf("video");
+            index += 5;
+            result += Util.str2int(dev.substring(index), 0);
+        }
+
+        return (result);
+    }
+
+    private boolean isReadModeCopyOnly() {
+
+        return (NMSConstants.READ_MODE_COPY_ONLY.equals(getReadMode()));
+    }
+
+    private boolean isReadModeCopyTemp() {
+
+        return (NMSConstants.READ_MODE_COPY_TEMP.equals(getReadMode()));
+    }
+
+    private boolean isReadModeUdp() {
+
+        return (NMSConstants.READ_MODE_UDP.equals(getReadMode()));
+    }
+
+    private boolean isReadModeFFmpegDirect() {
+
+        return (NMSConstants.READ_MODE_FFMPEG_DIRECT.equals(getReadMode()));
     }
 
     /**
@@ -124,19 +209,55 @@ public class RecordJob extends BaseDeviceJob {
      */
     public void run() {
 
-        DeviceJob job = new DeviceJob(getDevice(), fileToString());
-        job.setAudioCodec(getAudioTranscodeOptions());
-        job.addJobListener(this);
-        JobContainer jc = JobManager.getJobContainer(job);
-        setJobContainer(jc);
-        jc.start();
-        /*
-        CopyJob job = new CopyJob(getDevice(), fileToString());
-        job.addJobListener(this);
-        JobContainer jc = JobManager.getJobContainer(job);
-        setJobContainer(jc);
-        jc.start();
-        */
+        if (isReadModeCopyOnly()) {
+
+            CopyJob job = new CopyJob(getDevice(), fileToString());
+            job.addJobListener(this);
+            JobContainer jc = JobManager.getJobContainer(job);
+            setJobContainer(jc);
+            jc.start();
+
+        } else if (isReadModeCopyTemp()) {
+
+            String tmp = fileToTempString();
+            CopyJob job = new CopyJob(getDevice(), tmp);
+            job.addJobListener(this);
+            JobContainer jc = JobManager.getJobContainer(job);
+            setReadJobContainer(jc);
+            jc.start();
+
+            Timer timer = new Timer();
+            timer.schedule(new DeviceJobTask(tmp, fileToString(), this), 5000);
+
+        } else if (isReadModeUdp()) {
+
+            int sport = computeStreamPort();
+            StreamJob job = new StreamJob();
+            job.setDevice(getDevice());
+            job.setHost("localhost");
+            job.setPort(sport);
+            job.addJobListener(this);
+            JobContainer jc = JobManager.getJobContainer(job);
+            setReadJobContainer(jc);
+            jc.start();
+
+            // Build the proper URL.
+            //String url = "udp://localhost?localport=" + sport;
+            String url = "udp://localhost:" + sport
+                + "?fifo_size=1000000&overrun_nonfatal=1'";
+
+            Timer timer = new Timer();
+            timer.schedule(new DeviceJobTask(url, fileToString(), this), 5000);
+
+        } else if (isReadModeFFmpegDirect()) {
+
+            DeviceJob job = new DeviceJob(getDevice(), fileToString());
+            job.setAudioCodec(getAudioTranscodeOptions());
+            job.addJobListener(this);
+            JobContainer jc = JobManager.getJobContainer(job);
+            setJobContainer(jc);
+            jc.start();
+        }
 
         // End  a few seconds early...
         long l = getDuration() - 3;
@@ -184,16 +305,19 @@ public class RecordJob extends BaseDeviceJob {
         if (jc != null) {
 
             // First lets stop listening since we are stopping it ourselves.
-            DeviceJob dj = (DeviceJob) jc.getJob();
-            dj.removeJobListener(this);
+            AbstractJob aj = (AbstractJob) jc.getJob();
+            aj.removeJobListener(this);
             jc.stop();
             setJobContainer(null);
-            /*
-            CopyJob cj = (CopyJob) jc.getJob();
-            cj.removeJobListener(this);
+        }
+
+        jc = getReadJobContainer();
+        if (jc != null) {
+
+            AbstractJob aj = (AbstractJob) jc.getJob();
+            aj.removeJobListener(this);
             jc.stop();
-            setJobContainer(null);
-            */
+            setReadJobContainer(null);
         }
     }
 
@@ -208,6 +332,31 @@ public class RecordJob extends BaseDeviceJob {
             // stop too so at least the recording length will be correct.
             setTerminate(true);
         }
+    }
+
+    class DeviceJobTask extends TimerTask {
+
+        private String from;
+        private String to;
+        private RecordJob recordJob;
+
+        public DeviceJobTask(String source, String dest, RecordJob rj) {
+
+            from = source;
+            to = dest;
+            recordJob = rj;
+        }
+
+        public void run() {
+
+            DeviceJob job = new DeviceJob(from, to);
+            job.setAudioCodec(getAudioTranscodeOptions());
+            job.addJobListener(recordJob);
+            JobContainer jc = JobManager.getJobContainer(job);
+            setJobContainer(jc);
+            jc.start();
+        }
+
     }
 
 }
