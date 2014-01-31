@@ -17,6 +17,9 @@
 package org.jflicks.tv.recorder.v4l2;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -145,32 +148,57 @@ public class RecordJob extends BaseDeviceJob {
         return (result);
     }
 
-    private String fileToTempString() {
+    private boolean available(int port) {
 
-        String result = "/tmp/tmp.mpg";
+        boolean result = false;
 
-        File f = getFile();
-        if (f != null) {
+        ServerSocket ss = null;
+        DatagramSocket ds = null;
+        try {
 
-            String front = f.getPath();
-            String back = front.substring(front.lastIndexOf("."));
-            front = front.substring(0, front.lastIndexOf("."));
-            result = front + ".temp" + back;
+            ss = new ServerSocket(port);
+            ss.setReuseAddress(true);
+            ds = new DatagramSocket(port);
+            ds.setReuseAddress(true);
+            result = true;
+
+        } catch (IOException e) {
+        } finally {
+            if (ds != null) {
+                ds.close();
+            }
+
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                    /* should not be thrown */
+                }
+            }
         }
 
-        return (result);
+        return result;
     }
 
     private int computeStreamPort() {
 
-        int result = 4888;
+        int result = -1;
 
-        String dev = getDevice();
-        if (dev != null) {
+        boolean found = false;
+        for (int i = 4888; i < 5000; i++) {
 
-            int index = dev.indexOf("video");
-            index += 5;
-            result += Util.str2int(dev.substring(index), 0);
+            if (available(i)) {
+
+                result = i;
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            fireJobEvent(JobEvent.UPDATE, "Using valid port " + result);
+        } else {
+            fireJobEvent(JobEvent.UPDATE, "Could not find a valid port!");
         }
 
         return (result);
@@ -179,11 +207,6 @@ public class RecordJob extends BaseDeviceJob {
     private boolean isReadModeCopyOnly() {
 
         return (NMSConstants.READ_MODE_COPY_ONLY.equals(getReadMode()));
-    }
-
-    private boolean isReadModeCopyTemp() {
-
-        return (NMSConstants.READ_MODE_COPY_TEMP.equals(getReadMode()));
     }
 
     private boolean isReadModeUdp() {
@@ -217,37 +240,23 @@ public class RecordJob extends BaseDeviceJob {
             setJobContainer(jc);
             jc.start();
 
-        } else if (isReadModeCopyTemp()) {
-
-            String tmp = fileToTempString();
-            CopyJob job = new CopyJob(getDevice(), tmp);
-            job.addJobListener(this);
-            JobContainer jc = JobManager.getJobContainer(job);
-            setReadJobContainer(jc);
-            jc.start();
-
-            Timer timer = new Timer();
-            timer.schedule(new DeviceJobTask(tmp, fileToString(), this), 5000);
-
         } else if (isReadModeUdp()) {
 
             int sport = computeStreamPort();
-            StreamJob job = new StreamJob();
-            job.setDevice(getDevice());
-            job.setHost("localhost");
-            job.setPort(sport);
-            job.addJobListener(this);
-            JobContainer jc = JobManager.getJobContainer(job);
-            setReadJobContainer(jc);
-            jc.start();
 
             // Build the proper URL.
-            //String url = "udp://localhost?localport=" + sport;
-            String url = "udp://localhost:" + sport
+            String url = "'udp://localhost:" + sport
                 + "?fifo_size=1000000&overrun_nonfatal=1'";
 
+            DeviceJob job = new DeviceJob(url, fileToString());
+            job.setAudioCodec(getAudioTranscodeOptions());
+            job.addJobListener(this);
+            JobContainer jc = JobManager.getJobContainer(job);
+            setJobContainer(jc);
+            jc.start();
+
             Timer timer = new Timer();
-            timer.schedule(new DeviceJobTask(url, fileToString(), this), 5000);
+            timer.schedule(new StreamJobTask(sport, this), 1000);
 
         } else if (isReadModeFFmpegDirect()) {
 
@@ -331,29 +340,33 @@ public class RecordJob extends BaseDeviceJob {
             // If we got here, then the recording stopped early.  We need to
             // stop too so at least the recording length will be correct.
             setTerminate(true);
+
+        } else if (event.getType() == JobEvent.UPDATE) {
+
+            fireJobEvent(event);
         }
     }
 
-    class DeviceJobTask extends TimerTask {
+    class StreamJobTask extends TimerTask {
 
-        private String from;
-        private String to;
+        private int port;
         private RecordJob recordJob;
 
-        public DeviceJobTask(String source, String dest, RecordJob rj) {
+        public StreamJobTask(int i, RecordJob rj) {
 
-            from = source;
-            to = dest;
+            port = i;
             recordJob = rj;
         }
 
         public void run() {
 
-            DeviceJob job = new DeviceJob(from, to);
-            job.setAudioCodec(getAudioTranscodeOptions());
+            StreamJob job = new StreamJob();
+            job.setDevice(getDevice());
+            job.setHost("localhost");
+            job.setPort(port);
             job.addJobListener(recordJob);
             JobContainer jc = JobManager.getJobContainer(job);
-            setJobContainer(jc);
+            setReadJobContainer(jc);
             jc.start();
         }
 

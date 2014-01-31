@@ -318,7 +318,6 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
                         String[] rchoices = new String[] {
 
                             NMSConstants.READ_MODE_COPY_ONLY,
-                            NMSConstants.READ_MODE_COPY_TEMP,
                             NMSConstants.READ_MODE_UDP,
                             NMSConstants.READ_MODE_FFMPEG_DIRECT
                         };

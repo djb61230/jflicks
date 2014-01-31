@@ -181,11 +181,6 @@ public class HlsJob extends AbstractJob implements JobListener {
         String outStr = getOutput();
         if ((f != null) && (inStr != null) && (outStr != null)) {
 
-            if (inStr.startsWith("udp")) {
-
-                inStr = "'" + inStr + "?fifo_size=1000000&overrun_nonfatal=1'";
-            }
-
             String prefix = "";
             if (isV4l2(inStr)) {
 
