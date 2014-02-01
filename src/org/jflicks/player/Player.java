@@ -65,6 +65,11 @@ public interface Player {
     /**
      * A player that can handle web video, most likely a browser.
      */
+    String PLAYER_VIDEO_HLS = "VideoHls";
+
+    /**
+     * A player that can handle web video, most likely a browser.
+     */
     String PLAYER_APPLICATION = "Application";
 
     /**

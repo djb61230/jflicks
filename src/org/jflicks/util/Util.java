@@ -26,6 +26,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -62,8 +64,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
-
-import com.sun.awt.AWTUtilities;
 
 /**
  * Some very basic methods that capture some common tasks.  Implemented here
@@ -1497,53 +1497,62 @@ public final class Util {
 
     public static boolean isShapedSupported() {
 
-        return (AWTUtilities.isTranslucencySupported(AWTUtilities.Translucency.PERPIXEL_TRANSLUCENT));
-        /*
-        return (false);
         GraphicsEnvironment ge =
             GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
 
         return (gd.isWindowTranslucencySupported(
             GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT));
-        */
     }
 
     public static boolean isTranslucencySupported() {
 
-        return (AWTUtilities.isTranslucencySupported(AWTUtilities.Translucency.TRANSLUCENT));
-
-        /*
-        return (false);
         GraphicsEnvironment ge =
             GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
 
         return (gd.isWindowTranslucencySupported(
             GraphicsDevice.WindowTranslucency.TRANSLUCENT));
-        */
     }
 
     public static Shape getWindowShape(Window w) {
 
-        return (AWTUtilities.getWindowShape(w));
+        Shape result = null;
+
+        if (w != null) {
+
+            result = w.getShape();
+        }
+
+        return (result);
     }
 
     public static void setWindowShape(Window w, Shape s) {
 
-        if (!isMac()) {
-            AWTUtilities.setWindowShape(w, s);
+        if ((w != null) && (s != null)) {
+
+            w.setShape(s);
         }
     }
 
     public static float getWindowOpacity(Window w) {
 
-        return (AWTUtilities.getWindowOpacity(w));
+        float result = 0.0f;
+
+        if (w != null) {
+
+            result = w.getOpacity();
+        }
+
+        return (result);
     }
 
     public static void setWindowOpacity(Window w, float f) {
 
-        AWTUtilities.setWindowOpacity(w, f);
+        if (w != null) {
+
+            w.setOpacity(f);
+        }
     }
 
     public static Point findInFrame(Container c) {
