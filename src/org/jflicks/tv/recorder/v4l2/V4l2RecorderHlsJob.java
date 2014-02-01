@@ -34,6 +34,7 @@ import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.recorder.HlsJob;
 import org.jflicks.tv.recorder.StreamJob;
+import org.jflicks.util.Util;
 
 /**
  * This job supports the V4l2 recorder.  There are several steps to recording
@@ -43,6 +44,8 @@ import org.jflicks.tv.recorder.StreamJob;
  * @version 1.0
  */
 public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
+
+    private static final int GAP = 20;
 
     private V4l2Recorder v4l2Recorder;
     private ControlJob controlJob;
@@ -316,6 +319,23 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
         return (NMSConstants.READ_MODE_FFMPEG_DIRECT.equals(getReadMode()));
     }
 
+    private int computeOffset() {
+
+        int result = 0;
+
+        String dev = getDevice();
+        if (dev != null) {
+
+            int index = dev.indexOf("video");
+            index += 5;
+            result = Util.str2int(dev.substring(index), result);
+
+            result *= GAP;
+        }
+
+        return (result);
+    }
+
     private boolean available(int port) {
 
         boolean result = false;
@@ -353,11 +373,13 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
         int result = -1;
 
         boolean found = false;
-        for (int i = 4888; i < 5000; i++) {
+        int offset = computeOffset();
+        int start = 4000 + offset;
+        for (int i = 0; i < GAP; i++) {
 
-            if (available(i)) {
+            if (available(i + start)) {
 
-                result = i;
+                result = i + start;
                 found = true;
                 break;
             }

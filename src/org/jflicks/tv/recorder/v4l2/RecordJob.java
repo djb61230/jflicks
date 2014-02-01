@@ -43,6 +43,8 @@ import org.jflicks.util.Util;
  */
 public class RecordJob extends BaseDeviceJob {
 
+    private static final int GAP = 20;
+
     private File file;
     private long duration;
     private String audioTranscodeOptions;
@@ -180,16 +182,35 @@ public class RecordJob extends BaseDeviceJob {
         return result;
     }
 
+    private int computeOffset() {
+
+        int result = 0;
+
+        String dev = getDevice();
+        if (dev != null) {
+
+            int index = dev.indexOf("video");
+            index += 5;
+            result = Util.str2int(dev.substring(index), result);
+
+            result *= GAP;
+        }
+
+        return (result);
+    }
+
     private int computeStreamPort() {
 
         int result = -1;
 
         boolean found = false;
-        for (int i = 4888; i < 5000; i++) {
+        int offset = computeOffset();
+        int start = 4000 + offset;
+        for (int i = 0; i < GAP; i++) {
 
-            if (available(i)) {
+            if (available(i + start)) {
 
-                result = i;
+                result = i + start;
                 found = true;
                 break;
             }
