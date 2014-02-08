@@ -271,7 +271,7 @@ public class HlsJob extends AbstractJob implements JobListener {
 
         } else if (event.getType() == JobEvent.UPDATE) {
 
-            fireJobEvent(JobEvent.UPDATE, event.getMessage());
+            //fireJobEvent(JobEvent.UPDATE, event.getMessage());
         }
     }
 

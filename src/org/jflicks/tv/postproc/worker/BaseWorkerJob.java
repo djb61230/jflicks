@@ -303,5 +303,30 @@ public abstract class BaseWorkerJob extends AbstractJob {
         return (result);
     }
 
+    /**
+     * We want to be able to determine if a Recording is being done
+     * via HLS.  If it is, then in this moment of time it will not
+     * have it's raw path to a .ts file.
+     *
+     * @return True when in HLS recording mode.
+     */
+    public boolean isHlsRecording() {
+
+        boolean result = false;
+
+        Recording r = getRecording();
+        if (r != null) {
+
+            String path = r.getPath();
+            File f = new File(path);
+            if (!f.exists()) {
+
+                result = true;
+            }
+        }
+
+        return (result);
+    }
+
 }
 

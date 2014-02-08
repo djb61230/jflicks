@@ -70,17 +70,33 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
         Recording r = getRecording();
         if (r != null) {
 
+            // When we have a full .ts recording file we want to fetch
+            // 44 seconds into it.  However if we are in HLS mode this
+            // doesn't always work so lets just fetch 7 seconds into it.
+            String timeoffset = "-00:00:44";
+            if (isHlsRecording()) {
+
+                timeoffset = "-00:00:07";
+            }
+
             String path = r.getPath();
-            String inputpath = getRecordingPath(3);
-            SystemJob job = SystemJob.getInstance("ffmpeg -itsoffset -00:00:40"
-                + " -y -i " + inputpath + " -vcodec png -vframes 1 -an -f "
-                + "rawvideo -s 534x300 " + path + ".png");
+            String inputpath = getRecordingPath(4);
+            SystemJob job = SystemJob.getInstance("ffmpeg -itsoffset"
+                + " "
+                + timeoffset
+                + " -y -i "
+                + inputpath
+                + " -vcodec png -vframes 1 -an -f "
+                + "rawvideo -s 534x300 "
+                + path
+                + ".png");
+
             fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand()
                 + ">");
 
             // Don't run until this time because there won't be video to
-            // grab the screen shot!  We tack on 50 seconds just to be safe.
-            setAfter(r.getRealStart() + 50000);
+            // grab the screen shot!  We tack on 60 seconds just to be safe.
+            setAfter(r.getRealStart() + 60000);
 
             job.addJobListener(this);
             setSystemJob(job);
