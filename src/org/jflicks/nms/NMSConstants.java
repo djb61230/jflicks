@@ -60,6 +60,12 @@ public final class NMSConstants {
     public static final String LIVE_DIRECTORY = "Live Directory";
 
     /**
+     * The minimum number of segments generated before returning from
+     * an open for live TV.
+     */
+    public static final String MINIMUM_SEGMENT_COUNT = "Minimum Segment Count";
+
+    /**
      * The configuration name for a "OnDemand" service.
      */
     public static final String ON_DEMAND_NAME = "OnDemand";

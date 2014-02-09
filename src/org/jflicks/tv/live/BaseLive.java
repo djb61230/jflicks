@@ -33,6 +33,7 @@ import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.RecorderInformation;
 import org.jflicks.tv.scheduler.Scheduler;
 import org.jflicks.util.StartsWithFilter;
+import org.jflicks.util.Util;
 
 /**
  * This class is a base implementation of the Live interface.
@@ -336,21 +337,23 @@ public abstract class BaseLive extends BaseConfig implements Live {
                         // We are going to block here until we
                         // have a valid files.  Things take time
                         // to spin up.
+                        int minseg = getConfiguredMinimumSegmentCount();
+                        int loopmax = minseg * 10;
                         File m3u8 = new File(hls);
                         int loops = 0;
                         boolean done = false;
                         while (!done) {
 
                             loops++;
-                            done = count(l) >= 3;
+                            done = count(l) >= minseg;
                             if (!done) {
 
-                                done = loops > 30;
+                                done = loops > loopmax;
                             }
 
                             try {
 
-                                Thread.sleep(500);
+                                Thread.sleep(1000);
 
                             } catch (Exception ex) {
                             }
@@ -473,6 +476,24 @@ public abstract class BaseLive extends BaseConfig implements Live {
             if (nv != null) {
 
                 result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
+    private int getConfiguredMinimumSegmentCount() {
+
+        int result = 6;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv =
+                c.findNameValueByName(NMSConstants.MINIMUM_SEGMENT_COUNT);
+            if (nv != null) {
+
+                result = Util.str2int(nv.getValue(), result);
             }
         }
 

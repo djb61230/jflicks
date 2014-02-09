@@ -83,7 +83,7 @@ public class NMSApplication extends BaseApplication {
             LiveTVItemResource.class);
         router.attach("/{version}/livetv/open/{channelId}.{format}",
             LiveTVOpenCloseResource.class);
-        router.attach("/{version}/livetv/close/{liveTVId}",
+        router.attach("/{version}/livetv/close/{liveTVId}.{format}",
             LiveTVOpenCloseResource.class);
 
         return (router);
