@@ -49,9 +49,7 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
     public FFmpegScreenshotJob(Recording r, BaseWorker bw) {
 
         super(r, bw);
-
-        // Lets get 45 seconds of video out there before we check.
-        //setSleepTime(45000);
+        setSleepTime(1000);
     }
 
     private long getAfter() {
@@ -60,6 +58,38 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
 
     private void setAfter(long l) {
         after = l;
+    }
+
+    private boolean isReadyToRun() {
+
+        boolean result = false;
+
+        if (isHlsRecording()) {
+
+            // If the 5th segment is there, then the 4th is ready to use.
+            File next = new File(getRecordingPath(5));
+            result = next.exists();
+
+        } else {
+
+            long now = System.currentTimeMillis();
+            result = (now > getAfter());
+
+            if (result) {
+
+                // Time is up.  For sanity sake lets make sure it's there.
+                // This getRecordingPath will return the actual path as
+                // we are not in HLS mode.
+                File fname = new File(getRecordingPath(0));
+                if (!fname.exists()) {
+
+                    // Actually not really ready.
+                    result = false;
+                }
+            }
+        }
+
+        return (result);
     }
 
     /**
@@ -117,11 +147,11 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
     public void run() {
 
         boolean jobStarted = false;
+        int loops = 0;
 
         while (!isTerminate()) {
 
-            long now = System.currentTimeMillis();
-            if (now > getAfter()) {
+            if (isReadyToRun()) {
 
                 JobContainer jc = getJobContainer();
                 if ((!jobStarted) && (jc != null)) {
@@ -130,6 +160,15 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
                     // use a flag just to be safe...
                     jobStarted = true;
                     jc.start();
+                }
+
+            } else {
+
+                loops++;
+                if (loops >= 180) {
+
+                    log(BaseWorker.INFO, "Giving up on getting screenshot!!!");
+                    setTerminate(true);
                 }
             }
 
