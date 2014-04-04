@@ -46,8 +46,7 @@ public class Admin extends BaseApplication {
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.DEBUG_HANDLER);
 
-        File templates = new File("templates");
-        File admin = new File(templates, "admin");
+        File admin = new File("admin");
 
         try {
 
@@ -81,32 +80,40 @@ public class Admin extends BaseApplication {
         Router router = new Router(getContext());
 
         // Attach the resources to the router
-        router.attach("/{ver}/home.html", HomeResource.class);
-        router.attach("/{ver}/config.html", ConfigResource.class);
-        router.attach("/{ver}/recordings.html", RecordingsResource.class);
+        router.attach("/home", HomeResource.class);
+        router.attach("/config", ConfigResource.class);
+        router.attach("/vm", VideoManagerResource.class);
+        router.attach("/recordings", RecordingsResource.class);
+        router.attach("/upcoming", UpcomingResource.class);
+        router.attach("/about", AboutResource.class);
 
-        File templates = new File("templates");
-        File admin = new File(templates, "admin");
-        File resources = new File(admin, "resources");
-        File images = new File(resources, "images");
-        File css = new File(resources, "css");
-        File js = new File(resources, "js");
+        File admin = new File("admin");
+        File common = new File(admin, "common");
+        File theme = new File(admin, "theme");
+        File images = new File(admin, "images");
+        File css = new File(admin, "css");
+        File js = new File(admin, "js");
 
+        common = common.getAbsoluteFile();
+        theme = theme.getAbsoluteFile();
         images = images.getAbsoluteFile();
         css = css.getAbsoluteFile();
         js = js.getAbsoluteFile();
 
-        URI uri = images.toURI();
-        router.attach("/{ver}/images",
-            new Directory(getContext(), uri.toString()));
+        URI uri = common.toURI();
+        router.attach("/common", new Directory(getContext(), uri.toString()));
+
+        uri = theme.toURI();
+        router.attach("/theme", new Directory(getContext(), uri.toString()));
+
+        uri = images.toURI();
+        router.attach("/images", new Directory(getContext(), uri.toString()));
 
         uri = css.toURI();
-        router.attach("/{ver}/css",
-            new Directory(getContext(), uri.toString()));
+        router.attach("/css", new Directory(getContext(), uri.toString()));
 
         uri = js.toURI();
-        router.attach("/{ver}/js",
-            new Directory(getContext(), uri.toString()));
+        router.attach("/js", new Directory(getContext(), uri.toString()));
 
         return (router);
     }

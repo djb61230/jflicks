@@ -150,9 +150,10 @@ public class DeviceJob extends AbstractJob implements JobListener {
                 + " " + prefix
                 + " " + inStr
                 + " -vcodec " + getVideoCodec()
-                + " -acodec " + getAudioCodec()
+                + " " + getAudioCodec()
                 + " " + outStr;
 
+                //+ " -acodec " + getAudioCodec()
                 //+ " -ss 00:00:03"
 
             SystemJob job = SystemJob.getInstance(command);

@@ -191,7 +191,7 @@ public class HlsJob extends AbstractJob implements JobListener {
                 + " " + prefix
                 + " " + inStr
                 + " -vcodec " + getVideoCodec()
-                + " -acodec " + getAudioCodec()
+                + " " + getAudioCodec()
                 + " " + getOptional()
                 + " -map 0 -f segment -segment_list"
                 + " " + outStr + ".m3u8"

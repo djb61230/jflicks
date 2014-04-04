@@ -3,8 +3,10 @@ package org.jflicks.restlet.admin;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.jflicks.configure.NameValue;
 import org.jflicks.nms.NMS;
 import org.jflicks.restlet.BaseServerResource;
+import org.jflicks.restlet.NMSSupport;
 
 import freemarker.template.Configuration;
 
@@ -78,8 +80,8 @@ public abstract class BaseAdminServerResource extends BaseServerResource {
         if (buri != null) {
 
             result = new String[2];
-            result[0] = buri + "/1.0/home.html";
-            result[1] = buri + "/1.0/recordings.html";
+            result[0] = buri + "/home";
+            result[1] = buri + "/recordings";
         }
 
         return (result);
@@ -107,10 +109,46 @@ public abstract class BaseAdminServerResource extends BaseServerResource {
 
             for (int i = 0; i < result.length; i++) {
 
-                result[i] = buri + "/1.0/recordings.html?title="
+                result[i] = buri + "/recordings?title="
                     + encode(array[i]);
             }
         }
+
+        return (result);
+    }
+
+    public String[] getNMSDescriptions() {
+
+        String[] result = null;
+
+        NMSSupport nsup = NMSSupport.getInstance();
+        NMS[] array = nsup.getNMS();
+        if ((array != null) && (array.length > 0)) {
+
+            result = new String[array.length];
+            for (int i = 0; i < result.length; i++) {
+
+                result[i] = array[i].getHost() + ":" + array[i].getPort()
+                    + " - " + array[i].getGroupName();
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * We are baking in here just the NameValue instances we want
+     * the user to be able to edit in a web admin.  This is much
+     * less than what is really configurable.  Some settings just
+     * should not be changed from the default.  Makes it easier to
+     * deal with too.
+     *
+     * @param hostPort A host port property so we can get the NMS instance.
+     * @return An array of NameValue instances.
+     */
+    public NameValue[] getNameValues(String hostPort) {
+
+        NameValue[] result = null;
 
         return (result);
     }

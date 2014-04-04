@@ -146,7 +146,7 @@ public class FFmpegJob extends BaseWorkerJob implements JobListener {
 
                     int vindex = output.indexOf("Video:");
                     int aindex = output.indexOf("Audio:");
-                    if ((vindex != -1) && (aindex != -1)) {
+                    if ((vindex >= 0) && (aindex >= 0)) {
 
                         videoLine = output.substring(vindex, aindex);
                         audioLine = output.substring(aindex);

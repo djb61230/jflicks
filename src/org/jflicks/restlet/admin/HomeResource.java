@@ -13,11 +13,10 @@ import org.restlet.resource.Get;
 import org.restlet.representation.Representation;
 
 /**
- * This resource handles User requests.  The request returns info
- * about the current user.
+ * We display state information on the home page.
  *
  * @author Doug Barnum
- * @version 3.0
+ * @version 1.0
  */
 public class HomeResource extends BaseAdminServerResource {
 
@@ -44,14 +43,23 @@ public class HomeResource extends BaseAdminServerResource {
         if (c != null) {
 
             HashMap<String, Object> root = new HashMap<String, Object>();
-            
+
             NMSSupport nsup = NMSSupport.getInstance();
-            
+
             State state = nsup.getState();
-            
-            if(state != null){
-                root.put("status",state);
+
+            if (state != null) {
+
+                root.put("state", state);
             }
+
+            root.put("homeClass", "class=\"selected\"");
+            root.put("configClass", "");
+            root.put("vmClass", "");
+            root.put("recordingsClass", "");
+            root.put("upcomingClass", "");
+            root.put("aboutClass", "");
+
             Template temp = TemplateRepresentation.getTemplate(c, "home.ftl");
             TemplateRepresentation rep = new TemplateRepresentation(temp,
                 root, MediaType.TEXT_HTML); 

@@ -91,6 +91,7 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
     public void run() {
 
         boolean begun = false;
+
         while (!isTerminate()) {
 
             JobManager.sleep(getSleepTime());
@@ -110,12 +111,12 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
                             log(BaseWorker.INFO, "Kicked off comskip");
                         }
                     }
+
+                } else {
+
+                    log(BaseWorker.INFO, "Recording still seems to be on. "
+                        + "Waiting until finished to work.");
                 }
-
-            } else {
-
-                log(BaseWorker.INFO, "Recording still seems to be on. "
-                    + "Waiting until finished to work.");
             }
         }
 

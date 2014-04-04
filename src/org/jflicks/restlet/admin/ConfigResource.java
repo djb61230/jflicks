@@ -2,6 +2,8 @@ package org.jflicks.restlet.admin;
 
 import java.util.HashMap;
 
+import org.jflicks.configure.NameValue;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.restlet.data.MediaType;
@@ -41,6 +43,26 @@ public class ConfigResource extends BaseAdminServerResource {
         if (c != null) {
 
             HashMap<String, Object> root = new HashMap<String, Object>();
+
+            root.put("homeClass", "");
+            root.put("configClass", "class=\"selected\"");
+            root.put("vmClass", "");
+            root.put("recordingsClass", "");
+            root.put("upcomingClass", "");
+            root.put("aboutClass", "");
+
+            String[] nmsDescriptions = getNMSDescriptions();
+            root.put("nmsDescriptions", nmsDescriptions);
+
+            String hostPort = getQuery().getValues("hostPort");
+            if (hostPort == null) {
+
+                hostPort = nmsDescriptions[0];
+                hostPort = hostPort.substring(0, hostPort.indexOf(" "));
+            }
+
+            NameValue[] nvalues = getNameValues(hostPort);
+
             Template temp = TemplateRepresentation.getTemplate(c, "config.ftl");
             TemplateRepresentation rep = new TemplateRepresentation(temp,
                 root, MediaType.TEXT_HTML); 

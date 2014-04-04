@@ -171,7 +171,7 @@ public class RecordTranscodeJob extends BaseHDHRJob {
             + getTuner()
             + "/v"
             + getProgram()
-            + "?transcode=heavy -vcodec copy -acodec "
+            + "?transcode=heavy -vcodec copy "
             + getAudioTranscodeOptions()
             + " -ss 00:00:03 "
             + fileToString());

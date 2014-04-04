@@ -936,8 +936,19 @@
         description="Gotta do more than just compile!">
 
         <!-- First do server side. -->
+        <delete failonerror="false">
+            <fileset dir="${felix.server.home}/bundle" includes="jflicks-*" />
+            <fileset dir="${felix.server.home}/gadmin" />
+        </delete>
+
         <copy todir="${felix.server.home}/bundle">
             <fileset dir="${bundle}" includes="${server.deploy}"/>
+        </copy>
+
+        <delete dir="${felix.server.home}/admin"/>
+        <mkdir dir="${felix.server.home}/admin"/>
+        <copy todir="${felix.server.home}/admin">
+            <fileset dir="templates/admin"/>
         </copy>
 
         <!-- Now do aspirin side. -->

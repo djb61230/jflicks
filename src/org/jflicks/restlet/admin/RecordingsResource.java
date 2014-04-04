@@ -46,11 +46,18 @@ public class RecordingsResource extends BaseAdminServerResource {
         if (c != null) {
 
             HashMap<String, Object> root = new HashMap<String, Object>();
+
+            root.put("homeClass", "");
+            root.put("configClass", "");
+            root.put("vmClass", "");
+            root.put("recordingsClass", "class=\"selected\"");
+            root.put("upcomingClass", "");
+            root.put("aboutClass", "");
+
             root.put("menus", getMenus());
             root.put("menu_urls", getMenuURLs());
             Recording[] recs = null;
             String title = getQuery().getValues("title");
-            System.out.println("FFFFFFFFFFFF: " + title);
             if (title != null) {
                 recs = nsup.getRecordingsByTitle(title);
             } else {
