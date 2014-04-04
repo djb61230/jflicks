@@ -45,9 +45,6 @@ public class Activator extends BaseActivator {
         setBundleContext(bc);
 
         Admin app = new Admin();
-        HomeResource.setAdmin(app);
-        ConfigResource.setAdmin(app);
-        RecordingsResource.setAdmin(app);
 
         nmsTracker = new NMSTracker(bc, app);
         nmsTracker.open();
@@ -59,32 +56,6 @@ public class Activator extends BaseActivator {
             new ServiceTracker(bc, LogService.class.getName(), null);
         app.setLogServiceTracker(logServiceTracker);
         logServiceTracker.open();
-
-        /*
-        try {
-
-            component = new Component();
-            component.getServers().add(Protocol.HTTP, 8182);
-
-            // Here we attach our restlet application.
-            Admin app = new Admin();
-            TestResource.setAdmin(app);
-            nmsTracker = new NMSTracker(bc, app);
-            nmsTracker.open();
-
-            logServiceTracker =
-                new ServiceTracker(bc, LogService.class.getName(), null);
-            app.setLogServiceTracker(logServiceTracker);
-            logServiceTracker.open();
-
-            component.getDefaultHost().attach("/admin", app);
-            component.start();
-
-        } catch (Exception ex) {
-
-            System.out.println(ex.getMessage());
-        }
-        */
     }
 
     /**
