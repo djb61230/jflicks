@@ -64,12 +64,12 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
             if (Util.isLinux() || Util.isMac()) {
 
                 job = SystemJob.getInstance("wine bin/comskip "
-                    + "--ini=conf/comskip.ini " + r.getPath());
+                    + "--ini=conf/comskip.ini " + "\"" + r.getPath() + "\"");
 
             } else {
 
                 job = SystemJob.getInstance("bin\\comskip "
-                    + "--ini=conf/comskip.ini " + r.getPath());
+                    + "--ini=conf/comskip.ini " + "\"" + r.getPath() + "\"");
             }
 
             job.addJobListener(this);

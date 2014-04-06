@@ -64,7 +64,8 @@ public class FFmpegJob extends BaseWorkerJob implements JobListener {
         if (r != null) {
 
             String path = getRecordingPath(0);
-            SystemJob job = SystemJob.getInstance("ffmpeg -i " + path);
+            SystemJob job = SystemJob.getInstance("ffmpeg -i \"" + path
+                + "\"");
             fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand()
                 + ">");
 

@@ -948,7 +948,7 @@
         <delete dir="${felix.server.home}/admin"/>
         <mkdir dir="${felix.server.home}/admin"/>
         <copy todir="${felix.server.home}/admin">
-            <fileset dir="templates/admin"/>
+            <fileset dir="admin"/>
         </copy>
 
         <!-- Now do aspirin side. -->

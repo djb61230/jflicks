@@ -18,6 +18,7 @@ package org.jflicks.job;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import org.jflicks.util.Util;
 
@@ -215,6 +216,20 @@ public final class SystemJob extends AbstractJob implements JobListener {
 
             try {
 
+                // We want to set the PATH variable in case a System
+                // property is set.
+                String jflicksPath = System.getProperty("jflicks.path");
+                if (jflicksPath != null) {
+
+                    String pathsep = System.getProperty("path.separator");
+                    Map<String, String> env = pb.environment();
+                    String oldpath = env.get("PATH");
+                    if (oldpath != null) {
+                        env.put("PATH", jflicksPath + pathsep + oldpath);
+                    } else {
+                        env.put("PATH", jflicksPath);
+                    }
+                }
                 File dir = getWorking();
                 if (dir != null) {
 

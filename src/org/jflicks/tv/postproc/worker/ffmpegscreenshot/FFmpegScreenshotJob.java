@@ -115,11 +115,15 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
                 + " "
                 + timeoffset
                 + " -y -i "
+                + "\""
                 + inputpath
+                + "\""
                 + " -vcodec png -vframes 1 -an -f "
                 + "rawvideo -s 534x300 "
+                + "\""
                 + path
-                + ".png");
+                + ".png"
+                + "\"");
 
             fireJobEvent(JobEvent.UPDATE, "command: <" + job.getCommand()
                 + ">");
