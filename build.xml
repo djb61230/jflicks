@@ -491,6 +491,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/jflicks-ui-view-j4cc.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-ui-view-scheduler.bnd"
             output="${bundle}"
         />
@@ -881,6 +890,12 @@
 
     </target>
 
+    <target name="check-felix-j4cc" unless="felix.j4cc.home">
+
+        <echo message="Felix j4cc home is not defined!"/>
+
+    </target>
+
     <target name="check-felix-aspirin" unless="felix.aspirin.home">
 
         <echo message="Felix aspirin home is not defined!"/>
@@ -923,12 +938,17 @@
 
     </target>
 
-    <target name="deploy" depends="build,check-felix-server,check-felix-aspirin,check-felix-advanced,check-felix-ez,check-felix-scheduler,check-felix-fe,check-felix-metadata,check-felix-vm"
+    <target name="deploy" depends="build,check-felix-server,check-felix-j4cc,check-felix-aspirin,check-felix-advanced,check-felix-ez,check-felix-scheduler,check-felix-fe,check-felix-metadata,check-felix-vm"
         description="Gotta do more than just compile!">
 
         <!-- First do server side. -->
         <copy todir="${felix.server.home}/bundle">
             <fileset dir="${bundle}" includes="${server.deploy}"/>
+        </copy>
+
+        <!-- Now do j4cc side. -->
+        <copy todir="${felix.j4cc.home}/bundle">
+            <fileset dir="${bundle}" includes="${j4cc.deploy}"/>
         </copy>
 
         <!-- Now do aspirin side. -->

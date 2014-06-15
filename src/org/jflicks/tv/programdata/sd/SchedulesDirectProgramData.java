@@ -121,6 +121,9 @@ public class SchedulesDirectProgramData extends BaseProgramData
         overrideTimeToUpdate = b;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isUpdatingNow() {
         return (updatingNow);
     }
@@ -1012,6 +1015,30 @@ public class SchedulesDirectProgramData extends BaseProgramData
         return (result);
     }
     */
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getNextTimeToRun() {
+
+        long result = -1L;
+
+        ObjectContainer oc = getObjectContainer();
+        if (oc != null) {
+
+            ObjectSet<Status> os = oc.queryByExample(Status.class);
+            if (os != null) {
+
+                if (os.size() > 0) {
+
+                    Status status = os.next();
+                    result = status.getNextUpdate();
+                }
+            }
+        }
+
+        return (result);
+    }
 
     /**
      * We compute if it's time to update data from Schedules Direct.  We

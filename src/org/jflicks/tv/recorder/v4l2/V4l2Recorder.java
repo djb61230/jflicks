@@ -434,6 +434,9 @@ public class V4l2Recorder extends BaseRecorder {
             String name = nv.getName();
             if ((name != null)
                 && (!name.equals(NMSConstants.AUDIO_INPUT_NAME))
+                && (!name.equals(NMSConstants.AUDIO_TRANSCODE_OPTIONS))
+                && (!name.equals(NMSConstants.READ_MODE))
+                && (!name.equals(NMSConstants.HLS_MODE))
                 && (!name.equals(NMSConstants.VIDEO_INPUT_NAME))
                 && (!name.equals(NMSConstants.FREQUENCY_TABLE_NAME))
                 && (!name.equals(NMSConstants.CUSTOM_CHANNEL_LIST))

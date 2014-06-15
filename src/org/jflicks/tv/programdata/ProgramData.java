@@ -161,5 +161,21 @@ public interface ProgramData extends Config, DataUpdateable {
      * @return True if the request is accepted.
      */
     boolean requestUpdate();
+
+    /**
+     * Convenience method to report whether the program data is currently being
+     * updated.
+     *
+     * @return True if the data is being updated right now.
+     */
+    boolean isUpdatingNow();
+
+    /**
+     * As a long value (millis since 1970) the time the program data is scheduled to
+     * do an update.  A value of -1 means no time scheduled.
+     *
+     * @return A long value.
+     */
+    long getNextTimeToRun();
 }
 
