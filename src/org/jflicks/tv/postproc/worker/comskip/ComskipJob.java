@@ -150,6 +150,8 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
                 String path = r.getPath();
                 if (path != null) {
 
+                    String origPath = path;
+
                     path = path.substring(0, path.lastIndexOf("."));
                     File file = new File(path + ".log");
                     boolean delresult = file.delete();
@@ -173,6 +175,41 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
                     log(BaseWorker.INFO, "setting commercials...");
                     r.setCommercials(Commercial.fromEDL(file));
 
+                    // Next we want to write a chapter file for mp4chaps.
+                    String ext = r.getIndexedExtension();
+                    if ((ext != null) && (ext.equals("mp4"))) {
+
+                        Commercial[] coms = r.getCommercials();
+                        if ((coms != null) && (coms.length > 0)) {
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("00:00:00.000 Chapter 1\n");
+                            for (int i = 0; i < coms.length; i++) {
+
+                                String fmt = formatSeconds(coms[i].getEnd());
+                                sb.append(fmt + ".000 Chapter " + (i + 2)
+                                    + "\n");
+                            }
+
+                            file = new File(origPath + ".chapters.txt");
+                            try {
+
+                                Util.writeTextFile(file, sb.toString());
+                                SystemJob job = SystemJob.getInstance(
+                                    "mp4chaps -i \"" + origPath + ".mp4\"");
+                                JobContainer jc =
+                                    JobManager.getJobContainer(job);
+                                log(BaseWorker.INFO, "will start: "
+                                    + job.getCommand());
+                                jc.start();
+
+                            } catch (Exception ex) {
+
+                                log(BaseWorker.INFO, "Couldn't do chapters");
+                            }
+                        }
+                    }
+
                     writeBIF();
                 }
             }
@@ -181,5 +218,16 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
         }
     }
 
+    private static String formatSeconds(int secsIn) { 
+
+        int hours = secsIn / 3600; 
+        int remainder = secsIn % 3600;
+        int minutes = remainder / 60;
+        int seconds = remainder % 60; 
+
+        return ( (hours < 10 ? "0" : "") + hours 
+        + ":" + (minutes < 10 ? "0" : "") + minutes 
+        + ":" + (seconds< 10 ? "0" : "") + seconds ); 
+    }
 }
 
