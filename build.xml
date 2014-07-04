@@ -1173,6 +1173,20 @@
 
     </target>
 
+    <target name="test-chapter-update" depends="build">
+
+        <java classname="org.jflicks.util.chapter.ChapterUpdate" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+            <arg value="/Users/djb/tmp/chaptertest"/>
+
+        </java>
+
+    </target>
+
     <target name="test-stream-v4l2" depends="build">
 
         <java classname="org.jflicks.tv.recorder.StreamJob" fork="true">
