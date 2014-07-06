@@ -16,6 +16,9 @@
 */
 package org.jflicks.restlet.nms;
 
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
+
 import org.jflicks.util.BaseActivator;
 import org.jflicks.restlet.NMSTracker;
 import org.jflicks.restlet.servercomponent.ServerComponentTracker;
@@ -33,6 +36,7 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class Activator extends BaseActivator {
 
+    private JmDNS jmdns;
     private NMSTracker nmsTracker;
     private ServerComponentTracker serverComponentTracker;
     private ServiceTracker logServiceTracker;
@@ -56,6 +60,20 @@ public class Activator extends BaseActivator {
             new ServiceTracker(bc, LogService.class.getName(), null);
         app.setLogServiceTracker(logServiceTracker);
         logServiceTracker.open();
+
+        // Setup DNS for discovery.
+        try {
+
+            jmdns = JmDNS.create("localhost");
+            ServiceInfo si = ServiceInfo.create("_http._tcp.local.",
+                "jflicks", 8182, "jflicks REST service");
+            jmdns.registerService(si);
+            System.out.println("we have it registered dude!");
+
+        } catch (Exception ex) {
+
+            System.out.println("poo: " + ex.getMessage());
+        }
     }
 
     /**
@@ -79,6 +97,11 @@ public class Activator extends BaseActivator {
 
             serverComponentTracker.close();
             serverComponentTracker = null;
+        }
+
+        if (jmdns != null) {
+
+            jmdns.unregisterAllServices();
         }
     }
 

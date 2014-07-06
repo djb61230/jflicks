@@ -31,4 +31,5 @@ Import-Package:\
  org.w3c.dom,\
  org.w3c.dom.ls,\
  org.xml.sax,\
- org.xml.sax.helpers
+ org.xml.sax.helpers,\
+ javax.jmdns
