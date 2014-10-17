@@ -139,6 +139,28 @@ public class Client {
         }
     }
 
+    private void putUserAgentInHeader(ClientResource cr) {
+
+        if (cr != null) {
+
+            ConcurrentMap<String, Object> attrs = cr.getRequest().getAttributes();
+            Series<Header> headers = (Series<Header>) cr.getRequestAttributes().get(
+                "org.restlet.http.headers");
+
+            if (headers == null) {
+
+                headers = new Series<Header>(Header.class);
+                Series<Header> prev = (Series<Header>) 
+                attrs.putIfAbsent(HeaderConstants.ATTRIBUTE_HEADERS, headers);
+
+                if (prev != null) {
+                    headers = prev;
+                }
+            }
+            headers.set("User-Agent", "jflicks/1.0"); 
+        }
+    }
+
     private String getUriFromLineupName(String name) {
 
         String result = null;
@@ -202,6 +224,7 @@ public class Client {
         String uri = getBaseUri() + "/" + getApiVersion() + "/status";
         ClientResource cr = new ClientResource(uri);
         putTokenInHeader(cr);
+        putUserAgentInHeader(cr);
 
         String json = RestUtil.get(cr);
 
@@ -234,6 +257,7 @@ public class Client {
                 + "&postalcode=" + zip;
             ClientResource cr = new ClientResource(uri);
             putTokenInHeader(cr);
+            putUserAgentInHeader(cr);
 
             String json = RestUtil.get(cr);
 
@@ -276,6 +300,7 @@ public class Client {
                     uri = getBaseUri() + uri;
                     ClientResource cr = new ClientResource(uri);
                     putTokenInHeader(cr);
+                    putUserAgentInHeader(cr);
 
                     String json = RestUtil.put(cr, null);
 
@@ -311,6 +336,7 @@ public class Client {
                     uri = getBaseUri() + uri;
                     ClientResource cr = new ClientResource(uri);
                     putTokenInHeader(cr);
+                    putUserAgentInHeader(cr);
 
                     String json = RestUtil.delete(cr);
 
@@ -342,6 +368,7 @@ public class Client {
                 String uri = getBaseUri() + "/" + getApiVersion() + "/lineups";
                 ClientResource cr = new ClientResource(uri);
                 putTokenInHeader(cr);
+                putUserAgentInHeader(cr);
 
                 String json = RestUtil.get(cr);
 
@@ -367,6 +394,7 @@ public class Client {
                 uri = getBaseUri() + uri;
                 ClientResource cr = new ClientResource(uri);
                 putTokenInHeader(cr);
+                putUserAgentInHeader(cr);
 
                 String json = RestUtil.get(cr);
 
@@ -392,6 +420,7 @@ public class Client {
                     String uri = getBaseUri() + "/" + getApiVersion() + "/schedules";
                     ClientResource cr = new ClientResource(uri);
                     putTokenInHeader(cr);
+                    putUserAgentInHeader(cr);
 
                     Gson gson = new Gson();
                     String rjson = gson.toJson(array);
@@ -428,6 +457,7 @@ public class Client {
                     String uri = getBaseUri() + "/" + getApiVersion() + "/programs";
                     ClientResource cr = new ClientResource(uri);
                     putTokenInHeader(cr);
+                    putUserAgentInHeader(cr);
                     putAcceptInHeader(cr);
 
                     Gson gson = new Gson();
