@@ -157,7 +157,9 @@ public class IndexerWorker extends BaseWorker implements JobListener {
 
         } else {
 
-            //log(DEBUG, "IndexerWorker: " + event.getMessage());
+            if (event.getSource() == getConcatJob()) {
+                log(DEBUG, "ConcatJob: " + event.getMessage());
+            }
         }
     }
 

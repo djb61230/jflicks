@@ -80,21 +80,14 @@ public class SchedulesDirectProgramDataJob extends AbstractJob {
 
                 if (pd.isTimeToUpdate()) {
 
-                    try {
-
-                        pd.setUpdatingNow(true);
-                        SchedulesDirect sd = new SchedulesDirect();
-                        Xtvd xtvd = sd.getXtvd();
-                        if (xtvd != null) {
-                            pd.process(xtvd);
-                        }
-                        pd.setUpdatingNow(false);
-
-                    } catch (DataDirectException ex) {
-
-                        log(SchedulesDirectProgramData.WARNING,
-                            ex.getMessage());
+                    pd.setUpdatingNow(true);
+                    SchedulesDirect sd = SchedulesDirect.getInstance();
+                    Xtvd xtvd = sd.getXtvd(pd.getConfiguredUserName(), pd.getConfiguredPassword(),
+                        pd.getConfiguredCountry(), pd.getConfiguredZipCode());
+                    if (xtvd != null) {
+                        pd.process(xtvd);
                     }
+                    pd.setUpdatingNow(false);
                 }
             }
 

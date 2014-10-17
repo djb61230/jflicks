@@ -376,8 +376,17 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
                 public boolean match(Channel c) {
 
+                    // Here we are changing the listingId from an
+                    // exact match to a substring of.  The json data
+                    // has not made a nice field that matches the
+                    // listingId exactly.  So we are just going to
+                    // check for indexOf to be not -1.
+                    return ((cid == c.getId())
+                        && (clid.indexOf(c.getListingId()) != -1));
+                    /*
                     return ((cid == c.getId())
                         && (clid.equals(c.getListingId())));
+                    */
                 }
             });
 
@@ -683,6 +692,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                 Collection coll = map.values();
                 if (coll != null) {
 
+                    log(DEBUG, "SD station count <" + coll.size() + ">");
                     purge(oc, Channel.class);
                     Iterator iter = coll.iterator();
                     while (iter.hasNext()) {
@@ -696,6 +706,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                         tmp.setCallSign(station.getCallSign());
                         clist.add(tmp);
                     }
+                    log(DEBUG, "Channel count <" + clist.size() + ">");
                 }
             }
 
@@ -721,6 +732,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                         count += processReferenceChannels(lineup, clist);
                     }
                     log(DEBUG, "Found <" + count + "> channels to reference");
+                    log(DEBUG, "Channel count <" + clist.size() + ">");
 
                     // Now we go through again and if we have
                     // set the reference number we should be
@@ -739,6 +751,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
             // We have built all the fields to the Channels we know about.
             // Now lets write then to the DB.
+            log(DEBUG, "Multiple Channel count <" + multiple.size() + ">");
             for (int i = 0; i < multiple.size(); i++) {
 
                 Channel tmp = multiple.get(i);
@@ -749,11 +762,13 @@ public class SchedulesDirectProgramData extends BaseProgramData
             // Process the Programs and put new Show instances into the
             // database.
             Map<String, Program> pmap = xtvd.getPrograms();
+            log(DEBUG, "Program map count <" + pmap.size() + ">");
             if (pmap != null) {
 
                 Collection<Program> coll = pmap.values();
                 if (coll != null) {
 
+                    log(DEBUG, "Program count <" + coll.size() + ">");
                     purge(oc, Show.class);
                     Iterator<Program> iter = coll.iterator();
                     while (iter.hasNext()) {
@@ -781,6 +796,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
             Collection<Schedule> scheds = xtvd.getSchedules();
             if ((scheds != null) && (scheds.size() > 0)) {
 
+                log(DEBUG, "Schedule count <" + scheds.size() + ">");
                 purge(oc, Airing.class);
                 Iterator<Schedule> iter = scheds.iterator();
                 while (iter.hasNext()) {
@@ -863,8 +879,11 @@ public class SchedulesDirectProgramData extends BaseProgramData
         if ((l != null) && (list != null) && (all != null)) {
 
             result = new Listing();
-            result.setName(l.getName() + "-" + l.getType());
+            result.setName(l.getName());
             result.setId(l.getId());
+
+            log(DEBUG, "Listing name <" + result.getName() + ">");
+            log(DEBUG, "Listing id <" + result.getId() + ">");
 
             Collection<net.sf.xtvdclient.xtvd.datatypes.Map> coll = l.getMaps();
             if (coll != null) {
@@ -988,33 +1007,6 @@ public class SchedulesDirectProgramData extends BaseProgramData
             }
         }
     }
-
-    /*
-    private boolean exists(ObjectContainer db, Program p) {
-
-        boolean result = false;
-
-        if ((db != null) && (p != null)) {
-
-            final String id = p.getId();
-            if (id != null) {
-
-                List<Show> shows = db.query(new Predicate<Show>() {
-
-                    public boolean match(Show s) {
-                        return (id.equals(s.getId()));
-                    }
-                });
-
-                if ((shows != null) && (shows.size() > 0)) {
-                    result = true;
-                }
-            }
-        }
-
-        return (result);
-    }
-    */
 
     /**
      * {@inheritDoc}

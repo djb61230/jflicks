@@ -190,13 +190,26 @@ public class HlsJob extends AbstractJob implements JobListener {
             String command = "ffmpeg -i"
                 + " " + prefix
                 + " " + inStr
+                + " -map 0:0 -map 0:1 -map 0:1 -c:v " + getVideoCodec()
+                + " -c:a:0 " + getAudioCodec()
+                + " -c:a:1 copy"
+                + " " + getOptional()
+                + " -f segment -segment_list"
+                + " " + outStr + ".m3u8"
+                + " -segment_time 10 -segment_list_flags +live"
+                + " " + outStr + ".%06d.ts";
+            /*
+            String command = "ffmpeg -i"
+                + " " + prefix
+                + " " + inStr
                 + " -vcodec " + getVideoCodec()
-                + " " + getAudioCodec()
+                + " -acodec " + getAudioCodec()
                 + " " + getOptional()
                 + " -map 0 -f segment -segment_list"
                 + " " + outStr + ".m3u8"
                 + " -segment_time 10 -segment_list_flags +live"
                 + " " + outStr + ".%06d.ts";
+            */
 
             SystemJob job = SystemJob.getInstance(command, f);
             fireJobEvent(JobEvent.UPDATE,

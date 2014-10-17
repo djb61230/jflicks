@@ -44,7 +44,7 @@ public class PassthruWorker extends BaseWorker implements JobListener {
      */
     public PassthruWorker() {
 
-        setTitle("MP4PassthruWorker");
+        setTitle("Mp4PassthruWorker");
         setDescription("MP4 that preserves digial audio passthru.");
         setHeavy(false);
         setDefaultRun(false);

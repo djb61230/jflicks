@@ -60,6 +60,42 @@ public abstract class BaseProgramData extends BaseConfig
         title = s;
     }
 
+    public String getConfiguredUserName() {
+
+        String result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv =
+                c.findNameValueByName(NMSConstants.USER_NAME);
+            if (nv != null) {
+
+                result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
+    public String getConfiguredPassword() {
+
+        String result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv =
+                c.findNameValueByName(NMSConstants.PASSWORD);
+            if (nv != null) {
+
+                result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -75,6 +111,42 @@ public abstract class BaseProgramData extends BaseConfig
             if (nv != null) {
 
                 result = Util.str2int(nv.getValue(), result);
+            }
+        }
+
+        return (result);
+    }
+
+    public String getConfiguredCountry() {
+
+        String result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv =
+                c.findNameValueByName(NMSConstants.COUNTRY);
+            if (nv != null) {
+
+                result = nv.getValue();
+            }
+        }
+
+        return (result);
+    }
+
+    public String getConfiguredZipCode() {
+
+        String result = null;
+
+        Configuration c = getConfiguration();
+        if (c != null) {
+
+            NameValue nv =
+                c.findNameValueByName(NMSConstants.ZIP_CODE);
+            if (nv != null) {
+
+                result = nv.getValue();
             }
         }
 

@@ -26,6 +26,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.util.Util;
 
 /**
  * Transfer a file using curl.
@@ -115,15 +116,30 @@ public class ConcatJob extends AbstractJob implements JobListener {
             if ((array != null) && (array.length > 0)) {
 
                 Arrays.sort(array);
-                StringBuilder sb = new StringBuilder("ffmpeg -i concat:\"");
-                for (int i = 0; i < array.length; i++) {
+                StringBuilder sb = new StringBuilder();
+                if (Util.isWindows()) {
 
-                    if (i > 0) {
-                        sb.append("|");
+                    sb.append("ffmpeg -i concat:\"");
+                    for (int i = 0; i < array.length; i++) {
+
+                        if (i > 0) {
+                            sb.append("|");
+                        }
+                        sb.append(array[i].getName());
                     }
-                    sb.append(array[i].getName());
+                    sb.append("\" -c copy " + pref + ".ts");
+
+                } else {
+
+                    sb.append("cat ");
+                    for (int i = 0; i < array.length; i++) {
+
+                        sb.append(array[i].getName());
+                        sb.append(" ");
+                    }
+                    sb.append(" >> " + pref + ".ts");
                 }
-                sb.append("\" -c copy " + pref + ".ts");
+
                 String command = sb.toString();
 
                 SystemJob job = SystemJob.getInstance(command, f);

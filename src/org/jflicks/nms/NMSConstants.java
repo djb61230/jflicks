@@ -642,6 +642,10 @@ public final class NMSConstants {
      */
     public static final String PASSWORD = "Password";
 
+    public static final String COUNTRY = "Country";
+
+    public static final String ZIP_CODE = "Zip Code";
+
     /**
      * A constant for identifying over the air frequency type.
      */

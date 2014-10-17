@@ -1153,6 +1153,49 @@
 
     </target>
 
+    <target name="test-sdjson" depends="build">
+
+        <java classname="org.jflicks.tv.programdata.sd.json.Manage"
+            fork="true">
+
+            <arg value="-u"/>
+            <arg value="${sduser}"/>
+            <arg value="-p"/>
+            <arg value="${sdpass}"/>
+            <arg value="-zip"/>
+            <arg value="${sdzip}"/>
+            <arg value="-action"/>
+            <arg value="listStations"/>
+            <!--
+            <arg value="listAddedLineups"/>
+            <arg value="listStations"/>
+            <arg value="program"/>
+            <arg value="listAllLineups"/>
+            <arg value="addLineup"/>
+            <arg value="deleteLineup"/>
+            <arg value="guide"/>
+            -->
+            <arg value="-lineup"/>
+            <arg value="DIRECTV-Albany"/>
+            <!--
+            <arg value="DIRECTV-Albany"/>
+            <arg value="Antenna"/>
+            -->
+            <arg value="-sid"/>
+            <arg value="53158"/>
+            <arg value="-sid"/>
+            <arg value="34968"/>
+            <arg value="-pid"/>
+            <arg value="EP013657560167"/>
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
     <target name="test-tmdb" depends="build">
 
         <java classname="org.jflicks.metadata.themoviedb.TheMovieDB"
