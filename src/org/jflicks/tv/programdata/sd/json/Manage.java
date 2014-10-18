@@ -159,7 +159,7 @@ public class Manage {
 
                                 for (int i = 0; i < lups.length; i++) {
 
-                                    System.out.println(lups[i] + " (" + lups[i].getId() + ")");
+                                    System.out.println(lups[i] + " name=" + lups[i].getName() + " id=" + lups[i].getId());
                                 }
                             }
 

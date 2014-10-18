@@ -1164,10 +1164,10 @@
             <arg value="${sdpass}"/>
             <arg value="-l"/>
             <arg value="${sdlocation}"/>
-            <arg value="-zip"/>
+            <arg value="-zipcode"/>
             <arg value="${sdzip}"/>
             <arg value="-action"/>
-            <arg value="listAddedLineups"/>
+            <arg value="listStations"/>
             <!--
             <arg value="listAddedLineups"/>
             <arg value="listStations"/>
@@ -1178,10 +1178,10 @@
             <arg value="guide"/>
             -->
             <arg value="-lineup"/>
-            <arg value="Time-Warner-Cable---Cable"/>
+            <arg value="DIRECTV Albany"/>
             <!--
-            <arg value="DIRECTV-Albany"/>
-            <arg value="Antenna"/>
+            <arg value="DIRECTV Albany"/>
+            <arg value="Local"/>
             -->
             <arg value="-sid"/>
             <arg value="53158"/>
