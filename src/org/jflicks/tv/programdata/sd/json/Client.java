@@ -204,7 +204,7 @@ public class Client {
 
                         for (int j = 0; j < lups.length; j++) {
 
-                            if (name.equals(lups[j].toString())) {
+                            if ((name.equals(lups[j].toString())) && (location.equals(array[i].getLocation()))) {
 
                                 result = lups[j].getUri();
                                 break;
