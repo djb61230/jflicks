@@ -58,6 +58,7 @@ public class Manage {
         String country = "USA";
         String zip = "12095";
         String lineup = null;
+        String location = null;
         ArrayList<GuideRequest> glist = new ArrayList<GuideRequest>();
         ArrayList<String> plist = new ArrayList<String>();
 
@@ -70,6 +71,10 @@ public class Manage {
             } else if (args[i].equalsIgnoreCase("-p")) {
 
                 password = args[i + 1];
+
+            } else if (args[i].equalsIgnoreCase("-l")) {
+
+                location = args[i + 1];
 
             } else if (args[i].equalsIgnoreCase("-action")) {
 
@@ -119,7 +124,7 @@ public class Manage {
                     switch (action) {
 
                     case LIST_ALL_LINEUPS:
-                        if (c.doHeadend("USA", "12095")) {
+                        if (c.doHeadend(country, zip)) {
 
                             Headend[] array = c.getHeadends();
                             if ((array != null) && (array.length > 0)) {
@@ -131,7 +136,7 @@ public class Manage {
 
                                         for (int j = 0; j < lups.length; j++) {
 
-                                            System.out.println(lups[j]);
+                                            System.out.println(lups[j] + " location=" + array[i].getLocation());
                                         }
                                     }
                                 }
@@ -169,7 +174,7 @@ public class Manage {
 
                         if (c.doHeadend(country, zip)) {
 
-                            if (c.doAddLineup(lineup)) {
+                            if (c.doAddLineup(lineup, location)) {
 
                                 LineupResponse lr = c.getLineupResponse();
                                 if (lr != null) {
@@ -193,7 +198,7 @@ public class Manage {
 
                         if (c.doHeadend(country, zip)) {
 
-                            if (c.doDeleteLineup(lineup)) {
+                            if (c.doDeleteLineup(lineup, location)) {
 
                                 LineupResponse lr = c.getLineupResponse();
                                 if (lr != null) {

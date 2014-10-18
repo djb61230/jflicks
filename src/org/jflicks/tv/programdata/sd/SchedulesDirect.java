@@ -601,21 +601,10 @@ public class SchedulesDirect {
                 net.sf.xtvdclient.xtvd.datatypes.Lineup l = new net.sf.xtvdclient.xtvd.datatypes.Lineup();
 
                 System.out.println("BBBBBBBBBBBBB " + array[i].getName());
-                String mapName = array[i].getName().replaceAll(" ", "-");
+                String mapName = array[i].getName();
                 System.out.println("BBBBBBBBBBBBB " + mapName);
                 Mapping jmap = c.getMapping(mapName);
                 String lineupValidName = null;
-                if (jmap == null) {
-
-                    jmap = c.getMapping(array[i].getType());
-                    if (jmap != null) {
-                        lineupValidName = array[i].getType();
-                    }
-
-                } else {
-
-                    lineupValidName = array[i].getName();
-                }
                 lineuplist.add(array[i].toString());
 
                 l.setId(array[i].getId());

@@ -1162,10 +1162,12 @@
             <arg value="${sduser}"/>
             <arg value="-p"/>
             <arg value="${sdpass}"/>
+            <arg value="-l"/>
+            <arg value="${sdlocation}"/>
             <arg value="-zip"/>
             <arg value="${sdzip}"/>
             <arg value="-action"/>
-            <arg value="listStations"/>
+            <arg value="listAddedLineups"/>
             <!--
             <arg value="listAddedLineups"/>
             <arg value="listStations"/>
@@ -1176,7 +1178,7 @@
             <arg value="guide"/>
             -->
             <arg value="-lineup"/>
-            <arg value="DIRECTV-Albany"/>
+            <arg value="Time-Warner-Gloversville---Cable"/>
             <!--
             <arg value="DIRECTV-Albany"/>
             <arg value="Antenna"/>

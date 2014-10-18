@@ -167,6 +167,33 @@ public class Client {
 
         if (name != null) {
 
+            UserLineup ul = getUserLineup();
+            if (ul != null) {
+
+                Lineup[] lups = ul.getLineups();
+                if ((lups != null) && (lups.length > 0)) {
+
+                    for (int j = 0; j < lups.length; j++) {
+
+                        if (name.equals(lups[j].getName())) {
+
+                            result = lups[j].getUri();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private String getUriFromLineupNameAndLocation(String name, String location) {
+
+        String result = null;
+
+        if ((name != null) && (location != null)) {
+
             Headend[] array = getHeadends();
             if ((array != null) && (array.length > 0)) {
 
@@ -260,7 +287,6 @@ public class Client {
             putUserAgentInHeader(cr);
 
             String json = RestUtil.get(cr);
-
             Gson gson = new Gson();
             Type mapType = new TypeToken<HashMap<String, Headend>>() {}.getType();
             HashMap hm = gson.fromJson(json, mapType);
@@ -285,13 +311,13 @@ public class Client {
         return (result);
     }
 
-    public boolean doAddLineup(String name) {
+    public boolean doAddLineup(String name, String location) {
 
         boolean result = false;
 
-        if (name != null) {
+        if ((name != null) && (location != null)) {
 
-            String uri = getUriFromLineupName(name);
+            String uri = getUriFromLineupNameAndLocation(name, location);
             if (uri != null) {
 
                 try {
@@ -321,13 +347,13 @@ public class Client {
         return (result);
     }
 
-    public boolean doDeleteLineup(String name) {
+    public boolean doDeleteLineup(String name, String location) {
 
         boolean result = false;
 
-        if (name != null) {
+        if ((name != null) && (location != null)) {
 
-            String uri = getUriFromLineupName(name);
+            String uri = getUriFromLineupNameAndLocation(name, location);
             if (uri != null) {
 
                 try {
@@ -371,7 +397,6 @@ public class Client {
                 putUserAgentInHeader(cr);
 
                 String json = RestUtil.get(cr);
-
                 Gson gson = new Gson();
                 result = gson.fromJson(json, UserLineup.class);
 
