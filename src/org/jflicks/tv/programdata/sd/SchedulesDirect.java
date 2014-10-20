@@ -29,6 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -628,7 +629,7 @@ public class SchedulesDirect {
                 }
                 if (jmap != null) {
 
-                    ArrayList<net.sf.xtvdclient.xtvd.datatypes.Map> mlist = handleStationMap(jmap);
+                    ArrayList<net.sf.xtvdclient.xtvd.datatypes.Map> mlist = handleStationMap(jmap, array[i]);
                     l.setMaps(mlist);
                 }
                 hm.put(array[i].toString(), l);
@@ -649,7 +650,8 @@ public class SchedulesDirect {
         return (result);
     }
 
-    private ArrayList<net.sf.xtvdclient.xtvd.datatypes.Map> handleStationMap(Mapping m) {
+    private ArrayList<net.sf.xtvdclient.xtvd.datatypes.Map> handleStationMap(Mapping m,
+        org.jflicks.tv.programdata.sd.json.Lineup l) {
 
         ArrayList<net.sf.xtvdclient.xtvd.datatypes.Map> result = null;
 
@@ -658,20 +660,29 @@ public class SchedulesDirect {
             StationID[] sids = m.getMap();
             if ((sids != null) && (sids.length > 0)) {
 
-                result = new ArrayList<net.sf.xtvdclient.xtvd.datatypes.Map>();
-                for (int i = 0; i < sids.length; i++) {
-                    
-                    net.sf.xtvdclient.xtvd.datatypes.Map map = new net.sf.xtvdclient.xtvd.datatypes.Map();
-                    map.setStation(Util.str2int(sids[i].getStationID(), 0));
-                    String ch = sids[i].getChannel();
-                    if (ch == null) {
-                        map.setChannel("" + sids[i].getAtscMajor());
-                        map.setChannelMinor(sids[i].getAtscMinor());
-                    } else {
-                        map.setChannel(sids[i].getChannel());
-                    }
+                String[] wanted = getStationsByLineupName(l.toString());
+                if ((wanted != null) && (wanted.length > 0)) {
 
-                    result.add(map);
+                    Arrays.sort(wanted);
+                    result = new ArrayList<net.sf.xtvdclient.xtvd.datatypes.Map>();
+                    for (int i = 0; i < sids.length; i++) {
+                    
+                        String currentsid = sids[i].getStationID();
+                        if (Arrays.binarySearch(wanted, currentsid) >= 0) {
+
+                            net.sf.xtvdclient.xtvd.datatypes.Map map = new net.sf.xtvdclient.xtvd.datatypes.Map();
+                            map.setStation(Util.str2int(currentsid, 0));
+                            String ch = sids[i].getChannel();
+                            if (ch == null) {
+                                map.setChannel("" + sids[i].getAtscMajor());
+                                map.setChannelMinor(sids[i].getAtscMinor());
+                            } else {
+                                map.setChannel(sids[i].getChannel());
+                            }
+
+                            result.add(map);
+                        }
+                    }
                 }
             }
         }
@@ -833,7 +844,17 @@ public class SchedulesDirect {
     public static void main(String[] args) throws Exception {
 
         SchedulesDirect sd = new SchedulesDirect();
-        sd.getXtvd("djb61230@yahoo.com", "sd8662", "USA", "12095");
+        Xtvd xtvd = sd.getXtvd("djb61230@yahoo.com", "sd8662", "USA", "12095");
+
+        Map map = xtvd.getStations();
+        if (map != null) {
+
+            Collection coll = map.values();
+            if (coll != null) {
+
+                System.out.println("SD station count <" + coll.size() + ">");
+            }
+        }
     }
 
 }

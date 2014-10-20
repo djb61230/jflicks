@@ -896,6 +896,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                     Channel found = findChannel(list, map.getStation());
                     if (found != null) {
 
+                        log(DEBUG, "Channel found " + found);
                         Channel copy = new Channel(found);
                         copy.setListingId(l.getId());
                         if (copy.getFrequency() != 0) {
@@ -919,6 +920,10 @@ public class SchedulesDirectProgramData extends BaseProgramData
                         }
 
                         all.add(copy);
+
+                    } else {
+
+                        log(DEBUG, "Channel not found " + map.getStation());
                     }
                 }
             }

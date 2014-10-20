@@ -1167,7 +1167,7 @@
             <arg value="-zipcode"/>
             <arg value="${sdzip}"/>
             <arg value="-action"/>
-            <arg value="listStations"/>
+            <arg value="listAddedLineups"/>
             <!--
             <arg value="listAddedLineups"/>
             <arg value="listStations"/>
@@ -1178,7 +1178,7 @@
             <arg value="guide"/>
             -->
             <arg value="-lineup"/>
-            <arg value="DIRECTV Albany"/>
+            <arg value="Time-Warner-Cable---Cable"/>
             <!--
             <arg value="DIRECTV Albany"/>
             <arg value="Local"/>
