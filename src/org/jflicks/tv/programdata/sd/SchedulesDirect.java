@@ -288,6 +288,68 @@ public class SchedulesDirect {
         return (result);
     }
 
+    private StationID[] getStationIDsByLineupName(String name) {
+
+        StationID[] result = null;
+
+        if (name != null) {
+
+            name = name + ".properties";
+            System.out.println("looking to conf file <" + name + ">");
+            File conf = new File("conf");
+            File pfile = new File(conf, name);
+            Properties p = Util.findProperties(pfile);
+            if (p != null) {
+
+                Set<String> set = p.stringPropertyNames();
+                if (set != null) {
+
+                    String[] tags = set.toArray(new String[set.size()]);
+                    if ((tags != null) && (tags.length > 0)) {
+
+                        result = new StationID[tags.length];
+                        for (int i = 0; i < result.length; i++) {
+
+                            String val = p.getProperty(tags[i]);
+                            if (val != null) {
+
+                                int index = val.indexOf("|");
+                                if (index >= 0) {
+
+                                    StationID tmp = new StationID();
+                                    tmp.setStationID(tags[i]);
+                                    tmp.setChannel(val.substring(0, index));
+                                    result[i] = tmp;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private boolean isWanted(StationID[] array, String sid, String channel) {
+
+        boolean result = false;
+
+        if ((array != null) && (array.length > 0) && (sid != null) && (channel != null)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                if ((sid.equals(array[i].getStationID())) && (channel.equals(array[i].getChannel()))) {
+
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
     private String[] getStationsByLineupName(String name) {
 
         String[] result = null;
@@ -660,15 +722,19 @@ public class SchedulesDirect {
             StationID[] sids = m.getMap();
             if ((sids != null) && (sids.length > 0)) {
 
-                String[] wanted = getStationsByLineupName(l.toString());
+                StationID[] wanted = getStationIDsByLineupName(l.toString());
                 if ((wanted != null) && (wanted.length > 0)) {
 
-                    Arrays.sort(wanted);
                     result = new ArrayList<net.sf.xtvdclient.xtvd.datatypes.Map>();
                     for (int i = 0; i < sids.length; i++) {
                     
                         String currentsid = sids[i].getStationID();
-                        if (Arrays.binarySearch(wanted, currentsid) >= 0) {
+                        String currentch = sids[i].getChannel();
+                        if (currentch == null) {
+
+                            currentch = sids[i].getAtscMajor() + "." + sids[i].getAtscMinor();
+                        }
+                        if (isWanted(wanted, currentsid, currentch)) {
 
                             net.sf.xtvdclient.xtvd.datatypes.Map map = new net.sf.xtvdclient.xtvd.datatypes.Map();
                             map.setStation(Util.str2int(currentsid, 0));
@@ -677,7 +743,7 @@ public class SchedulesDirect {
                                 map.setChannel("" + sids[i].getAtscMajor());
                                 map.setChannelMinor(sids[i].getAtscMinor());
                             } else {
-                                map.setChannel(sids[i].getChannel());
+                                map.setChannel(ch);
                             }
 
                             result.add(map);
