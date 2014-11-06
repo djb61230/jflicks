@@ -27,6 +27,7 @@ import java.io.Serializable;
 public class Station implements Serializable {
 
     private String callsign;
+    private String channel;
     private String name;
     private String broadcastLanguage;
     private String descriptionLanguage;
@@ -52,6 +53,14 @@ public class Station implements Serializable {
 
     public void setName(String s) {
         name = s;
+    }
+
+    public String getChannel() {
+        return (channel);
+    }
+
+    public void setChannel(String s) {
+        channel = s;
     }
 
     public String getBroadcastLanguage() {

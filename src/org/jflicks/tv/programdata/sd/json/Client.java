@@ -32,6 +32,8 @@ import org.restlet.util.Series;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.jflicks.util.Util;
+
 /**
  * A class to communicate with the new schedules direct JSON web service.
  *
@@ -425,6 +427,43 @@ public class Client {
 
                 Gson gson = new Gson();
                 result = gson.fromJson(json, Mapping.class);
+
+                if (result != null) {
+
+                    // Reconcile the asciiMajor and asciiMinor values.
+                    StationID[] map = result.getMap();
+                    Station[] stations = result.getStations();
+                    if ((map != null) && (stations != null)) {
+
+                        for (int i = 0; i < map.length; i++) {
+
+                            String sid = map[i].getStationID();
+                            int major = map[i].getAtscMajor();
+                            int minor = map[i].getAtscMinor();
+                            if ((sid != null) && (major > 0) && (minor > 0)) {
+
+                                for (int j = 0; j < stations.length; j++) {
+
+
+                                    if (sid.equals(stations[j].getStationID())) {
+
+                                        String chan = stations[j].getChannel();
+                                        if (chan != null) {
+
+                                            int index = chan.indexOf(".");
+                                            if (index != -1) {
+
+                                                map[i].setAtscMajor(Util.str2int(chan.substring(0, index), 0));
+                                                map[i].setAtscMinor(Util.str2int(chan.substring(index + 1), 0));
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
