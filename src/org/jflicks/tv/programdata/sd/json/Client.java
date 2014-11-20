@@ -53,7 +53,7 @@ public class Client {
      */
     public Client() {
 
-        setBaseUri("https://data2.schedulesdirect.org");
+        setBaseUri("https://json.schedulesdirect.org");
         setApiVersion("20140530");
     }
 
@@ -145,21 +145,7 @@ public class Client {
 
         if (cr != null) {
 
-            ConcurrentMap<String, Object> attrs = cr.getRequest().getAttributes();
-            Series<Header> headers = (Series<Header>) cr.getRequestAttributes().get(
-                "org.restlet.http.headers");
-
-            if (headers == null) {
-
-                headers = new Series<Header>(Header.class);
-                Series<Header> prev = (Series<Header>) 
-                attrs.putIfAbsent(HeaderConstants.ATTRIBUTE_HEADERS, headers);
-
-                if (prev != null) {
-                    headers = prev;
-                }
-            }
-            headers.set("User-Agent", "jflicks/1.0"); 
+            cr.getClientInfo().setAgent("jflicks/1.0");
         }
     }
 
