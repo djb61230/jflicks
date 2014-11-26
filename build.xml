@@ -1153,6 +1153,18 @@
 
     </target>
 
+    <target name="test-sdjson-client" depends="build">
+
+        <java classname="org.jflicks.tv.programdata.sd.json.Client" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
     <target name="test-sdjson" depends="build">
 
         <java classname="org.jflicks.tv.programdata.sd.json.Manage"
@@ -1167,7 +1179,7 @@
             <arg value="-zipcode"/>
             <arg value="${sdzip}"/>
             <arg value="-action"/>
-            <arg value="listAddedLineups"/>
+            <arg value="listAllLineups"/>
             <!--
             <arg value="listAddedLineups"/>
             <arg value="listStations"/>
@@ -1178,7 +1190,7 @@
             <arg value="guide"/>
             -->
             <arg value="-lineup"/>
-            <arg value="Time-Warner-Cable---Cable"/>
+            <arg value="Local"/>
             <!--
             <arg value="DIRECTV Albany"/>
             <arg value="Local"/>

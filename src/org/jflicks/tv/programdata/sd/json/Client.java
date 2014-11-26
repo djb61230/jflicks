@@ -543,5 +543,32 @@ public class Client {
         return (result);
     }
 
+    public void dump(String uri) {
+
+        try {
+
+            ClientResource cr = new ClientResource(uri);
+            putUserAgentInHeader(cr);
+            dumpHeader(cr);
+
+            String json = RestUtil.get(cr);
+
+            if (json != null) {
+
+                System.out.println(json);
+            }
+
+        } catch (Exception ex) {
+
+            ex.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+
+        Client c = new Client();
+        c.dump("https://httpbin.org/get?show_env=1");
+    }
+
 }
 
