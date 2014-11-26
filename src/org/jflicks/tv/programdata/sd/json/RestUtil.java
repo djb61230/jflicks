@@ -58,20 +58,6 @@ public final class RestUtil {
         return (result);
     }
 
-    public static String get(String uri) {
-
-        String result = null;
-
-        if (uri != null) {
-
-            ClientResource cr = new ClientResource(uri);
-            result = get(cr);
-            cr.release();
-        }
-
-        return (result);
-    }
-
     public static String put(ClientResource cr, Object object) {
 
         String result = null;
@@ -90,20 +76,6 @@ public final class RestUtil {
 
                 result = null;
             }
-        }
-
-        return (result);
-    }
-
-    public static String put(String uri, Object object) {
-
-        String result = null;
-
-        if (uri != null) {
-
-            ClientResource cr = new ClientResource(uri);
-            result = put(cr, object);
-            cr.release();
         }
 
         return (result);
@@ -132,20 +104,6 @@ public final class RestUtil {
         return (result);
     }
 
-    public static String delete(String uri) {
-
-        String result = null;
-
-        if (uri != null) {
-
-            ClientResource cr = new ClientResource(uri);
-            result = delete(cr);
-            cr.release();
-        }
-
-        return (result);
-    }
-
     public static String post(ClientResource cr, Object object) {
 
         String result = null;
@@ -164,20 +122,6 @@ public final class RestUtil {
 
                 result = null;
             }
-        }
-
-        return (result);
-    }
-
-    public static String post(String uri, Object object) {
-
-        String result = null;
-
-        if (uri != null) {
-
-            ClientResource cr = new ClientResource(uri);
-            result = post(cr, object);
-            cr.release();
         }
 
         return (result);

@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.restlet.engine.header.Header;
 import org.restlet.engine.header.HeaderConstants;
 import org.restlet.util.Series;
+import org.restlet.data.ClientInfo;
 import org.restlet.data.Form;
 import org.restlet.resource.ClientResource;
 import org.restlet.util.Series;
@@ -95,6 +96,38 @@ public class Client {
 
     public void setHeadends(Headend[] array) {
         headends = array;
+    }
+
+    private void dumpHeader(ClientResource cr) {
+
+        if (cr != null) {
+
+            ClientInfo ci = cr.getClientInfo();
+            if (ci != null) {
+
+                Map<String, String> map = ci.getAgentAttributes();
+                if (map != null) {
+
+                    Set<Map.Entry<String, String>> set = map.entrySet();
+                    Iterator<Map.Entry<String, String>> iter = set.iterator();
+                    while (iter.hasNext()) {
+
+                        Map.Entry<String, String> me = iter.next();
+                        String key = me.getKey();
+                        String val = me.getValue();
+                        System.out.println("dumpHeader: <" + key + "> <" + val + ">");
+                    }
+                }
+
+            } else {
+
+                System.out.println("dumpHeader: no ClientInfo!");
+            }
+
+        } else {
+
+            System.out.println("dumpHeader: no ClientResource!");
+        }
     }
 
     private void putTokenInHeader(ClientResource cr) {
@@ -218,7 +251,10 @@ public class Client {
 
             String json = "{\"username\":\"" + user + "\", \"password\":\"" + sha1password + "\"}";
             String uri = getBaseUri() + "/" + getApiVersion() + "/token";
-            json = RestUtil.post(uri, json);
+            ClientResource cr = new ClientResource(uri);
+            putUserAgentInHeader(cr);
+            dumpHeader(cr);
+            json = RestUtil.post(cr, json);
 
             Gson gson = new Gson();
             TokenResponse tr = gson.fromJson(json, TokenResponse.class);
@@ -240,6 +276,7 @@ public class Client {
         ClientResource cr = new ClientResource(uri);
         putTokenInHeader(cr);
         putUserAgentInHeader(cr);
+        dumpHeader(cr);
 
         String json = RestUtil.get(cr);
 
@@ -273,6 +310,7 @@ public class Client {
             ClientResource cr = new ClientResource(uri);
             putTokenInHeader(cr);
             putUserAgentInHeader(cr);
+            dumpHeader(cr);
 
             String json = RestUtil.get(cr);
             Gson gson = new Gson();
@@ -315,6 +353,7 @@ public class Client {
                     ClientResource cr = new ClientResource(uri);
                     putTokenInHeader(cr);
                     putUserAgentInHeader(cr);
+                    dumpHeader(cr);
 
                     String json = RestUtil.put(cr, null);
 
@@ -351,6 +390,7 @@ public class Client {
                     ClientResource cr = new ClientResource(uri);
                     putTokenInHeader(cr);
                     putUserAgentInHeader(cr);
+                    dumpHeader(cr);
 
                     String json = RestUtil.delete(cr);
 
@@ -383,6 +423,7 @@ public class Client {
                 ClientResource cr = new ClientResource(uri);
                 putTokenInHeader(cr);
                 putUserAgentInHeader(cr);
+                dumpHeader(cr);
 
                 String json = RestUtil.get(cr);
                 Gson gson = new Gson();
@@ -408,6 +449,7 @@ public class Client {
                 ClientResource cr = new ClientResource(uri);
                 putTokenInHeader(cr);
                 putUserAgentInHeader(cr);
+                dumpHeader(cr);
 
                 String json = RestUtil.get(cr);
 
@@ -434,6 +476,7 @@ public class Client {
                     ClientResource cr = new ClientResource(uri);
                     putTokenInHeader(cr);
                     putUserAgentInHeader(cr);
+                    dumpHeader(cr);
 
                     Gson gson = new Gson();
                     String rjson = gson.toJson(array);
@@ -472,6 +515,7 @@ public class Client {
                     putTokenInHeader(cr);
                     putUserAgentInHeader(cr);
                     putAcceptInHeader(cr);
+                    dumpHeader(cr);
 
                     Gson gson = new Gson();
                     String rjson = gson.toJson(array);
