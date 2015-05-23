@@ -16,6 +16,7 @@
 */
 package org.jflicks.tv.programdata.sd.json;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,6 +56,7 @@ public class Client {
     public Client() {
 
         setBaseUri("https://json.schedulesdirect.org");
+        //setApiVersion("20141201");
         setApiVersion("20140530");
     }
 
@@ -96,6 +98,19 @@ public class Client {
 
     public void setHeadends(Headend[] array) {
         headends = array;
+    }
+
+    private void dumpJson(String s) {
+
+        if (s != null) {
+
+            File sdjson = new File("sdjson.debug");
+            if ((sdjson.exists()) && (sdjson.isFile())) {
+
+                System.out.println(s);
+                System.out.println("---------------------------------------------------");
+            }
+        }
     }
 
     private void dumpHeader(ClientResource cr) {
@@ -186,6 +201,7 @@ public class Client {
 
         String result = null;
 
+        System.out.println("fred: " + name);
         if (name != null) {
 
             UserLineup ul = getUserLineup();
@@ -196,6 +212,7 @@ public class Client {
 
                     for (int j = 0; j < lups.length; j++) {
 
+                        System.out.println("bob: " + lups[j].getName());
                         if (name.equals(lups[j].getName())) {
 
                             result = lups[j].getUri();
@@ -225,6 +242,8 @@ public class Client {
 
                         for (int j = 0; j < lups.length; j++) {
 
+                            System.out.println("Bob: " +lups[j].toString());
+                            System.out.println("harry: " + array[i].getLocation());
                             if ((name.equals(lups[j].toString())) && (location.equals(array[i].getLocation()))) {
 
                                 result = lups[j].getUri();
@@ -279,6 +298,7 @@ public class Client {
         dumpHeader(cr);
 
         String json = RestUtil.get(cr);
+        dumpJson(json);
 
         Gson gson = new Gson();
         Status status = gson.fromJson(json, Status.class);
@@ -313,6 +333,7 @@ public class Client {
             dumpHeader(cr);
 
             String json = RestUtil.get(cr);
+            dumpJson(json);
             Gson gson = new Gson();
             Type mapType = new TypeToken<HashMap<String, Headend>>() {}.getType();
             HashMap hm = gson.fromJson(json, mapType);
@@ -341,6 +362,8 @@ public class Client {
 
         boolean result = false;
 
+        System.out.println("FRED: " + name);
+        System.out.println("FRED: " + location);
         if ((name != null) && (location != null)) {
 
             String uri = getUriFromLineupNameAndLocation(name, location);
@@ -356,6 +379,7 @@ public class Client {
                     dumpHeader(cr);
 
                     String json = RestUtil.put(cr, null);
+                    dumpJson(json);
 
                     Gson gson = new Gson();
                     LineupResponse lr = gson.fromJson(json, LineupResponse.class);
@@ -378,21 +402,26 @@ public class Client {
 
         boolean result = false;
 
+        System.out.println("FRED <" + name + ">");
+        System.out.println("FRED <" + location + ">");
         if ((name != null) && (location != null)) {
 
             String uri = getUriFromLineupNameAndLocation(name, location);
+            System.out.println("FRED <" + uri + ">");
             if (uri != null) {
 
                 try {
 
                     setLineupResponse(null);
                     uri = getBaseUri() + uri;
+                    System.out.println("FRED <" + uri + ">");
                     ClientResource cr = new ClientResource(uri);
                     putTokenInHeader(cr);
                     putUserAgentInHeader(cr);
                     dumpHeader(cr);
 
                     String json = RestUtil.delete(cr);
+                    dumpJson(json);
 
                     Gson gson = new Gson();
                     LineupResponse lr = gson.fromJson(json, LineupResponse.class);
@@ -403,6 +432,7 @@ public class Client {
                     }
 
                 } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
                 }
             }
         }
@@ -426,6 +456,7 @@ public class Client {
                 dumpHeader(cr);
 
                 String json = RestUtil.get(cr);
+                dumpJson(json);
                 Gson gson = new Gson();
                 result = gson.fromJson(json, UserLineup.class);
 
@@ -452,6 +483,7 @@ public class Client {
                 dumpHeader(cr);
 
                 String json = RestUtil.get(cr);
+                dumpJson(json);
 
                 Gson gson = new Gson();
                 result = gson.fromJson(json, Mapping.class);
@@ -481,6 +513,7 @@ public class Client {
                     Gson gson = new Gson();
                     String rjson = gson.toJson(array);
                     String json = RestUtil.post(cr, rjson);
+                    dumpJson(json);
 
                     String[] items = json.split("\n");
                     if ((items != null) && (items.length > 0)) {
@@ -520,6 +553,7 @@ public class Client {
                     Gson gson = new Gson();
                     String rjson = gson.toJson(array);
                     String json = RestUtil.post(cr, rjson);
+                    dumpJson(json);
 
                     if (json != null) {
 

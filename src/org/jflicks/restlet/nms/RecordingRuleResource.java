@@ -65,6 +65,9 @@ public class RecordingRuleResource extends BaseServerResource {
         if (isFormatJson()) {
 
             RecordingRule[] array = nsup.getRecordingRules();
+            if (array == null) {
+                array = new RecordingRule[0];
+            }
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -79,6 +82,9 @@ public class RecordingRuleResource extends BaseServerResource {
         } else if (isFormatXml()) {
 
             RecordingRule[] array = nsup.getRecordingRules();
+            if (array == null) {
+                array = new RecordingRule[0];
+            }
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 

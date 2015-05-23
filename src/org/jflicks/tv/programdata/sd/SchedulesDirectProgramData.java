@@ -762,9 +762,10 @@ public class SchedulesDirectProgramData extends BaseProgramData
             // Process the Programs and put new Show instances into the
             // database.
             Map<String, Program> pmap = xtvd.getPrograms();
-            log(DEBUG, "Program map count <" + pmap.size() + ">");
+            log(DEBUG, "Program map <" + pmap + ">");
             if (pmap != null) {
 
+                log(DEBUG, "Program map count <" + pmap.size() + ">");
                 Collection<Program> coll = pmap.values();
                 if (coll != null) {
 

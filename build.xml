@@ -1179,7 +1179,7 @@
             <arg value="-zipcode"/>
             <arg value="${sdzip}"/>
             <arg value="-action"/>
-            <arg value="listAllLineups"/>
+            <arg value="listStations"/>
             <!--
             <arg value="listAddedLineups"/>
             <arg value="listStations"/>
@@ -1190,7 +1190,7 @@
             <arg value="guide"/>
             -->
             <arg value="-lineup"/>
-            <arg value="Local"/>
+            <arg value="Local Over the Air Broadcast"/>
             <!--
             <arg value="DIRECTV Albany"/>
             <arg value="Local"/>

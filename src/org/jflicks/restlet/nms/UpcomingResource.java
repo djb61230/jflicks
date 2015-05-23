@@ -63,6 +63,10 @@ public class UpcomingResource extends BaseServerResource {
         if (isFormatJson()) {
 
             Upcoming[] array = nsup.getUpcomings();
+            if (array == null) {
+                array = new Upcoming[0];
+            }
+
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
@@ -77,6 +81,9 @@ public class UpcomingResource extends BaseServerResource {
         } else if (isFormatXml()) {
 
             Upcoming[] array = nsup.getUpcomings();
+            if (array == null) {
+                array = new Upcoming[0];
+            }
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 
