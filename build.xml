@@ -1179,7 +1179,7 @@
             <arg value="-zipcode"/>
             <arg value="${sdzip}"/>
             <arg value="-action"/>
-            <arg value="listStations"/>
+            <arg value="listAddedLineups"/>
             <!--
             <arg value="listAddedLineups"/>
             <arg value="listStations"/>
@@ -1192,15 +1192,17 @@
             <arg value="-lineup"/>
             <arg value="Local Over the Air Broadcast"/>
             <!--
+            <arg value="USA-OTA-13492"/>
             <arg value="DIRECTV Albany"/>
             <arg value="Local"/>
+            <arg value="Local Over the Air Broadcast"/>
             -->
             <arg value="-sid"/>
             <arg value="53158"/>
             <arg value="-sid"/>
             <arg value="34968"/>
             <arg value="-pid"/>
-            <arg value="EP013657560167"/>
+            <arg value="EP008298780289"/>
 
             <classpath>
                 <path refid="runtime.classpath"/>

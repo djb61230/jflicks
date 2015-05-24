@@ -24,41 +24,41 @@ import java.io.Serializable;
  * @author Doug Barnum
  * @version 1.0
  */
-public class UserLineup implements Serializable {
+public class HeadendObject implements Serializable {
 
-    private String code;
-    private String serverID;
-    private String datetime;
+    private String headend;
+    private String transport;
+    private String location;
     private Lineup[] lineups;
 
     /**
      * Simple empty constructor.
      */
-    public UserLineup() {
+    public HeadendObject() {
     }
 
-    public String getCode() {
-        return (code);
+    public String getHeadend() {
+        return (headend);
     }
 
-    public void setCode(String s) {
-        code = s;
+    public void setHeadend(String s) {
+        headend = s;
     }
 
-    public String getServerID() {
-        return (serverID);
+    public String getTransport() {
+        return (transport);
     }
 
-    public void setServerID(String s) {
-        serverID = s;
+    public void setTransport(String s) {
+        transport = s;
     }
 
-    public String getDatetime() {
-        return (datetime);
+    public String getLocation() {
+        return (location);
     }
 
-    public void setDatetime(String s) {
-        datetime = s;
+    public void setLocation(String s) {
+        location = s;
     }
 
     public Lineup[] getLineups() {

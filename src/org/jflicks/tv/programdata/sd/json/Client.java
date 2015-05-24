@@ -47,7 +47,7 @@ public class Client {
     private String baseUri;
     private String apiVersion;
     private String token;
-    private Headend[] headends;
+    private HeadendObject[] headendObjects;
     private LineupResponse lineupResponse;
 
     /**
@@ -56,8 +56,8 @@ public class Client {
     public Client() {
 
         setBaseUri("https://json.schedulesdirect.org");
-        //setApiVersion("20141201");
-        setApiVersion("20140530");
+        setApiVersion("20141201");
+        //setApiVersion("20140530");
     }
 
     public String getBaseUri() {
@@ -92,12 +92,12 @@ public class Client {
         lineupResponse = lr;
     }
 
-    public Headend[] getHeadends() {
-        return (headends);
+    public HeadendObject[] getHeadendObjects() {
+        return (headendObjects);
     }
 
-    public void setHeadends(Headend[] array) {
-        headends = array;
+    public void setHeadendObjects(HeadendObject[] array) {
+        headendObjects = array;
     }
 
     private void dumpJson(String s) {
@@ -232,7 +232,7 @@ public class Client {
 
         if ((name != null) && (location != null)) {
 
-            Headend[] array = getHeadends();
+            HeadendObject[] array = getHeadendObjects();
             if ((array != null) && (array.length > 0)) {
 
                 for (int i = 0; i < array.length; i++) {
@@ -335,6 +335,10 @@ public class Client {
             String json = RestUtil.get(cr);
             dumpJson(json);
             Gson gson = new Gson();
+            HeadendObject[] heads = gson.fromJson(json, HeadendObject[].class);
+            setHeadendObjects(heads);
+            result = getHeadendObjects() != null;
+            /*
             Type mapType = new TypeToken<HashMap<String, Headend>>() {}.getType();
             HashMap hm = gson.fromJson(json, mapType);
             if ((hm != null) && (hm.size() > 0)) {
@@ -352,6 +356,7 @@ public class Client {
                 setHeadends(array);
                 result = getHeadends() != null;
             }
+            */
 
         }
 
@@ -450,6 +455,7 @@ public class Client {
             try {
 
                 String uri = getBaseUri() + "/" + getApiVersion() + "/lineups";
+                System.out.println("uri <" + uri + ">");
                 ClientResource cr = new ClientResource(uri);
                 putTokenInHeader(cr);
                 putUserAgentInHeader(cr);
@@ -461,6 +467,9 @@ public class Client {
                 result = gson.fromJson(json, UserLineup.class);
 
             } catch (Exception ex) {
+
+                ex.printStackTrace();
+                System.out.println("getUserLineup: " + ex.getMessage());
             }
         }
 
@@ -512,19 +521,27 @@ public class Client {
 
                     Gson gson = new Gson();
                     String rjson = gson.toJson(array);
+                    dumpJson(rjson);
                     String json = RestUtil.post(cr, rjson);
                     dumpJson(json);
+                    result = gson.fromJson(json, StationSchedule[].class);
 
+                    /*
                     String[] items = json.split("\n");
                     if ((items != null) && (items.length > 0)) {
 
                         result = new StationSchedule[items.length];
                         for (int i = 0; i < result.length; i++) {
+
+                            dumpJson(items[i]);
                             result[i] = gson.fromJson(items[i], StationSchedule.class);
                         }
                     }
+                    */
 
                 } catch (Exception ex) {
+
+                    ex.printStackTrace();
                 }
             }
         }
@@ -552,9 +569,12 @@ public class Client {
 
                     Gson gson = new Gson();
                     String rjson = gson.toJson(array);
+                    dumpJson(rjson);
                     String json = RestUtil.post(cr, rjson);
                     dumpJson(json);
+                    result = gson.fromJson(json, Program[].class);
 
+                    /*
                     if (json != null) {
 
                         String[] items = json.split("\n");
@@ -566,6 +586,7 @@ public class Client {
                             }
                         }
                     }
+                    */
 
                 } catch (Exception ex) {
 

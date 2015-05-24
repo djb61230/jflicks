@@ -126,7 +126,7 @@ public class Manage {
                     case LIST_ALL_LINEUPS:
                         if (c.doHeadend(country, zip)) {
 
-                            Headend[] array = c.getHeadends();
+                            HeadendObject[] array = c.getHeadendObjects();
                             if ((array != null) && (array.length > 0)) {
 
                                 for (int i = 0; i < array.length; i++) {
@@ -136,7 +136,7 @@ public class Manage {
 
                                         for (int j = 0; j < lups.length; j++) {
 
-                                            System.out.println(lups[j] + " location=" + array[i].getLocation());
+                                            System.out.println(lups[j].getLineup() + " location=" + array[i].getLocation());
                                         }
                                     }
                                 }
@@ -159,7 +159,7 @@ public class Manage {
 
                                 for (int i = 0; i < lups.length; i++) {
 
-                                    System.out.println(lups[i] + " name=" + lups[i].getName() + " id=" + lups[i].getId());
+                                    System.out.println(lups[i].getLineup() + " name=" + lups[i].getName() + " transport=" + lups[i].getTransport() + " location=" + lups[i].getLocation());
                                 }
                             }
 

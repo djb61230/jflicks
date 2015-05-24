@@ -499,6 +499,7 @@ public class SchedulesDirect {
                         ArrayList<String> md5list = new ArrayList<String>();
                         for (int i = 0; i < lineupNames.length; i++) {
 
+                            System.out.println("DEBUG: " + lineupNames[i]);
                             String[] sids = getStationsByLineupName(lineupNames[i]);
                             if ((sids != null) && (sids.length > 0)) {
 
@@ -509,11 +510,13 @@ public class SchedulesDirect {
                                 }
 
                                 StationSchedule[] sched = c.getGuide(grs);
+                                System.out.println("DEBUG: " + sched);
                                 if ((sched != null) && (sched.length > 0)) {
 
                                     // Make an xtvd Schedule.
                                     for (int j = 0; j < sched.length; j++) {
 
+                                        System.out.println("DEBUG: " + sched[j]);
                                         Program[] progs = sched[j].getPrograms();
                                         if ((progs != null) && (progs.length > 0)) {
 
@@ -674,7 +677,7 @@ public class SchedulesDirect {
                 l.setName(array[i].toString());
                 l.setLocation(array[i].getLocation());
 
-                String type = array[i].getType();
+                String type = array[i].getTransport();
                 if (type != null) {
 
                     if (type.equalsIgnoreCase("cable")) {

@@ -28,10 +28,10 @@ import java.util.StringTokenizer;
 public class Lineup implements Serializable {
 
     private String id;
+    private String lineup;
     private String name;
-    private String type;
+    private String transport;
     private String location;
-    private String modified;
     private String uri;
 
     /**
@@ -49,9 +49,9 @@ public class Lineup implements Serializable {
             // Ok here we hack because the listing id
             // is not nicely it's own field in the json
             // data.
-            if (type != null) {
+            if (transport != null) {
 
-                if (type.equalsIgnoreCase("antenna")) {
+                if (transport.equalsIgnoreCase("antenna")) {
                     result = location;
                 } else if (uri != null) {
 
@@ -76,6 +76,14 @@ public class Lineup implements Serializable {
         id = s;
     }
 
+    public String getLineup() {
+        return (lineup);
+    }
+
+    public void setLineup(String s) {
+        lineup = s;
+    }
+
     public String getName() {
         return (name);
     }
@@ -84,12 +92,12 @@ public class Lineup implements Serializable {
         name = s;
     }
 
-    public String getType() {
-        return (type);
+    public String getTransport() {
+        return (transport);
     }
 
-    public void setType(String s) {
-        type = s;
+    public void setTransport(String s) {
+        transport = s;
     }
 
     public String getLocation() {
@@ -98,14 +106,6 @@ public class Lineup implements Serializable {
 
     public void setLocation(String s) {
         location = s;
-    }
-
-    public String getModified() {
-        return (modified);
-    }
-
-    public void setModified(String s) {
-        modified = s;
     }
 
     public String getUri() {
@@ -121,7 +121,7 @@ public class Lineup implements Serializable {
         String result = null;
 
         StringBuilder sb = new StringBuilder(getName());
-        String tmp = getType();
+        String tmp = getTransport();
         if (tmp != null) {
 
             sb.append("-");

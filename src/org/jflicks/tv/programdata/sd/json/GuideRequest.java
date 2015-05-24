@@ -17,6 +17,8 @@
 package org.jflicks.tv.programdata.sd.json;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * A class to capture the JSON defining a station.
@@ -27,14 +29,27 @@ import java.io.Serializable;
 public class GuideRequest implements Serializable {
 
     private String stationID;
-    private int days;
+    private String[] date;
 
     /**
      * Simple empty constructor.
      */
     public GuideRequest() {
 
-        setDays(13);
+        // Next we set the date array for the next 13 days.
+        String[] array = new String[13];
+
+        // First do today.
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date tmp = new Date();
+        array[0] = sdf.format(tmp);
+        for (int i = 1; i < array.length; i++) {
+
+            tmp = new Date(tmp.getTime() + 86400000L);
+            array[i] = sdf.format(tmp);
+        }
+
+        setDate(array);
     }
 
     public GuideRequest(String s) {
@@ -51,12 +66,12 @@ public class GuideRequest implements Serializable {
         stationID = s;
     }
 
-    public int getDays() {
-        return (days);
+    public String[] getDate() {
+        return (date);
     }
 
-    public void setDays(int i) {
-        days = i;
+    public void setDate(String[] array) {
+        date = array;
     }
 
 }

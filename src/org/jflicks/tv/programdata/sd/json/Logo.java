@@ -19,54 +19,54 @@ package org.jflicks.tv.programdata.sd.json;
 import java.io.Serializable;
 
 /**
- * A class to capture the JSON that defines the "headends".
+ * A class to capture the JSON defining a lineup.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class UserLineup implements Serializable {
+public class Logo implements Serializable {
 
-    private String code;
-    private String serverID;
-    private String datetime;
-    private Lineup[] lineups;
+    private String url;
+    private int height;
+    private int width;
+    private String md5;
 
     /**
      * Simple empty constructor.
      */
-    public UserLineup() {
+    public Logo() {
     }
 
-    public String getCode() {
-        return (code);
+    public String getUrl() {
+        return (url);
     }
 
-    public void setCode(String s) {
-        code = s;
+    public void setUrl(String s) {
+        url = s;
     }
 
-    public String getServerID() {
-        return (serverID);
+    public int getHeight() {
+        return (height);
     }
 
-    public void setServerID(String s) {
-        serverID = s;
+    public void setHeight(int i) {
+        height = i;
     }
 
-    public String getDatetime() {
-        return (datetime);
+    public int getWidth() {
+        return (width);
     }
 
-    public void setDatetime(String s) {
-        datetime = s;
+    public void setWidth(int i) {
+        width = i;
     }
 
-    public Lineup[] getLineups() {
-        return (lineups);
+    public String getMd5() {
+        return (md5);
     }
 
-    public void setLineups(Lineup[] array) {
-        lineups = array;
+    public void setMd5(String s) {
+        md5 = s;
     }
 
 }

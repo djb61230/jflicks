@@ -29,14 +29,25 @@ public class Station implements Serializable {
     private String callsign;
     private String channel;
     private String name;
-    private String broadcastLanguage;
-    private String descriptionLanguage;
+    private String[] broadcastLanguage;
+    private String[] descriptionLanguage;
     private String stationID;
+    private String affiliate;
+    private Broadcaster broadcaster;
+    private Logo logo;
 
     /**
      * Simple empty constructor.
      */
     public Station() {
+    }
+
+    public String getAffiliate() {
+        return (affiliate);
+    }
+
+    public void setAffiliate(String s) {
+        affiliate = s;
     }
 
     public String getCallsign() {
@@ -63,19 +74,19 @@ public class Station implements Serializable {
         channel = s;
     }
 
-    public String getBroadcastLanguage() {
+    public String[] getBroadcastLanguage() {
         return (broadcastLanguage);
     }
 
-    public void setBroadcastLanguage(String s) {
+    public void setBroadcastLanguage(String[] s) {
         broadcastLanguage = s;
     }
 
-    public String getDescriptionLanguage() {
+    public String[] getDescriptionLanguage() {
         return (descriptionLanguage);
     }
 
-    public void setDescriptionLanguage(String s) {
+    public void setDescriptionLanguage(String[] s) {
         descriptionLanguage = s;
     }
 

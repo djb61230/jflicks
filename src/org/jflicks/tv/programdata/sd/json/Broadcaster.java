@@ -17,56 +17,57 @@
 package org.jflicks.tv.programdata.sd.json;
 
 import java.io.Serializable;
+import java.util.StringTokenizer;
 
 /**
- * A class to capture the JSON that defines the "headends".
+ * A class to capture the JSON defining a lineup.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class UserLineup implements Serializable {
+public class Broadcaster implements Serializable {
 
-    private String code;
-    private String serverID;
-    private String datetime;
-    private Lineup[] lineups;
+    private String city;
+    private String state;
+    private String postalcode;
+    private String country;
 
     /**
      * Simple empty constructor.
      */
-    public UserLineup() {
+    public Broadcaster() {
     }
 
-    public String getCode() {
-        return (code);
+    public String getCity() {
+        return (city);
     }
 
-    public void setCode(String s) {
-        code = s;
+    public void setCity(String s) {
+        city = s;
     }
 
-    public String getServerID() {
-        return (serverID);
+    public String getState() {
+        return (state);
     }
 
-    public void setServerID(String s) {
-        serverID = s;
+    public void setState(String s) {
+        state = s;
     }
 
-    public String getDatetime() {
-        return (datetime);
+    public String getPostalcode() {
+        return (postalcode);
     }
 
-    public void setDatetime(String s) {
-        datetime = s;
+    public void setPostalcode(String s) {
+        postalcode = s;
     }
 
-    public Lineup[] getLineups() {
-        return (lineups);
+    public String getCountry() {
+        return (country);
     }
 
-    public void setLineups(Lineup[] array) {
-        lineups = array;
+    public void setCountry(String s) {
+        country = s;
     }
 
 }
