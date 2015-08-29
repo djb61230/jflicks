@@ -41,6 +41,8 @@ import org.jflicks.util.ExtensionsFilter;
 import org.jflicks.util.Util;
 import org.jflicks.videomanager.VideoManager;
 
+import fi.iki.elonen.SimpleWebServer;
+
 /**
  * This is our implementation of an NMS.
  *
@@ -49,6 +51,8 @@ import org.jflicks.videomanager.VideoManager;
  */
 public class SystemNMS extends BaseNMS {
 
+    private SimpleWebServer simpleWebServer;
+
     /**
      * Default empty constructor.
      */
@@ -56,6 +60,43 @@ public class SystemNMS extends BaseNMS {
 
         setTitle("SystemNMS");
         saveDefaultConfigurations();
+    }
+
+    public void startWebServer() {
+
+        if (simpleWebServer == null) {
+
+            int port = getConfiguredStreamPort();
+            ArrayList<File> rootDirs= new ArrayList<File>();
+            String[] paths = getConfiguredStreamPaths();
+            if ((paths != null) && (paths.length > 0)) {
+
+                for (int i = 0; i < paths.length; i++) {
+
+                    rootDirs.add(new File(paths[i]));
+                }
+            }
+
+            simpleWebServer = new SimpleWebServer(null, port, rootDirs, false);
+            try {
+
+                simpleWebServer.start();
+
+            } catch (Exception ex) {
+
+                log(INFO, "simpleWebServer problem: " + ex.getMessage());
+                simpleWebServer = null;
+            }
+        }
+    }
+
+    public void stopWebServer() {
+
+        if (simpleWebServer != null) {
+
+            simpleWebServer.stop();
+            simpleWebServer = null;
+        }
     }
 
     private File createConfigurationFile(Configuration c) {
@@ -252,6 +293,8 @@ public class SystemNMS extends BaseNMS {
                 if (name.equals(NMSConstants.NMS_NAME)) {
 
                     setConfiguration(c);
+                    stopWebServer();
+                    startWebServer();
 
                 } else if (name.equals(NMSConstants.SCHEDULER_NAME)) {
 

@@ -1190,10 +1190,11 @@
             <arg value="guide"/>
             -->
             <arg value="-lineup"/>
-            <arg value="Local Over the Air Broadcast"/>
+            <arg value="Antenna"/>
             <!--
             <arg value="USA-OTA-13492"/>
             <arg value="DIRECTV Albany"/>
+            <arg value="Antenna"/>
             <arg value="Local"/>
             <arg value="Local Over the Air Broadcast"/>
             -->

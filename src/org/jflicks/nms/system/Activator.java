@@ -147,6 +147,9 @@ public class Activator extends BaseActivator {
         Runtime runtime = Runtime.getRuntime();
         Thread thread = new Thread(new ShutDownListener());
         runtime.addShutdownHook(thread);
+
+        // Finally start up the web server
+        s.startWebServer();
     }
 
     /**
@@ -162,6 +165,8 @@ public class Activator extends BaseActivator {
 
         SystemNMS s = getSystemNMS();
         if (s != null) {
+
+            s.stopWebServer();
             s.close();
         }
 
@@ -345,16 +350,16 @@ public class Activator extends BaseActivator {
             if ((s != null) && (bc != null)) {
 
                 s.log(s.INFO, "Shutting down via shutdown hook!");
-                Bundle b = bc.getBundle(0L);
-                if (b != null) {
+                try {
 
-                    try {
+                    Bundle b = bc.getBundle(0L);
+                    if (b != null) {
 
                         System.out.println("BundleContext: stop");
                         b.stop();
-
-                    } catch (BundleException ex) {
                     }
+
+                } catch (BundleException ex) {
                 }
             }
         }

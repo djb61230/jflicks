@@ -143,6 +143,19 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private String getModel() {
+
+        String result = null;
+
+        HDHRRecorder r = getHDHRRecorder();
+        if (r != null) {
+
+            result = r.getModel();
+        }
+
+        return (result);
+    }
+
     private int getTuner() {
 
         int result = -1;
@@ -243,6 +256,7 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
         fj.setTuner(getTuner());
         fj.setFrequency(getFrequency());
         fj.setType(getFrequencyType());
+        fj.setModel(getModel());
 
         StreamInfoJob sij = new StreamInfoJob();
         setStreamInfoJob(sij);
@@ -272,6 +286,7 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
         nfj.setId(getId());
         nfj.setTuner(getTuner());
         nfj.setFrequency(-1);
+        fj.setModel(getModel());
 
         JobContainer jc = JobManager.getJobContainer(fj);
         setJobContainer(jc);

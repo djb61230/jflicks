@@ -35,6 +35,7 @@ public class FrequencyJob extends BaseHDHRJob {
 
     private int frequency;
     private String type;
+    private String model;
 
     /**
      * Simple no argument constructor.
@@ -86,13 +87,47 @@ public class FrequencyJob extends BaseHDHRJob {
         type = s;
     }
 
+    public String getModel() {
+        return (model);
+    }
+
+    public void setModel(String s) {
+        model = s;
+    }
+
+    private String getPrefix() {
+
+        // By default we have no prefix which works for the old HDHR.
+        // This method should be more complete, something to work on in
+        // the future.
+        String result = "";
+
+        String m = getModel();
+        if (m != null) {
+
+            // Ok we have a model.  Right now just handling the HDTC.
+            // We will assume anything else is the older model since
+            // at this point do not know what model it will be.  Also
+            // this drops support for the other HDHR devices like prime.
+            // But thats not really a cord cutter device since that is
+            // our current focus.
+            if (m.startsWith("HDTC")) {
+
+                result = getType() + ":";
+            }
+        }
+
+        return (result);
+    }
+
     private String frequencyToString() {
 
         String result = "none";
 
         int f = getFrequency();
         if (f > 0) {
-            result = getType() + ":" + f;
+
+            result = getPrefix() + f;
         }
 
         return (result);

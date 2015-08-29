@@ -34,6 +34,8 @@ public class DiscoverJob extends BaseHDHRJob {
 
     private ArrayList<String> idList;
     private ArrayList<String> ipList;
+    private ArrayList<String> modelList;
+    private ModelJob[] modelJobs;
 
     /**
      * Simple no argument constructor.
@@ -42,6 +44,7 @@ public class DiscoverJob extends BaseHDHRJob {
 
         setIdList(new ArrayList<String>());
         setIpList(new ArrayList<String>());
+        setModelList(new ArrayList<String>());
     }
 
     private ArrayList<String> getIdList() {
@@ -108,6 +111,38 @@ public class DiscoverJob extends BaseHDHRJob {
         }
     }
 
+    private ArrayList<String> getModelList() {
+        return (modelList);
+    }
+
+    private void setModelList(ArrayList<String> l) {
+        modelList = l;
+    }
+
+    private void addModel(String s) {
+
+        ArrayList<String> l = getModelList();
+        if ((l != null) && (s != null)) {
+            l.add(s);
+        }
+    }
+
+    private void removeModel(String s) {
+
+        ArrayList<String> l = getModelList();
+        if ((l != null) && (s != null)) {
+            l.remove(s);
+        }
+    }
+
+    private void clearModelList() {
+
+        ArrayList<String> l = getModelList();
+        if (l != null) {
+            l.clear();
+        }
+    }
+
     /**
      * The array of HDHR ID values found on the network.  There will be one
      * ID for each HDHR found.
@@ -147,6 +182,58 @@ public class DiscoverJob extends BaseHDHRJob {
     }
 
     /**
+     * The array of HDHR models found on the network.  There will be one
+     * model for each HDHR found.
+     *
+     * @return An array of String instances representing HDHR model value.
+     */
+    public String[] getModels() {
+
+        String[] result = null;
+
+        ArrayList<String> l = getModelList();
+        if (l != null) {
+
+            result = l.toArray(new String[l.size()]);
+        }
+
+        return (result);
+    }
+
+    private ModelJob[] getModelJobs() {
+        return (modelJobs);
+    }
+
+    private void setModelJobs(ModelJob[] array) {
+        modelJobs = array;
+    }
+
+    private int findNextIdIndex(String s) {
+
+        int result = -1;
+
+        String[] all = getIds();
+        if ((s != null) && (all != null) && (all.length > 0)) {
+
+            for (int i = 0; i < all.length; i++) {
+
+                if (s.equals(all[i])) {
+
+                    result = i + 1;
+                    break;
+                }
+            }
+
+            // See if we are done.
+            if (result == all.length) {
+                result = -1;
+            }
+        }
+
+        return (result);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void start() {
@@ -154,6 +241,7 @@ public class DiscoverJob extends BaseHDHRJob {
         setTerminate(false);
         clearIdList();
         clearIpList();
+        clearModelList();
     }
 
     /**
@@ -224,7 +312,54 @@ public class DiscoverJob extends BaseHDHRJob {
                          }
                      }
                 }
-                stop();
+
+                // At this point we know all the HDHRs on the network.  Now we have to check
+                // the model for each one.  We set SystemJob to null so we know we are in finding
+                // the models mode.
+                setSystemJob(null);
+
+                String[] all = getIds();
+                if ((all != null) && (all.length > 0)) {
+
+                    ModelJob[] mjobs = new ModelJob[all.length];
+                    for (int i = 0; i < mjobs.length; i++) {
+
+                        mjobs[i] = new ModelJob(all[i]);
+                    }
+
+                    setModelJobs(mjobs);
+
+                    // Now start the first ModelJob.  We will do them one at a time.
+                    mjobs[0].addJobListener(this);
+                    JobContainer jc = JobManager.getJobContainer(mjobs[0]);
+                    setJobContainer(jc);
+                    jc.start();
+
+                } else {
+
+                    // Didn't find any so just stop.
+                    stop();
+                }
+
+            } else {
+
+                // A ModelJob has just finished.
+                ModelJob mj = (ModelJob) event.getSource();
+                addModel(mj.getModel());
+                int next = findNextIdIndex(mj.getId());
+                if (next != -1) {
+
+                    // Now start the next ModelJob.
+                    ModelJob[] mjobs = getModelJobs();
+                    mjobs[next].addJobListener(this);
+                    JobContainer jc = JobManager.getJobContainer(mjobs[next]);
+                    setJobContainer(jc);
+                    jc.start();
+
+                } else {
+
+                    stop();
+                }
             }
         }
     }

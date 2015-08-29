@@ -47,6 +47,8 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-jna.jar"
             todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-metadata-themoviedb.jar"
+            todir="server/bundle"/>
         <copy file="${bundle}/jflicks-nativeutil.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-nms-system.jar"
@@ -56,6 +58,16 @@
         <copy file="${bundle}/jflicks-photomanager-digikam.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-platform.jar"
+            todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-restlet-all.jar"
+            todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-restlet-base.jar"
+            todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-restlet-nms.jar"
+            todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-restlet-servercomponent-system.jar"
+            todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-sqlitejdbc.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-stream-http.jar"
             todir="server/bundle"/>
@@ -75,6 +87,8 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-worker-indexer.jar"
             todir="server/bundle"/>
+        <copy file="${bundle}/jflicks-tv-postproc-worker-passthru.jar"
+            todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-postproc-worker-projectx.jar"
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-tv-programdata-sd.jar"
@@ -93,7 +107,7 @@
             todir="server/bundle"/>
         <copy file="${bundle}/jflicks-videomanager-system.jar"
             todir="server/bundle"/>
-        <copy file="${bundle}/jflicks-sqlitejdbc.jar"
+        <copy file="${bundle}/jflicks-xstream.jar"
             todir="server/bundle"/>
         <copy file="${topdist}/directvweb.jar" todir="server/bin"/>
         <copy file="${topdist}/jflicks-update.jar" todir="server/bin"/>

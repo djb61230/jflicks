@@ -6,7 +6,13 @@ Bundle-Version: 1.0.0
 Bundle-Activator: ${module}.Activator
 
 Include-Resource:\
- org/jflicks/nms/system/default.properties=../conf/nms.default.properties
+ org/jflicks/nms/system/default.properties=../conf/nms.default.properties,\
+ ../lib/nanohttpd-webserver-2.2.0-20150814.jar
+
+Bundle-ClassPath:\
+ .,\
+ nanohttpd-webserver-2.2.0-20150814.jar
+
 
 Import-Package:\
  org.jflicks.autoart;version="1.0.0",\
@@ -29,6 +35,7 @@ Import-Package:\
  org.osgi.framework;version="[1.3,2.0)",\
  org.osgi.service.log;version="[1.0,4.0)",\
  org.osgi.util.tracker;version="[1.3,2.0)",\
+ javax.net.ssl,\
  ch.ethz.iks.r_osgi,\
  com.db4o,\
  com.db4o.config,\

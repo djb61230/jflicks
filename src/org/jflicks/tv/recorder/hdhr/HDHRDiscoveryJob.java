@@ -189,18 +189,19 @@ public class HDHRDiscoveryJob extends AbstractJob implements JobListener {
 
                 String[] array = job.getIds();
                 String[] iparray = job.getIps();
+                String[] modelarray = job.getModels();
                 BundleContext bc = getBundleContext();
-                if ((array != null) && (iparray != null) && (bc != null)) {
+                if ((array != null) && (iparray != null) && (modelarray != null) && (bc != null)) {
 
                     // We will assume dual tuners for right now, but this
                     // needs to be fixed to handle single tuners.
                     for (int i = 0; i < array.length; i++) {
 
                         if (!contains(array[i], 0)) {
-                            registerRecorder(bc, array[i], iparray[i], 0);
+                            registerRecorder(bc, array[i], iparray[i], modelarray[i], 0);
                         }
                         if (!contains(array[i], 1)) {
-                            registerRecorder(bc, array[i], iparray[i], 1);
+                            registerRecorder(bc, array[i], iparray[i], modelarray[i], 1);
                         }
                     }
                 }
@@ -208,14 +209,16 @@ public class HDHRDiscoveryJob extends AbstractJob implements JobListener {
         }
     }
 
-    private void registerRecorder(BundleContext bc, String id, String ip,
+    private void registerRecorder(BundleContext bc, String id, String ip, String model,
         int tuner) {
 
         if ((bc != null) && (id != null)) {
 
+            System.out.println("register id <" + id + "> tuner <" + tuner + "> ip <" + ip + "> model <" + model + ">");
             HDHRRecorder r = new HDHRRecorder();
             r.setDevice(id + "-" + tuner);
             r.setIpAddress(ip);
+            r.setModel(model);
             r.updateDefault();
             r.setLogServiceTracker(getLogServiceTracker());
             addHDHRRecorder(r);

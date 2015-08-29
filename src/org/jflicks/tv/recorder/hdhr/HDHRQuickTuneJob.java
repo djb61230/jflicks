@@ -116,6 +116,19 @@ public class HDHRQuickTuneJob extends AbstractJob implements JobListener {
         return (result);
     }
 
+    private String getModel() {
+
+        String result = null;
+
+        HDHRRecorder r = getHDHRRecorder();
+        if (r != null) {
+
+            result = r.getModel();
+        }
+
+        return (result);
+    }
+
     private int getTuner() {
 
         int result = -1;
@@ -216,6 +229,7 @@ public class HDHRQuickTuneJob extends AbstractJob implements JobListener {
         fj.setId(getId());
         fj.setTuner(getTuner());
         fj.setFrequency(getFrequency());
+        fj.setModel(getModel());
 
         ProgramJob pj = new ProgramJob();
         setProgramJob(pj);

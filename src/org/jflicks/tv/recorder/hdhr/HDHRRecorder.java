@@ -50,6 +50,7 @@ public class HDHRRecorder extends BaseRecorder {
     private boolean useScanFile;
     private ScanFile scanFile;
     private String ipAddress;
+    private String model;
 
     /**
      * Simple default constructor.
@@ -81,6 +82,14 @@ public class HDHRRecorder extends BaseRecorder {
      */
     public void setIpAddress(String s) {
         ipAddress = s;
+    }
+
+    public String getModel() {
+        return (model);
+    }
+
+    public void setModel(String s) {
+        model = s;
     }
 
     /**
