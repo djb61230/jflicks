@@ -30,6 +30,7 @@ import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
 import org.jflicks.util.DetectRating;
 import org.jflicks.util.DetectRatingPlan;
+import org.jflicks.util.Util;
 
 /**
  * This job starts a system job that runs comskip.
@@ -307,6 +308,39 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                         }
 
                         r.setCommercials(coms);
+
+                        // Next we want to write a chapter file for mp4chaps.
+                        String ext = r.getIndexedExtension();
+                        if ((ext != null) && (ext.equals("mp4"))) {
+
+                            coms = r.getCommercials();
+                            if ((coms != null) && (coms.length > 0)) {
+
+                                StringBuilder sb = new StringBuilder();
+                                sb.append("00:00:00.000 Chapter 1\n");
+                                for (int i = 0; i < coms.length; i++) {
+
+                                    String fmt = formatSeconds(coms[i].getEnd());
+                                    sb.append(fmt + ".000 Chapter " + (i + 2) + "\n");
+                                }
+
+                                String origPath = r.getPath();
+                                File file = new File(origPath + ".chapters.txt");
+                                try {
+
+                                    Util.writeTextFile(file, sb.toString());
+                                    SystemJob job = SystemJob.getInstance("mp4chaps -i \"" + origPath + ".mp4\"");
+                                    JobContainer jc = JobManager.getJobContainer(job);
+                                    log(BaseWorker.INFO, "will start: " + job.getCommand());
+                                    jc.start();
+
+                                } catch (Exception ex) {
+
+                                    log(BaseWorker.INFO, "Couldn't do chapters");
+                                }
+                            }
+                        }
+
                         writeBIF();
 
                     } else {
@@ -347,6 +381,18 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
             setTerminate(true);
         }
+    }
+
+    private static String formatSeconds(int secsIn) {
+
+        int hours = secsIn / 3600;
+        int remainder = secsIn % 3600;
+        int minutes = remainder / 60;
+        int seconds = remainder % 60;
+
+        return ( (hours < 10 ? "0" : "") + hours
+        + ":" + (minutes < 10 ? "0" : "") + minutes
+        + ":" + (seconds< 10 ? "0" : "") + seconds );
     }
 
 }

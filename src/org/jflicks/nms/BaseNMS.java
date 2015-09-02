@@ -275,8 +275,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                     result[i].setRun(array[i].isDefaultRun());
                     result[i].setSelectable(array[i].isUserSelectable());
                     result[i].setIndexer(array[i].isIndexer());
-                    result[i].setCommercialDetector(
-                        array[i].isCommercialDetector());
+                    result[i].setCommercialDetector(array[i].isCommercialDetector());
                 }
             }
         }

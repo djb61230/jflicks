@@ -596,6 +596,7 @@ public final class NMSSupport extends BaseSupport {
 
                     for (int j = 0; j < tarray.length; j++) {
 
+                        System.out.println("DDDDDDDDDDDDDDDDDDDDDDDDDD " + tarray[j].getDescription());
                         if (tarray[j].isSelectable()) {
 
                             tlist.add(tarray[j]);
