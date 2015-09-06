@@ -24,6 +24,7 @@ import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.Worker;
 import org.jflicks.tv.postproc.worker.WorkerEvent;
 import org.jflicks.tv.postproc.worker.WorkerListener;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job will run and queue recording jobs.
@@ -88,7 +89,7 @@ public class SystemPostProcHeavyJob extends SystemPostProcJob {
                                 File file = new File(path);
                                 if (file.exists() || hlsfile.exists()) {
 
-                                    log(SystemPostProc.INFO, "We have work!!");
+                                    LogUtil.log(LogUtil.INFO, "We have work!!");
                                     w.addWorkerListener(this);
                                     setCount(getCount() + 1);
                                     w.work(r);

@@ -28,6 +28,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.trailer.Download;
+import org.jflicks.util.LogUtil;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -110,8 +111,7 @@ public class AppleTrailerJob extends AbstractJob implements JobListener {
                         Download[] array = getDownloads();
                         if ((array != null) && (array.length > 0)) {
 
-                            System.out.println("Trailers to download: "
-                                + array.length);
+                            LogUtil.log(LogUtil.DEBUG, "Trailers to download: " + array.length);
                             for (int i = 0; i < array.length; i++) {
 
                                 File file = getDownloadFile(array[i]);

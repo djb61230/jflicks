@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import org.jflicks.util.LogUtil;
+
 /**
  * Abstract class that implements much of the Controller interface including
  * maintaining lists for models and views associated with this controller.
@@ -119,11 +121,11 @@ public abstract class BaseController implements Controller {
                 method.invoke(m, newValue);
 
             } catch (InvocationTargetException ex) {
-                System.out.println("No such property in this model");
+                LogUtil.log(LogUtil.WARNING, "No such property in this model");
             } catch (NoSuchMethodException ex) {
-                System.out.println("No such property in this model");
+                LogUtil.log(LogUtil.WARNING, "No such property in this model");
             } catch (IllegalAccessException ex) {
-                System.out.println("Permission denied!");
+                LogUtil.log(LogUtil.WARNING, "Permission denied!");
             }
         }
     }

@@ -21,6 +21,7 @@ import org.jflicks.restlet.LiveTVBean;
 import org.jflicks.restlet.LiveTVSupport;
 import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.Channel;
+import org.jflicks.util.LogUtil;
 
 import org.restlet.data.MediaType;
 import org.restlet.ext.json.JsonRepresentation;
@@ -56,19 +57,19 @@ public class LiveTVOpenCloseResource extends BaseServerResource {
 
         LiveTVSupport lsup = LiveTVSupport.getInstance();
 
-        log(NMSApplication.DEBUG, "GET LiveTV session.");
+        LogUtil.log(LogUtil.DEBUG, "GET LiveTV session.");
         if (isFormatJson()) {
 
-            log(NMSApplication.DEBUG, "User wants JSON.");
+            LogUtil.log(LogUtil.DEBUG, "User wants JSON.");
             String cid = getChannelId();
-            log(NMSApplication.DEBUG, "cid: <" + cid + ">");
+            LogUtil.log(LogUtil.DEBUG, "cid: <" + cid + ">");
             LiveTVBean ltv = lsup.openSession(cid);
-            log(NMSApplication.DEBUG, "ltv: <" + ltv + ">");
+            LogUtil.log(LogUtil.DEBUG, "ltv: <" + ltv + ">");
             Gson g = getGson();
             if ((g != null) && (ltv != null)) {
 
                 String data = g.toJson(ltv);
-                log(NMSApplication.DEBUG, "JSON data null = " + (data == null));
+                LogUtil.log(LogUtil.DEBUG, "JSON data null = " + (data == null));
                 if (data != null) {
 
                     JsonRepresentation sr = new JsonRepresentation(data);
@@ -78,7 +79,7 @@ public class LiveTVOpenCloseResource extends BaseServerResource {
 
         } else if (isFormatXml()) {
 
-            log(NMSApplication.DEBUG, "User wants XML.");
+            LogUtil.log(LogUtil.DEBUG, "User wants XML.");
             String cid = getChannelId();
             LiveTVBean ltv = lsup.openSession(cid);
             XStream x = getXStream();
@@ -94,7 +95,7 @@ public class LiveTVOpenCloseResource extends BaseServerResource {
             }
         }
 
-        log(NMSApplication.DEBUG, "Finished livetv open session.");
+        LogUtil.log(LogUtil.DEBUG, "Finished livetv open session.");
 
         return (result);
     }
@@ -115,13 +116,13 @@ public class LiveTVOpenCloseResource extends BaseServerResource {
 
         if (isFormatJson()) {
 
-            log(NMSApplication.DEBUG, "User wants JSON.");
-            log(NMSApplication.DEBUG, "ltv: <" + ltv + ">");
+            LogUtil.log(LogUtil.DEBUG, "User wants JSON.");
+            LogUtil.log(LogUtil.DEBUG, "ltv: <" + ltv + ">");
             Gson g = getGson();
             if ((g != null) && (ltv != null)) {
 
                 String data = g.toJson(ltv);
-                log(NMSApplication.DEBUG, "JSON data null = " + (data == null));
+                LogUtil.log(LogUtil.DEBUG, "JSON data null = " + (data == null));
                 if (data != null) {
 
                     JsonRepresentation sr = new JsonRepresentation(data);
@@ -131,7 +132,7 @@ public class LiveTVOpenCloseResource extends BaseServerResource {
 
         } else if (isFormatXml()) {
 
-            log(NMSApplication.DEBUG, "User wants XML.");
+            LogUtil.log(LogUtil.DEBUG, "User wants XML.");
             XStream x = getXStream();
             if ((x != null) && (ltv != null)) {
 
@@ -145,7 +146,7 @@ public class LiveTVOpenCloseResource extends BaseServerResource {
             }
         }
 
-        log(NMSApplication.DEBUG, "Finished livetv close session.");
+        LogUtil.log(LogUtil.DEBUG, "Finished livetv close session.");
 
         return (result);
     }

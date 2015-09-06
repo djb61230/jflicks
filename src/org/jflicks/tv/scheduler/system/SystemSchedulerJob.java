@@ -33,6 +33,7 @@ import org.jflicks.tv.Recording;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.PendingRecord;
 import org.jflicks.tv.scheduler.RecordedShow;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job will run and queue recording jobs.
@@ -119,15 +120,6 @@ public class SystemSchedulerJob extends AbstractJob
         }
     }
 
-    private void log(int status, String message) {
-
-        SystemScheduler ss = getSystemScheduler();
-        if ((ss != null) && (message != null)) {
-
-            ss.log(status, message);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -179,13 +171,13 @@ public class SystemSchedulerJob extends AbstractJob
                             addRecording(recorder, crec);
                             recorder.addPropertyChangeListener("Recording",
                                 this);
-                            log(SystemScheduler.INFO, "recording on :"
+                            LogUtil.log(LogUtil.INFO, "recording on :"
                                 + array[index].getChannel()
                                 + " "
                                 + new Date(now));
                             long dur = array[index].getDuration();
                             dur -= ((now - array[index].getStart()) / 1000);
-                            log(SystemScheduler.INFO, "adjust length: " + dur);
+                            LogUtil.log(LogUtil.INFO, "adjust length: " + dur);
                             crec.setRealStart(now);
 
                             recorder.startRecording(array[index].getChannel(),
@@ -199,7 +191,7 @@ public class SystemSchedulerJob extends AbstractJob
 
                         } else if (retries < 15) {
 
-                            log(SystemScheduler.INFO,
+                            LogUtil.log(LogUtil.INFO,
                                 "hmm, recorder busy will retry");
                             JobManager.sleep(1000);
                             retries++;
@@ -210,7 +202,7 @@ public class SystemSchedulerJob extends AbstractJob
 
                         } else {
 
-                            log(SystemScheduler.INFO,
+                            LogUtil.log(LogUtil.INFO,
                                 "Recorder stayed busy. Give up");
                             index++;
                             if (index == array.length) {
@@ -254,7 +246,7 @@ public class SystemSchedulerJob extends AbstractJob
         if ((bobj != null) && (!bobj.booleanValue())) {
 
             // A Recorder finished!!
-            log(SystemScheduler.INFO,
+            LogUtil.log(LogUtil.INFO,
                 "Recorder: " + event.getSource() + " finished");
             Recorder r = (Recorder) event.getSource();
             SystemScheduler ss = getSystemScheduler();
@@ -266,7 +258,7 @@ public class SystemSchedulerJob extends AbstractJob
                     rec.setCurrentlyRecording(false);
                     long now = System.currentTimeMillis();
                     rec.setDuration((now - rec.getRealStart()) / 1000L);
-                    log(SystemScheduler.INFO, "Setting true duration: "
+                    LogUtil.log(LogUtil.INFO, "Setting true duration: "
                         + rec.getDuration());
                     ss.updateRecording(rec);
                     removeRecording(r);
@@ -280,12 +272,12 @@ public class SystemSchedulerJob extends AbstractJob
                     // we use the NMS.
                     if (isBad(rec)) {
 
-                        log(SystemScheduler.INFO, rec.getTitle()
+                        LogUtil.log(LogUtil.INFO, rec.getTitle()
                             + " " + rec.getPath() + " was bad!!!");
                         NMS nms = ss.getNMS();
                         if (nms != null) {
 
-                            log(SystemScheduler.INFO, "Removing and"
+                            LogUtil.log(LogUtil.INFO, "Removing and"
                                 + " rescheduling " + rec);
                             nms.removeRecording(rec, true);
                         }
@@ -295,7 +287,7 @@ public class SystemSchedulerJob extends AbstractJob
                         // Now we want to do any indexing of the recording
                         // if so configured.
                         String iname = r.getIndexerName();
-                        log(SystemScheduler.INFO, "Indexing recording: "
+                        LogUtil.log(LogUtil.INFO, "Indexing recording: "
                             + iname);
                         if (iname != null) {
 
@@ -354,7 +346,7 @@ public class SystemSchedulerJob extends AbstractJob
                 File recorded = new File(importdir, "recorded.txt");
                 if ((recorded.exists()) && (recorded.isFile())) {
 
-                    log(SystemScheduler.DEBUG,
+                    LogUtil.log(LogUtil.DEBUG,
                         "SystemScheduler: importing recorded");
                     try {
 
@@ -373,17 +365,17 @@ public class SystemSchedulerJob extends AbstractJob
                         br.close();
                         if (!recorded.delete()) {
 
-                            log(SystemScheduler.WARNING,
+                            LogUtil.log(LogUtil.WARNING,
                                 "checkImports: delete failed");
                         }
 
-                        log(SystemScheduler.INFO,
+                        LogUtil.log(LogUtil.INFO,
                             "SystemScheduler: imported " + count
                             + " shows from recorded.txt");
 
                     } catch (IOException ex) {
 
-                        log(SystemScheduler.WARNING,
+                        LogUtil.log(LogUtil.WARNING,
                             "checkImports: " + ex.getMessage());
                     }
                 }

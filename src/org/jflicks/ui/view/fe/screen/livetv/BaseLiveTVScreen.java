@@ -74,6 +74,7 @@ import org.jflicks.ui.view.fe.ShowDetailPanel;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.util.Busy;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXLabel;
@@ -272,7 +273,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
     private void setGuideMap(HashMap<Channel, ShowAiring[]> m) {
         guideMap = m;
 
-        log(INFO, "Guide is done...");
+        LogUtil.log(LogUtil.INFO, "Guide is done...");
 
         GridGuidePanel ggp = getGridGuidePanel();
         if (ggp != null) {
@@ -558,10 +559,10 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
 
                     setWatchingStartTime(System.currentTimeMillis());
                     LiveTV l = openSession(n, lastChannelNumber);
-                    log(DEBUG, "Called start livetv: " + l);
+                    LogUtil.log(LogUtil.DEBUG, "Called start livetv: " + l);
                     if (l != null) {
 
-                        log(DEBUG, "livetv: " + l.getMessage());
+                        LogUtil.log(LogUtil.DEBUG, "livetv: " + l.getMessage());
                         if (l.getMessageType() == LiveTV.MESSAGE_TYPE_NONE) {
 
                             GuideJob gjob = new GuideJob(n, l.getChannels());
@@ -579,7 +580,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
 
                                 public void run() {
 
-                                    log(DEBUG, "Starting player...");
+                                    LogUtil.log(LogUtil.DEBUG, "Starting player...");
                                     startPlayer(fl);
                                 }
                             };
@@ -635,12 +636,10 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
      */
     public void info() {
 
-        System.out.println("info called: " + isGuideMode());
         if (isGuideMode()) {
 
             if (!isPopupEnabled()) {
 
-                System.out.println("Should be only popup");
                 GridGuidePanel ggp = getGridGuidePanel();
                 if (ggp != null) {
 
@@ -697,7 +696,6 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
      */
     public void guide() {
 
-        System.out.println("guide function");
         Player p = getPlayer();
         Rectangle r = getGuideRectangle();
         if ((p != null) && (p.isPlaying()) && (r != null)) {
@@ -728,7 +726,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
                     }
                 }
 
-                log(DEBUG, "About to resize to little");
+                LogUtil.log(LogUtil.DEBUG, "About to resize to little");
                 p.setSize(r);
                 //requestFocus();
                 updateLayout(false);
@@ -736,7 +734,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
             } else {
 
                 setGuideMode(false);
-                log(DEBUG, "About to resize to big");
+                LogUtil.log(LogUtil.DEBUG, "About to resize to big");
                 p.setSize(p.getRectangle());
                 updateLayout(true);
             }
@@ -790,7 +788,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
             NMS n = NMSUtil.select(getNMS(), l.getHostPort());
             if (n != null) {
 
-                log(DEBUG, "calling stop...");
+                LogUtil.log(LogUtil.DEBUG, "calling stop...");
                 n.closeSession(l);
                 setLiveTV(null);
                 setNextChannel(null);
@@ -861,7 +859,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
         if (p != null) {
 
             int left = leftToGo(p, getMarkTime());
-            log(DEBUG, "left to go: " + left);
+            LogUtil.log(LogUtil.DEBUG, "left to go: " + left);
             if (left > 30) {
                 p.seek(30);
             }
@@ -888,7 +886,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
         if (!isGuideMode()) {
 
             computeNextChannelUp();
-            log(DEBUG, "Up: " + getNextChannel());
+            LogUtil.log(LogUtil.DEBUG, "Up: " + getNextChannel());
 
             ChannelInfoWindow cw = getChannelInfoWindow();
             Channel c = getNextChannel();
@@ -929,7 +927,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
         if (!isGuideMode()) {
 
             computeNextChannelDown();
-            log(DEBUG, "Down: " + getNextChannel());
+            LogUtil.log(LogUtil.DEBUG, "Down: " + getNextChannel());
 
             ChannelInfoWindow cw = getChannelInfoWindow();
             Channel c = getNextChannel();
@@ -1000,7 +998,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
             if (p != null) {
 
                 int left = leftToGo(p, getMarkTime());
-                log(DEBUG, "left to go: " + left);
+                LogUtil.log(LogUtil.DEBUG, "left to go: " + left);
                 if (left > 30) {
                     p.seek(30);
                 }
@@ -1054,7 +1052,7 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
      */
     public void propertyChange(PropertyChangeEvent event) {
 
-        log(DEBUG, "propertyChange: " + event.getPropertyName());
+        LogUtil.log(LogUtil.DEBUG, "propertyChange: " + event.getPropertyName());
         if ((event.getSource() == getPlayer()) && (!isDone())) {
 
             // If we get this property update, then it means the video
@@ -1064,11 +1062,11 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
             if (bobj.booleanValue()) {
 
                 getPlayer().removePropertyChangeListener(this);
-                log(DEBUG, "we are stopping because mplayer says so");
+                LogUtil.log(LogUtil.DEBUG, "we are stopping because mplayer says so");
 
                 close();
 
-                log(DEBUG, "about to request focus");
+                LogUtil.log(LogUtil.DEBUG, "about to request focus");
                 requestFocus();
             }
 
@@ -1147,7 +1145,6 @@ public abstract class BaseLiveTVScreen extends PlayerScreen
      */
     public void actionPerformed(ActionEvent event) {
 
-        System.out.println("action performed: " + event.getSource());
         if (isGuideMode()) {
 
             ButtonPanel pbp = getPlayButtonPanel();

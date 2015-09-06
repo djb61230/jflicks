@@ -23,6 +23,7 @@ import org.jflicks.photomanager.Photo;
 import org.jflicks.photomanager.PhotoManager;
 import org.jflicks.photomanager.Tag;
 import org.jflicks.trailer.Trailer;
+import org.jflicks.tv.Airing;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.LiveTV;
 import org.jflicks.tv.Recording;
@@ -91,6 +92,14 @@ public interface NMS extends Config {
     Recorder[] getRecorders();
 
     /**
+     * An NMS has one or more configured Recorders associated with it.  By
+     * configured we mean an schedule or guide is associated with it.
+     *
+     * @return The recorders configured to this NMS.
+     */
+    Recorder[] getConfiguredRecorders();
+
+    /**
      * Acquire a particular Recorder that matches the given device name.
      *
      * @param s A given device name.
@@ -104,6 +113,27 @@ public interface NMS extends Config {
      * @return The program data services available to this NMS.
      */
     ProgramData[] getProgramData();
+
+    /**
+     * True when a ProgramData exists.
+     *
+     * @return True when available.
+     */
+    boolean hasProgramData();
+
+    /**
+     * True when a ProgramData is running currently.
+     *
+     * @return True when running.
+     */
+    boolean isProgramDataUpdatingNow();
+
+    /**
+     * Get the time the next time the ProgramData is due to run.
+     *
+     * @return A long value.
+     */
+    long getProgramDataNextTimeToRun();
 
     /**
      * An NMS can be asked to have it's ProgramData objects to update their
@@ -326,6 +356,13 @@ public interface NMS extends Config {
     void schedule(RecordingRule rr);
 
     /**
+     * Get the channels defined by the ProgramData property.
+     *
+     * @return The Channel instances defined by the ProgramData.
+     */
+    Channel[] getChannels();
+
+    /**
      * Not all channels necessarily are configured to be recorded at
      * the current time.  Use this method just to get the channels
      * that actually could be recorded.
@@ -341,6 +378,15 @@ public interface NMS extends Config {
      * @return An array of Channels.
      */
     Channel[] getChannelsByListingName(String s);
+
+    /**
+     * Given a Channel instance return an array of it's Airing
+     * instances.
+     *
+     * @param c A given Channel instance.
+     * @return An array of Airing instances.
+     */
+    Airing[] getAiringsByChannel(Channel c);
 
     /**
      * Given a Channel instance return an array of it's scheduled

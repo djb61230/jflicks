@@ -34,6 +34,7 @@ import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.recorder.HlsJob;
 import org.jflicks.tv.recorder.StreamJob;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -119,15 +120,6 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
 
     private void setV4l2Recorder(V4l2Recorder r) {
         v4l2Recorder = r;
-    }
-
-    private void log(int status, String message) {
-
-        V4l2Recorder r = getV4l2Recorder();
-        if ((r != null) && (message != null)) {
-
-            r.log(status, message);
-        }
     }
 
     private String getDevice() {
@@ -526,14 +518,14 @@ public class V4l2RecorderHlsJob extends AbstractJob implements JobListener {
 
             } else if (event.getSource() == getHlsJob()) {
 
-                log(V4l2Recorder.INFO, "recording done at "
+                LogUtil.log(LogUtil.INFO, "recording done at "
                     + new Date(System.currentTimeMillis()));
                 stop();
             }
 
         } else if (event.getType() == JobEvent.UPDATE) {
 
-            log(V4l2Recorder.DEBUG, event.getMessage());
+            LogUtil.log(LogUtil.DEBUG, event.getMessage());
         }
     }
 

@@ -18,6 +18,7 @@ package org.jflicks.autoart.system;
 
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobManager;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job supports the Schedules Direct Program Data service.
@@ -47,15 +48,6 @@ public class SystemAutoArtJob extends AbstractJob {
         systemAutoArt = saa;
     }
 
-    private void log(int status, String message) {
-
-        SystemAutoArt saa = getSystemAutoArt();
-        if ((saa != null) && (message != null)) {
-
-            saa.log(status, message);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -75,13 +67,13 @@ public class SystemAutoArtJob extends AbstractJob {
         while (!isTerminate()) {
 
             SystemAutoArt saa = getSystemAutoArt();
-            log(SystemAutoArt.INFO, "SystemAutoArt " + saa);
+            LogUtil.log(LogUtil.INFO, "SystemAutoArt " + saa);
             if (saa != null) {
 
-                log(SystemAutoArt.INFO, "Calling performUpdate...");
+                LogUtil.log(LogUtil.INFO, "Calling performUpdate...");
                 saa.performUpdate();
                 wait = saa.getConfiguredUpdateTimeInMinutes() * 60 * 1000;
-                log(SystemAutoArt.INFO, "Returned now sleeping " + wait);
+                LogUtil.log(LogUtil.INFO, "Returned now sleeping " + wait);
             }
 
             JobManager.sleep(wait);

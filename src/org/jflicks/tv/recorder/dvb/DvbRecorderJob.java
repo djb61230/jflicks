@@ -30,6 +30,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.Channel;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job supports the DVB recorder.  There are two steps to recording
@@ -105,15 +106,6 @@ public class DvbRecorderJob extends AbstractJob implements JobListener,
 
     private void setStartedRecord(boolean b) {
         startedRecord = b;
-    }
-
-    private void log(int status, String message) {
-
-        DvbRecorder r = getDvbRecorder();
-        if ((r != null) && (message != null)) {
-
-            r.log(status, message);
-        }
     }
 
     private String getDevice() {
@@ -213,7 +205,7 @@ public class DvbRecorderJob extends AbstractJob implements JobListener,
         cj.setScript(getChannelChangeScriptName());
         cj.setReadyText(getChannelChangeReadyText());
         cj.addPropertyChangeListener(this);
-        log(DvbRecorder.DEBUG, "ready text: " + cj.getReadyText());
+        LogUtil.log(LogUtil.DEBUG, "ready text: " + cj.getReadyText());
 
         RecordJob rj = new RecordJob();
         setRecordJob(rj);
@@ -283,7 +275,7 @@ public class DvbRecorderJob extends AbstractJob implements JobListener,
 
     public void propertyChange(PropertyChangeEvent event) {
 
-        log(DvbRecorder.DEBUG, "propertyChange: " + event.getPropertyName());
+        LogUtil.log(LogUtil.DEBUG, "propertyChange: " + event.getPropertyName());
         if (event.getPropertyName().equals("Ready")) {
 
             ChannelJob cj = getChannelJob();
@@ -308,14 +300,14 @@ public class DvbRecorderJob extends AbstractJob implements JobListener,
 
             if (event.getSource() == getRecordJob()) {
 
-                log(DvbRecorder.INFO, "recording done at "
+                LogUtil.log(LogUtil.INFO, "recording done at "
                     + new Date(System.currentTimeMillis()));
                 stop();
             }
 
         } else if (event.getType() == JobEvent.UPDATE) {
 
-            log(DvbRecorder.DEBUG, event.getMessage());
+            LogUtil.log(LogUtil.DEBUG, event.getMessage());
         }
     }
 

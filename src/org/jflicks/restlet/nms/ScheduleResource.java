@@ -22,6 +22,7 @@ import org.jflicks.restlet.BaseServerResource;
 import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.Task;
+import org.jflicks.util.LogUtil;
 
 import org.restlet.data.MediaType;
 import org.restlet.resource.Post;
@@ -56,14 +57,14 @@ public class ScheduleResource extends BaseServerResource {
             try {
 
                 String json = r.getText();
-                log(NMSApplication.DEBUG, json);
+                LogUtil.log(LogUtil.DEBUG, json);
                 RecordingRule rr = g.fromJson(json, RecordingRule.class);
-                log(NMSApplication.DEBUG, "after gson: " + rr);
+                LogUtil.log(LogUtil.DEBUG, "after gson: " + rr);
                 if (rr != null) {
 
                     RecordingRule myrr = null;
                     RecordingRule old = nsup.getRecordingRuleById(rr.getId());
-                    log(NMSApplication.DEBUG, "old rule: " + old);
+                    LogUtil.log(LogUtil.DEBUG, "old rule: " + old);
 
                     if (old != null) {
 
@@ -103,13 +104,13 @@ public class ScheduleResource extends BaseServerResource {
                         myrr.setTasks(rr.getTasks());
                     }
 
-                    log(NMSApplication.DEBUG, "new rule: " + myrr);
+                    LogUtil.log(LogUtil.DEBUG, "new rule: " + myrr);
                     nsup.schedule(myrr);
                 }
 
             } catch (IOException ex) {
 
-                log(NMSApplication.DEBUG, ex.getMessage());
+                LogUtil.log(LogUtil.DEBUG, ex.getMessage());
             }
         }
     }

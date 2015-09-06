@@ -22,7 +22,6 @@ import org.jflicks.metadata.Metadata;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -34,7 +33,6 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends BaseActivator {
 
     private TheMovieDBMetadata theMovieDBMetadata;
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -49,23 +47,12 @@ public class Activator extends BaseActivator {
         dict.put(Metadata.TITLE_PROPERTY, m.getTitle());
 
         bc.registerService(Metadata.class.getName(), m, dict);
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        m.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
     }
 
     /**
      * {@inheritDoc}
      */
     public void stop(BundleContext context) {
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
-        }
     }
 
     private TheMovieDBMetadata getTheMovieDBMetadata() {

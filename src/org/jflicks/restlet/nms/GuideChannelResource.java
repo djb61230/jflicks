@@ -19,6 +19,7 @@ package org.jflicks.restlet.nms;
 import org.jflicks.restlet.BaseServerResource;
 import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.ShowAiring;
+import org.jflicks.util.LogUtil;
 
 import org.restlet.data.MediaType;
 import org.restlet.ext.json.JsonRepresentation;
@@ -61,13 +62,13 @@ public class GuideChannelResource extends BaseServerResource {
 
             ShowAiring[] array = nsup.getShowAiringsByChannel(
                 nsup.getChannelById(getChannelId()));
-            nsup.log(NMSSupport.DEBUG, "getShowAiringsByChannel array null = "
+            LogUtil.log(LogUtil.DEBUG, "getShowAiringsByChannel array null = "
                 + (array == null));
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
                 String data = g.toJson(array);
-                nsup.log(NMSSupport.DEBUG, "json data null = " + (data == null));
+                LogUtil.log(LogUtil.DEBUG, "json data null = " + (data == null));
                 if (data != null) {
 
                     JsonRepresentation jr = new JsonRepresentation(data);
@@ -92,7 +93,7 @@ public class GuideChannelResource extends BaseServerResource {
             }
         }
 
-        log(NMSSupport.DEBUG, "Finished getting guide by channel.");
+        LogUtil.log(LogUtil.DEBUG, "Finished getting guide by channel.");
 
         return (result);
     }

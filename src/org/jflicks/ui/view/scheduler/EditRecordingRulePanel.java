@@ -38,9 +38,10 @@ import javax.swing.event.ListSelectionListener;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.nms.NMS;
-import org.jflicks.util.ProgressBar;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.RecordingRule;
+import org.jflicks.util.LogUtil;
+import org.jflicks.util.ProgressBar;
 
 /**
  * A implements a View so a user can control the scheduling of
@@ -237,7 +238,7 @@ public class EditRecordingRulePanel extends JPanel
 
             if (event.getType() == JobEvent.COMPLETE) {
 
-                System.out.println("rule updated!");
+                LogUtil.log(LogUtil.DEBUG, "rule updated!");
             }
         }
 

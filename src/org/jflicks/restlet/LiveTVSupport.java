@@ -33,6 +33,7 @@ import org.jflicks.tv.live.Live;
 import org.jflicks.tv.programdata.ProgramData;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.Scheduler;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -110,14 +111,14 @@ public final class LiveTVSupport extends BaseSupport {
         LiveTVBean result = null;
 
         LiveTVItem item = getLiveTVItemByChannelId(channelId);
-        log(DEBUG, "item: <" + item + ">");
+        LogUtil.log(LogUtil.DEBUG, "item: <" + item + ">");
         if (item != null) {
 
             Channel c = item.getChannel();
-            log(DEBUG, "channel: <" + c + ">");
-            log(DEBUG, "hostPort: <" + item.getHostPort() + ">");
+            LogUtil.log(LogUtil.DEBUG, "channel: <" + c + ">");
+            LogUtil.log(LogUtil.DEBUG, "hostPort: <" + item.getHostPort() + ">");
             NMS n = NMSUtil.select(getNMS(), item.getHostPort());
-            log(DEBUG, "nms: <" + n + ">");
+            LogUtil.log(LogUtil.DEBUG, "nms: <" + n + ">");
             if ((c != null) && (n != null)) {
 
                 LiveTV ltv = n.openSession(c.getNumber());
@@ -149,9 +150,9 @@ public final class LiveTVSupport extends BaseSupport {
 
     public void closeSession(String liveId) {
 
-        log(DEBUG, "closeSession liveId: <" + liveId + ">");
+        LogUtil.log(LogUtil.DEBUG, "closeSession liveId: <" + liveId + ">");
         LiveTV ltv = getLiveTVById(liveId);
-        log(DEBUG, "closeSession liveTV: <" + ltv + ">");
+        LogUtil.log(LogUtil.DEBUG, "closeSession liveTV: <" + ltv + ">");
         if (ltv != null) {
 
             NMS n = NMSUtil.select(getNMS(), ltv.getHostPort());
@@ -181,10 +182,8 @@ public final class LiveTVSupport extends BaseSupport {
             for (int i = 0; i < narray.length; i++) {
             //for (int i = 0; i < 1; i++) {
 
-                System.out.println("gern: " + narray[i]);
                 if (supportsLive(narray[i])) {
 
-                    System.out.println("gern after: " + narray[i]);
                     // Sweet something that can be played live.
                     Channel[] array = getAvailableChannels(narray[i]);
                     if ((array != null) && (array.length > 0)) {
@@ -382,16 +381,16 @@ public final class LiveTVSupport extends BaseSupport {
 
                 } else {
 
-                    log(DEBUG, "No channels available for recording now!");
+                    LogUtil.log(LogUtil.DEBUG, "No channels available for recording now!");
                 }
 
             } else {
 
-                log(DEBUG, "bad channel id: <" + channelId + ">");
+                LogUtil.log(LogUtil.DEBUG, "bad channel id: <" + channelId + ">");
             }
         }
 
-        log(DEBUG, "LiveTVItem to use null = " + (result == null));
+        LogUtil.log(LogUtil.DEBUG, "LiveTVItem to use null = " + (result == null));
 
         return (result);
     }

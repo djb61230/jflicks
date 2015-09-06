@@ -193,10 +193,6 @@ public class MediainfoJob extends AbstractJob implements JobListener {
             }
 
             stop();
-
-        } else {
-
-            //System.out.println(event.getMessage());
         }
     }
 

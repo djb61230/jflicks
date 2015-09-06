@@ -1064,7 +1064,7 @@ public final class Util {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                ex.printStackTrace();
             }
         }
     }
@@ -1488,7 +1488,7 @@ public final class Util {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                ex.printStackTrace();
             }
         }
 
@@ -1574,18 +1574,6 @@ public final class Util {
 
         return (result);
     }   
-
-    /**
-     * Simple main method that dumps the system properties to stdout.
-     *
-     * @param args Arguments that happen to be ignored.
-     */
-    public static void main(String[] args) {
-
-        Util.dumpOSProperties();
-        System.out.println("Translucent: " + Util.isTranslucencySupported());
-        System.out.println("Shaped: " + Util.isShapedSupported());
-    }
 
 }
 

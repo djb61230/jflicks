@@ -27,6 +27,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.recorder.StreamJob;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job supports the V4l2 recorder.  There are several steps to recording
@@ -266,15 +267,6 @@ public class V4l2StreamJob extends AbstractJob implements JobListener {
         return (result);
     }
 
-    private void log(int status, String message) {
-
-        V4l2Recorder r = getV4l2Recorder();
-        if ((r != null) && (message != null)) {
-
-            r.log(status, message);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -305,11 +297,11 @@ public class V4l2StreamJob extends AbstractJob implements JobListener {
         sj.setHost(getHost());
         sj.setPort(getPort());
 
-        log(V4l2Recorder.DEBUG, "Device: <" + getDevice() + ">");
-        log(V4l2Recorder.DEBUG, "Host: <" + getHost() + ">");
-        log(V4l2Recorder.DEBUG, "Port: <" + getPort() + ">");
+        LogUtil.log(LogUtil.DEBUG, "Device: <" + getDevice() + ">");
+        LogUtil.log(LogUtil.DEBUG, "Host: <" + getHost() + ">");
+        LogUtil.log(LogUtil.DEBUG, "Port: <" + getPort() + ">");
 
-        log(V4l2Recorder.DEBUG, "starting control job...");
+        LogUtil.log(LogUtil.DEBUG, "starting control job...");
         JobContainer jc = JobManager.getJobContainer(conj);
         setJobContainer(jc);
         jc.start();
@@ -353,14 +345,14 @@ public class V4l2StreamJob extends AbstractJob implements JobListener {
 
             if (event.getSource() == getControlJob()) {
 
-                log(V4l2Recorder.DEBUG, "starting channel job...");
+                LogUtil.log(LogUtil.DEBUG, "starting channel job...");
                 JobContainer jc = JobManager.getJobContainer(getChannelJob());
                 setJobContainer(jc);
                 jc.start();
 
             } else if (event.getSource() == getChannelJob()) {
 
-                log(V4l2Recorder.DEBUG, "starting stream job...");
+                LogUtil.log(LogUtil.DEBUG, "starting stream job...");
 
                 JobContainer jc = JobManager.getJobContainer(getStreamJob());
                 setJobContainer(jc);
@@ -368,14 +360,14 @@ public class V4l2StreamJob extends AbstractJob implements JobListener {
 
             } else if (event.getSource() == getStreamJob()) {
 
-                log(V4l2Recorder.DEBUG, "streaming done at "
+                LogUtil.log(LogUtil.DEBUG, "streaming done at "
                     + new Date(System.currentTimeMillis()));
                 stop();
             }
 
         } else if (event.getType() == JobEvent.UPDATE) {
 
-            log(V4l2Recorder.DEBUG, event.getMessage());
+            LogUtil.log(LogUtil.DEBUG, event.getMessage());
         }
     }
 

@@ -36,6 +36,165 @@ public class Manage {
     public Manage() {
     }
 
+    public Client connect(String user, String password) throws NoSuchAlgorithmException {
+
+        Client result = null;
+
+        if ((user != null) && (password != null)) {
+
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            md.reset();
+            md.update(password.getBytes());
+            String sha = new String(Hex.encodeHex(md.digest()));
+
+            Client c = new Client();
+            if (c.doToken(user, sha)) {
+
+                if (c.doStatus()) {
+
+                    System.out.println("status ok\n");
+                    result = c;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    public Lineup[] listAllLineups(Client c, String country, String zip) {
+
+        Lineup[] result = null;
+
+        if (c != null) {
+
+            if (c.doHeadend(country, zip)) {
+
+                HeadendObject[] array = c.getHeadendObjects();
+                if ((array != null) && (array.length > 0)) {
+
+                    ArrayList<Lineup> l = new ArrayList<Lineup>();
+                    for (int i = 0; i < array.length; i++) {
+
+                        Lineup[] lups = array[i].getLineups();
+                        if ((lups != null) && (lups.length > 0)) {
+
+                            for (int j = 0; j < lups.length; j++) {
+
+                                l.add(lups[j]);
+                            }
+                        }
+                    }
+
+                    if (l.size() > 0) {
+
+                        result = l.toArray(new Lineup[l.size()]);
+                    }
+                }
+
+            } else {
+
+                throw new RuntimeException("No headends found!");
+            }
+        }
+
+        return (result);
+    }
+
+    public Lineup[] listAddedLineups(Client c) {
+
+        Lineup[] result = null;
+
+        if (c != null) {
+
+            UserLineup ul = c.getUserLineup();
+            if (ul != null) {
+
+                result = ul.getLineups();
+            }
+        }
+
+        return (result);
+    }
+
+    public LineupResponse addAntennaLineup(Client c, String country, String zip) {
+
+        LineupResponse result = null;
+
+        if (c != null) {
+
+            if (c.doHeadend(country, zip)) {
+
+                if (c.doAddLineup("Antenna", zip)) {
+
+                    result = c.getLineupResponse();
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    public String getAntennaStationConfig(Client c, String country, String zip) {
+
+        String result = null;
+
+        if (c != null) {
+
+            if (c.doHeadend(country, zip)) {
+
+                StringBuilder text = new StringBuilder();
+                Mapping mapping = c.getMapping("Local Over the Air Broadcast");
+                if (mapping != null) {
+
+                    Station[] sarray = mapping.getStations();
+                    if ((sarray != null) && (sarray.length > 0)) {
+
+                        for (int i = 0; i < sarray.length; i++) {
+
+                            StationID sid = mapping.getStationID(sarray[i].getStationID());
+                            if (sid != null) {
+
+                                String chan = sid.getChannel();
+                                if (chan == null) {
+
+                                    chan = sid.getAtscMajor() + "." + sid.getAtscMinor();
+                                }
+                                if ((!chan.equals("0.0"))) {
+
+                                    text.append(sid.getStationID());
+                                    text.append("=");
+                                    text.append(chan);
+                                    text.append("|");
+                                    text.append(sarray[i].getName());
+                                    text.append("\n");
+                                }
+                            }
+                        }
+
+                    } else {
+
+                        throw new RuntimeException("Failed to get stations.");
+                    }
+
+                } else {
+
+                    throw new RuntimeException("Failed to get station mapping.");
+                }
+
+                if (text.length() > 0) {
+
+                    result = text.toString();
+                }
+
+            } else {
+
+                throw new RuntimeException("Failed check country or zip");
+            }
+        }
+
+        return (result);
+    }
+
     public static void main(String[] args) throws NoSuchAlgorithmException {
 
         final String LIST_ALL_LINEUPS = "listAllLineups";
@@ -136,6 +295,7 @@ public class Manage {
 
                                         for (int j = 0; j < lups.length; j++) {
 
+                                            System.out.println("Transport: " + lups[j].getTransport());
                                             System.out.println(lups[j].getLineup() + " location=" + array[i].getLocation());
                                         }
                                     }
@@ -159,6 +319,7 @@ public class Manage {
 
                                 for (int i = 0; i < lups.length; i++) {
 
+                                    System.out.println("Transport: " + lups[i].getTransport());
                                     System.out.println(lups[i].getLineup() + " name=" + lups[i].getName() + " transport=" + lups[i].getTransport() + " location=" + lups[i].getLocation());
                                 }
                             }

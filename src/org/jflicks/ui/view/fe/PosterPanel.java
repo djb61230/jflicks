@@ -633,7 +633,6 @@ public class PosterPanel extends BaseCustomizePanel {
 
         } else {
 
-            System.out.println("gern on else");
             BufferedImage bi = getCenterImage();
             Point p = getCenterImagePoint();
             if ((bi != null) && (p != null)) {

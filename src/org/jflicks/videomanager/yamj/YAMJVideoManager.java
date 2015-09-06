@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.Video;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 import org.jflicks.videomanager.BaseVideoManager;
 
@@ -81,7 +82,7 @@ public class YAMJVideoManager extends BaseVideoManager {
      */
     public void save(Video v) {
 
-        log(INFO, "The YAMJ VideoManager cannot save, make changes using YAMJ");
+        LogUtil.log(LogUtil.INFO, "The YAMJ VideoManager cannot save, make changes using YAMJ");
     }
 
     /**
@@ -129,7 +130,7 @@ public class YAMJVideoManager extends BaseVideoManager {
      */
     public void removeVideo(Video v) {
 
-        log(INFO, "The YAMJ VideoManager cannot remove, use YAMJ to manage");
+        LogUtil.log(LogUtil.INFO, "The YAMJ VideoManager cannot remove, use YAMJ to manage");
     }
 
     /**
@@ -143,7 +144,7 @@ public class YAMJVideoManager extends BaseVideoManager {
      */
     public synchronized void videoScan() {
 
-        log(INFO, "Time to scan for video files...");
+        LogUtil.log(LogUtil.INFO, "Time to scan for video files...");
 
         clear();
         String[] array = getConfiguredVideoDirectories();

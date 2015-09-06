@@ -94,7 +94,6 @@ public class NMSTracker extends BaseTracker {
      */
     public void removedService(ServiceReference sr, Object svc) {
 
-        System.out.println("Freakin removed service.");
         removeNMS((NMS) svc);
         String title = (String) sr.getProperty(NMS.TITLE_PROPERTY);
         dispose(title);

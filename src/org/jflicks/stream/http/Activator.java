@@ -29,10 +29,6 @@ import org.osgi.framework.BundleContext;
 public class Activator extends BaseActivator {
 
     private HttpServiceTracker httpServiceTracker;
-    private HttpServiceTracker rokuFeedHttpServiceTracker;
-    private HttpServiceTracker gtvFeedHttpServiceTracker;
-    private NMSTracker rokuFeedNMSTracker;
-    private NMSTracker gtvFeedNMSTracker;
 
     /**
      * {@inheritDoc}
@@ -46,26 +42,6 @@ public class Activator extends BaseActivator {
         HttpServiceTracker tracker = new HttpServiceTracker(bc, hs);
         setHttpServiceTracker(tracker);
         tracker.open();
-
-        RokuFeed rf = new RokuFeed();
-        rf.setBundleContext(bc);
-        tracker = new HttpServiceTracker(bc, rf);
-        setRokuFeedHttpServiceTracker(tracker);
-        tracker.open();
-
-        NMSTracker ntracker = new NMSTracker(bc, rf);
-        setRokuFeedNMSTracker(ntracker);
-        ntracker.open();
-
-        GtvFeed gtv = new GtvFeed();
-        gtv.setBundleContext(bc);
-        tracker = new HttpServiceTracker(bc, gtv);
-        setGtvFeedHttpServiceTracker(tracker);
-        tracker.open();
-
-        ntracker = new NMSTracker(bc, gtv);
-        setGtvFeedNMSTracker(ntracker);
-        ntracker.open();
     }
 
     /**
@@ -77,16 +53,6 @@ public class Activator extends BaseActivator {
         if (tracker != null) {
             tracker.close();
         }
-
-        tracker = getRokuFeedHttpServiceTracker();
-        if (tracker != null) {
-            tracker.close();
-        }
-
-        tracker = getGtvFeedHttpServiceTracker();
-        if (tracker != null) {
-            tracker.close();
-        }
     }
 
     private HttpServiceTracker getHttpServiceTracker() {
@@ -95,38 +61,6 @@ public class Activator extends BaseActivator {
 
     private void setHttpServiceTracker(HttpServiceTracker t) {
         httpServiceTracker = t;
-    }
-
-    private HttpServiceTracker getRokuFeedHttpServiceTracker() {
-        return (rokuFeedHttpServiceTracker);
-    }
-
-    private void setRokuFeedHttpServiceTracker(HttpServiceTracker t) {
-        rokuFeedHttpServiceTracker = t;
-    }
-
-    private HttpServiceTracker getGtvFeedHttpServiceTracker() {
-        return (gtvFeedHttpServiceTracker);
-    }
-
-    private void setGtvFeedHttpServiceTracker(HttpServiceTracker t) {
-        gtvFeedHttpServiceTracker = t;
-    }
-
-    private NMSTracker getRokuFeedNMSTracker() {
-        return (rokuFeedNMSTracker);
-    }
-
-    private void setRokuFeedNMSTracker(NMSTracker t) {
-        rokuFeedNMSTracker = t;
-    }
-
-    private NMSTracker getGtvFeedNMSTracker() {
-        return (gtvFeedNMSTracker);
-    }
-
-    private void setGtvFeedNMSTracker(NMSTracker t) {
-        gtvFeedNMSTracker = t;
     }
 
 }

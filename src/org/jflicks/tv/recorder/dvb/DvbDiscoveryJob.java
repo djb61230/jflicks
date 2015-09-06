@@ -25,6 +25,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.recorder.Recorder;
+import org.jflicks.util.LogUtil;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
@@ -48,20 +49,17 @@ public class DvbDiscoveryJob extends AbstractJob implements JobListener {
     private BundleContext bundleContext;
     private DiscoverJob discoverJob;
     private JobContainer jobContainer;
-    private ServiceTracker logServiceTracker;
 
     /**
      * This job supports the DvbRecorder plugin.
      *
      * @param bc Need a bundle context to register, unregister Dvb devices
      * as they "come and go" from the computer.
-     * @param log A log tracker we can pass to instantiated recorders.
      */
-    public DvbDiscoveryJob(BundleContext bc, ServiceTracker log) {
+    public DvbDiscoveryJob(BundleContext bc) {
 
         setDvbRecorderList(new ArrayList<DvbRecorder>());
         setBundleContext(bc);
-        setLogServiceTracker(log);
     }
 
     private BundleContext getBundleContext() {
@@ -70,14 +68,6 @@ public class DvbDiscoveryJob extends AbstractJob implements JobListener {
 
     private void setBundleContext(BundleContext bc) {
         bundleContext = bc;
-    }
-
-    private ServiceTracker getLogServiceTracker() {
-        return (logServiceTracker);
-    }
-
-    private void setLogServiceTracker(ServiceTracker st) {
-        logServiceTracker = st;
     }
 
     private DiscoverJob getDiscoverJob() {
@@ -212,14 +202,13 @@ public class DvbDiscoveryJob extends AbstractJob implements JobListener {
 
             DvbRecorder r = new DvbRecorder();
             r.setDevice(d.getPath());
-            r.setLogServiceTracker(getLogServiceTracker());
             r.updateDefault();
 
             addDvbRecorder(r);
             Hashtable<String, String> dict = new Hashtable<String, String>();
             dict.put(Recorder.TITLE_PROPERTY, r.getTitle());
             bc.registerService(Recorder.class.getName(), r, dict);
-            r.log(DvbRecorder.INFO, "registerRecorder: registered in osgi");
+            LogUtil.log(LogUtil.INFO, "registerRecorder: registered in osgi");
         }
     }
 

@@ -25,7 +25,6 @@ import org.jflicks.util.BaseActivator;
 import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -34,8 +33,6 @@ import org.osgi.util.tracker.ServiceTracker;
  * @version 1.0
  */
 public class Activator extends BaseActivator {
-
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -48,8 +45,6 @@ public class Activator extends BaseActivator {
 
         if (array != null) {
 
-            logServiceTracker =
-                new ServiceTracker(bc, LogService.class.getName(), null);
             for (int i = 0; i < array.length; i++) {
 
                 Hashtable<String, String> dict =
@@ -57,11 +52,7 @@ public class Activator extends BaseActivator {
                 dict.put(Screen.TITLE_PROPERTY, array[i].getTitle());
 
                 bc.registerService(Screen.class.getName(), array[i], dict);
-
-                array[i].setLogServiceTracker(logServiceTracker);
             }
-
-            logServiceTracker.open();
         }
     }
 
@@ -69,12 +60,6 @@ public class Activator extends BaseActivator {
      * {@inheritDoc}
      */
     public void stop(BundleContext context) {
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
-        }
     }
 
     private ScriptScreen[] getScriptScreens() {

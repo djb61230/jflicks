@@ -17,6 +17,9 @@
     <taskdef resource="aQute/bnd/ant/taskdef.properties"
         classpath="${tools}/bnd-0.0.384.jar"/>
 
+    <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"
+        classpath="${tools}/jarjar-1.0.jar"/>
+
     <!--
         Make a build classpath for our code.
     -->
@@ -64,7 +67,11 @@
         </javac>
 
         <jar destfile="${dist}/jflicks.jar" basedir="${build}"
-            excludes="org.jflicks/**/test/*.class">
+            excludes="org/jflicks/**/test/*.class">
+        </jar>
+
+        <jar destfile="${dist}/jflicks_hdhr_config.jar" basedir="${build}"
+            includes="org/jflicks/tv/recorder/jhdhr/*.class,com/**">
         </jar>
 
         <jar destfile="${dist}/jflicks-4android.jar" basedir="${build}"
@@ -100,13 +107,31 @@
             excludes="**/test/*.class">
 
             <zipfileset includes="**/*.class" src="lib/jdom.jar"/>
-            <zipfileset includes="**/*.class" src="lib/commons-io-2.1.jar"/>
+            <zipfileset includes="**/*.class" src="lib/commons-io-2.4.jar"/>
             <manifest>
                 <attribute name="Main-Class"
                     value="org.jflicks.update.system.SystemUpdate"/>
             </manifest>
 
         </jar>
+
+        <jarjar jarfile="${dist}/schedules_direct_json.jar">
+
+            <fileset dir="${build}">
+                <include name="org/jflicks/tv/programdata/sd/json/*"/>
+            </fileset>
+
+            <zipfileset src="${lib}/commons-codec-1.9.jar"/>
+            <zipfileset src="${lib}/gson-2.2.4.jar"/>
+            <zipfileset src="${lib}/org.restlet.jar"/>
+            <zipfileset src="${lib}/org.restlet.ext.json.jar"/>
+            <zipfileset src="${lib}/org.json.jar"/>
+
+            <manifest>
+                <attribute name="Main-Class" value="org.jflicks.tv.programdata.sd.json.Manage" />
+            </manifest>
+
+        </jarjar>
 
         <bnd
             classpath="${build}"
@@ -141,6 +166,15 @@
             failok="false"
             exceptions="true"
             files="${bnd}/jflicks-tv-recorder-hdhr.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
+            files="${bnd}/jflicks-tv-recorder-jhdhr.bnd"
             output="${bundle}"
         />
 
@@ -204,15 +238,6 @@
             failok="false"
             exceptions="true"
             files="${bnd}/jflicks-autoart-system.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-photomanager-digikam.bnd"
             output="${bundle}"
         />
 
@@ -392,24 +417,6 @@
             eclipse="false"
             failok="false"
             exceptions="true"
-            files="${bnd}/jflicks-player-chrome.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-player-hulu.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
             files="${bnd}/jflicks-player-photoshow.bnd"
             output="${bundle}"
         />
@@ -572,33 +579,6 @@
             eclipse="false"
             failok="false"
             exceptions="true"
-            files="${bnd}/jflicks-ui-view-fe-screen-net.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-ui-view-fe-screen-ondemand.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-ui-view-fe-screen-photo.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
             files="${bnd}/jflicks-ui-view-fe-screen-systemstatus.bnd"
             output="${bundle}"
         />
@@ -662,24 +642,6 @@
             eclipse="false"
             failok="false"
             exceptions="true"
-            files="${bnd}/jflicks-ui-view-fe-screen-googletv.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-ui-view-fe-screen-hulu.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
             files="${bnd}/jflicks-rc-lirc.bnd"
             output="${bundle}"
         />
@@ -717,24 +679,6 @@
             failok="false"
             exceptions="true"
             files="${bnd}/jflicks-trailer-apple.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-tv-ondemand-appletv.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-tv-ondemand-roku.bnd"
             output="${bundle}"
         />
 
@@ -789,15 +733,6 @@
             failok="false"
             exceptions="true"
             files="${bnd}/jflicks-restlet-nms.bnd"
-            output="${bundle}"
-        />
-
-        <bnd
-            classpath="${build}"
-            eclipse="false"
-            failok="false"
-            exceptions="true"
-            files="${bnd}/jflicks-restlet-x10.bnd"
             output="${bundle}"
         />
 
@@ -893,106 +828,46 @@
 
     </target>
 
-    <target name="check-felix-server" unless="felix.server.home">
+    <target name="check-felix-server" unless="felix.j4cc.server.home">
 
         <echo message="Felix server home is not defined!"/>
 
     </target>
 
-    <target name="check-felix-j4cc" unless="felix.j4cc.home">
+    <target name="check-felix-client" unless="felix.j4cc.client.home">
 
         <echo message="Felix j4cc home is not defined!"/>
 
     </target>
 
-    <target name="check-felix-aspirin" unless="felix.aspirin.home">
-
-        <echo message="Felix aspirin home is not defined!"/>
-
-    </target>
-
-    <target name="check-felix-advanced" unless="felix.advanced.home">
-
-        <echo message="Felix advanced home is not defined!"/>
-
-    </target>
-
-    <target name="check-felix-ez" unless="felix.ez.home">
-
-        <echo message="Felix ez home is not defined!"/>
-
-    </target>
-
-    <target name="check-felix-scheduler" unless="felix.scheduler.home">
-
-        <echo message="Felix scheduler home is not defined!"/>
-
-    </target>
-
-    <target name="check-felix-fe" unless="felix.fe.home">
+    <target name="check-felix-fe" unless="felix.j4cc.fe.home">
 
         <echo message="Felix front end home is not defined!"/>
 
     </target>
 
-    <target name="check-felix-metadata" unless="felix.metadata.home">
-
-        <echo message="Felix metadata home is not defined!"/>
-
-    </target>
-
-    <target name="check-felix-vm" unless="felix.vm.home">
-
-        <echo message="Felix vm home is not defined!"/>
-
-    </target>
-
-    <target name="deploy" depends="build,check-felix-server,check-felix-j4cc,check-felix-aspirin,check-felix-advanced,check-felix-ez,check-felix-scheduler,check-felix-fe,check-felix-metadata,check-felix-vm"
+    <target name="deploy" depends="build,check-felix-server,check-felix-client,check-felix-fe"
         description="Gotta do more than just compile!">
 
+        <delete>
+            <fileset dir="${felix.j4cc.server.home}/bundle" includes="jflicks-*" />
+            <fileset dir="${felix.j4cc.client.home}/bundle" includes="jflicks-*" />
+            <fileset dir="${felix.j4cc.fe.home}/bundle" includes="jflicks-*" />
+        </delete>
+
         <!-- First do server side. -->
-        <copy todir="${felix.server.home}/bundle">
-            <fileset dir="${bundle}" includes="${server.deploy}"/>
+        <copy todir="${felix.j4cc.server.home}/bundle">
+            <fileset dir="${bundle}" includes="${j4cc.server.deploy}"/>
         </copy>
 
-        <!-- Now do j4cc side. -->
-        <copy todir="${felix.j4cc.home}/bundle">
-            <fileset dir="${bundle}" includes="${j4cc.deploy}"/>
+        <!-- Next do client side. -->
+        <copy todir="${felix.j4cc.client.home}/bundle">
+            <fileset dir="${bundle}" includes="${j4cc.client.deploy}"/>
         </copy>
 
-        <!-- Now do aspirin side. -->
-        <copy todir="${felix.aspirin.home}/bundle">
-            <fileset dir="${bundle}" includes="${aspirin.deploy}"/>
-        </copy>
-
-        <!-- Now do advanced side. -->
-        <copy todir="${felix.advanced.home}/bundle">
-            <fileset dir="${bundle}" includes="${advanced.deploy}"/>
-        </copy>
-
-        <!-- Now do ez side. -->
-        <copy todir="${felix.ez.home}/bundle">
-            <fileset dir="${bundle}" includes="${ez.deploy}"/>
-        </copy>
-
-        <!-- Now do scheduler side. -->
-        <copy todir="${felix.scheduler.home}/bundle">
-            <fileset dir="${bundle}" includes="${scheduler.deploy}"/>
-        </copy>
-
-        <!-- Now do fe side. -->
-        <copy todir="${felix.fe.home}/bundle">
-            <fileset dir="${bundle}" includes="${fe.deploy}"/>
-        </copy>
-
-        <!-- Now do metadata side. -->
-        <copy todir="${felix.metadata.home}/bundle">
-            <fileset dir="${bundle}" includes="${metadata.deploy}"/>
-        </copy>
-
-        <!-- Now do vm side. -->
-        <copy todir="${felix.vm.home}/bundle">
-            <fileset dir="${bundle}" includes="${vm.deploy}"/>
+        <!-- Next do fe side. -->
+        <copy todir="${felix.j4cc.fe.home}/bundle">
+            <fileset dir="${bundle}" includes="${j4cc.fe.deploy}"/>
         </copy>
 
     </target>
@@ -1082,68 +957,9 @@
 
     </target>
 
-    <target name="roku" depends="build">
-
-        <java classname="org.jflicks.tv.ondemand.roku.RokuUtil"
-            fork="true">
-
-            <arg value="press home:3"/>
-            <arg value="press home:2"/>
-            <arg value="press back:2"/>
-            <arg value="press right:2"/>
-            <arg value="press right:2"/>
-            <arg value="press select:5"/>
-
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
-
-        </java>
-
-    </target>
-
     <target name="stream-send" depends="build">
 
         <java classname="org.jflicks.nms.StreamFileJob" fork="true">
-
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
-
-        </java>
-
-    </target>
-
-    <target name="test-scan" depends="build">
-
-        <java classname="org.jflicks.tv.recorder.dvb.ScanJob"
-            fork="true">
-
-            <arg value="ez-gui-messages.txt"/>
-            <!--
-            <arg value="w_scan"/>
-            <arg value="-c"/>
-            <arg value="US"/>
-            <arg value="-o"/>
-            <arg value="7"/>
-            <arg value="-f"/>
-            <arg value="a"/>
-            <arg value="-X"/>
-            <arg value="-O"/>
-            <arg value="0"/>
-            -->
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
-
-        </java>
-
-    </target>
-
-    <target name="test-sd" depends="build">
-
-        <java classname="org.jflicks.tv.programdata.sd.SchedulesDirect"
-            fork="true">
 
             <classpath>
                 <path refid="runtime.classpath"/>
@@ -1190,7 +1006,7 @@
             <arg value="guide"/>
             -->
             <arg value="-lineup"/>
-            <arg value="Antenna"/>
+            <arg value="Local Over the Air Broadcast"/>
             <!--
             <arg value="USA-OTA-13492"/>
             <arg value="DIRECTV Albany"/>
@@ -1226,22 +1042,6 @@
 
     </target>
 
-    <target name="test-v4l2" depends="build">
-
-        <java classname="org.jflicks.tv.recorder.CopyJob" fork="true">
-
-            <arg value="-i"/>
-            <arg value="/dev/video2"/>
-            <arg value="-s"/>
-            <arg value="60"/>
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
-
-        </java>
-
-    </target>
-
     <target name="test-chapter-update" depends="build">
 
         <java classname="org.jflicks.util.chapter.ChapterUpdate" fork="true">
@@ -1251,34 +1051,6 @@
             </classpath>
 
             <arg value="/Users/djb/tmp/chaptertest"/>
-
-        </java>
-
-    </target>
-
-    <target name="test-stream-v4l2" depends="build">
-
-        <java classname="org.jflicks.tv.recorder.StreamJob" fork="true">
-
-            <arg value="-i"/>
-            <arg value="/Users/djb/Movies/witches.ts"/>
-            <!--
-            <arg value="/Users/djb/bin/movie.ts"/>
-            <arg value="/dev/video2"/>
-            -->
-            <arg value="-h"/>
-            <arg value="127.0.0.1"/>
-            <!--
-            <arg value="192.168.2.3"/>
-            <arg value="244.1.1.1"/>
-            -->
-            <arg value="-p"/>
-            <arg value="1234"/>
-            <arg value="-s"/>
-            <arg value="300"/>
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
 
         </java>
 
@@ -1323,12 +1095,12 @@
     <target name="test-detect" depends="build">
 
         <input message="path" addproperty="arg1"
-            defaultvalue="/home/djb/dtest/gh"/>
+            defaultvalue="/Users/djb/dtest"/>
         <input message="type:value " addproperty="arg2"
             defaultvalue="0:10,0:80,1:220,1:175"/>
         <input message="extension: " addproperty="arg3" defaultvalue="jpg"/>
         <input message="verbose: " addproperty="arg4" defaultvalue="false"/>
-        <java classname="org.jflicks.util.DetectRating" fork="true">
+        <java classname="org.jflicks.util.DetectRatingRectangle" fork="true">
 
             <arg value="-path"/>
             <arg value="${arg1}"/>
@@ -1338,23 +1110,6 @@
             <arg value="${arg3}"/>
             <arg value="-verbose"/>
             <arg value="${arg4}"/>
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
-
-        </java>
-
-    </target>
-
-    <target name="test-parselirc" depends="build">
-
-        <java classname="org.jflicks.ui.view.aspirin.analyze.lirc.ParseLirc"
-            fork="true">
-
-            <arg value="/etc/lirc/lircd.conf"/>
-            <!--
-            <arg value="/usr/share/lirc/remotes/hauppauge/lircd.conf.hauppauge"/>
-            -->
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>
@@ -1437,19 +1192,6 @@
     <target name="test-bundle-tree" depends="build">
 
         <java classname="org.jflicks.update.system.BundleTree" fork="true">
-
-            <classpath>
-                <path refid="runtime.classpath"/>
-            </classpath>
-
-        </java>
-
-    </target>
-
-    <target name="test-feedutil" depends="build">
-
-        <java classname="org.jflicks.ui.view.fe.screen.net.FeedUtil"
-            fork="true">
 
             <classpath>
                 <path refid="runtime.classpath"/>

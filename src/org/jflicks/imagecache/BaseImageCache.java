@@ -16,15 +16,13 @@
 */
 package org.jflicks.imagecache;
 
-import org.jflicks.log.BaseLog;
-
 /**
  * A base implementation of the ImageCache interface.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseImageCache extends BaseLog implements ImageCache {
+public abstract class BaseImageCache implements ImageCache {
 
     private String title;
 

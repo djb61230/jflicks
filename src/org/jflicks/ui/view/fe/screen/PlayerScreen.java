@@ -36,6 +36,7 @@ import org.jflicks.player.PlayState;
 import org.jflicks.rc.RC;
 import org.jflicks.ui.view.fe.ButtonPanel;
 import org.jflicks.ui.view.fe.FrontEndView;
+import org.jflicks.util.LogUtil;
 
 /**
  * This abstract class supports playing a video in a front end UI on a TV,
@@ -292,7 +293,7 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
      */
     public void removeBlankPanel() {
 
-        log(DEBUG, "removeBlankPanel now");
+        LogUtil.log(LogUtil.DEBUG, "removeBlankPanel now");
         JPanel p = getBlankPanel();
         JLayeredPane pane = getLayeredPane();
         if ((p != null) && (pane != null)) {
@@ -324,11 +325,11 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
 
         } catch (ClassNotFoundException ex) {
 
-            log(WARNING, "Error loading bookmarks:" + ex.getMessage());
+            LogUtil.log(LogUtil.WARNING, "Error loading bookmarks:" + ex.getMessage());
 
         } catch (IOException ex) {
 
-            log(WARNING, "Error loading bookmarks:" + ex.getMessage());
+            LogUtil.log(LogUtil.WARNING, "Error loading bookmarks:" + ex.getMessage());
         }
     }
 
@@ -353,7 +354,7 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
 
             } catch (IOException ex) {
 
-                log(WARNING, "Error saving bookmarks:" + ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, "Error saving bookmarks:" + ex.getMessage());
             }
         }
     }
@@ -497,10 +498,10 @@ public abstract class PlayerScreen extends Screen implements ActionListener {
             if (p.isPlaying()) {
 
                 // Then we pay attention to remote events...
-                log(DEBUG, getClass().getName() + " commandReceived: " + s);
+                LogUtil.log(LogUtil.DEBUG, getClass().getName() + " commandReceived: " + s);
                 if (s.equals(RC.ESCAPE_COMMAND)) {
 
-                    log(DEBUG, "OK we are to close up shop!");
+                    LogUtil.log(LogUtil.DEBUG, "OK we are to close up shop!");
                     setBlocking(false);
                     saveBookmark(p);
                     p.stop();

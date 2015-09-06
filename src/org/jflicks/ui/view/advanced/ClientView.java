@@ -44,6 +44,7 @@ import org.jflicks.configure.ConfigurationPanel;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.ui.view.JFlicksView;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.MessagePanel;
 import org.jflicks.util.TabClose;
 import org.jflicks.util.Util;
@@ -184,7 +185,7 @@ public class ClientView extends JFlicksView {
 
             } catch (IOException ex) {
 
-                log(WARNING, "Did not find icon for aplication.");
+                LogUtil.log(LogUtil.WARNING, "Did not find icon for aplication.");
             }
 
             frame.pack();
@@ -447,7 +448,6 @@ public class ClientView extends JFlicksView {
                                 if (NMSConstants.RECORDER_NAME.equals(name)) {
 
                                     String src = c.getSource();
-                                    System.out.println("src: <" + src + ">");
                                     Object[] options = {
                                         NMSConstants.OTA,
                                         NMSConstants.CABLE

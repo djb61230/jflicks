@@ -28,7 +28,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Filter;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -41,7 +40,6 @@ public class Activator extends BaseActivator {
 
     private ServiceTracker serviceTracker;
     private RCTracker rcTracker;
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -81,11 +79,6 @@ public class Activator extends BaseActivator {
         dict.put(Screen.TITLE_PROPERTY, s.getTitle());
 
         bc.registerService(Screen.class.getName(), s, dict);
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        s.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
     }
 
     /**
@@ -101,12 +94,6 @@ public class Activator extends BaseActivator {
         RCTracker rct = getRCTracker();
         if (rct != null) {
             rct.close();
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 

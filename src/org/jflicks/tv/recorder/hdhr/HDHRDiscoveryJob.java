@@ -25,6 +25,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.recorder.Recorder;
+import org.jflicks.util.LogUtil;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
@@ -49,28 +50,17 @@ public class HDHRDiscoveryJob extends AbstractJob implements JobListener {
     private BundleContext bundleContext;
     private DiscoverJob discoverJob;
     private JobContainer jobContainer;
-    private ServiceTracker logServiceTracker;
 
     /**
      * This job supports the HDHRRecorder plugin.
      *
      * @param bc Need a bundle context to register, unregister HDHR devices
      * as they "come and go" from the network.
-     * @param log A Tracker for the LogService.
      */
-    public HDHRDiscoveryJob(BundleContext bc, ServiceTracker log) {
+    public HDHRDiscoveryJob(BundleContext bc) {
 
         setHDHRRecorderList(new ArrayList<HDHRRecorder>());
         setBundleContext(bc);
-        setLogServiceTracker(log);
-    }
-
-    private ServiceTracker getLogServiceTracker() {
-        return (logServiceTracker);
-    }
-
-    private void setLogServiceTracker(ServiceTracker st) {
-        logServiceTracker = st;
     }
 
     private BundleContext getBundleContext() {
@@ -214,13 +204,12 @@ public class HDHRDiscoveryJob extends AbstractJob implements JobListener {
 
         if ((bc != null) && (id != null)) {
 
-            System.out.println("register id <" + id + "> tuner <" + tuner + "> ip <" + ip + "> model <" + model + ">");
+            LogUtil.log(LogUtil.INFO, "register id <" + id + "> tuner <" + tuner + "> ip <" + ip + "> model <" + model + ">");
             HDHRRecorder r = new HDHRRecorder();
             r.setDevice(id + "-" + tuner);
             r.setIpAddress(ip);
             r.setModel(model);
             r.updateDefault();
-            r.setLogServiceTracker(getLogServiceTracker());
             addHDHRRecorder(r);
 
             Hashtable<String, String> dict = new Hashtable<String, String>();

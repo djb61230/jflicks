@@ -27,7 +27,6 @@ import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -40,7 +39,6 @@ import org.osgi.util.tracker.ServiceTracker;
 public class ActivatorVideo extends BaseActivator {
 
     private ServiceTracker eventServiceTracker;
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -57,7 +55,6 @@ public class ActivatorVideo extends BaseActivator {
         if ((conf.exists()) && (conf.isDirectory())) {
 
             File props = new File(conf, "vlc.properties");
-            System.out.println(props);
             if ((props.exists()) && (props.isFile())) {
 
                 Properties p = Util.findProperties(props);
@@ -92,11 +89,6 @@ public class ActivatorVideo extends BaseActivator {
             new ServiceTracker(bc, EventAdmin.class.getName(), null);
         v.setEventServiceTracker(eventServiceTracker);
         eventServiceTracker.open();
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        v.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
     }
 
     /**
@@ -108,12 +100,6 @@ public class ActivatorVideo extends BaseActivator {
 
             eventServiceTracker.close();
             eventServiceTracker = null;
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 

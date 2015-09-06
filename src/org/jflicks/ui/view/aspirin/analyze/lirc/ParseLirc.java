@@ -87,7 +87,6 @@ public class ParseLirc {
 
     private void parse(String path) {
 
-        System.out.println("parse <" + path + ">");
         if (path != null) {
 
             File fpath = new File(path);
@@ -175,34 +174,6 @@ public class ParseLirc {
                                 }
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Simple test main.
-     *
-     * @param args The arguments.
-     */
-    public static void main(String[] args) {
-
-        ParseLirc pl = new ParseLirc(args[0]);
-
-        Remote[] array = pl.getRemotes();
-        if (array != null) {
-
-            for (int i = 0; i < array.length; i++) {
-
-                System.out.println("name <" + array[i].getName() + ">");
-
-                String[] buts = array[i].getButtons();
-                if (buts != null) {
-
-                    for (int j = 0; j < buts.length; j++) {
-
-                        System.out.println("\tbutton <" + buts[j] + ">");
                     }
                 }
             }

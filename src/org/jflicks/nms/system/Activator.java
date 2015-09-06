@@ -26,13 +26,13 @@ import org.jflicks.nms.NMS;
 import org.jflicks.util.BaseActivator;
 import org.jflicks.util.EventSender;
 import org.jflicks.util.Hostname;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import ch.ethz.iks.r_osgi.RemoteOSGiService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -55,7 +55,6 @@ public class Activator extends BaseActivator {
     private OnDemandTracker onDemandTracker;
     private RemoteTracker remoteTracker;
     private SystemNMS systemNMS;
-    private ServiceTracker logServiceTracker;
     private JobContainer removalJobContainer;
 
     /**
@@ -117,16 +116,11 @@ public class Activator extends BaseActivator {
         props.put(RemoteOSGiService.R_OSGi_REGISTRATION, Boolean.TRUE);
         bc.registerService(NMS.class.getName(), s, props);
 
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        s.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
-
         ServiceDescription sd = new ServiceDescription();
         sd.setAddress(Hostname.getLocalhostAddress());
         sd.setPort(9278);
         sd.setInstanceName("SystemNMS");
-        System.out.println("Service details: " + sd.toString());
+        LogUtil.log(LogUtil.INFO, "Service details: " + sd.toString());
         s.setTitle("NMS - " + sd.getAddressAsString() + ":" + sd.getPort());
         s.setHost(sd.getAddressAsString());
         s.setPort(9278);
@@ -228,12 +222,6 @@ public class Activator extends BaseActivator {
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 
@@ -349,13 +337,13 @@ public class Activator extends BaseActivator {
             BundleContext bc = getBundleContext();
             if ((s != null) && (bc != null)) {
 
-                s.log(s.INFO, "Shutting down via shutdown hook!");
+                LogUtil.log(LogUtil.INFO, "Shutting down via shutdown hook!");
                 try {
 
                     Bundle b = bc.getBundle(0L);
                     if (b != null) {
 
-                        System.out.println("BundleContext: stop");
+                        LogUtil.log(LogUtil.INFO, "BundleContext: stop");
                         b.stop();
                     }
 

@@ -25,7 +25,6 @@ import org.jflicks.job.JobManager;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -38,7 +37,6 @@ public class Activator extends BaseActivator {
 
     private Db4oServiceTracker db4oServiceTracker;
     private SystemAutoArt systemAutoArt;
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -48,11 +46,6 @@ public class Activator extends BaseActivator {
         setBundleContext(bc);
         SystemAutoArt saa = new SystemAutoArt();
         setSystemAutoArt(saa);
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        saa.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
 
         Db4oServiceTracker t = new Db4oServiceTracker(bc, saa);
         setDb4oServiceTracker(t);
@@ -82,12 +75,6 @@ public class Activator extends BaseActivator {
         Db4oServiceTracker t = getDb4oServiceTracker();
         if (t != null) {
             t.close();
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
 
         SystemAutoArt aa = getSystemAutoArt();

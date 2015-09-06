@@ -19,6 +19,8 @@ package org.jflicks.photomanager;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.jflicks.util.LogUtil;
+
 /**
  * This class contains all the properties representing a tag.
  *
@@ -462,8 +464,7 @@ public class Tag implements Serializable, Comparable<Tag> {
      */
     public void dump() {
 
-        System.out.println("id: " + getId() + " name <" + getName()
-            + "> path <" + toPath() + ">");
+        LogUtil.log(LogUtil.INFO, "id: " + getId() + " name <" + getName() + "> path <" + toPath() + ">");
         Tag[] kids = getChildren();
         if (kids != null) {
 

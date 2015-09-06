@@ -18,6 +18,8 @@ package org.jflicks.photomanager;
 
 import java.util.ArrayList;
 
+import org.jflicks.util.LogUtil;
+
 /**
  * A set of utility methods useful in PhotoManager implementations or classes
  * that use one.
@@ -147,8 +149,7 @@ public final class PhotoUtil {
 
                     if (tmp.equals(ptags[i])) {
 
-                        System.out.println("tmp <" + tmp + "> <" + ptags[i]
-                            + ">");
+                        LogUtil.log(LogUtil.DEBUG, "tmp <" + tmp + "> <" + ptags[i] + ">");
                         result = true;
                         break;
                     }

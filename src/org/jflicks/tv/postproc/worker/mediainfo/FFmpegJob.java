@@ -25,6 +25,7 @@ import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job starts a system job that runs mediainfo.
@@ -77,7 +78,7 @@ public class FFmpegJob extends BaseWorkerJob implements JobListener {
             setSystemJob(job);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
-            log(BaseWorker.INFO, "started: " + job.getCommand());
+            LogUtil.log(LogUtil.INFO, "started: " + job.getCommand());
             setTerminate(false);
 
         } else {
@@ -139,7 +140,7 @@ public class FFmpegJob extends BaseWorkerJob implements JobListener {
             if ((r != null) && (job != null)) {
 
                 String output = job.getOutputText();
-                log(BaseWorker.INFO, "output: " + output);
+                LogUtil.log(LogUtil.INFO, "output: " + output);
                 if (output != null) {
 
                     String videoLine = null;
@@ -153,8 +154,8 @@ public class FFmpegJob extends BaseWorkerJob implements JobListener {
                         audioLine = output.substring(aindex);
                     }
 
-                    log(BaseWorker.INFO, "videoLine: " + videoLine);
-                    log(BaseWorker.INFO, "audioLine: " + audioLine);
+                    LogUtil.log(LogUtil.INFO, "videoLine: " + videoLine);
+                    LogUtil.log(LogUtil.INFO, "audioLine: " + audioLine);
                     if (videoLine != null) {
 
                         if (videoLine.indexOf("1920x1080") != -1) {

@@ -1345,7 +1345,6 @@ public class EZPanel extends JXPanel implements ListSelectionListener,
                 if (r != null) {
 
                     String src = r.getName();
-                    System.out.println("src: <" + src + ">");
 
                     Object[] options = {
                         NMSConstants.OTA,

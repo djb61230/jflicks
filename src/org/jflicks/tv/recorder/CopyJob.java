@@ -26,6 +26,7 @@ import javax.swing.Timer;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -112,57 +113,6 @@ public class CopyJob extends RecoverJob {
                 fileOutputStream = null;
             }
         }
-    }
-
-    /**
-     * Simple test main.
-     *
-     * @param args The arguments.
-     */
-    public static void main(String[] args) {
-
-        String src = "/dev/video0";
-        String dst = "recording.mpg";
-        int seconds = 60;
-
-        for (int i = 0; i < args.length; i += 2) {
-
-            if (args[i].equals("-i")) {
-
-                src = args[i + 1];
-
-            } else if (args[i].equals("-o")) {
-
-                dst = args[i + 1];
-
-            } else if (args[i].equals("-s")) {
-
-                seconds = Util.str2int(args[i + 1], seconds);
-
-            } else {
-
-                System.out.println("Unknown arg <" + args[i] + ">");
-            }
-        }
-
-        System.out.println("input <" + src + ">");
-        System.out.println("output <" + dst + ">");
-        System.out.println("seconds <" + seconds + ">");
-        CopyJob job = new CopyJob(src, dst);
-        final JobContainer jc = JobManager.getJobContainer(job);
-        jc.start();
-
-        ActionListener taskPerformer = new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-
-                jc.stop();
-            }
-        };
-
-        Timer wait = new Timer(seconds * 1000, taskPerformer);
-        wait.setRepeats(false);
-        wait.start();
     }
 
 }

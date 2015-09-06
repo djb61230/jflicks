@@ -22,6 +22,7 @@ import org.jflicks.restlet.BaseServerResource;
 import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
+import org.jflicks.util.LogUtil;
 
 import org.restlet.data.MediaType;
 import org.restlet.ext.json.JsonRepresentation;
@@ -60,18 +61,17 @@ public class RecordingResource extends BaseServerResource {
 
         NMSSupport nsup = NMSSupport.getInstance();
 
-        log(NMSApplication.DEBUG, "GET recordings.");
+        LogUtil.log(LogUtil.DEBUG, "GET recordings.");
         if (isFormatJson()) {
 
-            log(NMSApplication.DEBUG, "User wants JSON.");
+            LogUtil.log(LogUtil.DEBUG, "User wants JSON.");
             Recording[] array = nsup.getRecordings();
-            log(NMSApplication.DEBUG, "getRecordings array null = "
-                + (array == null));
+            LogUtil.log(LogUtil.DEBUG, "getRecordings array null = " + (array == null));
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
                 String data = g.toJson(array);
-                log(NMSApplication.DEBUG, "JSON data null = " + (data == null));
+                LogUtil.log(LogUtil.DEBUG, "JSON data null = " + (data == null));
                 if (data != null) {
 
                     JsonRepresentation sr = new JsonRepresentation(data);
@@ -81,10 +81,9 @@ public class RecordingResource extends BaseServerResource {
 
         } else if (isFormatXml()) {
 
-            log(NMSApplication.DEBUG, "User wants XML.");
+            LogUtil.log(LogUtil.DEBUG, "User wants XML.");
             Recording[] array = nsup.getRecordings();
-            log(NMSApplication.DEBUG, "getRecordings array null = "
-                + (array == null));
+            LogUtil.log(LogUtil.DEBUG, "getRecordings array null = " + (array == null));
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 
@@ -98,7 +97,7 @@ public class RecordingResource extends BaseServerResource {
             }
         }
 
-        log(NMSApplication.DEBUG, "Finished getting recordings.");
+        LogUtil.log(LogUtil.DEBUG, "Finished getting recordings.");
 
         return (result);
     }

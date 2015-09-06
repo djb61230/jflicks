@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import org.jflicks.restlet.servercomponent.BaseServerComponent;
 import org.jflicks.restlet.servercomponent.ServerComponent;
+import org.jflicks.util.LogUtil;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -17,6 +18,7 @@ import org.restlet.Server;
 import org.restlet.data.Parameter;
 import org.restlet.data.Protocol;
 import org.restlet.util.Series;
+import org.jflicks.util.Util;
 
 /**
  * A ServerComponent implementation that runs all our restlet apps.
@@ -75,7 +77,8 @@ public class SystemServerComponent extends BaseServerComponent {
         // Now we start things up right.
         try {
 
-            int httpPort = 8182;
+            String restPort = System.getProperty("org.jflicks.restlet.servercomponent.system.SystemServerComponent");
+            int httpPort = Util.str2int(restPort, 8182);
             Component c = new Component();
             setComponent(c);
             c.getServers().add(Protocol.HTTP, httpPort);
@@ -83,7 +86,7 @@ public class SystemServerComponent extends BaseServerComponent {
 
         } catch (Exception ex) {
 
-            System.out.println("ServerComponent: " + ex.getMessage());
+            LogUtil.log(LogUtil.WARNING, "ServerComponent: " + ex.getMessage());
         }
 
         Hashtable<String, String> h = new Hashtable<String, String>();
@@ -109,7 +112,7 @@ public class SystemServerComponent extends BaseServerComponent {
 
             } catch (Exception ex) {
 
-                System.out.println("ServerComponent: " + ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, "ServerComponent: " + ex.getMessage());
             }
 
             // Also let's unregister so restlet applications can know that

@@ -23,6 +23,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.Video;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -96,13 +97,13 @@ public class SaveVideoJob extends AbstractJob {
                 id = v.getId();
             }
             String url = v.getBannerURL();
-            System.out.println("url: " + url);
-            System.out.println("id: " + id);
+            LogUtil.log(LogUtil.DEBUG, "url: " + url);
+            LogUtil.log(LogUtil.DEBUG, "id: " + id);
             if ((url != null) && (id != null)) {
 
                 if (url.indexOf(id) == -1) {
 
-                    System.out.println("url <" + url + ">");
+                    LogUtil.log(LogUtil.DEBUG, "url <" + url + ">");
                     if (url.startsWith("file")) {
 
                         String path = url.substring(5);
@@ -122,20 +123,20 @@ public class SaveVideoJob extends AbstractJob {
             }
 
             url = v.getFanartURL();
-            System.out.println("url: " + url);
-            System.out.println("id: " + id);
+            LogUtil.log(LogUtil.DEBUG, "url: " + url);
+            LogUtil.log(LogUtil.DEBUG, "id: " + id);
             if ((url != null) && (id != null)) {
 
                 if (url.indexOf(id) == -1) {
 
-                    System.out.println("url <" + url + ">");
+                    LogUtil.log(LogUtil.DEBUG, "url <" + url + ">");
                     if (url.startsWith("file")) {
 
                         String path = url.substring(5);
                         File fbuf = new File(path);
-                        System.out.println("fbuf: " + fbuf);
+                        LogUtil.log(LogUtil.DEBUG, "fbuf: " + fbuf);
                         byte[] b = Util.read(fbuf);
-                        System.out.println("b: " + b);
+                        LogUtil.log(LogUtil.DEBUG, "b: " + b);
                         if (b != null) {
                             n.save(NMSConstants.FANART_IMAGE_TYPE, b, id);
                         }
@@ -149,19 +150,19 @@ public class SaveVideoJob extends AbstractJob {
             }
 
             url = v.getPosterURL();
-            System.out.println("url: " + url);
-            System.out.println("id: " + id);
+            LogUtil.log(LogUtil.DEBUG, "url: " + url);
+            LogUtil.log(LogUtil.DEBUG, "id: " + id);
             if ((url != null) && (id != null)) {
 
                 if (url.indexOf(id) == -1) {
 
-                    System.out.println("url <" + url + ">");
+                    LogUtil.log(LogUtil.DEBUG, "url <" + url + ">");
                     if (url.startsWith("file")) {
 
                         String path = url.substring(5);
                         File fbuf = new File(path);
                         byte[] b = Util.read(fbuf);
-                        System.out.println("b: " + b);
+                        LogUtil.log(LogUtil.DEBUG, "b: " + b);
                         if (b != null) {
                             n.save(NMSConstants.POSTER_IMAGE_TYPE, b, id);
                         }

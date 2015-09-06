@@ -38,6 +38,7 @@ import org.jflicks.tv.programdata.ProgramData;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.Scheduler;
 import org.jflicks.util.ExtensionsFilter;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 import org.jflicks.videomanager.VideoManager;
 
@@ -84,7 +85,7 @@ public class SystemNMS extends BaseNMS {
 
             } catch (Exception ex) {
 
-                log(INFO, "simpleWebServer problem: " + ex.getMessage());
+                LogUtil.log(LogUtil.INFO, "simpleWebServer problem: " + ex.getMessage());
                 simpleWebServer = null;
             }
         }
@@ -186,10 +187,10 @@ public class SystemNMS extends BaseNMS {
     private void saveDefaultConfigurations() {
 
         Configuration def = getDefaultConfiguration();
-        log(DEBUG, "SystemNMS: def: " + def);
+        LogUtil.log(LogUtil.DEBUG, "SystemNMS: def: " + def);
         save(def, false);
         setConfiguration(getConfigurationBySource(def.getSource()));
-        log(DEBUG, "SystemNMS: conf: " + getConfiguration());
+        LogUtil.log(LogUtil.DEBUG, "SystemNMS: conf: " + getConfiguration());
 
         Scheduler s = getScheduler();
         if (s != null) {
@@ -248,7 +249,7 @@ public class SystemNMS extends BaseNMS {
             boolean result = f.delete();
             if (!result) {
 
-                log(WARNING, "Failed to delete " + f.getPath());
+                LogUtil.log(LogUtil.WARNING, "Failed to delete " + f.getPath());
             }
         }
     }
@@ -258,11 +259,11 @@ public class SystemNMS extends BaseNMS {
      */
     public void save(Configuration c, boolean force) {
 
-        log(DEBUG, "save: c: " + c + " force: " + force);
+        LogUtil.log(LogUtil.DEBUG, "save: c: " + c + " force: " + force);
         if (c != null) {
 
             File f = createConfigurationFile(c);
-            log(DEBUG, "save: f: " + f);
+            LogUtil.log(LogUtil.DEBUG, "save: f: " + f);
             if ((f != null) && (f.exists()) && (f.isFile())) {
 
                 // The Configuration does exist.  We over write only if
@@ -284,7 +285,7 @@ public class SystemNMS extends BaseNMS {
 
     private void updateConfiguration(Configuration c) {
 
-        log(DEBUG, "updateConfiguration c: " + c);
+        LogUtil.log(LogUtil.DEBUG, "updateConfiguration c: " + c);
         if (c != null) {
 
             String name = c.getName();
@@ -444,7 +445,7 @@ public class SystemNMS extends BaseNMS {
 
                 } else {
 
-                    log(WARNING, "Not handling update of "
+                    LogUtil.log(LogUtil.WARNING, "Not handling update of "
                         + c.getName() + "-" + c.getSource());
                 }
             }

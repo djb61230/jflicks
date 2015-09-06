@@ -8,4 +8,5 @@ Export-Package:\
 Import-Package:\
  org.jflicks.job;version="1.0.0",\
  org.jflicks.nativeutil;version="1.0.0",\
+ org.jflicks.util;version="1.0.0",\
  com.sun.jna

@@ -22,6 +22,7 @@ import java.util.Date;
 import org.jflicks.restlet.BaseServerResource;
 import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.Upcoming;
+import org.jflicks.util.LogUtil;
 
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
@@ -97,7 +98,7 @@ public class UpcomingResource extends BaseServerResource {
             }
         }
 
-        log(NMSApplication.DEBUG, "Finished getting upcomings.");
+        LogUtil.log(LogUtil.DEBUG, "Finished getting upcomings.");
 
         return (result);
     }
@@ -129,7 +130,7 @@ public class UpcomingResource extends BaseServerResource {
 
             } catch (IOException ex) {
 
-                log(NMSApplication.WARNING, ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, ex.getMessage());
             }
         }
     }

@@ -18,6 +18,7 @@ package org.jflicks.restlet.nms;
 
 import org.jflicks.restlet.BaseServerResource;
 import org.jflicks.restlet.NMSSupport;
+import org.jflicks.util.LogUtil;
 
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
@@ -49,7 +50,7 @@ public class StopRecordingResource extends BaseServerResource {
     public void stopRecording() {
 
         String rid = getRecordingId();
-        System.out.println("stopRecording: " + rid);
+        LogUtil.log(LogUtil.DEBUG, "stopRecording: " + rid);
         if (rid != null) {
 
             NMSSupport nsup = NMSSupport.getInstance();

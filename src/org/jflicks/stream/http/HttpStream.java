@@ -26,6 +26,7 @@ import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.stream.BaseStream;
 import org.jflicks.tv.scheduler.Scheduler;
+import org.jflicks.util.LogUtil;
 
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
@@ -99,25 +100,10 @@ public class HttpStream extends BaseStream implements JobListener,
                 httpService.registerResources("/"
                     + NMSConstants.HTTP_IMAGES_NAME, web.getAbsolutePath(),
                     getMimeHttpContext());
-                /*
-                String[] dirs = getRecordingDirectories();
-                System.out.println("Recording dirs: " + dirs);
-                if (dirs != null) {
 
-                    for (int i = 0; i < dirs.length; i++) {
-
-                        System.out.println("registerResources: " + dirs[i]);
-                        httpService.registerResources(dirs[i], dirs[i],
-                            getMimeHttpContext());
-                    }
-                    StreamServlet ss = new StreamServlet();
-                    httpService.registerServlet("/streamer", ss, null, null);
-                }
-
-            } catch (ServletException ex) {
-                */
             } catch (NamespaceException ex) {
-                System.out.println("NamespaceException: " + ex.getMessage());
+
+                LogUtil.log(LogUtil.WARNING, "NamespaceException: " + ex.getMessage());
             }
         }
     }

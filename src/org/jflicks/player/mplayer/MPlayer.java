@@ -45,6 +45,7 @@ import org.jflicks.job.SystemJob;
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.PlayState;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -384,7 +385,7 @@ public class MPlayer extends BasePlayer {
 
                 } catch (IOException ex) {
 
-                    log(DEBUG, ex.getMessage());
+                    LogUtil.log(LogUtil.DEBUG, ex.getMessage());
                 }
             }
         }
@@ -426,10 +427,10 @@ public class MPlayer extends BasePlayer {
                         canid = Native.getComponentID(can);
 
                     } catch (Exception ex) {
-                        log(DEBUG, ex.getMessage());
+                        LogUtil.log(LogUtil.DEBUG, ex.getMessage());
                     }
 
-                    log(DEBUG, "canvas id: " + canid);
+                    LogUtil.log(LogUtil.DEBUG, "canvas id: " + canid);
                     String wid = "" + canid;
 
                     job = new MPlayerUdpJob(this, wid, getArgs(), port);
@@ -481,10 +482,10 @@ public class MPlayer extends BasePlayer {
                         canid = Native.getComponentID(can);
 
                     } catch (Exception ex) {
-                        log(DEBUG, ex.getMessage());
+                        LogUtil.log(LogUtil.DEBUG, ex.getMessage());
                     }
 
-                    log(DEBUG, "canvas id: " + canid);
+                    LogUtil.log(LogUtil.DEBUG, "canvas id: " + canid);
                     String wid = "" + canid;
 
                     job = new MPlayerJob(this, wid, getArgs(), position,
@@ -530,7 +531,7 @@ public class MPlayer extends BasePlayer {
         int width = (int) r.getWidth();
         int height = (int) r.getHeight();
 
-        log(MPlayer.DEBUG, "getFrame: " + getFrame());
+        LogUtil.log(LogUtil.DEBUG, "getFrame: " + getFrame());
         result = new JWindow(getFrame());
         result.setFocusableWindowState(true);
         //result.setUndecorated(true);
@@ -559,7 +560,7 @@ public class MPlayer extends BasePlayer {
 
             public void windowGainedFocus(WindowEvent e) {
 
-                log(MPlayer.DEBUG, "windowGainedFocus: ");
+                LogUtil.log(LogUtil.DEBUG, "windowGainedFocus: ");
                 getKeyPanel().requestFocusInWindow();
             }
         });
@@ -571,7 +572,7 @@ public class MPlayer extends BasePlayer {
      */
     public void stop() {
 
-        System.out.println("Stop being called.");
+        LogUtil.log(LogUtil.DEBUG, "Stop being called.");
         setPaused(false);
         setPlaying(false);
         setUserStop(true);
@@ -740,10 +741,8 @@ public class MPlayer extends BasePlayer {
             setWindow(null);
             if (Util.isLinux()) {
 
-                System.out.println("On Linux: doing a killall just for fun.");
-                log(MPlayer.INFO, "On Linux: doing a killall just for fun.");
-                SystemJob job =
-                    SystemJob.getInstance("killall " + getProgramName());
+                LogUtil.log(LogUtil.INFO, "On Linux: doing a killall just for fun.");
+                SystemJob job = SystemJob.getInstance("killall " + getProgramName());
                 JobContainer jc = JobManager.getJobContainer(job);
                 jc.start();
             }
@@ -765,13 +764,13 @@ public class MPlayer extends BasePlayer {
                     sofar += step;
                     if (sofar >= timeout) {
 
-                        log(DEBUG, "Not Cool we timed out.");
+                        LogUtil.log(LogUtil.DEBUG, "Not Cool we timed out.");
                         done = true;
                     }
 
                 } else {
 
-                    log(DEBUG, "Cool Job thread was done.");
+                    LogUtil.log(LogUtil.DEBUG, "Cool Job thread was done.");
                     done = true;
                 }
             }
@@ -783,7 +782,7 @@ public class MPlayer extends BasePlayer {
         MPlayerJob job = getMPlayerJob();
         if ((s != null) && (job != null)) {
 
-            log(DEBUG, "send command to mplayer <" + s + ">");
+            LogUtil.log(LogUtil.DEBUG, "send command to mplayer <" + s + ">");
             job.command(s);
         }
     }
@@ -793,7 +792,7 @@ public class MPlayer extends BasePlayer {
         MPlayerJob job = getMPlayerJob();
         if (job != null) {
 
-            log(DEBUG, "send stop to mplayer");
+            LogUtil.log(LogUtil.DEBUG, "send stop to mplayer");
             job.stop();
         }
     }

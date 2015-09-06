@@ -99,8 +99,7 @@ public final class ChapterUpdate implements JobListener {
                     + (currentJobIndex + 1)
                     + " of "
                     + (systemJobs.length));
-                System.out.println("Starting <"
-                    + systemJobs[currentJobIndex].getCommand() + ">");
+                System.out.println("Starting <" + systemJobs[currentJobIndex].getCommand() + ">");
                 jobContainer =
                     JobManager.getJobContainer(systemJobs[currentJobIndex]);
                 systemJobs[currentJobIndex].addJobListener(this);

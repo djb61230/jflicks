@@ -58,6 +58,7 @@ import org.jflicks.ui.view.fe.RecordingInfoWindow;
 import org.jflicks.ui.view.fe.RecordingProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.ui.view.fe.screen.ScreenEvent;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.core.animation.timing.Animator;
@@ -123,7 +124,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         File home = new File(".");
         File dbhome = new File(home, "db");
         setBookmarkFile(new File(dbhome, "recbookmarks.dat"));
-        log(DEBUG, getBookmarkFile().getPath());
+        LogUtil.log(LogUtil.DEBUG, getBookmarkFile().getPath());
         load();
 
         setFocusable(true);
@@ -191,7 +192,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             for (int i = 1; i < array.length; i++) {
 
                 if ((i % 2) == 1) {
-                    log(DEBUG, "timeline: " + array[i].intValue());
+                    LogUtil.log(LogUtil.DEBUG, "timeline: " + array[i].intValue());
                     timeline[index++] = array[i];
                 }
             }
@@ -318,12 +319,12 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
      */
     public void updateRecording(Recording r) {
 
-        log(DEBUG, "updateRecording: " + r);
+        LogUtil.log(LogUtil.DEBUG, "updateRecording: " + r);
         if (r != null) {
 
             // First thing is to update the Recording in our array.
             int index = getRecordingById(r.getId());
-            log(DEBUG, "updateRecording: index " + index);
+            LogUtil.log(LogUtil.DEBUG, "updateRecording: index " + index);
             if (index != -1) {
 
                 recordings[index] = r;
@@ -335,7 +336,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                     if (r.equals(rdp.getRecording())) {
 
-                        log(DEBUG, "updateRecording: selected ");
+                        LogUtil.log(LogUtil.DEBUG, "updateRecording: selected ");
                         rdp.setRecording(r);
 
                         ImageCache ic = getImageCache();
@@ -651,7 +652,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
     private void preserveState() {
 
-        log(DEBUG, "preserveState");
+        LogUtil.log(LogUtil.DEBUG, "preserveState");
         RecordingListPanel group = getGroupRecordingListPanel();
         RecordingListPanel rlp = getRecordingListPanel();
         if ((group != null) && (rlp != null)) {
@@ -661,8 +662,8 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
             setCurrentRecordingIndex(rlp.getSelectedIndex());
             setCurrentRecordingStartIndex(rlp.getStartIndex());
             setRestoreState(true);
-            log(DEBUG, "preserveState group: " + getCurrentGroupIndex());
-            log(DEBUG, "preserveState rec: " + getCurrentRecordingIndex());
+            LogUtil.log(LogUtil.DEBUG, "preserveState group: " + getCurrentGroupIndex());
+            LogUtil.log(LogUtil.DEBUG, "preserveState rec: " + getCurrentRecordingIndex());
         }
     }
 
@@ -866,7 +867,6 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         if ((ic != null) && (r != null)) {
 
             String path = r.getPath();
-            System.out.println("path <" + path + ">");
             File tmp = new File(path);
             if ((tmp.exists()) && (tmp.isFile())) {
 
@@ -890,7 +890,6 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 // from the "indexed" video version.  So we have to do some
                 // trickery here.
                 String surl = r.getStreamURL();
-                System.out.println("streamurl <" + surl + ">");
                 if (surl != null) {
 
                     String iext = r.getIndexedExtension();
@@ -905,7 +904,6 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         surl = surl + ".ts";
                     }
 
-                    System.out.println("streamurl GERN BLANK <" + surl + ">");
                     result = ic.getImage(surl + ".png", false);
                 }
             }
@@ -946,8 +944,6 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     // recheck the ext type of the URL.
                     result = streamURL;
 
-                    System.out.println("iext <" + iext + ">");
-                    System.out.println("streamURL <" + streamURL + ">");
                     if (iext != null) {
 
                         if (streamURL.endsWith(iext)) {
@@ -956,11 +952,6 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                                 result = result.substring(0,
                                     result.lastIndexOf("."));
-                                System.out.println("ts  - audio control on");
-                                System.out.println(result);
-
-                            } else {
-                                System.out.println("saying video");
                             }
                         }
                     }
@@ -1092,7 +1083,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                         int old = getCurrentRecordingStartIndex();
                         if (old > 0) {
 
-                            log(DEBUG, "rcount: " + rcount);
+                            LogUtil.log(LogUtil.DEBUG, "rcount: " + rcount);
                             if (old + rlp.getVisibleCount() > rcount) {
 
                                 old--;
@@ -1213,7 +1204,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                     }
                 }
 
-                log(DEBUG, "about to request focus");
+                LogUtil.log(LogUtil.DEBUG, "about to request focus");
                 requestFocus();
             }
         }
@@ -1225,12 +1216,9 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
     public void info() {
 
         RecordingInfoWindow w = getRecordingInfoWindow();
-        System.out.println("RecordingInfoWindow " + w);
         if (w != null) {
 
-            System.out.println("RecordingInfoWindow " + w.isVisible());
             w.setVisible(!w.isVisible());
-            System.out.println("RecordingInfoWindow " + w.isVisible());
         }
     }
 
@@ -1333,7 +1321,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else {
 
-                    log(INFO, "commercials not set or end, skipping 10 min");
+                    LogUtil.log(LogUtil.INFO, "commercials not set or end, skipping 10 min");
 
                     updateLengthHint(cr, p);
                     int left = leftToGo(p, cr);
@@ -1367,7 +1355,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else {
 
-                    log(INFO, "commercials not set or end, going back 10 min");
+                    LogUtil.log(LogUtil.INFO, "commercials not set or end, going back 10 min");
                     updateLengthHint(getCurrentRecording(), p);
                     p.seek(-600);
                 }
@@ -1566,7 +1554,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else if (DELETE.equals(pbp.getSelectedButton())) {
 
-                    log(DEBUG, "firing delete recording after certain");
+                    LogUtil.log(LogUtil.DEBUG, "firing delete recording after certain");
                     certainPopup = true;
                     setLastScreenEvent(ScreenEvent.DELETE_RECORDING);
                     setCertainRecording(r);
@@ -1574,7 +1562,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
                 } else if (DELETE_ALLOW_RERECORDING.equals(
                     pbp.getSelectedButton())) {
 
-                    log(DEBUG, "firing delete recording - allow after certain");
+                    LogUtil.log(LogUtil.DEBUG, "firing delete recording - allow after certain");
                     certainPopup = true;
                     setLastScreenEvent(
                         ScreenEvent.DELETE_RECORDING_ALLOW_RERECORDING);
@@ -1582,7 +1570,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else if (STOP_RECORDING.equals(pbp.getSelectedButton())) {
 
-                    log(DEBUG, "firing stop recording after certain");
+                    LogUtil.log(LogUtil.DEBUG, "firing stop recording after certain");
                     certainPopup = true;
                     setLastScreenEvent(ScreenEvent.STOP_RECORDING);
                     setCertainRecording(r);
@@ -1593,7 +1581,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
 
                 } else if (CANCEL.equals(pbp.getSelectedButton())) {
 
-                    log(DEBUG, "cancel hit");
+                    LogUtil.log(LogUtil.DEBUG, "cancel hit");
 
                 } else {
 

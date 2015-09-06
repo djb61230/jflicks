@@ -49,6 +49,7 @@ import org.jflicks.metadata.Metadata;
 import org.jflicks.metadata.SearchPanel;
 import org.jflicks.nms.NMS;
 import org.jflicks.ui.view.JFlicksView;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.ProgressBar;
 import org.jflicks.util.Util;
 
@@ -280,7 +281,7 @@ public class MetadataView extends JFlicksView implements ActionListener {
 
             } catch (IOException ex) {
 
-                log(WARNING, "Did not find icon for aplication.");
+                LogUtil.log(LogUtil.WARNING, "Did not find icon for aplication.");
             }
 
             frame.pack();
@@ -353,7 +354,7 @@ public class MetadataView extends JFlicksView implements ActionListener {
      */
     public void messageReceived(String s) {
 
-        log(INFO, "messageReceived: " + s);
+        LogUtil.log(LogUtil.INFO, "messageReceived: " + s);
     }
 
     /**

@@ -24,6 +24,7 @@ import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.WorkerEvent;
 import org.jflicks.util.DetectRatingPlan;
+import org.jflicks.util.LogUtil;
 
 /**
  * Worker implementation that can flag a Recording using the comrat
@@ -149,14 +150,14 @@ public class ComratWorker extends BaseWorker implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            log(INFO, "ComratWorker: completed");
+            LogUtil.log(LogUtil.INFO, "ComratWorker: completed");
             ComratJob job = (ComratJob) event.getSource();
             removeJobContainer(job);
             fireWorkerEvent(WorkerEvent.COMPLETE, job.getRecording(), true);
 
         } else {
 
-            //log(DEBUG, "ComratWorker: " + event.getMessage());
+            //LogUtil.log(LogUtil.DEBUG, "ComratWorker: " + event.getMessage());
         }
     }
 

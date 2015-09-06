@@ -24,6 +24,7 @@ import org.jflicks.tv.Task;
 import org.jflicks.tv.postproc.BasePostProc;
 import org.jflicks.tv.postproc.worker.Worker;
 import org.jflicks.tv.postproc.worker.WorkerEvent;
+import org.jflicks.util.LogUtil;
 
 /**
  * Class that implements the PostProc service.
@@ -62,7 +63,7 @@ public class SystemPostProc extends BasePostProc {
             synchronized (l) {
 
                 l.add(wr);
-                log(INFO, "Heavy queue size now: " + l.size());
+                LogUtil.log(LogUtil.INFO, "Heavy queue size now: " + l.size());
             }
         }
     }
@@ -89,7 +90,7 @@ public class SystemPostProc extends BasePostProc {
                     title = w.getTitle();
                 }
 
-                log(INFO, "(Push) Heavy " + title + " queue size now: "
+                LogUtil.log(LogUtil.INFO, "(Push) Heavy " + title + " queue size now: "
                     + l.size());
             }
         }
@@ -112,7 +113,7 @@ public class SystemPostProc extends BasePostProc {
 
                 result = l.get(0);
                 l.remove(0);
-                log(INFO, "(Pop) Heavy queue size now: " + l.size());
+                LogUtil.log(LogUtil.INFO, "(Pop) Heavy queue size now: " + l.size());
             }
         }
 
@@ -135,7 +136,7 @@ public class SystemPostProc extends BasePostProc {
             synchronized (l) {
 
                 l.add(wr);
-                log(INFO, "Light queue size now: " + l.size());
+                LogUtil.log(LogUtil.INFO, "Light queue size now: " + l.size());
             }
         }
     }
@@ -161,7 +162,7 @@ public class SystemPostProc extends BasePostProc {
                 if (w != null) {
                     title = w.getTitle();
                 }
-                log(INFO, "(Push) Light " + title + " queue size now: "
+                LogUtil.log(LogUtil.INFO, "(Push) Light " + title + " queue size now: "
                     + l.size());
             }
         }
@@ -184,7 +185,7 @@ public class SystemPostProc extends BasePostProc {
 
                 result = l.get(0);
                 l.remove(0);
-                log(INFO, "(Pop) Light queue size now: " + l.size());
+                LogUtil.log(LogUtil.INFO, "(Pop) Light queue size now: " + l.size());
             }
         }
 
@@ -213,13 +214,13 @@ public class SystemPostProc extends BasePostProc {
                             wr.setRecording(r);
                             if (w.isHeavy()) {
 
-                                log(INFO, "Time to queue a heavy worker..."
+                                LogUtil.log(LogUtil.INFO, "Time to queue a heavy worker..."
                                     + w.getTitle());
                                 addHeavyWorkerRecording(wr);
 
                             } else {
 
-                                log(INFO, "Time to queue a light worker..."
+                                LogUtil.log(LogUtil.INFO, "Time to queue a light worker..."
                                     + w.getTitle());
                                 addLightWorkerRecording(wr);
                             }
@@ -244,11 +245,11 @@ public class SystemPostProc extends BasePostProc {
                 wr.setWorker(w);
                 wr.setRecording(r);
                 if (w.isHeavy()) {
-                    log(INFO, "Time to queue up a heavy worker..."
+                    LogUtil.log(LogUtil.INFO, "Time to queue up a heavy worker..."
                         + w.getTitle());
                     addHeavyWorkerRecording(wr);
                 } else {
-                    log(INFO, "Time to queue up a light worker..."
+                    LogUtil.log(LogUtil.INFO, "Time to queue up a light worker..."
                         + w.getTitle());
                     addLightWorkerRecording(wr);
                 }
@@ -266,7 +267,7 @@ public class SystemPostProc extends BasePostProc {
             Recording r = event.getRecording();
             if (r != null) {
 
-                log(INFO, "workerUpdate: updating Recording in db");
+                LogUtil.log(LogUtil.INFO, "workerUpdate: updating Recording in db");
                 updateRecording(r);
             }
         }

@@ -60,6 +60,7 @@ import org.jflicks.ui.view.fe.screen.ExecuteScreen;
 import org.jflicks.ui.view.fe.screen.Screen;
 import org.jflicks.ui.view.fe.screen.ScreenEvent;
 import org.jflicks.ui.view.fe.screen.ScreenListener;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.core.animation.timing.Animator;
@@ -685,7 +686,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
 
                     if (array[i] instanceof ParameterProperty) {
 
-                        log(WARNING, "Now getting parameter - screen.");
+                        LogUtil.log(LogUtil.WARNING, "Now getting parameter - screen.");
                         ParameterProperty pp = (ParameterProperty) array[i];
                         String[] parameters = pp.getParameters();
                         if (parameters != null) {
@@ -1072,7 +1073,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
             NMS[] array = getNMS();
             if ((array != null) && (array.length > 0)) {
 
-                log(DEBUG, "NMS count: " + array.length);
+                LogUtil.log(LogUtil.DEBUG, "NMS count: " + array.length);
                 if (array.length == 1) {
 
                     Recording[] recs = array[0].getRecordings();
@@ -1086,10 +1087,10 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                     for (int i = 0; i < array.length; i++) {
 
                         Recording[] recs = array[i].getRecordings();
-                        log(DEBUG, "recs from NMS : " + i);
+                        LogUtil.log(LogUtil.DEBUG, "recs from NMS : " + i);
                         if (recs != null) {
 
-                            log(DEBUG, "recs from NMS : " + recs.length);
+                            LogUtil.log(LogUtil.DEBUG, "recs from NMS : " + recs.length);
                             Collections.addAll(list, recs);
                         }
                     }
@@ -1276,7 +1277,7 @@ public class FrontEndView extends JFlicksView implements ActionListener,
                 Recording todelete = event.getRecording();
                 if (todelete != null) {
 
-                    log(DEBUG, "whence: " + todelete.getHostPort());
+                    LogUtil.log(LogUtil.DEBUG, "whence: " + todelete.getHostPort());
                     NMS from = NMSUtil.select(array, todelete.getHostPort());
                     if (from != null) {
 

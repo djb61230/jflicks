@@ -25,6 +25,8 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import org.jflicks.util.LogUtil;
+
 import com.google.gson.Gson;
 
 /**
@@ -109,7 +111,7 @@ public final class TheMovieDB {
             String curl = PROTOCOL + DOMAIN + "/" + VERSION + "/configuration"
                 + "?api_key=" + KEY;
             String cjson = create(curl);
-            System.out.println("cjson: " + cjson);
+            LogUtil.log(LogUtil.DEBUG, "cjson: " + cjson);
 
             // Futz with the json....
             baseUrl = cjson.substring(23);
@@ -235,13 +237,12 @@ public final class TheMovieDB {
 
         TheMovieDB tmdb = new TheMovieDB();
         Search search = tmdb.search("Casablanca");
-        System.out.println(search.getPage());
-        System.out.println(search.getTotalResults());
+        LogUtil.log(LogUtil.DEBUG, "" + search.getPage());
+        LogUtil.log(LogUtil.DEBUG, "" + search.getTotalResults());
         Movie[] array = search.getMovies();
-        System.out.println("movies array: " + array);
         if (array != null) {
 
-            System.out.println("array.length " + array.length);
+            LogUtil.log(LogUtil.DEBUG, "array.length " + array.length);
             for (int i = 0; i < array.length; i++) {
 
                 if (i == 0) {
@@ -249,16 +250,16 @@ public final class TheMovieDB {
                     Movie m = tmdb.retrieve(array[i].getId());
                     if (m != null) {
 
-                        System.out.println("genres: " + m.getGenres());
+                        LogUtil.log(LogUtil.DEBUG, "genres: " + m.getGenres());
                         Genre[] garray = m.getGenres();
                         if ((garray != null) && (garray.length > 0)) {
 
                             for (int j = 0; j < garray.length; j++) {
 
-                                System.out.println("n: " + garray[j].getName());
+                                LogUtil.log(LogUtil.DEBUG, "n: " + garray[j].getName());
                             }
                         }
-                        System.out.println("a: " + m.getArtwork());
+                        LogUtil.log(LogUtil.DEBUG, "a: " + m.getArtwork());
                     }
                 }
             }

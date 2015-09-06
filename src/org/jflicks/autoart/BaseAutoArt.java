@@ -30,6 +30,7 @@ import org.jflicks.tv.Recording;
 import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -468,34 +469,34 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
         NMS n = getNMS();
         if ((n != null) && (si != null)) {
 
-            log(INFO, "save title: " + si.getTitle());
+            LogUtil.log(LogUtil.INFO, "save title: " + si.getTitle());
             String id = si.getFileId();
-            log(INFO, "id: " + id);
+            LogUtil.log(LogUtil.INFO, "id: " + id);
             if (id != null) {
 
                 String url = si.getBannerURL();
-                log(INFO, "url: " + url);
-                log(INFO, "need: " + si.isNeedBanner());
+                LogUtil.log(LogUtil.INFO, "url: " + url);
+                LogUtil.log(LogUtil.INFO, "need: " + si.isNeedBanner());
                 if ((url != null) && (si.isNeedBanner())) {
                     n.save(NMSConstants.BANNER_IMAGE_TYPE, url, id);
                 }
 
                 url = si.getPosterURL();
-                log(INFO, "url: " + url);
-                log(INFO, "need: " + si.isNeedPoster());
+                LogUtil.log(LogUtil.INFO, "url: " + url);
+                LogUtil.log(LogUtil.INFO, "need: " + si.isNeedPoster());
                 if ((url != null) && (si.isNeedPoster())) {
                     n.save(NMSConstants.POSTER_IMAGE_TYPE, url, id);
                 }
 
                 url = si.getFanartURL();
-                log(INFO, "url: " + url);
-                log(INFO, "need: " + si.isNeedFanart());
+                LogUtil.log(LogUtil.INFO, "url: " + url);
+                LogUtil.log(LogUtil.INFO, "need: " + si.isNeedFanart());
                 if ((url != null) && (si.isNeedFanart())) {
                     n.save(NMSConstants.FANART_IMAGE_TYPE, url, id);
                 }
 
                 String vid = si.getVideoId();
-                log(INFO, "vid: " + vid);
+                LogUtil.log(LogUtil.INFO, "vid: " + vid);
                 if (vid != null) {
 
                     // We looked up some metadata so let's see if we

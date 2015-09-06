@@ -102,7 +102,6 @@ public class SaveVideoJob extends AbstractJob {
 
                     if (url.indexOf(id) == -1) {
 
-                        System.out.println("url <" + url + ">");
                         if (url.startsWith("file")) {
 
                             String path = url.substring(5);
@@ -123,14 +122,11 @@ public class SaveVideoJob extends AbstractJob {
 
                     if (url.indexOf(id) == -1) {
 
-                        System.out.println("url <" + url + ">");
                         if (url.startsWith("file")) {
 
                             String path = url.substring(5);
                             File fbuf = new File(path);
-                            System.out.println("fbuf: " + fbuf);
                             byte[] b = Util.read(fbuf);
-                            System.out.println("b: " + b);
                             if (b != null) {
                                 n.save(NMSConstants.FANART_IMAGE_TYPE, b, id);
                             }
@@ -146,13 +142,11 @@ public class SaveVideoJob extends AbstractJob {
 
                     if (url.indexOf(id) == -1) {
 
-                        System.out.println("url <" + url + ">");
                         if (url.startsWith("file")) {
 
                             String path = url.substring(5);
                             File fbuf = new File(path);
                             byte[] b = Util.read(fbuf);
-                            System.out.println("b: " + b);
                             if (b != null) {
                                 n.save(NMSConstants.POSTER_IMAGE_TYPE, b, id);
                             }

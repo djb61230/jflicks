@@ -71,7 +71,6 @@ public class GenerateImageJob extends AbstractJob implements JobListener {
      */
     public void start() {
 
-        System.out.println("started GenerateImageJob");
         Video v = getVideo();
         if (v != null) {
 
@@ -101,7 +100,6 @@ public class GenerateImageJob extends AbstractJob implements JobListener {
             JobManager.sleep(getSleepTime());
         }
 
-        System.out.println("run compltete");
         fireJobEvent(JobEvent.COMPLETE);
     }
 
@@ -118,7 +116,6 @@ public class GenerateImageJob extends AbstractJob implements JobListener {
      */
     public void jobUpdate(JobEvent event) {
 
-        System.out.println("job update called....");
         if (event.getType() == JobEvent.COMPLETE) {
 
             try {
@@ -128,8 +125,6 @@ public class GenerateImageJob extends AbstractJob implements JobListener {
                 Video v = getVideo();
                 if ((bi != null) && (v != null)) {
 
-                    System.out.println("width: " + bi.getWidth());
-                    System.out.println("height: " + bi.getHeight());
                     if (bi.getWidth() < 1280) {
 
                         // We have a source video that is 4x3.  We need to

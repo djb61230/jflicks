@@ -27,6 +27,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.recorder.BaseRecorder;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -93,12 +94,12 @@ public class DvbRecorder extends BaseRecorder {
      */
     public void performScan(Channel[] array, String type) {
 
-        log(DEBUG, "performScan dvb called: " + array);
+        LogUtil.log(LogUtil.DEBUG, "performScan dvb called: " + array);
         for (int i = 0; i < array.length; i++) {
 
-            log(DEBUG, "number: " + array[i].getNumber());
-            log(DEBUG, "refnumber: " + array[i].getReferenceNumber());
-            log(DEBUG, "------------------");
+            LogUtil.log(LogUtil.DEBUG, "number: " + array[i].getNumber());
+            LogUtil.log(LogUtil.DEBUG, "refnumber: " + array[i].getReferenceNumber());
+            LogUtil.log(LogUtil.DEBUG, "------------------");
         }
 
         DvbScanJob scanner = new DvbScanJob(this, array, type);

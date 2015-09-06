@@ -26,6 +26,7 @@ import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -160,7 +161,7 @@ public abstract class BaseTrailer extends BaseConfig implements Trailer {
 
                     if (!all[i].delete()) {
 
-                        log(WARNING, all[i].getPath() + " delete fail");
+                        LogUtil.log(LogUtil.WARNING, all[i].getPath() + " delete fail");
                     }
                 }
             }

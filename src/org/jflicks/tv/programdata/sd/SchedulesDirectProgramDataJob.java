@@ -51,15 +51,6 @@ public class SchedulesDirectProgramDataJob extends AbstractJob {
         schedulesDirectProgramData = r;
     }
 
-    private void log(int status, String message) {
-
-        SchedulesDirectProgramData pd = getSchedulesDirectProgramData();
-        if ((pd != null) && (message != null)) {
-
-            pd.log(status, message);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */

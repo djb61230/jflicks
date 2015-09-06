@@ -37,6 +37,7 @@ import org.jflicks.player.Player;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.NMSProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
@@ -198,7 +199,7 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
 
                 public void run() {
 
-                    log(DEBUG, "Starting player...");
+                    LogUtil.log(LogUtil.DEBUG, "Starting player...");
                     startPlayer();
                 }
             };
@@ -263,7 +264,7 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
      */
     public void rewind() {
 
-        log(DEBUG, "rewind");
+        LogUtil.log(LogUtil.DEBUG, "rewind");
         Player p = getPlayer();
         if (p != null) {
 
@@ -276,7 +277,7 @@ public class PreviewScreen extends PlayerScreen implements NMSProperty,
      */
     public void forward() {
 
-        log(DEBUG, "forward");
+        LogUtil.log(LogUtil.DEBUG, "forward");
         Player p = getPlayer();
         if (p != null) {
 

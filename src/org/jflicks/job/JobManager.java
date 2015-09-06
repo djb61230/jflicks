@@ -56,8 +56,6 @@ public final class JobManager {
             Thread.sleep(l);
 
         } catch (Exception e) {
-
-            //System.out.println("Sleep interrupted!");
         }
     }
 

@@ -68,8 +68,6 @@ public class OutputStreamJob extends AbstractJob {
                 os.flush();
 
             } catch (IOException ex) {
-
-                System.out.println("output stream write: " + ex.getMessage());
             }
         }
     }

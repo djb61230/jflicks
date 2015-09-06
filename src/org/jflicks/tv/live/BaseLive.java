@@ -33,6 +33,7 @@ import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.RecorderInformation;
 import org.jflicks.tv.scheduler.Scheduler;
 import org.jflicks.util.StartsWithFilter;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -302,14 +303,14 @@ public abstract class BaseLive extends BaseConfig implements Live {
                 Recorder old = s.getCurrentRecorder();
                 if (old != null) {
 
-                    log(DEBUG, "stop recording");
+                    LogUtil.log(LogUtil.DEBUG, "stop recording");
                     old.stopRecording();
                     cleanup(l);
                 }
 
                 Recorder r = computeRecorder(s, c);
-                log(DEBUG, "channel: " + c);
-                log(DEBUG, "recorder: " + r);
+                LogUtil.log(LogUtil.DEBUG, "channel: " + c);
+                LogUtil.log(LogUtil.DEBUG, "recorder: " + r);
                 if ((r != null) && (!r.isRecording())) {
 
                     File output = computeFile(s, c, r.getExtension());
@@ -319,11 +320,11 @@ public abstract class BaseLive extends BaseConfig implements Live {
                         // a short time so things can settle down.
                         if (r.equals(old)) {
 
-                            log(DEBUG, "waiting a bit...");
+                            LogUtil.log(LogUtil.DEBUG, "waiting a bit...");
                             JobManager.sleep(500);
                         }
 
-                        log(DEBUG, "recording to file <" + output + ">");
+                        LogUtil.log(LogUtil.DEBUG, "recording to file <" + output + ">");
                         s.setCurrentRecorder(r);
                         r.startRecording(c, 60 * 60 * 4, output, true);
 
@@ -363,7 +364,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
                         l.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
                         l.setMessage("No File!");
-                        log(DEBUG, "No File!");
+                        LogUtil.log(LogUtil.DEBUG, "No File!");
                     }
                 }
 
@@ -371,7 +372,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
                 l.setMessageType(LiveTV.MESSAGE_TYPE_ERROR);
                 l.setMessage("No Available Recorders!");
-                log(DEBUG, "No Available Recorders!");
+                LogUtil.log(LogUtil.DEBUG, "No Available Recorders!");
             }
         }
 
@@ -418,7 +419,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
                     for (int i = 0; i < array.length; i++) {
 
                         if (!array[i].delete()) {
-                            log(WARNING, array[i].getPath() + " del fail");
+                            LogUtil.log(LogUtil.WARNING, array[i].getPath() + " del fail");
                         }
                     }
                 }
@@ -441,7 +442,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
 
                     r.stopRecording();
                     cleanup(l);
-                    log(DEBUG, "closeSession: stopRecording");
+                    LogUtil.log(LogUtil.DEBUG, "closeSession: stopRecording");
                 }
             }
         }
@@ -567,7 +568,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
                         if (!array[i].isRecording()) {
 
                             String tmp = s.getListingNameByRecorder(array[i]);
-                            log(DEBUG, "findRecorder: found <" + tmp + ">");
+                            LogUtil.log(LogUtil.DEBUG, "findRecorder: found <" + tmp + ">");
                             if ((tmp != null) && (tmp.equals(name))) {
 
                                 // Found one.  We won't break because we want
@@ -616,7 +617,7 @@ public abstract class BaseLive extends BaseConfig implements Live {
                 if (startc == null) {
                     startc = getConfiguredStartChannel();
                 }
-                log(DEBUG, "start channel: " + startc);
+                LogUtil.log(LogUtil.DEBUG, "start channel: " + startc);
                 if (startc != null) {
 
                     for (int i = 0; i < array.length; i++) {
@@ -655,14 +656,14 @@ public abstract class BaseLive extends BaseConfig implements Live {
         RecorderInformation[] array = s.getRecorderInformations();
         if (array != null) {
 
-            log(DEBUG, "channel count: " + array.length);
+            LogUtil.log(LogUtil.DEBUG, "channel count: " + array.length);
             ArrayList<Channel> clist = new ArrayList<Channel>();
             for (int i = 0; i < array.length; i++) {
 
                 Channel[] tmp = array[i].getChannels();
                 if (tmp != null) {
 
-                    log(DEBUG, "computeAllChannels: adding "
+                    LogUtil.log(LogUtil.DEBUG, "computeAllChannels: adding "
                         + tmp.length + " channels");
                     Collections.addAll(clist, tmp);
                 }

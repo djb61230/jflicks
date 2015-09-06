@@ -150,7 +150,7 @@ public final class DetectRating {
 
                             } catch (IOException ex) {
 
-                                System.out.println(ex.getMessage());
+                                ex.printStackTrace();
                             }
                         }
 
@@ -386,8 +386,7 @@ public final class DetectRating {
                 double d = analyzeRatingImage(data, w, h, rimages[i], 0.90);
                 if (verbose) {
 
-                    System.out.println("analyzeRatingImage: "
-                        + rimages[i].getPath() + ": " + d);
+                    System.out.println("analyzeRatingImage: " + rimages[i].getPath() + ": " + d);
                 }
                 if (d > percent) {
 
@@ -468,8 +467,7 @@ public final class DetectRating {
 
                         int time = frameToSeconds(all[i]);
                         timelist.add(Integer.valueOf(time));
-                        System.out.println(all[i] + " is a rating frame <"
-                            + time + ">");
+                        System.out.println(all[i] + " is a rating frame <" + time + ">");
 
                         // Since we just found one, lets assume the next
                         // 360 seconds or so we don't need to check.
@@ -541,8 +539,7 @@ public final class DetectRating {
 
                                 int time = frameToSeconds(all[i]);
                                 timelist.add(Integer.valueOf(time));
-                                System.out.println(all[i]
-                                    + " is a rating frame <" + time + ">");
+                                System.out.println(all[i] + " is a rating frame <" + time + ">");
 
                                 // Since we just found one, lets assume the next
                                 // 360 seconds or so we don't need to check.

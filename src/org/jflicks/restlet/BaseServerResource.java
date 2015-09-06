@@ -289,11 +289,5 @@ public abstract class BaseServerResource extends WadlServerResource {
         return (result);
     }
 
-    public void log(int level, String message) {
-
-        NMSSupport nsup = NMSSupport.getInstance();
-        nsup.log(level, message);
-    }
-
 }
 

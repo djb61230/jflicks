@@ -45,6 +45,7 @@ import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.PlayState;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -363,14 +364,14 @@ public class Vlcj extends BasePlayer {
 
             win.setVisible(true);
 
-            log(DEBUG, "vlc url <" + url + ">");
+            LogUtil.log(LogUtil.DEBUG, "vlc url <" + url + ">");
             String[] vlcArgs = getArgs();
-            log(DEBUG, "vlcargs " + (vlcArgs != null));
+            LogUtil.log(LogUtil.DEBUG, "vlcargs " + (vlcArgs != null));
             if (vlcArgs != null) {
 
                 for (int i = 0; i < vlcArgs.length; i++) {
 
-                    log(DEBUG, "vlcargs " + i + " " + vlcArgs[i]);
+                    LogUtil.log(LogUtil.DEBUG, "vlcargs " + i + " " + vlcArgs[i]);
                 }
             }
 
@@ -398,7 +399,7 @@ public class Vlcj extends BasePlayer {
      */
     public void stop() {
 
-        log(DEBUG, "stop called!");
+        LogUtil.log(LogUtil.DEBUG, "stop called!");
         setPaused(false);
         setPlaying(false);
 
@@ -459,7 +460,7 @@ public class Vlcj extends BasePlayer {
         DirectMediaPlayer p = getDirectMediaPlayer();
         if (p != null) {
 
-            log(DEBUG, "seek length: " + p.getLength());
+            LogUtil.log(LogUtil.DEBUG, "seek length: " + p.getLength());
             if (p.getLength() > 0) {
 
                 p.skip((long) (seconds * 1000));
@@ -470,7 +471,7 @@ public class Vlcj extends BasePlayer {
                 if (denom > 0.0f) {
 
                     float worth = (float) seconds / denom;
-                    log(DEBUG, "figuring : " + worth);
+                    LogUtil.log(LogUtil.DEBUG, "figuring : " + worth);
                     p.setPosition(p.getPosition() + worth);
                 }
             }
@@ -601,7 +602,7 @@ public class Vlcj extends BasePlayer {
             long loffset = (long) offset;
             long current = p.getAudioDelay();
             p.setAudioDelay(loffset + current);
-            log(DEBUG, "set audiodelay to <" + (loffset + current) + ">");
+            LogUtil.log(LogUtil.DEBUG, "set audiodelay to <" + (loffset + current) + ">");
         }
     }
 
@@ -694,12 +695,12 @@ public class Vlcj extends BasePlayer {
 
         public void stopped(MediaPlayer mediaPlayer) {
 
-            System.out.println("stopped");
+            LogUtil.log(LogUtil.DEBUG, "stopped");
         }
 
         public void finished(MediaPlayer mediaPlayer) {
 
-            System.out.println("finished");
+            LogUtil.log(LogUtil.DEBUG, "finished");
             String[] all = getUrls();
             if (urls != null) {
 
@@ -724,19 +725,6 @@ public class Vlcj extends BasePlayer {
                 setCompleted(true);
                 stop();
             }
-            /*
-            if (!mediaPlayer.playNextSubItem()) {
-
-                System.out.println("finished bee");
-                setPlaying(false);
-                setCompleted(true);
-                stop();
-
-            } else {
-
-                mediaPlayer.play();
-            }
-            */
         }
 
     }

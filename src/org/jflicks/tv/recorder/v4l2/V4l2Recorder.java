@@ -28,6 +28,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.recorder.BaseRecorder;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -129,8 +130,8 @@ public class V4l2Recorder extends BaseRecorder {
 
         if (!isRecording()) {
 
-            log(DEBUG, "stream to <" + host + "> port <" + port + ">");
-            log(DEBUG, "\t channel " + c);
+            LogUtil.log(LogUtil.DEBUG, "stream to <" + host + "> port <" + port + ">");
+            LogUtil.log(LogUtil.DEBUG, "\t channel " + c);
             setChannel(c);
             setHost(host);
             setPort(port);
@@ -152,7 +153,7 @@ public class V4l2Recorder extends BaseRecorder {
         JobContainer jc = getJobContainer();
         if (jc != null) {
 
-            log(DEBUG, "stopStreaming!");
+            LogUtil.log(LogUtil.DEBUG, "stopStreaming!");
             jc.stop();
             setJobContainer(null);
             setRecording(false);
@@ -227,10 +228,10 @@ public class V4l2Recorder extends BaseRecorder {
         // know that creates transport streams is the Hauppauge HD-PVR.
         // All others appear to make program streams.  So we should overwrite
         // the extension property for the HD-PVR.
-        log(DEBUG, "card type:" + cardType);
+        LogUtil.log(LogUtil.DEBUG, "card type:" + cardType);
         if ((cardType != null) && (cardType.indexOf("HD PVR") != -1)) {
 
-            log(DEBUG, "setting extension to ts!");
+            LogUtil.log(LogUtil.DEBUG, "setting extension to ts!");
             setExtension("ts");
         }
     }

@@ -26,6 +26,7 @@ import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job starts a system job that runs comskip.
@@ -151,7 +152,7 @@ public class PassthruJob extends BaseWorkerJob implements JobListener {
                 job.addJobListener(this);
                 JobContainer jc = JobManager.getJobContainer(job);
                 setJobContainer(jc);
-                log(BaseWorker.INFO, "started: " + job.getCommand());
+                LogUtil.log(LogUtil.INFO, "started: " + job.getCommand());
                 setTerminate(false);
             }
 
@@ -210,7 +211,7 @@ public class PassthruJob extends BaseWorkerJob implements JobListener {
                 SystemJob job = getMkvpropSystemJob();
                 job.addJobListener(this);
                 JobContainer jc = JobManager.getJobContainer(job);
-                log(BaseWorker.INFO, "started: " + job.getCommand());
+                LogUtil.log(LogUtil.INFO, "started: " + job.getCommand());
                 jc.start();
 
             } else if (event.getSource() == getMkvpropSystemJob()) {
@@ -219,7 +220,7 @@ public class PassthruJob extends BaseWorkerJob implements JobListener {
                 SystemJob job = getMp4SystemJob();
                 job.addJobListener(this);
                 JobContainer jc = JobManager.getJobContainer(job);
-                log(BaseWorker.INFO, "started: " + job.getCommand());
+                LogUtil.log(LogUtil.INFO, "started: " + job.getCommand());
                 jc.start();
 
             } else if (event.getSource() == getMp4SystemJob()) {
@@ -235,7 +236,7 @@ public class PassthruJob extends BaseWorkerJob implements JobListener {
                 if ((f != null) && (f.exists()) && (f.isFile())) {
 
                     if (!f.delete()) {
-                        log(BaseWorker.INFO, "delete failure: " + f.getPath());
+                        LogUtil.log(LogUtil.INFO, "delete failure: " + f.getPath());
                     }
                 }
 

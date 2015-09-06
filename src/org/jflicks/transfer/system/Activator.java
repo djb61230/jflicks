@@ -25,7 +25,6 @@ import org.jflicks.util.BaseActivator;
 import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -37,7 +36,6 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends BaseActivator {
 
     private SystemTransfer systemTransfer;
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -77,11 +75,6 @@ public class Activator extends BaseActivator {
         dict.put(Transfer.TITLE_PROPERTY, st.getTitle());
 
         bc.registerService(Transfer.class.getName(), st, dict);
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        st.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
     }
 
     /**
@@ -92,12 +85,6 @@ public class Activator extends BaseActivator {
         SystemTransfer st = getSystemTransfer();
         if (st != null) {
             st.close();
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 

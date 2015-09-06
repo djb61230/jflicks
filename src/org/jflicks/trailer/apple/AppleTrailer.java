@@ -22,6 +22,7 @@ import java.util.List;
 import org.jflicks.db.DbWorker;
 import org.jflicks.trailer.BaseTrailer;
 import org.jflicks.trailer.Download;
+import org.jflicks.util.LogUtil;
 
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
@@ -136,12 +137,12 @@ public class AppleTrailer extends BaseTrailer implements DbWorker {
         if (objectContainer != null) {
 
             boolean result = objectContainer.close();
-            log(INFO, "AppleTrailer: closed " + result);
+            LogUtil.log(LogUtil.INFO, "AppleTrailer: closed " + result);
             objectContainer = null;
 
         } else {
 
-            log(INFO, "AppleTrailer: Tried to close "
+            LogUtil.log(LogUtil.INFO, "AppleTrailer: Tried to close "
                 + "but objectContainer null.");
         }
     }
@@ -181,25 +182,25 @@ public class AppleTrailer extends BaseTrailer implements DbWorker {
                     long next = status.getNextUpdate();
                     if (now > next) {
 
-                        log(DEBUG, "Time to update! Now is newer!");
+                        LogUtil.log(LogUtil.DEBUG, "Time to update! Now is newer!");
                         updateStatus();
                         result = true;
 
                     } else {
 
-                        log(DEBUG, "Not time to update: " + new Date(next));
+                        LogUtil.log(LogUtil.DEBUG, "Not time to update: " + new Date(next));
                     }
 
                 } else {
 
-                    log(DEBUG, "Time to update! No history...");
+                    LogUtil.log(LogUtil.DEBUG, "Time to update! No history...");
                     updateStatus();
                     result = true;
                 }
 
             } else {
 
-                log(DEBUG, "Time to update! No history...");
+                LogUtil.log(LogUtil.DEBUG, "Time to update! No history...");
                 updateStatus();
                 result = true;
             }

@@ -36,6 +36,7 @@ import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.Video;
 import org.jflicks.util.FileFind;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 import org.jflicks.videomanager.BaseVideoManager;
 
@@ -105,7 +106,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
 
             } else {
 
-                log(WARNING, "SystemVideoManager: Db4oService null!");
+                LogUtil.log(LogUtil.WARNING, "SystemVideoManager: Db4oService null!");
             }
         }
 
@@ -139,12 +140,12 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
         if (objectContainer != null) {
 
             boolean result = objectContainer.close();
-            log(DEBUG, "SystemVideoManager: closed " + result);
+            LogUtil.log(LogUtil.DEBUG, "SystemVideoManager: closed " + result);
             objectContainer = null;
 
         } else {
 
-            log(DEBUG, "SystemVideoManager: Tried to close "
+            LogUtil.log(LogUtil.DEBUG, "SystemVideoManager: Tried to close "
                 + "but objectContainer null.");
         }
     }
@@ -447,8 +448,8 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                     BufferedImage bi = ImageIO.read(tmp);
                     if (bi != null) {
 
-                        log(DEBUG, "width: " + bi.getWidth());
-                        log(DEBUG, "height: " + bi.getHeight());
+                        LogUtil.log(LogUtil.DEBUG, "width: " + bi.getWidth());
+                        LogUtil.log(LogUtil.DEBUG, "height: " + bi.getHeight());
                         if (bi.getWidth() < 1280) {
 
                             // We have a source video that is 4x3.  We need to
@@ -463,8 +464,8 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
                             bi = Util.resize(bi, 1280, 720);
                         }
 
-                        log(DEBUG, "after width: " + bi.getWidth());
-                        log(DEBUG, "after height: " + bi.getHeight());
+                        LogUtil.log(LogUtil.DEBUG, "after width: " + bi.getWidth());
+                        LogUtil.log(LogUtil.DEBUG, "after height: " + bi.getHeight());
 
                         int height = bi.getHeight();
 
@@ -512,7 +513,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
 
             } catch (IOException ex) {
 
-                log(DEBUG, ex.getMessage());
+                LogUtil.log(LogUtil.DEBUG, ex.getMessage());
             }
         }
     }
@@ -560,7 +561,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
      */
     public synchronized void videoScan() {
 
-        log(INFO, "Time to scan for video files...");
+        LogUtil.log(LogUtil.INFO, "Time to scan for video files...");
 
         // First we are going to see if the DB video has been
         // changed to an mp4 extension.  This is really hack code
@@ -677,7 +678,7 @@ public class SystemVideoManager extends BaseVideoManager implements DbWorker {
 
                         } else {
 
-                            log(INFO, "Will hide <" + title
+                            LogUtil.log(LogUtil.INFO, "Will hide <" + title
                                 + "> with path <" + path + ">");
                             array[i].setHidden(true);
                             addVideo(array[i]);

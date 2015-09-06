@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
 
 import org.jflicks.mvc.BaseView;
 import org.jflicks.mvc.Controller;
-import org.jflicks.log.Log;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import org.osgi.framework.Bundle;
@@ -33,7 +33,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -42,8 +41,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class JFlicksView extends BaseView implements EventHandler,
-    Log {
+public abstract class JFlicksView extends BaseView implements EventHandler {
 
     /**
      * Each View needs to have a Title property.
@@ -66,7 +64,6 @@ public abstract class JFlicksView extends BaseView implements EventHandler,
     private BundleContext bundleContext;
     private ServiceTracker controllerServiceTracker;
     private Properties properties;
-    private ServiceTracker logServiceTracker;
 
     /**
      * Extensions receive messages from the EventAdmin via this method.  All
@@ -85,7 +82,7 @@ public abstract class JFlicksView extends BaseView implements EventHandler,
         File prop = new File(home, "jflicks.properties");
         if (prop.exists()) {
 
-            log(INFO, "old properties exists...");
+            LogUtil.log(LogUtil.INFO, "old properties exists...");
             setProperties(Util.findProperties(prop));
 
         } else {
@@ -110,36 +107,6 @@ public abstract class JFlicksView extends BaseView implements EventHandler,
      */
     public void setBundleContext(BundleContext bc) {
         bundleContext = bc;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ServiceTracker getLogServiceTracker() {
-        return (logServiceTracker);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setLogServiceTracker(ServiceTracker st) {
-        logServiceTracker = st;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void log(int level, String message) {
-
-        ServiceTracker st = getLogServiceTracker();
-        if ((st != null) && (message != null)) {
-
-            LogService ls = (LogService) st.getService();
-            if (ls != null) {
-
-                ls.log(level, message);
-            }
-        }
     }
 
     /**
@@ -218,7 +185,7 @@ public abstract class JFlicksView extends BaseView implements EventHandler,
      */
     public void handleEvent(Event event) {
 
-        log(INFO, "handleEvent: " + event);
+        LogUtil.log(LogUtil.INFO, "handleEvent: " + event);
         String message = (String) event.getProperty("message");
         if (message != null) {
 
@@ -282,7 +249,7 @@ public abstract class JFlicksView extends BaseView implements EventHandler,
             }
         }
 
-        log(INFO, "getBounds: <" + prefix + "> " + result);
+        LogUtil.log(LogUtil.INFO, "getBounds: <" + prefix + "> " + result);
         return (result);
     }
 

@@ -28,6 +28,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.tv.Recording;
 import org.jflicks.transfer.BaseTransfer;
 import org.jflicks.util.Hostname;
+import org.jflicks.util.LogUtil;
 
 /**
  * This is our implementation of a Transfer service.
@@ -120,7 +121,7 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
 
         String result = null;
 
-        log(DEBUG, "Recording: " + r);
+        LogUtil.log(LogUtil.DEBUG, "Recording: " + r);
 
         // First thing we do is stop the last one if it exists.
         WgetTransferJob job = getWgetTransferJob();
@@ -172,7 +173,7 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
                             && (local.length() > getMinSize())) {
 
                             done = true;
-                            log(INFO, "Blocked for " + waits + " seconds!");
+                            LogUtil.log(LogUtil.INFO, "Blocked for " + waits + " seconds!");
 
                         } else {
 
@@ -180,7 +181,7 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
                             if (waits < initial) {
                                 JobManager.sleep(1000);
                             } else {
-                                log(INFO, "Blocked for " + initial
+                                LogUtil.log(LogUtil.INFO, "Blocked for " + initial
                                     + " seconds but gave up!");
                                 done = true;
                             }
@@ -232,10 +233,10 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
                     long now = System.currentTimeMillis();
                     if (now > modified) {
 
-                        log(INFO, "Should delete " + files[i].getPath());
+                        LogUtil.log(LogUtil.INFO, "Should delete " + files[i].getPath());
                         if (!files[i].delete()) {
 
-                            log(WARNING, "Failed to delete "
+                            LogUtil.log(LogUtil.WARNING, "Failed to delete "
                                 + files[i].getPath());
                         }
                     }
@@ -251,12 +252,12 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
         if (r != null) {
 
             String hp = r.getHostPort();
-            log(DEBUG, "isLocal hp: <" + hp + ">");
+            LogUtil.log(LogUtil.DEBUG, "isLocal hp: <" + hp + ">");
             if (hp != null) {
 
                 hp = hp.substring(0, hp.indexOf(":"));
-                log(DEBUG, "isLocal hp: <" + hp + ">");
-                log(DEBUG, "isLocal host: <" + Hostname.getHostAddress() + ">");
+                LogUtil.log(LogUtil.DEBUG, "isLocal hp: <" + hp + ">");
+                LogUtil.log(LogUtil.DEBUG, "isLocal host: <" + Hostname.getHostAddress() + ">");
                 result = hp.equals(Hostname.getHostAddress());
             }
         }
@@ -293,11 +294,11 @@ public class SystemTransfer extends BaseTransfer implements JobListener,
             setWgetTransferJob(null);
             setJobContainer(null);
             setFirstDone(true);
-            log(DEBUG, "wget job done!!");
+            LogUtil.log(LogUtil.DEBUG, "wget job done!!");
 
         } else if (event.getType() == JobEvent.UPDATE) {
 
-            log(DEBUG, event.getMessage());
+            LogUtil.log(LogUtil.DEBUG, event.getMessage());
             setFirstDone(getWgetTransferJob().isFirstDone());
         }
     }

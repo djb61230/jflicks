@@ -2098,7 +2098,6 @@ public class ScheduleScreen extends Screen implements ParameterProperty,
 
         public void actionPerformed(ActionEvent e) {
 
-            System.out.println("actionPerformed info");
             if (isParameterByGuide()) {
 
                 handleFavorite();

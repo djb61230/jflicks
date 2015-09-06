@@ -84,7 +84,6 @@ public class ThumbnailerJob extends AbstractJob implements JobListener {
 
         job.addJobListener(this);
         JobContainer jc = JobManager.getJobContainer(job);
-        System.out.println("started: " + job.getCommand());
         jc.start();
         setTerminate(false);
     }
@@ -118,10 +117,6 @@ public class ThumbnailerJob extends AbstractJob implements JobListener {
         if (event.getType() == JobEvent.COMPLETE) {
 
             stop();
-
-        } else {
-
-            System.out.println(event.getMessage());
         }
     }
 

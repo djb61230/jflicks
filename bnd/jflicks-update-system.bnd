@@ -6,11 +6,11 @@ Bundle-Version: 1.0.0
 Bundle-Activator: ${module}.Activator
 
 Include-Resource:\
- ../lib/commons-io-2.1.jar
+ ../lib/commons-io-2.4.jar
 
 Bundle-ClassPath:\
  .,\
- commons-io-2.1.jar
+ commons-io-2.4.jar
 
 Import-Package:\
  org.jflicks.update;version="1.0.0",\

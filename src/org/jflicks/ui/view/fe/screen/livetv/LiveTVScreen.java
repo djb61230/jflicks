@@ -31,6 +31,7 @@ import org.jflicks.ui.view.fe.ChannelInfoWindow;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.RecordingInfoWindow;
 import org.jflicks.util.Hostname;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -75,7 +76,6 @@ public class LiveTVScreen extends BaseLiveTVScreen {
             }
 
             String hostaddr = Hostname.getHostAddress();
-            System.out.println("udp://@" + hostaddr + ":1234");
             setBlocking(true);
             p.play("udp://@" + hostaddr + ":1234");
         }
@@ -84,7 +84,7 @@ public class LiveTVScreen extends BaseLiveTVScreen {
     @Override
     public void close() {
 
-        log(DEBUG, "Yep at close!!!!");
+        LogUtil.log(LogUtil.DEBUG, "Yep at close!!!!");
         super.close();
     }
 
@@ -139,7 +139,7 @@ public class LiveTVScreen extends BaseLiveTVScreen {
 
                                 public void run() {
 
-                                    log(DEBUG, "Starting player...");
+                                    LogUtil.log(LogUtil.DEBUG, "Starting player...");
                                     startPlayer(fl);
                                 }
                             };

@@ -22,6 +22,7 @@ import org.jflicks.configure.NameValue;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.recorder.Recorder;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -103,17 +104,17 @@ public abstract class BaseOnDemand extends BaseConfig implements OnDemand {
 
         String source = getConfiguredRecorderSource();
         NMS n = getNMS();
-        log(DEBUG, "getRecorder: source <" + source + ">");
-        log(DEBUG, "getRecorder: n <" + n + ">");
+        LogUtil.log(LogUtil.DEBUG, "getRecorder: source <" + source + ">");
+        LogUtil.log(LogUtil.DEBUG, "getRecorder: n <" + n + ">");
         if ((source != null) && (n != null)) {
 
             String device = source.substring(source.lastIndexOf(" "));
             device = device.trim();
-            log(DEBUG, "getRecorder: device <" + device + ">");
+            LogUtil.log(LogUtil.DEBUG, "getRecorder: device <" + device + ">");
             result = n.getRecorderByDevice(device);
-            log(DEBUG, "getRecorder: result <" + result + ">");
+            LogUtil.log(LogUtil.DEBUG, "getRecorder: result <" + result + ">");
             if (result != null) {
-                log(DEBUG, "getRecorder: result <" + result.getDevice() + ">");
+                LogUtil.log(LogUtil.DEBUG, "getRecorder: result <" + result.getDevice() + ">");
             }
         }
 
@@ -127,14 +128,14 @@ public abstract class BaseOnDemand extends BaseConfig implements OnDemand {
 
         StreamSession result = null;
 
-        log(DEBUG, "openSession: title " + getTitle());
-        log(DEBUG, "openSession: host " + host);
-        log(DEBUG, "openSession: port " + port);
+        LogUtil.log(LogUtil.DEBUG, "openSession: title " + getTitle());
+        LogUtil.log(LogUtil.DEBUG, "openSession: host " + host);
+        LogUtil.log(LogUtil.DEBUG, "openSession: port " + port);
         if (host != null) {
 
             Recorder r = getRecorder();
             NMS n = getNMS();
-            log(DEBUG, "openSession: recorder " + r);
+            LogUtil.log(LogUtil.DEBUG, "openSession: recorder " + r);
             if ((n != null) && (r != null) && (!r.isRecording())) {
 
                 result = new StreamSession(getTitle(), n.getHost() + ":"

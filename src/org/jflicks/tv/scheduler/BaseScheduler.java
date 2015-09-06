@@ -39,6 +39,7 @@ import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Upcoming;
 import org.jflicks.tv.recorder.Recorder;
+import org.jflicks.util.LogUtil;
 
 /**
  * This class is a base implementation of the Scheduler interface.
@@ -468,7 +469,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                 } else {
 
-                    log(INFO, "Skipping " + dir
+                    LogUtil.log(LogUtil.INFO, "Skipping " + dir
                         + " as there is not enough room.");
                     checks++;
                     dir = null;
@@ -503,7 +504,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
             } else {
 
-                log(WARNING, "No configured directories have space!");
+                LogUtil.log(LogUtil.WARNING, "No configured directories have space!");
             }
         }
 
@@ -597,14 +598,14 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
     protected synchronized void updatePendingRecords() {
 
-        log(INFO, "Running updatePendingRecords");
+        LogUtil.log(LogUtil.INFO, "Running updatePendingRecords");
 
         ArrayList<PendingRecord> workList = getWorkPendingRecordList();
         NMS n = getNMS();
         Recorder[] recs = getConfiguredRecorders();
         if ((workList != null) && (n != null) && (recs != null)) {
 
-            log(DEBUG, "CONFIGURED RECORDERS COUNT: " + recs.length);
+            LogUtil.log(LogUtil.DEBUG, "CONFIGURED RECORDERS COUNT: " + recs.length);
             RecorderInformation[] ris = new RecorderInformation[recs.length];
             for (int i = 0; i < ris.length; i++) {
 
@@ -613,7 +614,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                 ris[i].setChannels(getChannelsByRecorder(recs[i]));
                 if (recs[i].isRecording()) {
 
-                    log(DEBUG, "recorder: " + recs[i]
+                    LogUtil.log(LogUtil.DEBUG, "recorder: " + recs[i]
                         + " is recording now...adding time range");
                     long started = recs[i].getStartedAt();
                     TimeRange tr = new TimeRange(started,
@@ -622,7 +623,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                 } else {
 
-                    log(DEBUG, "recorder " + recs[i] + " is NOT recording now");
+                    LogUtil.log(LogUtil.DEBUG, "recorder " + recs[i] + " is NOT recording now");
                 }
             }
             workList.clear();
@@ -645,11 +646,11 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                     Channel chan = n.getChannelById(rules[i].getChannelId(),
                         rules[i].getListingId());
 
-                    log(DEBUG, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-                    log(DEBUG, "chan: " + chan);
-                    log(DEBUG, "id: " + rules[i].getChannelId());
-                    log(DEBUG, "id: " + rules[i].getListingId());
-                    log(DEBUG, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                    LogUtil.log(LogUtil.DEBUG, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                    LogUtil.log(LogUtil.DEBUG, "chan: " + chan);
+                    LogUtil.log(LogUtil.DEBUG, "id: " + rules[i].getChannelId());
+                    LogUtil.log(LogUtil.DEBUG, "id: " + rules[i].getListingId());
+                    LogUtil.log(LogUtil.DEBUG, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
                     if (chan != null) {
 
                         long now = System.currentTimeMillis();
@@ -677,7 +678,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                             } else {
 
-                                log(DEBUG, "We have a ONCE but no ShowAiring!");
+                                LogUtil.log(LogUtil.DEBUG, "We have a ONCE but no ShowAiring!");
                             }
 
                         } else if (type == RecordingRule.SERIES_TYPE) {
@@ -759,13 +760,13 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                                     } else {
 
-                                        log(DEBUG, "We have an Airing but "
+                                        LogUtil.log(LogUtil.DEBUG, "We have an Airing but "
                                             + " the Date is NULL.");
                                     }
 
                                 } else {
 
-                                    log(DEBUG, "We have a ShowAiring but "
+                                    LogUtil.log(LogUtil.DEBUG, "We have a ShowAiring but "
                                         + " the Show or Airing is NULL.");
                                 }
                             }
@@ -777,7 +778,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
             // At this point we have all our PendingRecord instances created.
             // Now we work on eliminating them if we have recorded them
             // before or if we don't have a recorder available.
-            log(DEBUG, "pending record count: " + workList.size()
+            LogUtil.log(LogUtil.DEBUG, "pending record count: " + workList.size()
                 + " before checking whether previous recorded");
             for (int i = 0; i < workList.size(); i++) {
 
@@ -828,12 +829,12 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                             } else {
 
-                                log(DEBUG, "recorder busy: " + ris[j]);
+                                LogUtil.log(LogUtil.DEBUG, "recorder busy: " + ris[j]);
                             }
 
                         } else {
 
-                            log(DEBUG, "supports channel failed...");
+                            LogUtil.log(LogUtil.DEBUG, "supports channel failed...");
                         }
                     }
                 }
@@ -856,7 +857,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                 PendingRecord pr = workList.get(i);
                 if (pr.isUndeterminedStatus()) {
 
-                    log(WARNING, "PROBLEM: Should all be solved by now");
+                    LogUtil.log(LogUtil.WARNING, "PROBLEM: Should all be solved by now");
                 }
             }
 
@@ -908,7 +909,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
             }
         }
 
-        log(DEBUG, "isRecordingNow: " + sa + " " + result);
+        LogUtil.log(LogUtil.DEBUG, "isRecordingNow: " + sa + " " + result);
 
         return (result);
     }
@@ -1014,22 +1015,22 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
             for (int i = 0; i < realList.size(); i++) {
 
                 PendingRecord pr = realList.get(i);
-                log(DEBUG, "Channel: " + pr.getChannel());
-                log(DEBUG, "Duration: " + pr.getDuration());
-                log(DEBUG, "File: " + pr.getFile());
-                log(DEBUG, "Name: " + pr.getName());
-                log(DEBUG, "Recorder: " + pr.getRecorder());
-                log(DEBUG, "ShowId: " + pr.getShowId());
-                log(DEBUG, "Start: " + new Date(pr.getStart()));
-                log(DEBUG, "Status: " + pr.getStatus());
-                log(DEBUG, "-----------------------------------");
+                LogUtil.log(LogUtil.DEBUG, "Channel: " + pr.getChannel());
+                LogUtil.log(LogUtil.DEBUG, "Duration: " + pr.getDuration());
+                LogUtil.log(LogUtil.DEBUG, "File: " + pr.getFile());
+                LogUtil.log(LogUtil.DEBUG, "Name: " + pr.getName());
+                LogUtil.log(LogUtil.DEBUG, "Recorder: " + pr.getRecorder());
+                LogUtil.log(LogUtil.DEBUG, "ShowId: " + pr.getShowId());
+                LogUtil.log(LogUtil.DEBUG, "Start: " + new Date(pr.getStart()));
+                LogUtil.log(LogUtil.DEBUG, "Status: " + pr.getStatus());
+                LogUtil.log(LogUtil.DEBUG, "-----------------------------------");
 
                 if (pr.isReadyStatus()) {
                     readyCount++;
                 }
             }
 
-            log(INFO, "There are " + readyCount + " recordings scheduled.");
+            LogUtil.log(LogUtil.INFO, "There are " + readyCount + " recordings scheduled.");
         }
     }
 

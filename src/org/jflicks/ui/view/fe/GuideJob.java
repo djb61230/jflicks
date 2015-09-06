@@ -85,7 +85,6 @@ public class GuideJob extends AbstractJob {
             hm = new HashMap<Channel, ShowAiring[]>();
             for (int i = 0; i < array.length; i++) {
 
-                System.out.println("getting guide for: " + array[i]);
                 ShowAiring[] data = nms.getShowAiringsByChannel(array[i]);
                 if (data != null) {
 

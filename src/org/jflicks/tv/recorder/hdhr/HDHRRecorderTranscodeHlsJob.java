@@ -26,6 +26,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.recorder.HlsJob;
 import org.jflicks.util.Hostname;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -73,15 +74,6 @@ public class HDHRRecorderTranscodeHlsJob extends AbstractJob
 
     private void setHDHRRecorder(HDHRRecorder l) {
         hdhrRecorder = l;
-    }
-
-    private void log(int status, String message) {
-
-        HDHRRecorder r = getHDHRRecorder();
-        if ((r != null) && (message != null)) {
-
-            r.log(status, message);
-        }
     }
 
     private String getIpAddress() {
@@ -250,13 +242,13 @@ public class HDHRRecorderTranscodeHlsJob extends AbstractJob
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            log(HDHRRecorder.INFO, "recording done at "
+            LogUtil.log(LogUtil.INFO, "recording done at "
                 + new Date(System.currentTimeMillis()));
             stop();
 
         } else if (event.getType() == JobEvent.UPDATE) {
 
-            log(HDHRRecorder.DEBUG, event.getMessage());
+            LogUtil.log(LogUtil.DEBUG, event.getMessage());
         }
     }
 

@@ -73,7 +73,6 @@ public class QuickScreenJob extends AbstractJob implements JobListener {
      */
     public void start() {
 
-        System.out.println("started QuickScreenJob");
         Video v = getVideo();
         if (v != null) {
 
@@ -103,7 +102,6 @@ public class QuickScreenJob extends AbstractJob implements JobListener {
             JobManager.sleep(getSleepTime());
         }
 
-        System.out.println("run compltete");
         fireJobEvent(JobEvent.COMPLETE);
     }
 
@@ -120,7 +118,6 @@ public class QuickScreenJob extends AbstractJob implements JobListener {
      */
     public void jobUpdate(JobEvent event) {
 
-        System.out.println("job update called....");
         if (event.getType() == JobEvent.COMPLETE) {
 
             stop();

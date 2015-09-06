@@ -78,10 +78,7 @@ public class AllGuideJob extends AbstractJob {
 
                     for (int j = 0; j < chans.length; j++) {
 
-                        System.out.println("getting guide for: " + chans[j]
-                            + " from " + array[i]);
-                        ShowAiring[] data =
-                            array[i].getShowAiringsByChannel(chans[j]);
+                        ShowAiring[] data = array[i].getShowAiringsByChannel(chans[j]);
                         if (data != null) {
 
                             hm.put(chans[j], data);

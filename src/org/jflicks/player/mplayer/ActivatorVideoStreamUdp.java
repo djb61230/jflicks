@@ -30,7 +30,6 @@ import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -44,7 +43,6 @@ public class ActivatorVideoStreamUdp extends BaseActivator {
 
     private MPlayer mplayer;
     private ServiceTracker eventServiceTracker;
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -108,11 +106,6 @@ public class ActivatorVideoStreamUdp extends BaseActivator {
             new ServiceTracker(bc, EventAdmin.class.getName(), null);
         mplayer.setEventServiceTracker(eventServiceTracker);
         eventServiceTracker.open();
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        mplayer.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
     }
 
     /**
@@ -124,12 +117,6 @@ public class ActivatorVideoStreamUdp extends BaseActivator {
 
             eventServiceTracker.close();
             eventServiceTracker = null;
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 

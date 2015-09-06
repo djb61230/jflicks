@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import org.jflicks.job.Job;
 import org.jflicks.job.JobContainer;
-import org.jflicks.log.BaseLog;
 import org.jflicks.tv.Recording;
 
 /**
@@ -29,7 +28,7 @@ import org.jflicks.tv.Recording;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseWorker extends BaseLog implements Worker {
+public abstract class BaseWorker implements Worker {
 
     private ArrayList<WorkerListener> workerList =
         new ArrayList<WorkerListener>();

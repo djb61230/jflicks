@@ -24,6 +24,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.player.PlayState;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -174,8 +175,8 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
         if (time < getMinimumTime()) {
 
-            log(MPlayer.DEBUG, "setTime argument: " + time);
-            log(MPlayer.DEBUG, "setTime start seconds: " + getStartSeconds());
+            LogUtil.log(LogUtil.DEBUG, "setTime argument: " + time);
+            LogUtil.log(LogUtil.DEBUG, "setTime start seconds: " + getStartSeconds());
 
             double dtmp = (double) getStartSeconds();
             if (Math.abs(time - dtmp) < 12) {
@@ -185,14 +186,14 @@ public class PlayStateJob extends AbstractJob implements JobListener,
             } else {
 
                 dtmp = time - dtmp;
-                log(MPlayer.DEBUG, "setTime dtmp: " + dtmp);
+                LogUtil.log(LogUtil.DEBUG, "setTime dtmp: " + dtmp);
                 if (dtmp < 0.0) {
 
                     dtmp = time;
                 }
             }
 
-            log(MPlayer.DEBUG, "setTime setMinimumTime: " + dtmp);
+            LogUtil.log(LogUtil.DEBUG, "setTime setMinimumTime: " + dtmp);
             setMinimumTime(dtmp);
         }
     }
@@ -256,15 +257,6 @@ public class PlayStateJob extends AbstractJob implements JobListener,
         }
 
         return (result);
-    }
-
-    private void log(int level, String message) {
-
-        MPlayer m = getMPlayer();
-        if ((m != null) && (message != null)) {
-
-            m.log(level, message);
-        }
     }
 
     private void command(String s) {
@@ -401,13 +393,12 @@ public class PlayStateJob extends AbstractJob implements JobListener,
 
                 } else {
 
-                    //System.out.println("From mplayer: " + message);
-                    //log(MPlayer.DEBUG, "From mplayer: " + message);
+                    //LogUtil.log(LogUtil.DEBUG, "From mplayer: " + message);
                 }
 
             } else {
 
-                //log(MPlayer.DEBUG, "From mplayer: " + message);
+                //LogUtil.log(LogUtil.DEBUG, "From mplayer: " + message);
             }
         }
     }

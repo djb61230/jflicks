@@ -35,6 +35,7 @@ import org.jflicks.tv.Listing;
 import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.programdata.BaseProgramData;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import com.db4o.ObjectContainer;
@@ -130,114 +131,6 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
     public void setUpdatingNow(boolean b) {
         updatingNow = b;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setConfiguration(org.jflicks.configure.Configuration c) {
-
-        super.setConfiguration(c);
-
-        if (c != null) {
-
-            // We overwrite the conf/XTVD.xml file so the next fetch has these
-            // configuration properties, which at this point are just
-            // user/password.
-            NameValue usernv = c.findNameValueByName("User Name");
-            NameValue passwordnv = c.findNameValueByName("Password");
-            if ((usernv != null) && (passwordnv != null)) {
-
-                String utext = usernv.getValue();
-                String ptext = passwordnv.getValue();
-                if ((utext != null) && (ptext != null)) {
-
-                    File conf = new File("conf");
-                    File xtvd = new File(conf, "XTVD.xml");
-                    if (needsUpdating(xtvd, utext, ptext)) {
-
-                        Element root = new Element("properties");
-                        Element userName = new Element("userName");
-                        userName.setText(utext);
-                        Element password = new Element("password");
-                        password.setText(ptext);
-                        Element numberOfDays = new Element("numberOfDays");
-                        numberOfDays.setText("14");
-                        Element webserviceURI = new Element("webserviceURI");
-                        webserviceURI.setText("http://webservices."
-                            + "schedulesdirect.tmsdatadirect.com/"
-                            + "schedulesdirect/tvlistings/xtvdService");
-
-                        root.addContent(userName);
-                        root.addContent(password);
-                        root.addContent(numberOfDays);
-                        root.addContent(webserviceURI);
-
-                        Document doc = new Document(root);
-                        Format f = Format.getPrettyFormat();
-                        f.setEncoding("ISO-8859-1");
-                        XMLOutputter out = new XMLOutputter(f);
-                        String text = out.outputString(doc);
-
-                        if (xtvd.exists()) {
-
-                            File old = new File(xtvd.getPath() + ".old");
-                            xtvd.renameTo(old);
-                        }
-
-                        try {
-
-                            Util.writeTextFile(xtvd, text);
-                            setOverrideTimeToUpdate(true);
-
-                        } catch (IOException ex) {
-
-                            log(WARNING, ex.getMessage());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean needsUpdating(File f, String user, String password) {
-
-        boolean result = true;
-
-        if ((f != null) && (f.exists()) && (user != null)
-            && (password != null)) {
-
-            SAXBuilder builder = new SAXBuilder();
-            builder.setValidation(false);
-            builder.setIgnoringElementContentWhitespace(true);
-            try {
-
-                Document doc = builder.build(f);
-                if (doc != null) {
-
-                    Element root = doc.getRootElement();
-                    if (root != null) {
-
-                        Element uelement = root.getChild("userName");
-                        if ((uelement != null)
-                            && (user.equals(uelement.getText()))) {
-
-                            Element pelement = root.getChild("password");
-                            if ((pelement != null)
-                                && (password.equals(pelement.getText()))) {
-
-                                result = false;
-                            }
-                        }
-                    }
-                }
-
-            } catch (JDOMException ex) {
-            } catch (IOException ex) {
-            }
-        }
-
-        return (result);
     }
 
     /**
@@ -680,6 +573,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
      */
     public void process(Xtvd xtvd) {
 
+        LogUtil.log(LogUtil.DEBUG, "process xtvd null? <" + (xtvd == null) + ">");
         ObjectContainer oc = getObjectContainer();
         if ((oc != null) && (xtvd != null)) {
 
@@ -687,12 +581,13 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
             ArrayList<Channel> clist = new ArrayList<Channel>();
             Map map = xtvd.getStations();
+            LogUtil.log(LogUtil.DEBUG, "process map null? <" + (map == null) + ">");
             if (map != null) {
 
                 Collection coll = map.values();
                 if (coll != null) {
 
-                    log(DEBUG, "SD station count <" + coll.size() + ">");
+                    LogUtil.log(LogUtil.DEBUG, "SD station count <" + coll.size() + ">");
                     purge(oc, Channel.class);
                     Iterator iter = coll.iterator();
                     while (iter.hasNext()) {
@@ -706,7 +601,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                         tmp.setCallSign(station.getCallSign());
                         clist.add(tmp);
                     }
-                    log(DEBUG, "Channel count <" + clist.size() + ">");
+                    LogUtil.log(LogUtil.DEBUG, "Channel count <" + clist.size() + ">");
                 }
             }
 
@@ -731,8 +626,8 @@ public class SchedulesDirectProgramData extends BaseProgramData
                         Lineup lineup = iter.next();
                         count += processReferenceChannels(lineup, clist);
                     }
-                    log(DEBUG, "Found <" + count + "> channels to reference");
-                    log(DEBUG, "Channel count <" + clist.size() + ">");
+                    LogUtil.log(LogUtil.DEBUG, "Found <" + count + "> channels to reference");
+                    LogUtil.log(LogUtil.DEBUG, "Channel count <" + clist.size() + ">");
 
                     // Now we go through again and if we have
                     // set the reference number we should be
@@ -751,7 +646,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
             // We have built all the fields to the Channels we know about.
             // Now lets write then to the DB.
-            log(DEBUG, "Multiple Channel count <" + multiple.size() + ">");
+            LogUtil.log(LogUtil.DEBUG, "Multiple Channel count <" + multiple.size() + ">");
             for (int i = 0; i < multiple.size(); i++) {
 
                 Channel tmp = multiple.get(i);
@@ -762,14 +657,14 @@ public class SchedulesDirectProgramData extends BaseProgramData
             // Process the Programs and put new Show instances into the
             // database.
             Map<String, Program> pmap = xtvd.getPrograms();
-            log(DEBUG, "Program map <" + pmap + ">");
+            LogUtil.log(LogUtil.DEBUG, "Program map <" + pmap + ">");
             if (pmap != null) {
 
-                log(DEBUG, "Program map count <" + pmap.size() + ">");
+                LogUtil.log(LogUtil.DEBUG, "Program map count <" + pmap.size() + ">");
                 Collection<Program> coll = pmap.values();
                 if (coll != null) {
 
-                    log(DEBUG, "Program count <" + coll.size() + ">");
+                    LogUtil.log(LogUtil.DEBUG, "Program count <" + coll.size() + ">");
                     purge(oc, Show.class);
                     Iterator<Program> iter = coll.iterator();
                     while (iter.hasNext()) {
@@ -797,7 +692,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
             Collection<Schedule> scheds = xtvd.getSchedules();
             if ((scheds != null) && (scheds.size() > 0)) {
 
-                log(DEBUG, "Schedule count <" + scheds.size() + ">");
+                LogUtil.log(LogUtil.DEBUG, "Schedule count <" + scheds.size() + ">");
                 purge(oc, Airing.class);
                 Iterator<Schedule> iter = scheds.iterator();
                 while (iter.hasNext()) {
@@ -831,7 +726,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                 oc.commit();
             }
 
-            log(INFO, "Schedules Direct data process complete!");
+            LogUtil.log(LogUtil.INFO, "Schedules Direct data process complete!");
 
             // Let others know...
             fireDataUpdateEvent();
@@ -883,8 +778,8 @@ public class SchedulesDirectProgramData extends BaseProgramData
             result.setName(l.getName());
             result.setId(l.getId());
 
-            log(DEBUG, "Listing name <" + result.getName() + ">");
-            log(DEBUG, "Listing id <" + result.getId() + ">");
+            LogUtil.log(LogUtil.DEBUG, "Listing name <" + result.getName() + ">");
+            LogUtil.log(LogUtil.DEBUG, "Listing id <" + result.getId() + ">");
 
             Collection<net.sf.xtvdclient.xtvd.datatypes.Map> coll = l.getMaps();
             if (coll != null) {
@@ -897,7 +792,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                     Channel found = findChannel(list, map.getStation());
                     if (found != null) {
 
-                        log(DEBUG, "Channel found " + found);
+                        LogUtil.log(LogUtil.DEBUG, "Channel found " + found);
                         Channel copy = new Channel(found);
                         copy.setListingId(l.getId());
                         if (copy.getFrequency() != 0) {
@@ -924,7 +819,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
 
                     } else {
 
-                        log(DEBUG, "Channel not found " + map.getStation());
+                        LogUtil.log(LogUtil.DEBUG, "Channel not found " + map.getStation());
                     }
                 }
             }
@@ -993,12 +888,12 @@ public class SchedulesDirectProgramData extends BaseProgramData
         if (objectContainer != null) {
 
             boolean result = objectContainer.close();
-            log(DEBUG, "SchedulesDirectProgramData: closed " + result);
+            LogUtil.log(LogUtil.DEBUG, "SchedulesDirectProgramData: closed " + result);
             objectContainer = null;
 
         } else {
 
-            log(DEBUG, "SchedulesDirectProgramData: Tried to close "
+            LogUtil.log(LogUtil.DEBUG, "SchedulesDirectProgramData: Tried to close "
                 + "but objectContainer null.");
         }
     }
@@ -1060,7 +955,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                 status.setNextUpdate(System.currentTimeMillis());
                 oc.store(status);
                 oc.commit();
-                log(INFO, "Time to update by override!");
+                LogUtil.log(LogUtil.INFO, "Time to update by override!");
                 result = true;
 
             } else {
@@ -1076,11 +971,11 @@ public class SchedulesDirectProgramData extends BaseProgramData
                         if (now > next) {
 
                             result = true;
-                            log(INFO, "Time to update! Now is newer!");
+                            LogUtil.log(LogUtil.INFO, "Time to update! Now is newer!");
 
                         } else {
 
-                            log(INFO, "Not time to update: " + new Date(next));
+                            LogUtil.log(LogUtil.INFO, "Not time to update: " + new Date(next));
                         }
 
                     } else {
@@ -1089,7 +984,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                         status.setNextUpdate(System.currentTimeMillis());
                         oc.store(status);
                         oc.commit();
-                        log(INFO, "Time to update! No history...");
+                        LogUtil.log(LogUtil.INFO, "Time to update! No history...");
                         result = true;
                     }
 
@@ -1099,7 +994,7 @@ public class SchedulesDirectProgramData extends BaseProgramData
                     status.setNextUpdate(System.currentTimeMillis());
                     oc.store(status);
                     oc.commit();
-                    log(INFO, "Time to update! No history...");
+                    LogUtil.log(LogUtil.INFO, "Time to update! No history...");
                     result = true;
                 }
             }

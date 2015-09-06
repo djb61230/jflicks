@@ -59,11 +59,13 @@ import org.jflicks.tv.programdata.ProgramData;
 import org.jflicks.tv.postproc.PostProc;
 import org.jflicks.tv.postproc.worker.Worker;
 import org.jflicks.tv.recorder.BaseRecorder;
+import org.jflicks.tv.recorder.RecorderBean;
 import org.jflicks.tv.recorder.Recorder;
 import org.jflicks.tv.scheduler.RecordedShow;
 import org.jflicks.tv.scheduler.Scheduler;
 import org.jflicks.util.EventSender;
 import org.jflicks.util.StartsWithFilter;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 import org.jflicks.videomanager.VideoManager;
 
@@ -562,7 +564,40 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         ArrayList<Recorder> l = getRecorderList();
         if ((l != null) && (l.size() > 0)) {
 
-            result = l.toArray(new Recorder[l.size()]);
+            RecorderBean[] beans = new RecorderBean[l.size()];
+            for (int i = 0; i < beans.length; i++) {
+
+                beans[i] = new RecorderBean(l.get(i));
+            }
+
+            result = beans;
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Recorder[] getConfiguredRecorders() {
+
+        Recorder[] result = null;
+
+        Scheduler s = getScheduler();
+        if (s != null) {
+
+            Recorder[] array = s.getConfiguredRecorders();
+            if ((array != null) && (array.length > 0)) {
+
+                RecorderBean[] beans = new RecorderBean[array.length];
+                for (int i = 0; i < beans.length; i++) {
+
+                    beans[i] = new RecorderBean(array[i]);
+                    LogUtil.log(LogUtil.DEBUG, "RecorderBean isRecording: " + beans[i].isRecording());
+                }
+
+                result = beans;
+            }
         }
 
         return (result);
@@ -578,12 +613,12 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         ArrayList<Recorder> l = getRecorderList();
         if ((l != null) && (s != null)) {
 
-            log(DEBUG, "getRecorderByDevice: <" + s + ">");
-            log(DEBUG, "getRecorderByDevice: " + l.size());
+            LogUtil.log(LogUtil.DEBUG, "getRecorderByDevice: <" + s + ">");
+            LogUtil.log(LogUtil.DEBUG, "getRecorderByDevice: " + l.size());
             for (int i = 0; i < l.size(); i++) {
 
                 Recorder tmp = l.get(i);
-                log(DEBUG, "getRecorderByDevice: <" + tmp.getDevice() + ">");
+                LogUtil.log(LogUtil.DEBUG, "getRecorderByDevice: <" + tmp.getDevice() + ">");
                 if (s.equals(tmp.getDevice())) {
 
                     result = tmp;
@@ -606,6 +641,45 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if ((l != null) && (l.size() > 0)) {
 
             result = l.toArray(new ProgramData[l.size()]);
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasProgramData() {
+        return (getProgramData() != null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isProgramDataUpdatingNow() {
+
+        boolean result = false;
+
+        ProgramData[] array = getProgramData();
+        if ((array != null) && (array.length > 0)) {
+
+            result = array[0].isUpdatingNow();
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getProgramDataNextTimeToRun() {
+
+        long result = -1;
+
+        ProgramData[] array = getProgramData();
+        if ((array != null) && (array.length > 0)) {
+
+            result = array[0].getNextTimeToRun();
         }
 
         return (result);
@@ -1026,6 +1100,22 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     /**
      * {@inheritDoc}
      */
+    public Channel[] getChannels() {
+
+        Channel[] result = null;
+
+        ProgramData[] all = getProgramData();
+        if ((all != null) && (all.length > 0)) {
+
+            result = all[0].getChannels();
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Channel[] getRecordableChannels() {
 
         Channel[] result = null;
@@ -1034,6 +1124,22 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if (s != null) {
 
             result = s.getRecordableChannels();
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Airing[] getAiringsByChannel(Channel c) {
+
+        Airing[] result = null;
+
+        ProgramData[] all = getProgramData();
+        if ((c != null) && (all != null) && (all.length > 0)) {
+
+            result = all[0].getAiringsByChannel(c);
         }
 
         return (result);
@@ -1406,11 +1512,11 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         Recording[] result = null;
 
         Scheduler s = getScheduler();
-        log(DEBUG, "getRecordings: scheduler <" + s + ">");
+        LogUtil.log(LogUtil.DEBUG, "getRecordings: scheduler <" + s + ">");
         if (s != null) {
 
             result = s.getRecordings();
-            log(DEBUG, "getRecordings: result from scheduler <" + result + ">");
+            LogUtil.log(LogUtil.DEBUG, "getRecordings: result from scheduler <" + result + ">");
 
             // We should update the image URLs for the client.  Persisting
             // the URLs is not a good idea because the URL could change.
@@ -1641,7 +1747,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
      */
     public void performRemoval(Recording r) {
 
-        log(DEBUG, "Recording to physically remove: <" + r + ">");
+        LogUtil.log(LogUtil.DEBUG, "Recording to physically remove: <" + r + ">");
         if (r != null) {
 
             String path = r.getPath();
@@ -1653,14 +1759,14 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 // Of course delete the file.
                 if (!file.delete()) {
 
-                    log(WARNING, file.getPath() + " delete fail");
+                    LogUtil.log(LogUtil.WARNING, file.getPath() + " delete fail");
                 }
 
                 // The screenshot is a "filename.png" file.
                 File pngfile = new File(file.getPath() + ".png");
                 if (!pngfile.delete()) {
 
-                    log(WARNING, pngfile.getPath() + " del fail");
+                    LogUtil.log(LogUtil.WARNING, pngfile.getPath() + " del fail");
                 }
 
                 // The index file is "filename.iext".
@@ -1669,7 +1775,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                     File iextfile = new File(file.getPath() + "." + iext);
                     if (!iextfile.delete()) {
 
-                        log(WARNING, iextfile.getPath() + " del fail");
+                        LogUtil.log(LogUtil.WARNING, iextfile.getPath() + " del fail");
                     }
                 }
 
@@ -1692,7 +1798,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                             if (!array[i].delete()) {
 
-                                log(WARNING, array[i].getPath() + " del fail");
+                                LogUtil.log(LogUtil.WARNING, array[i].getPath() + " del fail");
                             }
                         }
                     }
@@ -1706,7 +1812,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
      */
     public void removeRecording(Recording r, boolean allowRerecord) {
 
-        log(DEBUG, "removeRecording: allowRerecord: " + allowRerecord);
+        LogUtil.log(LogUtil.DEBUG, "removeRecording: allowRerecord: " + allowRerecord);
         Scheduler s = getScheduler();
         if ((s != null) && (r != null)) {
 
@@ -1727,7 +1833,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 synchronized (l) {
 
-                    log(DEBUG, "Adding Recording to remove when we are "
+                    LogUtil.log(LogUtil.DEBUG, "Adding Recording to remove when we are "
                         + "not busy. <" + r + ">");
                     l.add(r);
                 }
@@ -1744,14 +1850,14 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                         // Of course delete the file.
                         if (!file.delete()) {
 
-                            log(WARNING, file.getPath() + " delete fail");
+                            LogUtil.log(LogUtil.WARNING, file.getPath() + " delete fail");
                         }
 
                         // The screenshot is a "filename.png" file.
                         File pngfile = new File(file.getPath() + ".png");
                         if (!pngfile.delete()) {
 
-                            log(WARNING, pngfile.getPath() + " del fail");
+                            LogUtil.log(LogUtil.WARNING, pngfile.getPath() + " del fail");
                         }
 
                         // The index file is "filename.iext".
@@ -1761,7 +1867,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                                 new File(file.getPath() + "." + iext);
                             if (!iextfile.delete()) {
 
-                                log(WARNING, iextfile.getPath() + " del fail");
+                                LogUtil.log(LogUtil.WARNING, iextfile.getPath() + " del fail");
                             }
                         }
 
@@ -1784,7 +1890,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                                     if (!array[i].delete()) {
 
-                                        log(WARNING, array[i].getPath()
+                                        LogUtil.log(LogUtil.WARNING, array[i].getPath()
                                             + " del fail");
                                     }
                                 }
@@ -1807,7 +1913,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
      */
     public void stopRecording(Recording r) {
 
-        log(INFO, "stopRecording <" + r + ">");
+        LogUtil.log(LogUtil.INFO, "stopRecording <" + r + ">");
         Scheduler s = getScheduler();
         if ((s != null) && (r != null)) {
 
@@ -1824,7 +1930,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                     if (array[i].isRecording(r)) {
 
-                        log(DEBUG, "Stopping <" + array[i] + ">");
+                        LogUtil.log(LogUtil.DEBUG, "Stopping <" + array[i] + ">");
                         array[i].stopRecording();
                         found = true;
                         break;
@@ -1971,12 +2077,12 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 } else {
 
-                    log(WARNING, "can't load <" + data + ">");
+                    LogUtil.log(LogUtil.WARNING, "can't load <" + data + ">");
                 }
 
             } catch (IOException ex) {
 
-                log(WARNING, "save image: " + ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, "save image: " + ex.getMessage());
             }
         }
     }
@@ -2034,12 +2140,12 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 } else {
 
-                    log(WARNING, "can't load <" + url + ">");
+                    LogUtil.log(LogUtil.WARNING, "can't load <" + url + ">");
                 }
 
             } catch (IOException ex) {
 
-                log(WARNING, "save image: " + ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, "save image: " + ex.getMessage());
             }
         }
     }
@@ -2053,12 +2159,12 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             Image scaled = bi.getScaledInstance(388, -1, Image.SCALE_DEFAULT);
             if (scaled instanceof BufferedImage) {
 
-                log(INFO, "It's a BufferedImage already...");
+                LogUtil.log(LogUtil.INFO, "It's a BufferedImage already...");
                 result = (BufferedImage) scaled;
 
             } else {
 
-                log(INFO, "Have to Make a BufferedImage!");
+                LogUtil.log(LogUtil.INFO, "Have to Make a BufferedImage!");
                 result = new BufferedImage(scaled.getWidth(null),
                     scaled.getHeight(null), bi.getType());
                 Graphics2D g2d = result.createGraphics();
@@ -2141,7 +2247,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 for (int i = 0; i < all.length; i++) {
 
                     ShowAiring[] sas = getShowAiringsByChannel(all[i]);
-                    log(DEBUG, "Cached ShowAirings for: " + all[i]);
+                    LogUtil.log(LogUtil.DEBUG, "Cached ShowAirings for: " + all[i]);
                 }
             }
         }
@@ -2162,7 +2268,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 result.setHostPort(getHost() + ":" + getPort());
                 result.setStreamURL(computeStreamURL(result));
-                log(DEBUG, "STREAM URL SET TO: " + result.getStreamURL());
+                LogUtil.log(LogUtil.DEBUG, "STREAM URL SET TO: " + result.getStreamURL());
             }
         }
 
@@ -2184,8 +2290,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 result.setHostPort(getHost() + ":" + getPort());
                 result.setStreamURL(computeStreamURL(result));
-                log(DEBUG, "STREAM URL SET TO: " + result.getStreamURL());
-                System.out.println("STREAM URL SET TO: " + result.getStreamURL());
+                LogUtil.log(LogUtil.DEBUG, "STREAM URL SET TO: " + result.getStreamURL());
             }
         }
 
@@ -2202,14 +2307,14 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         Live lve = getLive();
         if (lve != null) {
 
-            log(DEBUG, "request Host " + host);
-            log(DEBUG, "request Port " + port);
+            LogUtil.log(LogUtil.DEBUG, "request Host " + host);
+            LogUtil.log(LogUtil.DEBUG, "request Port " + port);
             result = lve.openSession(host, port);
             if (result != null) {
 
                 result.setHostPort(getHost() + ":" + getPort());
-                log(DEBUG, "DestinationHost " + result.getDestinationHost());
-                log(DEBUG, "DestinationPort " + result.getDestinationPort());
+                LogUtil.log(LogUtil.DEBUG, "DestinationHost " + result.getDestinationHost());
+                LogUtil.log(LogUtil.DEBUG, "DestinationPort " + result.getDestinationPort());
             }
         }
 
@@ -2226,14 +2331,14 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         Live lve = getLive();
         if (lve != null) {
 
-            log(DEBUG, "request Host " + host);
-            log(DEBUG, "request Port " + port);
+            LogUtil.log(LogUtil.DEBUG, "request Host " + host);
+            LogUtil.log(LogUtil.DEBUG, "request Port " + port);
             result = lve.openSession(host, port, channelNumber);
             if (result != null) {
 
                 result.setHostPort(getHost() + ":" + getPort());
-                log(DEBUG, "DestinationHost " + result.getDestinationHost());
-                log(DEBUG, "DestinationPort " + result.getDestinationPort());
+                LogUtil.log(LogUtil.DEBUG, "DestinationHost " + result.getDestinationHost());
+                LogUtil.log(LogUtil.DEBUG, "DestinationPort " + result.getDestinationPort());
             }
         }
 
@@ -2317,7 +2422,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
         } else {
 
-            log(WARNING, "Trying to do OnDemand from wrong NMS");
+            LogUtil.log(LogUtil.WARNING, "Trying to do OnDemand from wrong NMS");
         }
 
         return (result);
@@ -2525,7 +2630,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
         boolean result = false;
 
-        log(DEBUG, "performChannelScan using <" + recorderSource + ">");
+        LogUtil.log(LogUtil.DEBUG, "performChannelScan using <" + recorderSource + ">");
         if (recorderSource != null) {
 
             int index = recorderSource.indexOf(" ");
@@ -2533,15 +2638,15 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 String device = recorderSource.substring(index);
                 device = device.trim();
-                log(DEBUG, "parse device <" + device + ">");
+                LogUtil.log(LogUtil.DEBUG, "parse device <" + device + ">");
                 Recorder[] array = getRecorders();
                 if ((array != null) && (array.length > 0)) {
 
-                    log(DEBUG, "recorder count " + array.length);
+                    LogUtil.log(LogUtil.DEBUG, "recorder count " + array.length);
                     Recorder r = null;
                     for (int i = 0; i < array.length; i++) {
 
-                        log(DEBUG, "rec dev: <" + array[i].getDevice() + ">");
+                        LogUtil.log(LogUtil.DEBUG, "rec dev: <" + array[i].getDevice() + ">");
                         if (device.equals(array[i].getDevice())) {
 
                             r = array[i];

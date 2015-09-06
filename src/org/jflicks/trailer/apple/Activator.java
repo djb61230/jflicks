@@ -25,7 +25,6 @@ import org.jflicks.trailer.Trailer;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -38,7 +37,6 @@ public class Activator extends BaseActivator {
 
     private Db4oServiceTracker db4oServiceTracker;
     private AppleTrailer appleTrailer;
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -63,11 +61,6 @@ public class Activator extends BaseActivator {
         dict.put(Trailer.TITLE_PROPERTY, at.getTitle());
 
         bc.registerService(Trailer.class.getName(), at, dict);
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        at.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
     }
 
     /**
@@ -88,12 +81,6 @@ public class Activator extends BaseActivator {
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 

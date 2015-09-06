@@ -37,6 +37,7 @@ import org.jflicks.rc.RC;
 
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobManager;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.RuntimeId;
 
 import org.osgi.framework.BundleContext;
@@ -212,15 +213,6 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
         robot = r;
     }
 
-    private void log(int status, String message) {
-
-        LircRC rc = getLircRC();
-        if ((rc != null) && (message != null)) {
-
-            rc.log(status, message);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -259,9 +251,9 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
                 }
 
             } catch (IOException ex) {
-                log(LircRC.WARNING, ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, ex.getMessage());
             } catch (LIRCException ex) {
-                log(LircRC.WARNING, ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, ex.getMessage());
             }
         }
     }
@@ -480,7 +472,6 @@ public class LircRCJob extends AbstractJob implements IRActionListener,
         Robot r = getRobot();
         if ((rc != null) && (r != null)) {
 
-            System.out.println("SAPPPPPPPPPPPPPPPP");
             r.keyPress(rc.getSapKeyEvent());
             r.keyRelease(rc.getSapKeyEvent());
         }

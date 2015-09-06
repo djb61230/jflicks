@@ -23,6 +23,7 @@ import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job finds the HDHR recorders on the local network.
@@ -298,7 +299,7 @@ public class DiscoverJob extends BaseHDHRJob {
 
                          for (int i = 0; i < array.length; i++) {
 
-                             System.out.println("output line <" + array[i] + ">");
+                             LogUtil.log(LogUtil.DEBUG, "output line <" + array[i] + ">");
                              StringTokenizer st = new StringTokenizer(array[i]);
                              if (st.countTokens() > 3) {
 

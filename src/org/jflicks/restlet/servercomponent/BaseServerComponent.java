@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.jflicks.util.LogUtil;
+
 import org.restlet.Component;
 import org.restlet.Server;
 import org.restlet.data.Protocol;
@@ -98,7 +100,7 @@ public abstract class BaseServerComponent implements ServerComponent {
 
         } catch (UnknownHostException ex) {
 
-            System.out.println(ex.getMessage());
+            LogUtil.log(LogUtil.WARNING, ex.getMessage());
         }
 
         return (result);

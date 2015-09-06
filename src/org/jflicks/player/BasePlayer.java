@@ -30,8 +30,8 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
-import org.jflicks.log.BaseLog;
 import org.jflicks.rc.RC;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.RuntimeId;
 
 /**
@@ -40,7 +40,7 @@ import org.jflicks.util.RuntimeId;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BasePlayer extends BaseLog implements Player {
+public abstract class BasePlayer implements Player {
 
     private PropertyChangeSupport propertyChangeSupport;
 
@@ -515,7 +515,7 @@ public abstract class BasePlayer extends BaseLog implements Player {
      */
     public void commandEvent(String s) {
 
-        log(DEBUG, "commandEvent <" + s + ">");
+        LogUtil.log(LogUtil.DEBUG, "commandEvent <" + s + ">");
         ServiceTracker st = getEventServiceTracker();
         if ((st != null) && (s != null)) {
 

@@ -23,6 +23,7 @@ import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Task;
+import org.jflicks.util.LogUtil;
 
 import org.restlet.data.MediaType;
 import org.restlet.ext.json.JsonRepresentation;
@@ -157,7 +158,7 @@ public class RecordingRuleResource extends BaseServerResource {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, ex.getMessage());
             }
         }
     }

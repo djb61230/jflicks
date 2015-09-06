@@ -28,8 +28,9 @@ import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
-import org.jflicks.util.DetectRating;
 import org.jflicks.util.DetectRatingPlan;
+import org.jflicks.util.DetectRatingRectangle;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -151,7 +152,7 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
             File dir = File.createTempFile("comrat", "work");
             if (!dir.delete()) {
-                log(BaseWorker.INFO, dir.getPath() + " not found");
+                LogUtil.log(LogUtil.INFO, dir.getPath() + " not found");
             }
             if (dir.mkdir()) {
 
@@ -159,7 +160,7 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
             } else {
 
-                log(BaseWorker.INFO, "Failed to make " + dir.getPath());
+                LogUtil.log(LogUtil.INFO, "Failed to make " + dir.getPath());
             }
 
         } catch (IOException ex) {
@@ -201,18 +202,18 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                 setSystemJob(job);
                 JobContainer jc = JobManager.getJobContainer(job);
                 setJobContainer(jc);
-                log(BaseWorker.INFO, "Will start: " + job.getCommand());
+                LogUtil.log(LogUtil.INFO, "Will start: " + job.getCommand());
                 setTerminate(false);
 
             } else {
 
-                log(BaseWorker.INFO, "Couldn't make a working dir - quitting.");
+                LogUtil.log(LogUtil.INFO, "Couldn't make a working dir - quitting.");
                 setTerminate(true);
             }
 
         } else {
 
-            log(BaseWorker.INFO, "Recording is null - quitting.");
+            LogUtil.log(LogUtil.INFO, "Recording is null - quitting.");
             setTerminate(true);
         }
     }
@@ -239,12 +240,12 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
                         jc.start();
                         frameStarted = true;
-                        log(BaseWorker.INFO, "Actually kicked off ffmpeg");
+                        LogUtil.log(LogUtil.INFO, "Actually kicked off ffmpeg");
                     }
 
                 } else {
 
-                    log(BaseWorker.INFO, "Recording still seems to be on. "
+                    LogUtil.log(LogUtil.INFO, "Recording still seems to be on. "
                         + "Waiting until finished to grab frames.");
                 }
             }
@@ -273,7 +274,7 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            log(BaseWorker.INFO, "Frame grab finished...");
+            LogUtil.log(LogUtil.INFO, "Frame grab finished...");
             File dir = getDirectory();
             Recording r = getRecording();
             if ((dir != null) && (r != null)) {
@@ -282,17 +283,15 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                 // frames.
                 try {
 
-                    String ratingDir = "resources/rating";
-                    DetectRating dr = new DetectRating();
-                    dr.setBackup(getBackup());
-                    dr.setSpan(getSpan());
-                    log(BaseWorker.INFO, "Start processing of frames...");
-                    int[] array = dr.processDirectory(ratingDir, dir, "jpg",
-                        getDetectRatingPlans(), isVerbose());
-                    log(BaseWorker.INFO, "Finished processing of frames...");
+                    DetectRatingRectangle drr = new DetectRatingRectangle();
+                    drr.setBackup(getBackup());
+                    drr.setSpan(getSpan());
+                    LogUtil.log(LogUtil.INFO, "Start processing of frames...");
+                    int[] array = drr.processDirectory(dir, "jpg", getDetectRatingPlans(), isVerbose());
+                    LogUtil.log(LogUtil.INFO, "Finished processing of frames...");
                     if ((array != null) && (array.length > 0)) {
 
-                        log(BaseWorker.INFO, "Found " + array.length
+                        LogUtil.log(LogUtil.INFO, "Found " + array.length
                             + " rating frames...setting commercials");
                         Commercial[] coms = new Commercial[array.length];
                         for (int i = 0; i < coms.length; i++) {
@@ -331,21 +330,19 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                                     Util.writeTextFile(file, sb.toString());
                                     SystemJob job = SystemJob.getInstance("mp4chaps -i \"" + origPath + ".mp4\"");
                                     JobContainer jc = JobManager.getJobContainer(job);
-                                    log(BaseWorker.INFO, "will start: " + job.getCommand());
+                                    LogUtil.log(LogUtil.INFO, "will start: " + job.getCommand());
                                     jc.start();
 
                                 } catch (Exception ex) {
 
-                                    log(BaseWorker.INFO, "Couldn't do chapters");
+                                    LogUtil.log(LogUtil.INFO, "Couldn't do chapters");
                                 }
                             }
                         }
 
-                        writeBIF();
-
                     } else {
 
-                        log(BaseWorker.INFO, "Didn't find any rating frames!");
+                        LogUtil.log(LogUtil.INFO, "Didn't find any rating frames!");
                     }
 
                     // Now need to delete frames....
@@ -366,7 +363,7 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
                         if (!dir.delete()) {
 
-                            log(BaseWorker.INFO, "Crap left working dir :"
+                            LogUtil.log(LogUtil.INFO, "Crap left working dir :"
                                 + dir.getPath());
                         }
                     }
@@ -375,7 +372,7 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
                 } catch (IOException ex) {
 
-                    log(BaseWorker.INFO, "Comrat IO bad news.");
+                    LogUtil.log(LogUtil.INFO, "Comrat IO bad news.");
                 }
             }
 

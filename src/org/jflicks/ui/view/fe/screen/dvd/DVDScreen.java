@@ -30,6 +30,8 @@ import org.jflicks.player.Player;
 import org.jflicks.rc.RC;
 import org.jflicks.ui.view.JFlicksView;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
+import org.jflicks.util.LogUtil;
+import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -125,7 +127,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void guide() {
 
-        log(DEBUG, "DVDScreen guide");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen guide");
 
         Player p = getPlayer();
         if (p != null) {
@@ -151,7 +153,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void close() {
 
-        log(DEBUG, "DVDScreen close");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen close");
         RC rc = getRC();
         if (rc != null) {
 
@@ -166,7 +168,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void rewind() {
 
-        log(DEBUG, "DVDScreen rewind");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen rewind");
         Player p = getPlayer();
         if (p != null) {
 
@@ -179,7 +181,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void forward() {
 
-        log(DEBUG, "DVDScreen forward");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen forward");
         Player p = getPlayer();
         if (p != null) {
 
@@ -192,7 +194,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void skipforward() {
 
-        log(DEBUG, "DVDScreen skipforward");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen skipforward");
         Player p = getPlayer();
         if (p != null) {
 
@@ -205,7 +207,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void skipbackward() {
 
-        log(DEBUG, "DVDScreen skipbackward");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen skipbackward");
         Player p = getPlayer();
         if (p != null) {
 
@@ -218,7 +220,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void up() {
 
-        log(DEBUG, "DVDScreen up");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen up");
 
         Player p = getPlayer();
         if (p != null) {
@@ -232,7 +234,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void down() {
 
-        log(DEBUG, "DVDScreen down");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen down");
 
         Player p = getPlayer();
         if (p != null) {
@@ -246,7 +248,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void left() {
 
-        log(DEBUG, "DVDScreen left");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen left");
 
         Player p = getPlayer();
         if (p != null) {
@@ -260,7 +262,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void right() {
 
-        log(DEBUG, "DVDScreen right");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen right");
 
         Player p = getPlayer();
         if (p != null) {
@@ -274,7 +276,7 @@ public class DVDScreen extends PlayerScreen implements PropertyChangeListener {
      */
     public void enter() {
 
-        log(DEBUG, "DVDScreen enter");
+        LogUtil.log(LogUtil.DEBUG, "DVDScreen enter");
 
         Player p = getPlayer();
         if (p != null) {

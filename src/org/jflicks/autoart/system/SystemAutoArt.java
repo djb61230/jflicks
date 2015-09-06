@@ -30,6 +30,7 @@ import org.jflicks.metadata.themoviedb.Movie;
 import org.jflicks.metadata.themoviedb.Search;
 import org.jflicks.metadata.themoviedb.TheMovieDB;
 import org.jflicks.nms.NMS;
+import org.jflicks.util.LogUtil;
 
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
@@ -101,7 +102,7 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
 
             } else {
 
-                log(WARNING, "SystemAutoArt: Db4oService null!");
+                LogUtil.log(LogUtil.WARNING, "SystemAutoArt: Db4oService null!");
             }
         }
 
@@ -220,12 +221,12 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
         if (objectContainer != null) {
 
             boolean result = objectContainer.close();
-            log(DEBUG, "SystemAutoArt: closed " + result);
+            LogUtil.log(LogUtil.DEBUG, "SystemAutoArt: closed " + result);
             objectContainer = null;
 
         } else {
 
-            log(DEBUG, "SystemAutoArt: Tried to close "
+            LogUtil.log(LogUtil.DEBUG, "SystemAutoArt: Tried to close "
                 + "but objectContainer null.");
         }
     }
@@ -243,20 +244,20 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
         boolean checkMovie = true;
         if ((si != null) && (tvdb != null)) {
 
-            log(DEBUG, "Searching for: " + si.getTitle());
+            LogUtil.log(LogUtil.DEBUG, "Searching for: " + si.getTitle());
             List<Series> list = tvdb.searchSeries(si.getTitle(), "en");
-            log(DEBUG, "Series list: " + list);
+            LogUtil.log(LogUtil.DEBUG, "Series list: " + list);
             if ((list != null) && (list.size() > 0)) {
 
-                log(DEBUG, "Series list.size(): " + list.size());
+                LogUtil.log(LogUtil.DEBUG, "Series list.size(): " + list.size());
                 int season = si.getSeason();
                 int episode = si.getEpisode();
-                log(DEBUG, "season <" + season + "> episode <" + episode + ">");
+                LogUtil.log(LogUtil.DEBUG, "season <" + season + "> episode <" + episode + ">");
                 if ((season > 0) && (episode > 0)) {
 
                     Episode epi = tvdb.getEpisode(list.get(0).getId(),
                         season, episode, "en");
-                    log(DEBUG, "Episode: " + epi);
+                    LogUtil.log(LogUtil.DEBUG, "Episode: " + epi);
                     if (epi != null) {
 
                         si.setOverview("\"" + epi.getEpisodeName() + "\" "
@@ -378,7 +379,7 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
         SearchItem[] array = getSearchItems();
         if ((array != null) && (array.length > 0)) {
 
-            log(INFO, "We have " + array.length + " items missing art.");
+            LogUtil.log(LogUtil.INFO, "We have " + array.length + " items missing art.");
 
             // We have missing artwork, so we should check for new stuff.
             // However we should filter it because if it was missing on
@@ -399,13 +400,13 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
                 }
             }
 
-            log(INFO, "We are going to search for " + l.size()
+            LogUtil.log(LogUtil.INFO, "We are going to search for " + l.size()
                 + " items at this time.");
 
             for (int i = 0; i < l.size(); i++) {
 
                 SearchItem si = l.get(i);
-                log(INFO, "Searching using <" + si.getTitle() + ">");
+                LogUtil.log(LogUtil.INFO, "Searching using <" + si.getTitle() + ">");
                 si.setLastCheck(System.currentTimeMillis());
                 performSearch(si);
                 save(si);

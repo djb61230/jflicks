@@ -16,11 +16,9 @@
 */
 package org.jflicks.restlet;
 
-import org.jflicks.log.Log;
 import org.jflicks.nms.NMS;
 
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -29,40 +27,9 @@ import org.osgi.util.tracker.ServiceTracker;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseSupport implements Log {
+public abstract class BaseSupport {
 
-    private ServiceTracker logServiceTracker;
     private NMS[] nms;
-
-    /**
-     * {@inheritDoc}
-     */
-    public ServiceTracker getLogServiceTracker() {
-        return (logServiceTracker);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setLogServiceTracker(ServiceTracker st) {
-        logServiceTracker = st;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void log(int level, String message) {
-
-        ServiceTracker st = getLogServiceTracker();
-        if ((st != null) && (message != null)) {
-
-            LogService ls = (LogService) st.getService();
-            if (ls != null) {
-
-                ls.log(level, message);
-            }
-        }
-    }
 
     /**
      * We need to have the known NMS instances to do anything.

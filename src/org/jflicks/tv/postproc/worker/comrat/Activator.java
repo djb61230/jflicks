@@ -26,7 +26,6 @@ import org.jflicks.util.DetectRatingPlan;
 import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -37,8 +36,6 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class Activator extends BaseActivator {
 
-    private ServiceTracker logServiceTracker;
-
     /**
      * {@inheritDoc}
      */
@@ -46,17 +43,12 @@ public class Activator extends BaseActivator {
 
         setBundleContext(bc);
 
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        logServiceTracker.open();
-
         // We want to register all the comrat properties files found
         // in conf/comrat.properties.
         Properties p = Util.findProperties("conf/comrat.properties");
         if (p != null) {
 
             ComratWorker cw = new ComratWorker();
-            cw.setLogServiceTracker(logServiceTracker);
             cw.setDefaultRun(Util.str2boolean(
                 p.getProperty("defaultrun"), false));
             cw.setTitle(p.getProperty("title"));
@@ -98,12 +90,6 @@ public class Activator extends BaseActivator {
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 

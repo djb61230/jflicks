@@ -27,6 +27,7 @@ import java.nio.channels.FileChannel;
 import javax.swing.Timer;
 
 import org.jflicks.job.JobEvent;
+import org.jflicks.util.LogUtil;
 
 /**
  * This class has code to read from a file and have the notion of recovering
@@ -99,12 +100,11 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                 // We have arrived here with the same read time as last.
                 // We are probably blocked...
-                System.out.println("We are probably blocking..." + getDevice());
+                LogUtil.log(LogUtil.DEBUG, "We are probably blocking..." + getDevice());
                 int bcount = getBlockCount();
                 bcount++;
                 setBlockCount(bcount);
-                System.out.println("Times we failed on a block: " + bcount
-                    + " " + getDevice());
+                LogUtil.log(LogUtil.DEBUG, "Times we failed on a block: " + bcount + " " + getDevice());
 
                 // We always want to close...
                 if (fileChannel != null) {
@@ -113,30 +113,26 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                         try {
 
-                            System.out.println("Attempting to close!"
-                                + " " + getDevice());
+                            LogUtil.log(LogUtil.DEBUG, "Attempting to close! " + getDevice());
                             fileChannel.close();
-                            System.out.println("Close seemed to work."
-                                + " " + getDevice());
+                            LogUtil.log(LogUtil.DEBUG, "Close seemed to work. " + getDevice());
                             fileChannel = null;
 
                         } catch (Exception ex) {
 
-                            System.out.println("exception on interupt close"
-                                + " " + getDevice());
+                            LogUtil.log(LogUtil.WARNING, "exception on interupt close " + getDevice());
                             fileChannel = null;
                         }
                     }
 
                 } else {
 
-                    System.out.println("Can't close, fileChannel is null!"
-                        + " " + getDevice());
+                    LogUtil.log(LogUtil.DEBUG, "Can't close, fileChannel is null! " + getDevice());
                 }
 
                 if (bcount > MAX_BLOCK_COUNT) {
 
-                    System.out.println("Time to give up!! " + getDevice());
+                    LogUtil.log(LogUtil.DEBUG, "Time to give up!! " + getDevice());
                     stop();
                 }
 
@@ -150,7 +146,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
     private void reset() {
 
-        System.out.println("We are trying to reset! " + getDevice());
+        LogUtil.log(LogUtil.DEBUG, "We are trying to reset! " + getDevice());
 
         try {
 
@@ -161,7 +157,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
             // reached our max retry count.
             if (getBlockCount() < MAX_BLOCK_COUNT) {
 
-                System.out.println("Getting new fileChannel..." + getDevice());
+                LogUtil.log(LogUtil.DEBUG, "Getting new fileChannel..." + getDevice());
                 fileInputStream = new FileInputStream(getDevice());
                 fileChannel = fileInputStream.getChannel();
 
@@ -169,24 +165,24 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                     // Let's up the delay by a second - perhaps
                     // recovery will happen.
-                    System.out.println("Got new fileChannel." + getDevice());
+                    LogUtil.log(LogUtil.DEBUG, "Got new fileChannel." + getDevice());
 
                 } else {
 
                     // We tried to get a channel, it failed giveup.
-                    System.out.println("Failed new fileChannel." + getDevice());
+                    LogUtil.log(LogUtil.DEBUG, "Failed new fileChannel." + getDevice());
                     setTerminate(true);
                 }
 
             } else {
 
-                System.out.println("Looks like time to quit." + getDevice());
+                LogUtil.log(LogUtil.DEBUG, "Looks like time to quit." + getDevice());
                 setTerminate(true);
             }
 
         } catch (IOException ex) {
 
-            System.out.println("Failed to re-open, perhaps next time."
+            LogUtil.log(LogUtil.DEBUG, "Failed to re-open, perhaps next time."
                 + getDevice());
         }
     }
@@ -227,7 +223,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
                 } catch (AsynchronousCloseException ex) {
 
-                    System.out.println("We have been interupted!");
+                    LogUtil.log(LogUtil.DEBUG, "We have been interupted!");
                     if (fileInputStream != null) {
 
                         fileInputStream.close();
@@ -275,7 +271,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
 
         } catch (Exception ex) {
 
-            System.out.println("Exception RecoverJob: "
+            LogUtil.log(LogUtil.WARNING, "Exception RecoverJob: "
                 + ex.getClass().getName() + " " + ex.getMessage()
                 + " " + getDevice());
             ex.printStackTrace();
@@ -291,7 +287,7 @@ public abstract class RecoverJob extends BaseDeviceJob implements
      */
     public void stop() {
 
-        System.out.println("RecoverJob: We are told to terminate!");
+        LogUtil.log(LogUtil.DEBUG, "RecoverJob: We are told to terminate!");
         setTerminate(true);
     }
 

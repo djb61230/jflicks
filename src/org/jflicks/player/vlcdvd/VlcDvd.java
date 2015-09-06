@@ -27,6 +27,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.player.BasePlayer;
 import org.jflicks.player.Bookmark;
 import org.jflicks.player.PlayState;
+import org.jflicks.util.LogUtil;
 
 /**
  * This Player (with other classes in this package) is capable of
@@ -55,7 +56,7 @@ public class VlcDvd extends BasePlayer implements JobListener {
 
         } catch (AWTException ex) {
 
-            log(ERROR, ex.getMessage());
+            LogUtil.log(LogUtil.ERROR, ex.getMessage());
         }
     }
 

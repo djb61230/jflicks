@@ -16,7 +16,6 @@
 */
 package org.jflicks.transfer;
 
-import org.jflicks.log.BaseLog;
 import org.jflicks.tv.Recording;
 
 /**
@@ -25,7 +24,7 @@ import org.jflicks.tv.Recording;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseTransfer extends BaseLog implements Transfer {
+public abstract class BaseTransfer implements Transfer {
 
     private String title;
     private Recording recording;

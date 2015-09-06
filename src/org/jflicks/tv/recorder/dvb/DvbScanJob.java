@@ -28,6 +28,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -129,13 +130,12 @@ public class DvbScanJob extends AbstractJob implements JobListener {
         DvbRecorder r = getDvbRecorder();
         if ((r != null) && (message != null)) {
 
-            r.log(status, message);
+            LogUtil.log(status, message);
             NMS n = r.getNMS();
             if (n != null) {
 
-                message = NMSConstants.MESSAGE_RECORDER_SCAN_UPDATE
-                    + " " + message;
-                n.sendMessage(message);
+                n.sendMessage(NMSConstants.MESSAGE_RECORDER_SCAN_UPDATE
+                    + " " + message);
             }
         }
     }
@@ -155,7 +155,7 @@ public class DvbScanJob extends AbstractJob implements JobListener {
         setScanJob(sj);
         sj.addJobListener(this);
 
-        log(DvbRecorder.DEBUG, "starting scan job...");
+        log(LogUtil.DEBUG, "starting scan job...");
         JobContainer jc = JobManager.getJobContainer(sj);
         setJobContainer(jc);
         jc.start();
@@ -300,25 +300,25 @@ public class DvbScanJob extends AbstractJob implements JobListener {
 
                         String num = array[i].getNumber();
                         String ref = array[i].getReferenceNumber();
-                        log(DvbRecorder.DEBUG, "Checking ref <" + ref + ">");
+                        log(LogUtil.DEBUG, "Checking ref <" + ref + ">");
                         String line = process(num, ref, lines);
                         if (line != null) {
 
-                            log(DvbRecorder.DEBUG, "Adding <" + line + ">");
+                            log(LogUtil.DEBUG, "Adding <" + line + ">");
                             sb.append(line);
                             sb.append("\n");
 
                         } else {
 
-                            log(DvbRecorder.DEBUG, "Not Found!");
+                            log(LogUtil.DEBUG, "Not Found!");
                         }
                     }
 
                     if (sb.length() > 0) {
 
-                        log(DvbRecorder.DEBUG, "-------------------------");
-                        log(DvbRecorder.DEBUG, sb.toString());
-                        log(DvbRecorder.DEBUG, "-------------------------");
+                        log(LogUtil.DEBUG, "-------------------------");
+                        log(LogUtil.DEBUG, sb.toString());
+                        log(LogUtil.DEBUG, "-------------------------");
                         File conf = new File("conf");
                         if ((conf.exists()) && (conf.isDirectory())) {
 
@@ -328,12 +328,12 @@ public class DvbScanJob extends AbstractJob implements JobListener {
                             try {
 
                                 Util.writeTextFile(scan, sb.toString());
-                                log(DvbRecorder.DEBUG, "Writing "
+                                log(LogUtil.DEBUG, "Writing "
                                     + scan.getPath());
 
                             } catch (IOException ex) {
 
-                                log(DvbRecorder.DEBUG, ex.getMessage());
+                                log(LogUtil.DEBUG, ex.getMessage());
                             }
                         }
                     }
@@ -342,7 +342,7 @@ public class DvbScanJob extends AbstractJob implements JobListener {
 
         } else if (event.getType() == JobEvent.UPDATE) {
 
-            log(DvbRecorder.DEBUG, event.getMessage());
+            log(LogUtil.DEBUG, event.getMessage());
         }
     }
 

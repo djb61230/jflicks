@@ -64,8 +64,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
     NMSProperty, UpdateProperty, ActionListener, JobListener {
 
     private static final String REQUEST_GUIDE_UPDATE = "Request Guide Update";
-    private static final String RESTART = "Restart";
-    private static final String SOFTWARE_UPDATE = "Software Update";
     private static final String STATISTICS = "Statistics";
     private static final String RSYNC_MESSAGE = "sending incremental file list";
     private static final long GIGABYTE = 1073741824L;
@@ -96,8 +94,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
         String[] array = {
 
             REQUEST_GUIDE_UPDATE,
-            RESTART,
-            SOFTWARE_UPDATE,
             STATISTICS
         };
 
@@ -226,15 +222,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
                 updateLayout(false);
                 popup(CERTAIN);
 
-            } else if (isParameterSoftwareUpdate()) {
-
-                updateLayout(true);
-                UpdateOpenJob job = new UpdateOpenJob(getUpdate());
-                setUpdateOpenJob(job);
-                Busy busy = new Busy(getLayeredPane(), job);
-                busy.addJobListener(this);
-                busy.execute();
-
             } else if (isParameterStatistics()) {
 
                 MessagePanel mp = getMessagePanel();
@@ -301,18 +288,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
                     mp.setMessage(sb.toString());
                     updateLayout(false);
                 }
-
-            } else if (isParameterRestart()) {
-
-                FrontEndView fev = (FrontEndView) getView();
-                if (fev != null) {
-
-                    SystemJob job = SystemJob.getInstance(getScriptPrefix()
-                        + "restart." + getScriptExtension());
-                    JobContainer jc = JobManager.getJobContainer(job);
-                    jc.start();
-                    fev.exitAction(false);
-                }
             }
         }
     }
@@ -364,8 +339,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
                 if (isParameterRequestGuideUpdate()) {
                     pane.add(getMessagePanel(), Integer.valueOf(100));
-                } else if (isParameterSoftwareUpdate()) {
-                    pane.add(getMessagePanel(), Integer.valueOf(100));
                 } else if (isParameterStatistics()) {
                     pane.add(getMessagePanel(), Integer.valueOf(100));
                 }
@@ -383,17 +356,7 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
             if (!CANCEL.equals(bp.getSelectedButton())) {
 
-                if (isParameterSoftwareUpdate()) {
-
-                    updateLayout(true);
-                    UpdateJob job =
-                        new UpdateJob(getUpdate(), getUpdateState());
-                    setUpdateJob(job);
-                    Busy busy = new Busy(getLayeredPane(), job);
-                    busy.addJobListener(this);
-                    busy.execute();
-
-                } else if (isParameterRequestGuideUpdate()) {
+                if (isParameterRequestGuideUpdate()) {
 
                     MessagePanel mp = getMessagePanel();
                     StringBuilder sb = new StringBuilder();
@@ -442,7 +405,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
 
             if (event.getSource() == getUpdateOpenJob()) {
 
-                System.out.println("The update open finished!");
                 if (event.getState() instanceof UpdateState) {
 
                     UpdateState us = (UpdateState) event.getState();
@@ -541,14 +503,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
         return (REQUEST_GUIDE_UPDATE.equals(getSelectedParameter()));
     }
 
-    private boolean isParameterRestart() {
-        return (RESTART.equals(getSelectedParameter()));
-    }
-
-    private boolean isParameterSoftwareUpdate() {
-        return (SOFTWARE_UPDATE.equals(getSelectedParameter()));
-    }
-
     private boolean isParameterStatistics() {
         return (STATISTICS.equals(getSelectedParameter()));
     }
@@ -586,7 +540,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
     private void popup(String select) {
 
         JLayeredPane pane = getLayeredPane();
-        System.out.println("pane: " + pane);
         if (pane != null) {
 
             setPopupEnabled(true);
@@ -619,7 +572,6 @@ public class SystemStatusScreen extends Screen implements ParameterProperty,
             int bpy = (int) ((height - bpheight) / 2);
             bp.setBounds(bpx, bpy, bpwidth, bpheight);
 
-            System.out.println("bp bounds: " + bp.getBounds());
             pane.add(bp, Integer.valueOf(300));
             bp.setControl(true);
             bp.setButtons(choices);

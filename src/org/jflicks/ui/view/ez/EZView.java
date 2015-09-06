@@ -44,6 +44,7 @@ import org.jflicks.configure.Configuration;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.ui.view.JFlicksView;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.TabClose;
 import org.jflicks.util.Util;
 
@@ -175,7 +176,7 @@ public class EZView extends JFlicksView {
 
             } catch (IOException ex) {
 
-                log(WARNING, "Did not find icon for aplication.");
+                LogUtil.log(LogUtil.WARNING, "Did not find icon for aplication.");
             }
 
             frame.pack();

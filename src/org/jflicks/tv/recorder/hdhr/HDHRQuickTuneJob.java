@@ -22,6 +22,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.Channel;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -207,15 +208,6 @@ public class HDHRQuickTuneJob extends AbstractJob implements JobListener {
         return (result);
     }
 
-    private void log(int status, String message) {
-
-        HDHRRecorder r = getHDHRRecorder();
-        if ((r != null) && (message != null)) {
-
-            r.log(status, message);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -256,14 +248,14 @@ public class HDHRQuickTuneJob extends AbstractJob implements JobListener {
 
         if (isChangeFrequency()) {
 
-            log(HDHRRecorder.DEBUG, "starting frequency job...");
+            LogUtil.log(LogUtil.DEBUG, "starting frequency job...");
             JobContainer jc = JobManager.getJobContainer(fj);
             setJobContainer(jc);
             jc.start();
 
         } else {
 
-            log(HDHRRecorder.DEBUG, "starting program job since same freq");
+            LogUtil.log(LogUtil.DEBUG, "starting program job since same freq");
             JobContainer jc = JobManager.getJobContainer(pj);
             setJobContainer(jc);
             jc.start();
@@ -316,14 +308,14 @@ public class HDHRQuickTuneJob extends AbstractJob implements JobListener {
 
             if (event.getSource() == getFrequencyJob()) {
 
-                log(HDHRRecorder.DEBUG, "starting program job...");
+                LogUtil.log(LogUtil.DEBUG, "starting program job...");
                 JobContainer jc = JobManager.getJobContainer(getProgramJob());
                 setJobContainer(jc);
                 jc.start();
 
             } else if (event.getSource() == getProgramJob()) {
 
-                log(HDHRRecorder.DEBUG, "starting streaming job...");
+                LogUtil.log(LogUtil.DEBUG, "starting streaming job...");
                 JobContainer jc = JobManager.getJobContainer(getStreamJob());
                 setJobContainer(jc);
                 jc.start();
@@ -331,7 +323,7 @@ public class HDHRQuickTuneJob extends AbstractJob implements JobListener {
 
         } else if (event.getType() == JobEvent.UPDATE) {
 
-            log(HDHRRecorder.DEBUG, event.getMessage());
+            LogUtil.log(LogUtil.DEBUG, event.getMessage());
         }
     }
 

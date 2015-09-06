@@ -27,6 +27,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.recorder.StreamJob;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job supports the DVB recorder.  There are two steps to streaming
@@ -92,15 +93,6 @@ public class DvbStreamJob extends AbstractJob implements JobListener {
 
     private void setDvbRecorder(DvbRecorder r) {
         dvbRecorder = r;
-    }
-
-    private void log(int status, String message) {
-
-        DvbRecorder r = getDvbRecorder();
-        if ((r != null) && (message != null)) {
-
-            r.log(status, message);
-        }
     }
 
     private String getDevice() {
@@ -210,9 +202,9 @@ public class DvbStreamJob extends AbstractJob implements JobListener {
         setChannelJobContainer(jc);
         jc.start();
 
-        log(DvbRecorder.DEBUG, "Device: <" + getDevice() + ">");
-        log(DvbRecorder.DEBUG, "Host: <" + getHost() + ">");
-        log(DvbRecorder.DEBUG, "Port: <" + getPort() + ">");
+        LogUtil.log(LogUtil.DEBUG, "Device: <" + getDevice() + ">");
+        LogUtil.log(LogUtil.DEBUG, "Host: <" + getHost() + ">");
+        LogUtil.log(LogUtil.DEBUG, "Port: <" + getPort() + ">");
 
         // We need to wait a bit before we start to stream to give
         // the channel time to lock in.
@@ -222,7 +214,7 @@ public class DvbStreamJob extends AbstractJob implements JobListener {
         ActionListener streamPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 
-                log(DvbRecorder.DEBUG, "Starting stream job for DVB");
+                LogUtil.log(LogUtil.DEBUG, "Starting stream job for DVB");
                 fjc.start();
             }
         };
@@ -276,7 +268,7 @@ public class DvbStreamJob extends AbstractJob implements JobListener {
 
         if (event.getType() == JobEvent.UPDATE) {
 
-            log(DvbRecorder.DEBUG, event.getMessage());
+            LogUtil.log(LogUtil.DEBUG, event.getMessage());
         }
     }
 

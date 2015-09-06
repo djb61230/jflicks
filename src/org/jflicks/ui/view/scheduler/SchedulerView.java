@@ -59,6 +59,7 @@ import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Upcoming;
 import org.jflicks.ui.view.JFlicksView;
 import org.jflicks.util.ProgressBar;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXFrame;
@@ -287,7 +288,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
 
             } catch (IOException ex) {
 
-                log(WARNING, "Did not find icon for aplication.");
+                LogUtil.log(LogUtil.WARNING, "Did not find icon for aplication.");
             }
 
             frame.pack();
@@ -473,7 +474,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
             setBounds(MAIN_FRAME, mf.getBounds());
         }
 
-        log(INFO, "saving properties....");
+        LogUtil.log(LogUtil.INFO, "saving properties....");
         saveProperties();
 
         super.exitAction(ask);
@@ -675,7 +676,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
         public void jobUpdate(JobEvent event) {
 
             if (event.getType() == JobEvent.COMPLETE) {
-                log(INFO, "saved!");
+                LogUtil.log(LogUtil.INFO, "saved!");
             }
         }
 
@@ -703,8 +704,8 @@ public class SchedulerView extends JFlicksView implements ActionListener {
                     rr.setPriority(RecordingRule.NORMAL_PRIORITY);
                     rr.setTasks(n.getTasks());
 
-                    System.out.println("chanid: " + rr.getChannelId());
-                    System.out.println("listid: " + rr.getListingId());
+                    LogUtil.log(LogUtil.DEBUG, "chanid: " + rr.getChannelId());
+                    LogUtil.log(LogUtil.DEBUG, "listid: " + rr.getListingId());
 
                     RecordingRulePanel rrp = new RecordingRulePanel();
                     rrp.setNMS(n);

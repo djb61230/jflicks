@@ -37,6 +37,7 @@ import org.jflicks.tv.postproc.PostProc;
 import org.jflicks.tv.postproc.worker.Worker;
 import org.jflicks.tv.scheduler.BaseScheduler;
 import org.jflicks.tv.scheduler.RecordedShow;
+import org.jflicks.util.LogUtil;
 
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
@@ -165,48 +166,48 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
         if (objectContainer != null) {
 
             boolean result = objectContainer.close();
-            log(DEBUG, "SystemScheduler: closed " + result);
+            LogUtil.log(LogUtil.DEBUG, "SystemScheduler: closed " + result);
             objectContainer = null;
 
         } else {
 
-            log(DEBUG, "SystemScheduler: Tried to close "
+            LogUtil.log(LogUtil.DEBUG, "SystemScheduler: Tried to close "
                 + "but objectContainer null.");
         }
 
         if (cacheObjectContainer != null) {
 
             boolean result = cacheObjectContainer.close();
-            log(DEBUG, "SystemScheduler: (cache) closed " + result);
+            LogUtil.log(LogUtil.DEBUG, "SystemScheduler: (cache) closed " + result);
             cacheObjectContainer = null;
 
         } else {
 
-            log(DEBUG, "SystemScheduler: Tried to close "
+            LogUtil.log(LogUtil.DEBUG, "SystemScheduler: Tried to close "
                 + "but cacheObjectContainer null.");
         }
 
         if (recordedObjectContainer != null) {
 
             boolean result = recordedObjectContainer.close();
-            log(DEBUG, "SystemScheduler (recorded): closed " + result);
+            LogUtil.log(LogUtil.DEBUG, "SystemScheduler (recorded): closed " + result);
             recordedObjectContainer = null;
 
         } else {
 
-            log(DEBUG, "SystemScheduler: Tried to close "
+            LogUtil.log(LogUtil.DEBUG, "SystemScheduler: Tried to close "
                 + "but recordedObjectContainer null.");
         }
 
         if (recordingObjectContainer != null) {
 
             boolean result = recordingObjectContainer.close();
-            log(DEBUG, "SystemScheduler (recording): closed " + result);
+            LogUtil.log(LogUtil.DEBUG, "SystemScheduler (recording): closed " + result);
             recordingObjectContainer = null;
 
         } else {
 
-            log(DEBUG, "SystemScheduler: Tried to close "
+            LogUtil.log(LogUtil.DEBUG, "SystemScheduler: Tried to close "
                 + "but recordingObjectContainer null.");
         }
     }
@@ -408,7 +409,7 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                             Arrays.sort(tasks, new TaskByDescription());
                         }
 
-                        log(INFO, "We need to update the RecordingRule since "
+                        LogUtil.log(LogUtil.INFO, "We need to update the RecordingRule since "
                             + "the tasks have changed.");
                         rr.setTasks(tasks);
                         addRecordingRule(rr);
@@ -477,13 +478,13 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
 
             if (rules != null) {
 
-                log(DEBUG, "Found " + rules.size() + " rules");
+                LogUtil.log(LogUtil.DEBUG, "Found " + rules.size() + " rules");
                 for (int i = 0; i < rules.size(); i++) {
 
                     RecordingRule trule = rules.get(i);
                     if (trule.getId().equals(rr.getId())) {
 
-                        log(DEBUG, "Removing " + trule.getId());
+                        LogUtil.log(LogUtil.DEBUG, "Removing " + trule.getId());
                         oc.delete(trule);
                     }
                 }
@@ -811,17 +812,17 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                     } else {
 
                         if (s == null) {
-                            log(DEBUG, "A ONCE recording doesnt have a Show");
+                            LogUtil.log(LogUtil.DEBUG, "A ONCE recording doesnt have a Show");
                         }
 
                         if (a == null) {
-                            log(DEBUG, "A ONCE recording doesnt have a Airing");
+                            LogUtil.log(LogUtil.DEBUG, "A ONCE recording doesnt have a Airing");
                         }
                     }
 
                 } else {
 
-                    log(DEBUG, "A ONCE recording does not have a ShowAiring");
+                    LogUtil.log(LogUtil.DEBUG, "A ONCE recording does not have a ShowAiring");
                 }
 
             } else {

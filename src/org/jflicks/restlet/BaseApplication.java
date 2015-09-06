@@ -18,14 +18,13 @@ package org.jflicks.restlet;
 
 import java.util.ArrayList;
 
-import org.jflicks.log.Log;
 import org.jflicks.nms.NMS;
 import org.jflicks.restlet.servercomponent.ServerComponent;
 import org.jflicks.restlet.servercomponent.ServerComponentNotify;
+import org.jflicks.util.LogUtil;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.restlet.Application;
 import org.restlet.Component;
@@ -37,12 +36,10 @@ import org.restlet.ext.wadl.WadlApplication;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseApplication extends WadlApplication implements Log,
-    ServerComponentNotify {
+public abstract class BaseApplication extends WadlApplication implements ServerComponentNotify {
 
     private boolean attached;
     private ServerComponent serverComponent;
-    private ServiceTracker logServiceTracker;
     private BundleContext bundleContext;
     private ArrayList<NMS> nmsList;
     private String alias;
@@ -134,45 +131,9 @@ public abstract class BaseApplication extends WadlApplication implements Log,
 
                     } catch (Exception ex) {
 
-                        log(DEBUG, ex.getMessage());
+                        LogUtil.log(LogUtil.DEBUG, ex.getMessage());
                     }
                 }
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ServiceTracker getLogServiceTracker() {
-        return (logServiceTracker);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setLogServiceTracker(ServiceTracker st) {
-        logServiceTracker = st;
-
-        NMSSupport nsup = NMSSupport.getInstance();
-        nsup.setLogServiceTracker(logServiceTracker);
-
-        LiveTVSupport lsup = LiveTVSupport.getInstance();
-        lsup.setLogServiceTracker(logServiceTracker);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void log(int level, String message) {
-
-        ServiceTracker st = getLogServiceTracker();
-        if ((st != null) && (message != null)) {
-
-            LogService ls = (LogService) st.getService();
-            if (ls != null) {
-
-                ls.log(level, message);
             }
         }
     }
@@ -208,7 +169,7 @@ public abstract class BaseApplication extends WadlApplication implements Log,
 
     public void setNMS(NMS[] array) {
 
-        System.out.println("setNMS dude");
+        LogUtil.log(LogUtil.DEBUG, "setNMS dude");
         ArrayList<NMS> l = getNMSList();
         if (l != null) {
 

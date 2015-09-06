@@ -6,7 +6,6 @@ Export-Package:\
  org.jflicks.ui.view;version="1.0.0"
 
 Import-Package:\
- org.jflicks.log;version="1.0.0",\
  org.jflicks.mvc;version="1.0.0",\
  org.jflicks.ui.view;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\

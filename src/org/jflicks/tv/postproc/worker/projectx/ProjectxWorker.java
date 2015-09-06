@@ -27,6 +27,7 @@ import org.jflicks.tv.postproc.RecordingLengthJob;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.ConcatJob;
 import org.jflicks.tv.postproc.worker.WorkerEvent;
+import org.jflicks.util.LogUtil;
 
 /**
  * A generic indexer that just runs a command line program.
@@ -123,7 +124,7 @@ public class ProjectxWorker extends BaseWorker implements JobListener {
 
             } else {
 
-                log(INFO, "ProjectxWorker: completed");
+                LogUtil.log(LogUtil.INFO, "ProjectxWorker: completed");
                 ProjectxJob job = (ProjectxJob) event.getSource();
                 removeJobContainer(job);
 
@@ -138,7 +139,7 @@ public class ProjectxWorker extends BaseWorker implements JobListener {
 
         } else {
 
-            //log(DEBUG, "ProjectxWorker: " + event.getMessage());
+            //LogUtil.log(LogUtil.DEBUG, "ProjectxWorker: " + event.getMessage());
         }
     }
 

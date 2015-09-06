@@ -123,15 +123,6 @@ public class CreatePropertiesJob extends AbstractJob implements JobListener {
         return (result);
     }
 
-    private void log(int status, String message) {
-
-        V4l2Recorder r = getV4l2Recorder();
-        if ((r != null) && (message != null)) {
-
-            r.log(status, message);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */

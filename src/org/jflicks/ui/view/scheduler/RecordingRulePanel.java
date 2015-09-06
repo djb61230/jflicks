@@ -38,6 +38,7 @@ import org.jflicks.tv.RecordingRule;
 import org.jflicks.tv.Task;
 import org.jflicks.util.ColumnPanel;
 import org.jflicks.util.PromptPanel;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -313,7 +314,7 @@ public class RecordingRulePanel extends JPanel implements ActionListener,
 
         boolean result = false;
 
-        System.out.println("hasTasksToSelect: " + array);
+        LogUtil.log(LogUtil.DEBUG, "hasTasksToSelect: " + array);
         if ((array != null) && (array.length > 0)) {
 
             for (int i = 0; i < array.length; i++) {
@@ -340,8 +341,8 @@ public class RecordingRulePanel extends JPanel implements ActionListener,
                 ArrayList<JCheckBox> clist = new ArrayList<JCheckBox>();
                 for (int i = 0; i < tasks.length; i++) {
 
-                    System.out.println("title: " + tasks[i].getTitle());
-                    System.out.println("defaultRun: " + tasks[i].isDefaultRun());
+                    LogUtil.log(LogUtil.DEBUG, "title: " + tasks[i].getTitle());
+                    LogUtil.log(LogUtil.DEBUG, "defaultRun: " + tasks[i].isDefaultRun());
                     if (tasks[i].isSelectable()) {
 
                         JCheckBox b = new JCheckBox(tasks[i].getDescription());

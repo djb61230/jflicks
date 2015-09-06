@@ -23,6 +23,7 @@ import org.jflicks.discovery.DiscoverListener;
 import org.jflicks.discovery.ServiceDescription;
 import org.jflicks.job.AbstractJob;
 import org.jflicks.job.JobManager;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job will run and listen for remote discovery acknowledgements.
@@ -136,7 +137,7 @@ public class RemoteNMSJob extends AbstractJob implements DiscoverListener {
      */
     public void serviceReply(DiscoverEvent event) {
 
-        System.out.println("We received a DiscoverEvent event");
+        LogUtil.log(LogUtil.INFO, "We received a DiscoverEvent event");
         add(event.getServiceDescription());
     }
 

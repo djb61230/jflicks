@@ -29,7 +29,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Filter;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -44,7 +43,6 @@ public class Activator extends BaseActivator {
     private RCTracker rcTracker;
     private TransferTracker transferTracker;
     private ImageCacheTracker imageCacheTracker;
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -82,26 +80,18 @@ public class Activator extends BaseActivator {
                 + Player.PLAYER_VIDEO_TRANSPORT_STREAM + ")"
                 + "(Player-Handle=" + Player.PLAYER_VIDEO_PROGRAM_STREAM + ")"
                 + "(Player-Handle=" + Player.PLAYER_VIDEO + "))");
-            System.out.println(filter);
             ServiceTracker st = new ServiceTracker(bc, filter, null);
             setServiceTracker(st);
             st.open();
             s.setPlayerServiceTracker(st);
 
         } catch (InvalidSyntaxException ex) {
-
-            System.out.println(ex.getMessage());
         }
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
         dict.put(Screen.TITLE_PROPERTY, s.getTitle());
 
         bc.registerService(Screen.class.getName(), s, dict);
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        s.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
     }
 
     /**
@@ -127,12 +117,6 @@ public class Activator extends BaseActivator {
         ImageCacheTracker ict = getImageCacheTracker();
         if (ict != null) {
             ict.close();
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 

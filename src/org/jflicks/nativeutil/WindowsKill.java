@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.util.LogUtil;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -63,7 +64,7 @@ public final class WindowsKill {
 
             } catch (Exception ex) {
 
-                System.out.println(ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, ex.getMessage());
             }
         }
 
@@ -75,9 +76,8 @@ public final class WindowsKill {
         int pid = getPid(p);
         if (pid != 0) {
 
-            SystemJob job =
-                SystemJob.getInstance("pskill -t " + pid);
-            System.out.println(job.getCommand());
+            SystemJob job = SystemJob.getInstance("pskill -t " + pid);
+            LogUtil.log(LogUtil.DEBUG, job.getCommand());
             JobContainer jc = JobManager.getJobContainer(job);
             jc.start();
         }

@@ -8,7 +8,6 @@ Export-Package:\
 
 Import-Package:\
  org.jflicks.configure;version="1.0.0",\
- org.jflicks.log;version="1.0.0",\
  org.jflicks.nms;version="1.0.0",\
  org.jflicks.tv;version="1.0.0",\
  org.jflicks.tv.live;version="1.0.0",\

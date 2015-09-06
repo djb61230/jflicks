@@ -23,7 +23,6 @@ Export-Package:\
  org.jflicks.discovery;version="1.0.0",\
  org.jflicks.imagecache;version="1.0.0",\
  org.jflicks.job;version="1.0.0",\
- org.jflicks.log;version="1.0.0",\
  org.jflicks.metadata;version="1.0.0",\
  org.jflicks.mvc;version="1.0.0",\
  org.jflicks.nms;version="1.0.0",\
@@ -53,7 +52,6 @@ Import-Package:\
  org.jflicks.discovery;version="1.0.0",\
  org.jflicks.imagecache;version="1.0.0",\
  org.jflicks.job;version="1.0.0",\
- org.jflicks.log;version="1.0.0",\
  org.jflicks.metadata;version="1.0.0",\
  org.jflicks.mvc;version="1.0.0",\
  org.jflicks.nms;version="1.0.0",\

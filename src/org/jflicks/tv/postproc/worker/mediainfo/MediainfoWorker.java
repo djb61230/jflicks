@@ -23,6 +23,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.WorkerEvent;
+import org.jflicks.util.LogUtil;
 
 /**
  * Worker implementation that can flag a Recording using the comskip
@@ -67,7 +68,7 @@ public class MediainfoWorker extends BaseWorker implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            log(INFO, "MediainfoWorker: completed");
+            LogUtil.log(LogUtil.INFO, "MediainfoWorker: completed");
             //MediainfoJob job = (MediainfoJob) event.getSource();
             FFmpegJob job = (FFmpegJob) event.getSource();
             removeJobContainer(job);
@@ -75,7 +76,7 @@ public class MediainfoWorker extends BaseWorker implements JobListener {
 
         } else {
 
-            //log(DEBUG, "MediainfoWorker: " + event.getMessage());
+            //LogUtil.log(LogUtil.DEBUG, "MediainfoWorker: " + event.getMessage());
         }
     }
 

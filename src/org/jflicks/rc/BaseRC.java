@@ -20,8 +20,6 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import org.jflicks.log.BaseLog;
-
 /**
  * This base class implements some RC functionality that extensions can
  * take advantage.
@@ -29,7 +27,7 @@ import org.jflicks.log.BaseLog;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseRC extends BaseLog implements RC {
+public abstract class BaseRC implements RC {
 
     private String title;
     private boolean mouseControl;

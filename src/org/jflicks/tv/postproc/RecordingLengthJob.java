@@ -25,6 +25,7 @@ import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Recording;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -98,7 +99,7 @@ public class RecordingLengthJob extends AbstractJob implements JobListener {
 
             SystemJob job = SystemJob.getInstance("ffmpeg -i " + r.getPath()
                 + "." + r.getIndexedExtension());
-            System.out.println("getting real length: " + job.getCommand());
+            LogUtil.log(LogUtil.DEBUG, "getting real length: " + job.getCommand());
             job.addJobListener(this);
             setSystemJob(job);
             JobContainer jc = JobManager.getJobContainer(job);
@@ -191,7 +192,7 @@ public class RecordingLengthJob extends AbstractJob implements JobListener {
 
         } else {
 
-            //System.out.println(event.getMessage());
+            //LogUtil.log(LogUtil.DEBUG, event.getMessage());
         }
     }
 

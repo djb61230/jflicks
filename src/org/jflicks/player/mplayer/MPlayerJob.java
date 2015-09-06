@@ -26,6 +26,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -108,15 +109,6 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
     public void setJobContainer(JobContainer j) {
         jobContainer = j;
-    }
-
-    public void log(int level, String message) {
-
-        MPlayer m = getMPlayer();
-        if ((m != null) && (message != null)) {
-
-            m.log(level, message);
-        }
     }
 
     /**
@@ -374,7 +366,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
                 + " " + startParameter + " " + getPath());
         }
 
-        log(MPlayer.DEBUG, "started: " + job.getCommand());
+        LogUtil.log(LogUtil.DEBUG, "started: " + job.getCommand());
         job.addJobListener(this);
         setSystemJob(job);
         JobContainer jc = JobManager.getJobContainer(job);
@@ -387,7 +379,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
         } catch (IOException ex) {
 
-            log(MPlayer.WARNING, "WARNING: FIFO not opened");
+            LogUtil.log(LogUtil.WARNING, "WARNING: FIFO not opened");
         }
         setTerminate(false);
     }
@@ -423,7 +415,7 @@ public class MPlayerJob extends AbstractJob implements JobListener {
 
             } catch (IOException ex) {
 
-                log(MPlayer.WARNING, "WARNING: could not close FIFO");
+                LogUtil.log(LogUtil.WARNING, "WARNING: could not close FIFO");
             }
         }
         setTerminate(true);

@@ -19,6 +19,8 @@ package org.jflicks.metadata.themoviedb;
 import java.io.Serializable;
 import java.util.List;
 
+import org.jflicks.util.LogUtil;
+
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -157,12 +159,12 @@ public abstract class BaseObject implements Serializable {
 
     public void dump(Document doc) {
 
-        System.out.println("----------------------------");
+        LogUtil.log(LogUtil.DEBUG, "----------------------------");
         Format f = Format.getPrettyFormat();
         f.setEncoding("ISO-8859-1");
         XMLOutputter out = new XMLOutputter(f);
-        System.out.println(out.outputString(doc));
-        System.out.println("----------------------------");
+        LogUtil.log(LogUtil.DEBUG, out.outputString(doc));
+        LogUtil.log(LogUtil.DEBUG, "----------------------------");
     }
 }
 

@@ -28,6 +28,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -121,7 +122,7 @@ public class MPlayerUdpJob extends MPlayerJob {
                 + full.getAbsolutePath() + " -");
         }
 
-        log(MPlayer.DEBUG, "started: " + job.getCommand());
+        LogUtil.log(LogUtil.DEBUG, "started: " + job.getCommand());
         job.addJobListener(this);
         setSystemJob(job);
         JobContainer jc = JobManager.getJobContainer(job);
@@ -156,11 +157,11 @@ public class MPlayerUdpJob extends MPlayerJob {
 
             } catch (IOException ex) {
 
-                System.out.println(ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, ex.getMessage());
             }
         }
 
-        System.out.println("Time to close socket: " + dsocket);
+        LogUtil.log(LogUtil.DEBUG, "Time to close socket: " + dsocket);
         if (dsocket != null) {
 
             try {
@@ -182,7 +183,7 @@ public class MPlayerUdpJob extends MPlayerJob {
         JobContainer jc = getJobContainer();
         if (jc != null) {
 
-            System.out.println("calling stop on job container");
+            LogUtil.log(LogUtil.DEBUG, "calling stop on job container");
             jc.stop();
         }
 

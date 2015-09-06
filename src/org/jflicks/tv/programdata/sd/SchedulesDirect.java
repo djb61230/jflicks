@@ -49,6 +49,7 @@ import org.jflicks.tv.programdata.sd.json.Program;
 import org.jflicks.tv.programdata.sd.json.StationID;
 import org.jflicks.tv.programdata.sd.json.StationSchedule;
 import org.jflicks.tv.programdata.sd.json.UserLineup;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -130,7 +131,7 @@ public class SchedulesDirect {
 
         }  catch (IOException ex) {
 
-            System.out.println("writeCache: " + ex.getMessage());
+            LogUtil.log(LogUtil.WARNING, "writeCache: " + ex.getMessage());
 
         }  finally {
             
@@ -267,27 +268,6 @@ public class SchedulesDirect {
         }
     }
 
-    private boolean isValidXtvdXml() {
-
-        boolean result = false;
-
-        File f = new File("conf/XTVD.xml");
-        if ((f.exists()) && (f.isFile())) {
-
-            byte[] data = Util.read(f);
-            if (data != null) {
-
-                String tmp = new String(data);
-                if (tmp.indexOf("USER_NAME_FOR_SD") == -1) {
-
-                    result = true;
-                }
-            }
-        }
-
-        return (result);
-    }
-
     private StationID[] getStationIDsByLineupName(String name) {
 
         StationID[] result = null;
@@ -295,7 +275,7 @@ public class SchedulesDirect {
         if (name != null) {
 
             name = name + ".properties";
-            System.out.println("looking to conf file <" + name + ">");
+            LogUtil.log(LogUtil.DEBUG, "looking to conf file <" + name + ">");
             File conf = new File("conf");
             File pfile = new File(conf, name);
             Properties p = Util.findProperties(pfile);
@@ -357,7 +337,7 @@ public class SchedulesDirect {
         if (name != null) {
 
             name = name + ".properties";
-            System.out.println("looking to conf file <" + name + ">");
+            LogUtil.log(LogUtil.DEBUG, "looking to conf file <" + name + ">");
             File conf = new File("conf");
             File pfile = new File(conf, name);
             Properties p = Util.findProperties(pfile);
@@ -423,7 +403,7 @@ public class SchedulesDirect {
 
                     if (c.doStatus()) {
 
-                        System.out.println("SD json server status ok\n");
+                        LogUtil.log(LogUtil.DEBUG, "SD json server status ok\n");
                         if (c.doHeadend(country, zip)) {
 
                             result = c;
@@ -433,7 +413,7 @@ public class SchedulesDirect {
 
             } catch (Exception ex) {
 
-                System.out.println("getClient: " + ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, "getClient: " + ex.getMessage());
             }
         }
 
@@ -477,174 +457,151 @@ public class SchedulesDirect {
      */
     public Xtvd getXtvd(String user, String password, String country, String zipcode) {
 
+        LogUtil.log(LogUtil.DEBUG, "getXtvd user " + user);
+        LogUtil.log(LogUtil.DEBUG, "getXtvd password " + password);
+        LogUtil.log(LogUtil.DEBUG, "getXtvd country " + country);
+        LogUtil.log(LogUtil.DEBUG, "getXtvd zipcode " + zipcode);
+
         Xtvd result = null;
 
-        if (isValidXtvdXml()) {
+        // We now use the JSON service and make our own Xtvd
+        // instance.  Then very little other code needs to change.
+        result = new Xtvd();
 
-            // We now use the JSON service and make our own Xtvd
-            // instance.  Then very little other code needs to change.
-            result = new Xtvd();
+        Client c = getClient(user, password, country, zipcode);
+        if (c != null) {
 
-            Client c = getClient(user, password, country, zipcode);
-            if (c != null) {
+            UserLineup ul = c.getUserLineup();
+            if (ul != null) {
 
-                UserLineup ul = c.getUserLineup();
-                if (ul != null) {
+                String[] lineupNames = handleLineup(result, c, ul.getLineups());
+                if ((lineupNames != null) && (lineupNames.length > 0)) {
 
-                    String[] lineupNames = handleLineup(result, c, ul.getLineups());
-                    if ((lineupNames != null) && (lineupNames.length > 0)) {
+                    ArrayList<net.sf.xtvdclient.xtvd.datatypes.Schedule> schedlist =
+                        new ArrayList<net.sf.xtvdclient.xtvd.datatypes.Schedule>();
+                    ArrayList<String> md5list = new ArrayList<String>();
+                    for (int i = 0; i < lineupNames.length; i++) {
 
-                        ArrayList<net.sf.xtvdclient.xtvd.datatypes.Schedule> schedlist =
-                            new ArrayList<net.sf.xtvdclient.xtvd.datatypes.Schedule>();
-                        ArrayList<String> md5list = new ArrayList<String>();
-                        for (int i = 0; i < lineupNames.length; i++) {
+                        LogUtil.log(LogUtil.DEBUG, lineupNames[i]);
+                        String[] sids = getStationsByLineupName(lineupNames[i]);
+                        if ((sids != null) && (sids.length > 0)) {
 
-                            System.out.println("DEBUG: " + lineupNames[i]);
-                            String[] sids = getStationsByLineupName(lineupNames[i]);
-                            if ((sids != null) && (sids.length > 0)) {
+                            GuideRequest[] grs = new GuideRequest[sids.length];
+                            for (int j = 0; j < grs.length; j++) {
 
-                                GuideRequest[] grs = new GuideRequest[sids.length];
-                                for (int j = 0; j < grs.length; j++) {
+                                grs[j] = new GuideRequest(sids[j]);
+                            }
 
-                                    grs[j] = new GuideRequest(sids[j]);
-                                }
+                            StationSchedule[] sched = c.getGuide(grs);
+                            LogUtil.log(LogUtil.DEBUG, sched.toString());
+                            if ((sched != null) && (sched.length > 0)) {
 
-                                StationSchedule[] sched = c.getGuide(grs);
-                                System.out.println("DEBUG: " + sched);
-                                if ((sched != null) && (sched.length > 0)) {
+                                // Make an xtvd Schedule.
+                                for (int j = 0; j < sched.length; j++) {
 
-                                    // Make an xtvd Schedule.
-                                    for (int j = 0; j < sched.length; j++) {
+                                    Program[] progs = sched[j].getPrograms();
+                                    if ((progs != null) && (progs.length > 0)) {
 
-                                        System.out.println("DEBUG: " + sched[j]);
-                                        Program[] progs = sched[j].getPrograms();
-                                        if ((progs != null) && (progs.length > 0)) {
+                                        for (int k = 0; k < progs.length; k++) {
 
-                                            for (int k = 0; k < progs.length; k++) {
+                                            net.sf.xtvdclient.xtvd.datatypes.Schedule xsched =
+                                                new net.sf.xtvdclient.xtvd.datatypes.Schedule();
 
-                                                net.sf.xtvdclient.xtvd.datatypes.Schedule xsched =
-                                                    new net.sf.xtvdclient.xtvd.datatypes.Schedule();
+                                            xsched.setStation(Util.str2int(sched[j].getStationID(), 0));
 
-                                                xsched.setStation(Util.str2int(sched[j].getStationID(), 0));
+                                            xsched.setProgram(progs[k].getProgramID());
 
-                                                xsched.setProgram(progs[k].getProgramID());
+                                            try {
 
-                                                try {
+                                                net.sf.xtvdclient.xtvd.datatypes.DateTime dt =
+                                                    new net.sf.xtvdclient.xtvd.datatypes.DateTime(progs[k].getAirDateTime());
+                                                xsched.setTime(dt);
 
-                                                    net.sf.xtvdclient.xtvd.datatypes.DateTime dt =
-                                                        new net.sf.xtvdclient.xtvd.datatypes.DateTime(progs[k].getAirDateTime());
-                                                    xsched.setTime(dt);
+                                            } catch (Exception ex) {
 
-                                                } catch (Exception ex) {
-
-                                                    System.out.println("getXtvd: " + ex.getMessage());
-                                                }
-
-                                                String durformat = secondsToDuration(progs[k].getDuration());
-                                                net.sf.xtvdclient.xtvd.datatypes.Duration dur =
-                                                    new net.sf.xtvdclient.xtvd.datatypes.Duration(durformat);
-
-                                                xsched.setDuration(dur);
-                                                schedlist.add(xsched);
-                                                md5list.add(progs[k].getMd5());
+                                                LogUtil.log(LogUtil.WARNING, ex.getMessage());
                                             }
+
+                                            String durformat = secondsToDuration(progs[k].getDuration());
+                                            net.sf.xtvdclient.xtvd.datatypes.Duration dur =
+                                                new net.sf.xtvdclient.xtvd.datatypes.Duration(durformat);
+
+                                            xsched.setDuration(dur);
+                                            schedlist.add(xsched);
+                                            md5list.add(progs[k].getMd5());
                                         }
                                     }
-
-                                } else {
-
-                                    System.out.println("NOT found sched");
                                 }
 
                             } else {
-                                System.out.println("NOT found conf file");
+
+                                LogUtil.log(LogUtil.INFO, "NOT found sched");
                             }
+
+                        } else {
+
+                            LogUtil.log(LogUtil.INFO, "NOT found conf file");
                         }
+                    }
 
-                        result.setSchedules(schedlist);
+                    result.setSchedules(schedlist);
 
-                        // First unmark all Programs in our map.
-                        unmark();
+                    // First unmark all Programs in our map.
+                    unmark();
 
-                        // Now we have to get the programs
-                        ArrayList<String> allPidlist = new ArrayList<String>();
-                        ArrayList<String> pidlist = new ArrayList<String>();
-                        for (int i = 0; i < schedlist.size(); i++) {
+                    // Now we have to get the programs
+                    ArrayList<String> allPidlist = new ArrayList<String>();
+                    ArrayList<String> pidlist = new ArrayList<String>();
+                    for (int i = 0; i < schedlist.size(); i++) {
 
-                            String pid = schedlist.get(i).getProgram();
-                            String md5 = md5list.get(i);
-                            allPidlist.add(pid);
+                        String pid = schedlist.get(i).getProgram();
+                        String md5 = md5list.get(i);
+                        allPidlist.add(pid);
 
-                            //System.out.println("pid <" + pid + "><" + md5 + ">");
-                            if (!haveInCache(pid, md5)) {
+                        if (!haveInCache(pid, md5)) {
 
-                                pidlist.add(pid);
-                            }
+                            pidlist.add(pid);
                         }
+                    }
 
-                        // The pidlist has all the Programs we have to fetch.
-                        System.out.println("we have to fetch " + pidlist.size() + " programs.");
-                        if (pidlist.size() > 0) {
+                    // The pidlist has all the Programs we have to fetch.
+                    LogUtil.log(LogUtil.DEBUG, "we have to fetch " + pidlist.size() + " programs.");
+                    if (pidlist.size() > 0) {
 
-                            String[] parray = pidlist.toArray(new String[pidlist.size()]);
-                            ArrayList<String[]> alist = computeList(parray, 1000);
-                            if ((alist != null) && (alist.size() > 0)) {
+                        String[] parray = pidlist.toArray(new String[pidlist.size()]);
+                        ArrayList<String[]> alist = computeList(parray, 1000);
+                        if ((alist != null) && (alist.size() > 0)) {
 
-                                for (int i = 0; i < alist.size(); i++) {
+                            for (int i = 0; i < alist.size(); i++) {
 
-                                    String[] sub = alist.get(i);
+                                String[] sub = alist.get(i);
 
-                                    Program[] progs = c.getPrograms(sub);
-                                    if ((progs != null) && (progs.length > 0)) {
+                                Program[] progs = c.getPrograms(sub);
+                                if ((progs != null) && (progs.length > 0)) {
 
-                                        for (int j = 0; j < progs.length; j++) {
+                                    for (int j = 0; j < progs.length; j++) {
 
-                                            putInCache(progs[j]);
-                                        }
+                                        putInCache(progs[j]);
                                     }
                                 }
                             }
                         }
-
-                        // Next mark all Programs in our map.
-                        String[] parray = allPidlist.toArray(new String[allPidlist.size()]);
-                        mark(parray);
-
-                        // Now purge old programs.
-                        purge();
-
-                        // We have to convert our cache programs to xtvd programs.
-                        result.setPrograms(handlePrograms());
-
-                        // Finally lets write the cache.
-                        writeCache();
                     }
+
+                    // Next mark all Programs in our map.
+                    String[] parray = allPidlist.toArray(new String[allPidlist.size()]);
+                    mark(parray);
+
+                    // Now purge old programs.
+                    purge();
+
+                    // We have to convert our cache programs to xtvd programs.
+                    result.setPrograms(handlePrograms());
+
+                    // Finally lets write the cache.
+                    writeCache();
                 }
             }
-
-            /*
-            try {
-
-                buildInterface();
-                getData();
-
-                BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(
-                        new FileInputStream(getWorkingFile()), "UTF-8"));
-
-                result = new Xtvd();
-                Parser parser = ParserFactory.getXtvdParser(reader, result);
-                parser.parseXTVD();
-                reader.close();
-
-            } catch (DataDirectException ex) {
-            } catch (FileNotFoundException ex) {
-            } catch (UnsupportedEncodingException ex) {
-            } catch (IOException ex) {
-            } catch (Exception ex) {
-            }
-            */
-
         }
 
         return (result);
@@ -666,9 +623,9 @@ public class SchedulesDirect {
 
                 net.sf.xtvdclient.xtvd.datatypes.Lineup l = new net.sf.xtvdclient.xtvd.datatypes.Lineup();
 
-                System.out.println("BBBBBBBBBBBBB " + array[i].getName());
+                LogUtil.log(LogUtil.DEBUG, array[i].getName());
                 String mapName = array[i].getName();
-                System.out.println("BBBBBBBBBBBBB " + mapName);
+                LogUtil.log(LogUtil.DEBUG, mapName);
                 Mapping jmap = c.getMapping(mapName);
                 String lineupValidName = null;
                 lineuplist.add(array[i].toString());
@@ -761,12 +718,10 @@ public class SchedulesDirect {
 
     private void handleStations(HashMap<Integer, net.sf.xtvdclient.xtvd.datatypes.Station> hm, Mapping m, String lineupName) {
 
-        System.out.println("BBBBBBBBBBBBB m " + m);
-        System.out.println("BBBBBBBBBBBBB lineupName " + lineupName);
+        LogUtil.log(LogUtil.DEBUG, lineupName);
         if (m != null) {
 
             org.jflicks.tv.programdata.sd.json.Station[] array = getStations(m, lineupName);
-            System.out.println("BBBBBBBBBBBBB array " + array);
             if ((array != null) && (array.length > 0)) {
 
                 for (int i = 0; i < array.length; i++) {
@@ -884,7 +839,7 @@ public class SchedulesDirect {
 
                 } catch (Exception ex) {
 
-                    System.out.println("handlePrograms: " + ex.getMessage());
+                    LogUtil.log(LogUtil.WARNING, ex.getMessage());
                 }
             }
 
@@ -902,28 +857,6 @@ public class SchedulesDirect {
         }
 
         return (result);
-    }
-
-    /**
-     * Simple test main method.
-     *
-     * @param args Ignored arguments.
-     * @throws Exception on any error.
-     */
-    public static void main(String[] args) throws Exception {
-
-        SchedulesDirect sd = new SchedulesDirect();
-        Xtvd xtvd = sd.getXtvd("djb61230@yahoo.com", "sd8662", "USA", "12095");
-
-        Map map = xtvd.getStations();
-        if (map != null) {
-
-            Collection coll = map.values();
-            if (coll != null) {
-
-                System.out.println("SD station count <" + coll.size() + ">");
-            }
-        }
     }
 
 }

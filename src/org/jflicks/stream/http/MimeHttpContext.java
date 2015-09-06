@@ -21,6 +21,8 @@ import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jflicks.util.LogUtil;
+
 import org.osgi.service.http.HttpContext;
 
 /**
@@ -105,7 +107,8 @@ public class MimeHttpContext implements HttpContext {
             result = new URL("file:///" + name);
 
         } catch (MalformedURLException ex) {
-            System.out.println("bonage: " + ex.getMessage());
+
+            LogUtil.log(LogUtil.WARNING, "bonage: " + ex.getMessage());
         }
 
         return (result);

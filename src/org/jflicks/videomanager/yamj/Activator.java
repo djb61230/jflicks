@@ -22,7 +22,6 @@ import org.jflicks.videomanager.VideoManager;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -32,8 +31,6 @@ import org.osgi.util.tracker.ServiceTracker;
  * @version 1.0
  */
 public class Activator extends BaseActivator {
-
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -48,11 +45,6 @@ public class Activator extends BaseActivator {
 
         bc.registerService(VideoManager.class.getName(), vm, dict);
 
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        vm.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
-
         vm.videoScan();
     }
 
@@ -60,12 +52,6 @@ public class Activator extends BaseActivator {
      * {@inheritDoc}
      */
     public void stop(BundleContext context) {
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
-        }
     }
 
 }

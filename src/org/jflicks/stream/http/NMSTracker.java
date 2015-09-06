@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.jflicks.nms.NMS;
 import org.jflicks.util.BaseTracker;
+import org.jflicks.util.LogUtil;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -94,7 +95,7 @@ public class NMSTracker extends BaseTracker {
      */
     public void removedService(ServiceReference sr, Object svc) {
 
-        System.out.println("Freakin removed service.");
+        LogUtil.log(LogUtil.DEBUG, "Freakin removed service.");
         removeNMS((NMS) svc);
         String title = (String) sr.getProperty(NMS.TITLE_PROPERTY);
         dispose(title);

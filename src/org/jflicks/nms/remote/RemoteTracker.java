@@ -22,6 +22,7 @@ import ch.ethz.iks.r_osgi.URI;
 
 import org.jflicks.nms.NMS;
 import org.jflicks.util.BaseTracker;
+import org.jflicks.util.LogUtil;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -154,7 +155,7 @@ public class RemoteTracker extends BaseTracker {
      */
     public void connect(String host, int port) {
 
-        System.out.println("connect: " + host + ":" + port);
+        LogUtil.log(LogUtil.INFO, "connect: " + host + ":" + port);
         RemoteOSGiService r = getCurrentRemoteOSGiService();
         if ((r != null) && (host != null)) {
 
@@ -196,7 +197,7 @@ public class RemoteTracker extends BaseTracker {
 
             } catch (Exception ex) {
 
-                System.out.println("WARNING: could not disconnect.");
+                LogUtil.log(LogUtil.WARNING, "could not disconnect.");
             }
         }
     }

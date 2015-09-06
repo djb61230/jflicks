@@ -25,6 +25,7 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 import org.jflicks.imagecache.BaseImageCache;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -149,7 +150,7 @@ public class SystemImageCache extends BaseImageCache {
 
             } catch (IOException ex) {
 
-                log(WARNING, ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, ex.getMessage());
             }
         }
 
@@ -195,7 +196,7 @@ public class SystemImageCache extends BaseImageCache {
 
                             } catch (IOException ex) {
 
-                                log(WARNING, ex.getMessage());
+                                LogUtil.log(LogUtil.WARNING, ex.getMessage());
                             }
 
                         } else {
@@ -212,7 +213,7 @@ public class SystemImageCache extends BaseImageCache {
 
                                 } catch (IOException ex) {
 
-                                    log(WARNING, ex.getMessage());
+                                    LogUtil.log(LogUtil.WARNING, ex.getMessage());
                                 }
                             }
                         }
@@ -269,7 +270,7 @@ public class SystemImageCache extends BaseImageCache {
 
             } catch (IOException ex) {
 
-                log(WARNING, ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, ex.getMessage());
             }
         }
     }

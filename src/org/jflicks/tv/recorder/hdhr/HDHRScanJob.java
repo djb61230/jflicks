@@ -29,6 +29,7 @@ import org.jflicks.job.JobManager;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -166,7 +167,7 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
         HDHRRecorder r = getHDHRRecorder();
         if ((r != null) && (message != null)) {
 
-            r.log(status, message);
+            LogUtil.log(status, message);
             NMS n = r.getNMS();
             if (n != null) {
 
@@ -194,7 +195,7 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
         }
         sj.setFrequencyType(usertype);
 
-        log(HDHRRecorder.DEBUG, "starting scan job...");
+        log(LogUtil.DEBUG, "starting scan job...");
         JobContainer jc = JobManager.getJobContainer(sj);
         setJobContainer(jc);
         jc.start();
@@ -254,7 +255,7 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
 
                         } else {
 
-                            log(HDHRRecorder.DEBUG, "Not Found!");
+                            log(LogUtil.DEBUG, "Not Found!");
                         }
                     }
 
@@ -287,9 +288,9 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
 
                     if (sb.length() > 0) {
 
-                        log(HDHRRecorder.DEBUG, "-------------------------");
-                        log(HDHRRecorder.DEBUG, sb.toString());
-                        log(HDHRRecorder.DEBUG, "-------------------------");
+                        log(LogUtil.DEBUG, "-------------------------");
+                        log(LogUtil.DEBUG, sb.toString());
+                        log(LogUtil.DEBUG, "-------------------------");
                         File conf = new File("conf");
                         if ((conf.exists()) && (conf.isDirectory())) {
 
@@ -298,12 +299,12 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
                             try {
 
                                 Util.writeTextFile(scan, sb.toString());
-                                log(HDHRRecorder.DEBUG, "Writing "
+                                log(LogUtil.DEBUG, "Writing "
                                     + scan.getPath());
 
                             } catch (IOException ex) {
 
-                                log(HDHRRecorder.DEBUG, ex.getMessage());
+                                log(LogUtil.DEBUG, ex.getMessage());
                             }
                         }
                     }
@@ -312,7 +313,7 @@ public class HDHRScanJob extends AbstractJob implements JobListener {
 
         } else if (event.getType() == JobEvent.UPDATE) {
 
-            log(HDHRRecorder.DEBUG, event.getMessage());
+            log(LogUtil.DEBUG, event.getMessage());
         }
     }
 

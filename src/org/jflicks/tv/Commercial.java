@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.jflicks.util.Util;
+import org.jflicks.util.LogUtil;
 
 /**
  * This class contains all the properties representing a Commercial.  A
@@ -187,8 +188,8 @@ public class Commercial implements Serializable, Comparable<Commercial> {
                         stmp = array[i].substring(first + 1, second);
                         stmp = stmp.trim();
                         int end = (int) Util.str2double(stmp, 0.0);
-                        System.out.println("fromEDL: start " + start);
-                        System.out.println("fromEDL: end " + end);
+                        LogUtil.log(LogUtil.DEBUG, "fromEDL: start " + start);
+                        LogUtil.log(LogUtil.DEBUG, "fromEDL: end " + end);
                         Commercial tmp = new Commercial();
                         tmp.setStart(start);
                         tmp.setEnd(end);

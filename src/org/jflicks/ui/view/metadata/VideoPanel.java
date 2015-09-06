@@ -973,7 +973,6 @@ public class VideoPanel extends BasePanel implements ActionListener,
     private void updateDuration() {
 
         Video v = getSelectedVideo();
-        System.out.println("updateDuration: " + v);
         if (v != null) {
 
             JTextField tf = getDurationTextField();

@@ -22,6 +22,7 @@ import org.jflicks.restlet.LiveTVSupport;
 import org.jflicks.restlet.NMSSupport;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.ShowAiring;
+import org.jflicks.util.LogUtil;
 
 import org.restlet.data.MediaType;
 import org.restlet.ext.json.JsonRepresentation;
@@ -59,18 +60,17 @@ public class LiveTVItemResource extends BaseServerResource {
 
         LiveTVSupport lsup = LiveTVSupport.getInstance();
 
-        log(NMSApplication.DEBUG, "GET LiveTVItems.");
+        LogUtil.log(LogUtil.DEBUG, "GET LiveTVItems.");
         if (isFormatJson()) {
 
-            log(NMSApplication.DEBUG, "User wants JSON.");
+            LogUtil.log(LogUtil.DEBUG, "User wants JSON.");
             LiveTVItem[] array = lsup.getLiveTVItems();
-            log(NMSApplication.DEBUG, "getLiveTVItems array null = "
-                + (array == null));
+            LogUtil.log(LogUtil.DEBUG, "getLiveTVItems array null = " + (array == null));
             Gson g = getGson();
             if ((g != null) && (array != null)) {
 
                 String data = g.toJson(array);
-                log(NMSApplication.DEBUG, "JSON data null = " + (data == null));
+                LogUtil.log(LogUtil.DEBUG, "JSON data null = " + (data == null));
                 if (data != null) {
 
                     JsonRepresentation sr = new JsonRepresentation(data);
@@ -80,10 +80,9 @@ public class LiveTVItemResource extends BaseServerResource {
 
         } else if (isFormatXml()) {
 
-            log(NMSApplication.DEBUG, "User wants XML.");
+            LogUtil.log(LogUtil.DEBUG, "User wants XML.");
             LiveTVItem[] array = lsup.getLiveTVItems();
-            log(NMSApplication.DEBUG, "getLiveTVItems array null = "
-                + (array == null));
+            LogUtil.log(LogUtil.DEBUG, "getLiveTVItems array null = " + (array == null));
             XStream x = getXStream();
             if ((x != null) && (array != null)) {
 
@@ -97,7 +96,7 @@ public class LiveTVItemResource extends BaseServerResource {
             }
         }
 
-        log(NMSApplication.DEBUG, "Finished getting livetvitems.");
+        LogUtil.log(LogUtil.DEBUG, "Finished getting livetvitems.");
 
         return (result);
     }

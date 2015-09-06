@@ -24,7 +24,6 @@ import org.jflicks.job.JobManager;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -35,8 +34,6 @@ import org.osgi.util.tracker.ServiceTracker;
  * @version 1.0
  */
 public class Activator extends BaseActivator {
-
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -51,11 +48,6 @@ public class Activator extends BaseActivator {
 
         jc.start();
         bc.registerService(RC.class.getName(), rc, null);
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        rc.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
     }
 
     /**
@@ -66,12 +58,6 @@ public class Activator extends BaseActivator {
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 

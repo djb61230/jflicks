@@ -24,7 +24,6 @@ import org.jflicks.util.BaseActivator;
 import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 import java.util.Hashtable;
@@ -38,18 +37,12 @@ import java.util.Properties;
  */
 public class Activator extends BaseActivator {
 
-    private ServiceTracker logServiceTracker;
-
     /**
      * {@inheritDoc}
      */
     public void start(BundleContext bc) {
 
         setBundleContext(bc);
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        logServiceTracker.open();
 
         IndexerWorker[] array = null;
 
@@ -89,10 +82,7 @@ public class Activator extends BaseActivator {
 
         if (array != null) {
 
-            System.out.println("array.length: " + array.length);
             for (int i = 0; i < array.length; i++) {
-
-                array[i].setLogServiceTracker(logServiceTracker);
 
                 Hashtable<String, String> dict =
                     new Hashtable<String, String>();
@@ -111,12 +101,6 @@ public class Activator extends BaseActivator {
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 

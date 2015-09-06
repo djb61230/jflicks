@@ -364,16 +364,4 @@ public class ScanJob extends BaseDeviceJob {
         }
     }
 
-    /**
-     * Test main method.
-     *
-     * @param args Arguments to run as a system job.
-     */
-    public static void main(String[] args) {
-
-        ScanJob job = new ScanJob();
-        job.setDumpText(new String(Util.read(new File(args[0]))));
-        System.out.println(job.getFileText());
-    }
-
 }

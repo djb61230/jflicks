@@ -19,13 +19,14 @@ package org.jflicks.restlet.nms;
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 
-import org.jflicks.util.BaseActivator;
 import org.jflicks.restlet.NMSTracker;
 import org.jflicks.restlet.servercomponent.ServerComponentTracker;
+import org.jflicks.util.BaseActivator;
+import org.jflicks.util.LogUtil;
+import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -39,7 +40,6 @@ public class Activator extends BaseActivator {
     private JmDNS jmdns;
     private NMSTracker nmsTracker;
     private ServerComponentTracker serverComponentTracker;
-    private ServiceTracker logServiceTracker;
 
     /**
      * {@inheritDoc}
@@ -56,23 +56,21 @@ public class Activator extends BaseActivator {
         serverComponentTracker = new ServerComponentTracker(bc, app);
         serverComponentTracker.open();
 
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        app.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
-
         // Setup DNS for discovery.
         try {
 
+            String restPort = System.getProperty("org.jflicks.restlet.servercomponent.system.SystemServerComponent");
+            int defaultPort = Util.str2int(restPort, 8182);
+
             jmdns = JmDNS.create("localhost");
             ServiceInfo si = ServiceInfo.create("_http._tcp.local.",
-                "jflicks", 8182, "jflicks REST service");
+                "jflicks", defaultPort, "jflicks REST service");
             jmdns.registerService(si);
-            System.out.println("we have it registered dude!");
+            LogUtil.log(LogUtil.DEBUG, "we have it registered dude!");
 
         } catch (Exception ex) {
 
-            System.out.println("poo: " + ex.getMessage());
+            LogUtil.log(LogUtil.WARNING, "poo: " + ex.getMessage());
         }
     }
 
@@ -85,12 +83,6 @@ public class Activator extends BaseActivator {
 
             nmsTracker.close();
             nmsTracker = null;
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
 
         if (serverComponentTracker != null) {

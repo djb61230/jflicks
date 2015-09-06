@@ -58,6 +58,7 @@ import org.jflicks.ui.view.fe.VideoInfoWindow;
 import org.jflicks.ui.view.fe.VideoProperty;
 import org.jflicks.ui.view.fe.screen.PlayerScreen;
 import org.jflicks.ui.view.fe.screen.ScreenEvent;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXPanel;
@@ -100,7 +101,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         File home = new File(".");
         File dbhome = new File(home, "db");
         setBookmarkFile(new File(dbhome, "vidbookmarks.dat"));
-        log(DEBUG, getBookmarkFile().getPath());
+        LogUtil.log(LogUtil.DEBUG, getBookmarkFile().getPath());
         load();
 
         setFocusable(true);
@@ -652,12 +653,9 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
         Arrays.sort(tmp, new VideoSortByTitle());
         int newhashCode = Arrays.hashCode(tmp);
         int oldhashCode = Arrays.hashCode(videos);
-        System.out.println("hashCode: " + newhashCode);
-        System.out.println("hashCode: " + oldhashCode);
-        //if (isUpdatedParameter()) {
         if ((newhashCode != oldhashCode) || (isUpdatedParameter())) {
 
-            log(DEBUG, "Seems like we got a new list...");
+            LogUtil.log(LogUtil.DEBUG, "Seems like we got a new list...");
 
             videos = tmp;
 
@@ -988,7 +986,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                         } catch (IOException ex) {
 
-                            log(INFO, ex.getMessage());
+                            LogUtil.log(LogUtil.INFO, ex.getMessage());
                         }
                     }
 
@@ -1023,25 +1021,25 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             String s = v.getAspectRatio();
             NMS n = NMSUtil.select(getNMS(), v.getHostPort());
             FrontEndView fev = (FrontEndView) getView();
-            log(DEBUG, "aspect: <" + s + ">");
-            log(DEBUG, "nms: <" + n + ">");
-            log(DEBUG, "hostport: <" + v.getHostPort() + ">");
+            LogUtil.log(LogUtil.DEBUG, "aspect: <" + s + ">");
+            LogUtil.log(LogUtil.DEBUG, "nms: <" + n + ">");
+            LogUtil.log(LogUtil.DEBUG, "hostport: <" + v.getHostPort() + ">");
             if ((s != null) && (n != null) && (fev != null)) {
 
                 if (s.equals(NMSConstants.ASPECT_RATIO_16X9)) {
 
                     result = fev.transformPath(n.getFeatureIntro169());
-                    log(DEBUG, "result 169: <" + result + ">");
+                    LogUtil.log(LogUtil.DEBUG, "result 169: <" + result + ">");
 
                 } else if (s.equals(NMSConstants.ASPECT_RATIO_235X1)) {
 
                     result = fev.transformPath(n.getFeatureIntro235());
-                    log(DEBUG, "result 235: <" + result + ">");
+                    LogUtil.log(LogUtil.DEBUG, "result 235: <" + result + ">");
 
                 } else if (s.equals(NMSConstants.ASPECT_RATIO_4X3)) {
 
                     result = fev.transformPath(n.getFeatureIntro43());
-                    log(DEBUG, "result 43: <" + result + ">");
+                    LogUtil.log(LogUtil.DEBUG, "result 43: <" + result + ">");
                 }
             }
         }
@@ -1244,7 +1242,6 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
             if (v != null) {
 
                 String vidpath = computeVideoPath(v);
-                System.out.println("vidpath: " + vidpath);
                 ButtonPanel pbp = getPlayButtonPanel();
                 if (PLAY.equals(pbp.getSelectedButton())) {
 
@@ -1318,7 +1315,7 @@ public class VideoScreen extends PlayerScreen implements VideoProperty,
 
                 } else if (CANCEL.equals(pbp.getSelectedButton())) {
 
-                    log(DEBUG, "cancel hit");
+                    LogUtil.log(LogUtil.DEBUG, "cancel hit");
                 }
 
                 unpopup();

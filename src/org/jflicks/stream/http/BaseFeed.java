@@ -40,6 +40,7 @@ import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Task;
 import org.jflicks.tv.Upcoming;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import org.osgi.framework.BundleContext;
@@ -53,8 +54,7 @@ import org.osgi.service.http.NamespaceException;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseFeed extends HttpServlet
-    implements HttpServiceProperty {
+public abstract class BaseFeed extends HttpServlet implements HttpServiceProperty {
 
     public static final String NOT_RECORDING_TEXT = "NOT recording";
     public static final String NOT_RECORDING = "NOT_RECORDING";
@@ -165,11 +165,11 @@ public abstract class BaseFeed extends HttpServlet
 
             } catch (ServletException ex) {
 
-                System.out.println("BaseFeed: " + ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, "BaseFeed: " + ex.getMessage());
 
             } catch (NamespaceException ex) {
 
-                System.out.println("NamespaceException: " + ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, "NamespaceException: " + ex.getMessage());
             }
         }
     }
@@ -395,7 +395,6 @@ public abstract class BaseFeed extends HttpServlet
 
         Recording[] result = null;
 
-        System.out.println("nms: " + n);
         if (n != null) {
 
             Recording[] array = n.getRecordings();
@@ -467,7 +466,6 @@ public abstract class BaseFeed extends HttpServlet
 
         Upcoming[] result = null;
 
-        System.out.println("nms: " + n);
         if (n != null) {
 
             result = n.getUpcomings();
@@ -1069,8 +1067,8 @@ public abstract class BaseFeed extends HttpServlet
         if (rr != null) {
 
             rr = new RecordingRule(rr);
-            System.out.println("type: <" + type + ">");
-            System.out.println("priority: <" + priority + ">");
+            LogUtil.log(LogUtil.DEBUG, "type: <" + type + ">");
+            LogUtil.log(LogUtil.DEBUG, "priority: <" + priority + ">");
             int itype = toType(type);
             int ipriority = toPriority(priority);
             rr.setType(itype);
@@ -1079,7 +1077,7 @@ public abstract class BaseFeed extends HttpServlet
 
         } else {
 
-            System.out.println("Can't find rule for id <" + id + ">");
+            LogUtil.log(LogUtil.WARNING, "Can't find rule for id <" + id + ">");
         }
     }
 
@@ -1092,11 +1090,9 @@ public abstract class BaseFeed extends HttpServlet
             int pint = toPriority(priority);
             int cid = Util.str2int(channelId, 0);
             Channel c = getChannelById(cid, listingId);
-            System.out.println("channel: " + c);
             if (c != null) {
 
                 ShowAiring sa = getShowAiringByChannel(c, showAiringId);
-                System.out.println("sa: " + sa);
                 if (sa != null) {
 
                     // We have the exact ShowAiring submitted by the roku
@@ -1236,9 +1232,8 @@ public abstract class BaseFeed extends HttpServlet
         if ((term != null) && (n != null)) {
 
             result = n.getShowAirings(term, NMSConstants.SEARCH_TITLE);
-            System.out.println("result: " + result);
             if (result != null) {
-                System.out.println("result.length: " + result.length);
+                LogUtil.log(LogUtil.DEBUG, "result.length: " + result.length);
             }
         }
 

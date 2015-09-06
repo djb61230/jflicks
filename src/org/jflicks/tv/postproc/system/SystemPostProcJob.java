@@ -24,6 +24,7 @@ import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.Worker;
 import org.jflicks.tv.postproc.worker.WorkerEvent;
 import org.jflicks.tv.postproc.worker.WorkerListener;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job will run and queue recording jobs.
@@ -70,7 +71,7 @@ public abstract class SystemPostProcJob extends AbstractJob
     public void setCount(int i) {
         count = i;
 
-        log(SystemPostProc.INFO, getClass().getName()
+        LogUtil.log(LogUtil.INFO, getClass().getName()
             + "queue size now: " + count);
     }
 
@@ -88,15 +89,6 @@ public abstract class SystemPostProcJob extends AbstractJob
 
     public void setLastWorkerRecording(WorkerRecording wr) {
         lastWorkerRecording = wr;
-    }
-
-    public void log(int status, String message) {
-
-        SystemPostProc spp = getSystemPostProc();
-        if (spp != null) {
-
-            spp.log(status, message);
-        }
     }
 
     /**

@@ -19,6 +19,7 @@ package org.jflicks.tv.recorder;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.jflicks.configure.BaseConfig;
@@ -28,6 +29,7 @@ import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Channel;
 import org.jflicks.tv.Recording;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -36,7 +38,7 @@ import org.jflicks.util.Util;
  * @author Doug Barnum
  * @version 1.0
  */
-public abstract class BaseRecorder extends BaseConfig implements Recorder {
+public abstract class BaseRecorder extends BaseConfig implements Recorder, Serializable {
 
     private PropertyChangeSupport propertyChangeSupport;
 
@@ -402,13 +404,13 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
 
         if ((result != null) && (names != null)) {
 
-            log(DEBUG, "Looks like we DO have a custom channel list");
+            LogUtil.log(LogUtil.DEBUG, "Looks like we DO have a custom channel list");
 
             // We do have a non-null list of channel names.  We proceed in
             // one of two ways.
             if (isWhiteList()) {
 
-                log(DEBUG, "It's a WHITELIST");
+                LogUtil.log(LogUtil.DEBUG, "It's a WHITELIST");
 
                 // The list tells us the only channels we can really record.
                 // We need to filter the Channel instances to only our list
@@ -433,7 +435,7 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
 
             } else if (isBlackList()) {
 
-                log(DEBUG, "It's a BLACKLIST");
+                LogUtil.log(LogUtil.DEBUG, "It's a BLACKLIST");
 
                 // The list tells us the channels we cannot record.
                 // We need to filter the Channel instances to ignore our list
@@ -464,12 +466,12 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder {
 
             } else {
 
-                log(DEBUG, "We are set to IGNORE the list");
+                LogUtil.log(LogUtil.DEBUG, "We are set to IGNORE the list");
             }
 
         } else {
 
-            log(DEBUG, "Looks like we do NOT have a custom channel list");
+            LogUtil.log(LogUtil.DEBUG, "Looks like we do NOT have a custom channel list");
         }
 
         return (result);

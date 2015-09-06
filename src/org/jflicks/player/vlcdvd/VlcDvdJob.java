@@ -24,6 +24,7 @@ import org.jflicks.job.JobEvent;
 import org.jflicks.job.JobListener;
 import org.jflicks.job.JobManager;
 import org.jflicks.job.SystemJob;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job starts a system job that runs vlc.  It also is a conduit to
@@ -75,15 +76,6 @@ public class VlcDvdJob extends AbstractJob implements JobListener {
         jobContainer = j;
     }
 
-    private void log(int level, String message) {
-
-        VlcDvd p = getVlcDvd();
-        if ((p != null) && (message != null)) {
-
-            p.log(level, message);
-        }
-    }
-
     /**
      * When we start we start by listening on a UDP port via a URL.
      *
@@ -110,7 +102,7 @@ public class VlcDvdJob extends AbstractJob implements JobListener {
         SystemJob job = SystemJob.getInstance("vlc -I dummy --key-quit q"
             + " --fullscreen " + getURL());
 
-        log(VlcDvd.DEBUG, "started: " + job.getCommand());
+        LogUtil.log(LogUtil.DEBUG, "started: " + job.getCommand());
         job.addJobListener(this);
         setSystemJob(job);
         JobContainer jc = JobManager.getJobContainer(job);

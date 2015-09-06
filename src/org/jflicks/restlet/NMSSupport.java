@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.jflicks.configure.Configuration;
-import org.jflicks.log.Log;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.NMSUtil;
@@ -35,10 +34,10 @@ import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Task;
 import org.jflicks.tv.Upcoming;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -112,7 +111,7 @@ public final class NMSSupport extends BaseSupport {
 
         Channel result = null;
 
-        System.out.println("id: " + id);
+        LogUtil.log(LogUtil.DEBUG, "id: " + id);
         Channel[] array = getChannels();
         if ((id != null) && (array != null) && (array.length > 0)) {
 
@@ -130,7 +129,6 @@ public final class NMSSupport extends BaseSupport {
             }
         }
 
-        System.out.println(result);
         return (result);
     }
 
@@ -180,7 +178,7 @@ public final class NMSSupport extends BaseSupport {
         String[] result = null;
 
         NMS[] array = getNMS();
-        System.out.println("do we have nms: " + array);
+        LogUtil.log(LogUtil.DEBUG, "do we have nms: " + array);
         if ((array != null) && (array.length > 0)) {
 
             ArrayList<String> tlist = new ArrayList<String>();
@@ -242,18 +240,18 @@ public final class NMSSupport extends BaseSupport {
         Recording[] result = null;
 
         NMS[] array = getNMS();
-        log(Log.DEBUG, "NMS array null = " + (array == null));
+        LogUtil.log(LogUtil.DEBUG, "NMS array null = " + (array == null));
         if ((array != null) && (array.length > 0)) {
 
             ArrayList<Recording> rlist = new ArrayList<Recording>();
             for (int i = 0; i < array.length; i++) {
 
                 Recording[] rarray = getRecordings(array[i]);
-                log(Log.DEBUG, "recording array null = "
+                LogUtil.log(LogUtil.DEBUG, "recording array null = "
                     + (rarray == null));
                 if ((rarray != null) && (rarray.length > 0)) {
 
-                    log(Log.DEBUG, "rarray.length " + rarray.length);
+                    LogUtil.log(LogUtil.DEBUG, "rarray.length " + rarray.length);
                     for (int j = 0; j < rarray.length; j++) {
 
                         rlist.add(rarray[j]);
@@ -261,7 +259,7 @@ public final class NMSSupport extends BaseSupport {
                 }
             }
 
-            log(Log.DEBUG, "rlist.size() " + rlist.size());
+            LogUtil.log(LogUtil.DEBUG, "rlist.size() " + rlist.size());
             if (rlist.size() > 0) {
 
                 result = rlist.toArray(new Recording[rlist.size()]);
@@ -275,14 +273,14 @@ public final class NMSSupport extends BaseSupport {
 
         Recording[] result = null;
 
-        log(Log.DEBUG, "NMS null = " + (n == null));
+        LogUtil.log(LogUtil.DEBUG, "NMS null = " + (n == null));
         if (n != null) {
 
             Recording[] array = n.getRecordings();
-            log(Log.DEBUG, "array null = " + (array == null));
+            LogUtil.log(LogUtil.DEBUG, "array null = " + (array == null));
             if ((array != null) && (array.length > 0)) {
 
-                log(Log.DEBUG, "array length = " + array.length);
+                LogUtil.log(LogUtil.DEBUG, "array length = " + array.length);
                 ArrayList<Recording> l = new ArrayList<Recording>();
                 for (int i = 0; i < array.length; i++) {
 
@@ -486,7 +484,7 @@ public final class NMSSupport extends BaseSupport {
 
             if (slist.size() > 0) {
 
-                log(BaseApplication.DEBUG, "Found: " + slist.size());
+                LogUtil.log(LogUtil.DEBUG, "Found: " + slist.size());
                 result = slist.toArray(new ShowAiring[slist.size()]);
                 Arrays.sort(result, new ShowAiringSortByTitle());
             }
@@ -510,7 +508,7 @@ public final class NMSSupport extends BaseSupport {
                 ArrayList<String> showlist = new ArrayList<String>();
                 for (int i = 0; i < channels.length; i++) {
 
-                    log(BaseApplication.DEBUG, "Processing: " + channels[i]);
+                    LogUtil.log(LogUtil.DEBUG, "Processing: " + channels[i]);
                     ShowAiring[] array = getShowAiringsByChannel(n, channels[i]);
                     if ((array != null) && (array.length > 0)) {
 
@@ -529,16 +527,14 @@ public final class NMSSupport extends BaseSupport {
 
                                         if (!showlist.contains(title)) {
 
-                                            log(BaseApplication.DEBUG,
-                                                "Added: " + array[j]);
+                                            LogUtil.log(LogUtil.DEBUG, "Added: " + array[j]);
                                             chanlist.add(array[j]);
                                             showlist.add(title);
                                         }
 
                                     } else {
 
-                                        log(BaseApplication.DEBUG,
-                                            "Added: " + array[j]);
+                                        LogUtil.log(LogUtil.DEBUG, "Added: " + array[j]);
                                         chanlist.add(array[j]);
                                     }
                                 }
@@ -596,7 +592,7 @@ public final class NMSSupport extends BaseSupport {
 
                     for (int j = 0; j < tarray.length; j++) {
 
-                        System.out.println("DDDDDDDDDDDDDDDDDDDDDDDDDD " + tarray[j].getDescription());
+                        LogUtil.log(LogUtil.DEBUG, tarray[j].getDescription());
                         if (tarray[j].isSelectable()) {
 
                             tlist.add(tarray[j]);
@@ -659,7 +655,7 @@ public final class NMSSupport extends BaseSupport {
 
         Configuration[] result = null;
 
-        System.out.println("nms: " + n);
+        LogUtil.log(LogUtil.DEBUG, "nms: " + n);
         if (n != null) {
 
             result = n.getConfigurations();
@@ -701,7 +697,7 @@ public final class NMSSupport extends BaseSupport {
 
         Upcoming[] result = null;
 
-        System.out.println("nms: " + n);
+        LogUtil.log(LogUtil.DEBUG, "nms: " + n);
         if (n != null) {
 
             result = n.getUpcomings();

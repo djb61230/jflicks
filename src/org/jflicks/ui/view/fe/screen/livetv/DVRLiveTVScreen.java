@@ -31,6 +31,7 @@ import org.jflicks.tv.Recording;
 import org.jflicks.ui.view.fe.ChannelInfoWindow;
 import org.jflicks.ui.view.fe.FrontEndView;
 import org.jflicks.ui.view.fe.RecordingInfoWindow;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -90,8 +91,6 @@ public class DVRLiveTVScreen extends BaseLiveTVScreen {
                 p.stop();
             }
 
-            System.out.println("LIVE PATH = " + l.getPath());
-
             // Now we have to get the right player in case we switched
             // stream types.
             if (l.getPath().endsWith("m3u8")) {
@@ -122,18 +121,17 @@ public class DVRLiveTVScreen extends BaseLiveTVScreen {
             r.setStreamURL(l.getStreamURL());
             r.setHostPort(l.getHostPort());
 
-            log(DEBUG, l.getPath());
-            log(DEBUG, l.getStreamURL());
+            LogUtil.log(LogUtil.DEBUG, l.getPath());
+            LogUtil.log(LogUtil.DEBUG, l.getStreamURL());
 
             p.addPropertyChangeListener("Completed", this);
 
             //String path =
             //    t.transfer(r, getInitialTime(), getRestTime());
-            //log(DEBUG, "local: " + path);
+            //LogUtil.log(LogUtil.DEBUG, "local: " + path);
             setMarkTime(System.currentTimeMillis());
             setBlocking(true);
             //p.play(path);
-            System.out.println("FRED: " + r.getStreamURL());
             try {
                 Thread.sleep(3000);
             } catch (Exception ex) {
@@ -167,7 +165,7 @@ public class DVRLiveTVScreen extends BaseLiveTVScreen {
     @Override
     public void close() {
 
-        log(DEBUG, "Yep at close!!!!");
+        LogUtil.log(LogUtil.DEBUG, "Yep at close!!!!");
         super.close();
 
         Transfer t = getTransfer();
@@ -227,7 +225,7 @@ public class DVRLiveTVScreen extends BaseLiveTVScreen {
 
                                 public void run() {
 
-                                    log(DEBUG, "Starting player...");
+                                    LogUtil.log(LogUtil.DEBUG, "Starting player...");
                                     startPlayer(fl);
                                 }
                             };

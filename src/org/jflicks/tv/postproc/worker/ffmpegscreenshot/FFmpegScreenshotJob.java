@@ -28,6 +28,7 @@ import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -136,7 +137,7 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
             setSystemJob(job);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
-            log(BaseWorker.INFO, "started: " + job.getCommand());
+            LogUtil.log(LogUtil.INFO, "started: " + job.getCommand());
             setTerminate(false);
 
         } else {
@@ -171,7 +172,7 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
                 loops++;
                 if (loops >= 180) {
 
-                    log(BaseWorker.INFO, "Giving up on getting screenshot!!!");
+                    LogUtil.log(LogUtil.INFO, "Giving up on getting screenshot!!!");
                     setTerminate(true);
                 }
             }
@@ -224,7 +225,7 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
                             new File(rpath + ".roku_sd.png"));
 
                     } catch (Exception ex) {
-                        log(BaseWorker.INFO, ex.getMessage());
+                        LogUtil.log(LogUtil.INFO, ex.getMessage());
                     }
                 }
             }

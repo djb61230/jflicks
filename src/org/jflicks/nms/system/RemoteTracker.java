@@ -20,6 +20,7 @@ import ch.ethz.iks.r_osgi.RemoteOSGiService;
 
 import org.jflicks.discovery.ServiceDescription;
 import org.jflicks.util.BaseTracker;
+import org.jflicks.util.LogUtil;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -72,7 +73,7 @@ public class RemoteTracker extends BaseTracker {
             if (service != null) {
 
                 //sd.setPort(service.getListeningPort("r-osgi"));
-                System.out.println("UUUUUUUUUUUUUU: " + sd.getPort());
+                LogUtil.log(LogUtil.DEBUG, "port: " + sd.getPort());
             }
 
             result = service;

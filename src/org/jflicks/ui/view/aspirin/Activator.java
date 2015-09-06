@@ -23,7 +23,6 @@ import org.jflicks.mvc.View;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -36,7 +35,6 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends BaseActivator {
 
     private ServiceTracker controllerServiceTracker;
-    private ServiceTracker logServiceTracker;
     private AnalyzeTracker analyzeTracker;
 
     /**
@@ -63,11 +61,6 @@ public class Activator extends BaseActivator {
         dict.put(AspirinView.TITLE_PROPERTY, "JFLICKS-ASPIRIN");
 
         bc.registerService(View.class.getName(), v, dict);
-
-        logServiceTracker =
-            new ServiceTracker(bc, LogService.class.getName(), null);
-        v.setLogServiceTracker(logServiceTracker);
-        logServiceTracker.open();
     }
 
     /**
@@ -83,12 +76,6 @@ public class Activator extends BaseActivator {
         AnalyzeTracker at = getAnalyzeTracker();
         if (at != null) {
             at.close();
-        }
-
-        if (logServiceTracker != null) {
-
-            logServiceTracker.close();
-            logServiceTracker = null;
         }
     }
 

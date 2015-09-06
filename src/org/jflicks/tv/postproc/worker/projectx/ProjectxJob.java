@@ -26,6 +26,7 @@ import org.jflicks.job.SystemJob;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
+import org.jflicks.util.LogUtil;
 
 /**
  * This job starts a system job that runs comskip.
@@ -130,7 +131,7 @@ public class ProjectxJob extends BaseWorkerJob implements JobListener {
                 setSystemJob(job);
                 JobContainer jc = JobManager.getJobContainer(job);
                 setJobContainer(jc);
-                log(BaseWorker.INFO, "started: " + job.getCommand());
+                LogUtil.log(LogUtil.INFO, "started: " + job.getCommand());
                 setTerminate(false);
             }
 
@@ -199,7 +200,7 @@ public class ProjectxJob extends BaseWorkerJob implements JobListener {
                 if ((f != null) && (f.exists()) && (f.isFile())) {
 
                     if (!f.delete()) {
-                        log(BaseWorker.INFO, "delete failure: " + f.getPath());
+                        LogUtil.log(LogUtil.INFO, "delete failure: " + f.getPath());
                     }
                 }
 
@@ -207,7 +208,7 @@ public class ProjectxJob extends BaseWorkerJob implements JobListener {
                 if ((f != null) && (f.exists()) && (f.isFile())) {
 
                     if (!f.delete()) {
-                        log(BaseWorker.INFO, "delete failure: " + f.getPath());
+                        LogUtil.log(LogUtil.INFO, "delete failure: " + f.getPath());
                     }
                 }
 
@@ -215,7 +216,7 @@ public class ProjectxJob extends BaseWorkerJob implements JobListener {
                 if ((f != null) && (f.exists()) && (f.isFile())) {
 
                     if (!f.delete()) {
-                        log(BaseWorker.INFO, "delete failure: " + f.getPath());
+                        LogUtil.log(LogUtil.INFO, "delete failure: " + f.getPath());
                     }
                 }
 

@@ -27,6 +27,7 @@ import org.jflicks.tv.Commercial;
 import org.jflicks.tv.Recording;
 import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -76,7 +77,7 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
             setSystemJob(job);
             JobContainer jc = JobManager.getJobContainer(job);
             setJobContainer(jc);
-            log(BaseWorker.INFO, "will start: " + job.getCommand());
+            LogUtil.log(LogUtil.INFO, "will start: " + job.getCommand());
             setTerminate(false);
 
         } else {
@@ -108,13 +109,13 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
 
                             jc.start();
                             begun = true;
-                            log(BaseWorker.INFO, "Kicked off comskip");
+                            LogUtil.log(LogUtil.INFO, "Kicked off comskip");
                         }
                     }
 
                 } else {
 
-                    log(BaseWorker.INFO, "Recording still seems to be on. "
+                    LogUtil.log(LogUtil.INFO, "Recording still seems to be on. "
                         + "Waiting until finished to work.");
                 }
             }
@@ -156,23 +157,23 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
                     File file = new File(path + ".log");
                     boolean delresult = file.delete();
                     if (!delresult) {
-                        log(BaseWorker.INFO, file.getPath() + " not found");
+                        LogUtil.log(LogUtil.INFO, file.getPath() + " not found");
                     }
 
                     file = new File(path + ".logo.txt");
                     delresult = file.delete();
                     if (!delresult) {
-                        log(BaseWorker.INFO, file.getPath() + " not found");
+                        LogUtil.log(LogUtil.INFO, file.getPath() + " not found");
                     }
 
                     file = new File(path + ".txt");
                     delresult = file.delete();
                     if (!delresult) {
-                        log(BaseWorker.INFO, file.getPath() + " not found");
+                        LogUtil.log(LogUtil.INFO, file.getPath() + " not found");
                     }
 
                     file = new File(path + ".edl");
-                    log(BaseWorker.INFO, "setting commercials...");
+                    LogUtil.log(LogUtil.INFO, "setting commercials...");
                     r.setCommercials(Commercial.fromEDL(file));
 
                     // Next we want to write a chapter file for mp4chaps.
@@ -195,22 +196,17 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
                             try {
 
                                 Util.writeTextFile(file, sb.toString());
-                                SystemJob job = SystemJob.getInstance(
-                                    "mp4chaps -i \"" + origPath + ".mp4\"");
-                                JobContainer jc =
-                                    JobManager.getJobContainer(job);
-                                log(BaseWorker.INFO, "will start: "
-                                    + job.getCommand());
+                                SystemJob job = SystemJob.getInstance("mp4chaps -i \"" + origPath + ".mp4\"");
+                                JobContainer jc = JobManager.getJobContainer(job);
+                                LogUtil.log(LogUtil.INFO, "will start: " + job.getCommand());
                                 jc.start();
 
                             } catch (Exception ex) {
 
-                                log(BaseWorker.INFO, "Couldn't do chapters");
+                                LogUtil.log(LogUtil.INFO, "Couldn't do chapters");
                             }
                         }
                     }
-
-                    writeBIF();
                 }
             }
 

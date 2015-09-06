@@ -171,7 +171,6 @@ public class ChannelJob extends BaseDeviceJob {
         } else {
 
             String text = event.getMessage();
-            System.out.println("Text from azap: " + text);
             if ((!isReady()) && (text != null)) {
 
                 setReady(text.indexOf(getReadyText()) != -1);

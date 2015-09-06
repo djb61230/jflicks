@@ -25,6 +25,7 @@ import org.apache.commons.io.FileUtils;
 import org.jflicks.update.BaseUpdate;
 import org.jflicks.update.UpdateState;
 import org.jflicks.util.BundleFilter;
+import org.jflicks.util.LogUtil;
 
 /**
  * This is our implementation of an Update.
@@ -101,7 +102,7 @@ public class SystemUpdate extends BaseUpdate {
 
                         } catch (IOException ex) {
 
-                            log(WARNING, ex.getMessage());
+                            LogUtil.log(LogUtil.WARNING, ex.getMessage());
                             result = false;
                             break;
                         }
@@ -122,7 +123,7 @@ public class SystemUpdate extends BaseUpdate {
 
                                 } catch (IOException ex) {
 
-                                    log(WARNING, ex.getMessage());
+                                    LogUtil.log(LogUtil.WARNING, ex.getMessage());
                                     result = false;
                                 }
                             }
@@ -152,7 +153,7 @@ public class SystemUpdate extends BaseUpdate {
 
                 } catch (IOException ex) {
 
-                    log(WARNING, ex.getMessage());
+                    LogUtil.log(LogUtil.WARNING, ex.getMessage());
                 }
             }
         }

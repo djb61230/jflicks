@@ -44,6 +44,7 @@ import org.jflicks.ui.view.fe.ThemeDetailPanel;
 import org.jflicks.ui.view.fe.ThemeListPanel;
 import org.jflicks.ui.view.fe.screen.Screen;
 import org.jflicks.util.ExtensionsFilter;
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -320,7 +321,7 @@ public class PreferenceScreen extends Screen implements ParameterProperty,
 
             } catch (IOException ex) {
 
-                log(WARNING, ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, ex.getMessage());
             }
         }
 
@@ -346,7 +347,7 @@ public class PreferenceScreen extends Screen implements ParameterProperty,
 
             } catch (IOException ex) {
 
-                log(WARNING, ex.getMessage());
+                LogUtil.log(LogUtil.WARNING, ex.getMessage());
             }
         }
 
