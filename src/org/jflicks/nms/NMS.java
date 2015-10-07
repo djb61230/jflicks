@@ -19,6 +19,7 @@ package org.jflicks.nms;
 import org.jflicks.autoart.AutoArt;
 import org.jflicks.configure.Config;
 import org.jflicks.configure.Configuration;
+import org.jflicks.configure.J4ccConfiguration;
 import org.jflicks.photomanager.Photo;
 import org.jflicks.photomanager.PhotoManager;
 import org.jflicks.photomanager.Tag;
@@ -222,6 +223,22 @@ public interface NMS extends Config {
      * @return An array of Configuration instances.
      */
     Configuration[] getConfigurations();
+
+    /**
+     * We have a notion of a general configuration that covers the common
+     * properties to configure for a j4cc installation.
+     *
+     * @return A J4ccConfiguration instance.
+     */
+    J4ccConfiguration getJ4ccConfiguration();
+
+    /**
+     * We have a notion of a general configuration that covers the common
+     * properties to configure for a j4cc installation.
+     *
+     * @param gc A J4ccConfiguration instance.
+     */
+    void setJ4ccConfiguration(J4ccConfiguration gc);
 
     /**
      * Acquire the currently defined recording rules for this NMS.

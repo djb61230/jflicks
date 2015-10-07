@@ -77,7 +77,8 @@ public class SystemServerComponent extends BaseServerComponent {
         // Now we start things up right.
         try {
 
-            String restPort = System.getProperty("org.jflicks.restlet.servercomponent.system.SystemServerComponent");
+            String restPort = System.getProperty("org.jflicks.restlet.servercomponent.system.port");
+            LogUtil.log(LogUtil.DEBUG, "ServerComponent: restPort <" + restPort + ">");
             int httpPort = Util.str2int(restPort, 8182);
             Component c = new Component();
             setComponent(c);

@@ -202,6 +202,8 @@ public class SystemPostProc extends BasePostProc {
             Task[] array = rr.getTasks();
             if (array != null) {
 
+                // First we go through and add all post processing EXCEPT
+                // for commercial skip.  We want to do that LAST.
                 for (int i = 0; i < array.length; i++) {
 
                     if (array[i].isRun()) {
@@ -209,20 +211,56 @@ public class SystemPostProc extends BasePostProc {
                         Worker w = getWorkerByTitle(array[i].getTitle());
                         if (w != null) {
 
-                            WorkerRecording wr = new WorkerRecording();
-                            wr.setWorker(w);
-                            wr.setRecording(r);
-                            if (w.isHeavy()) {
+                            if (!w.isCommercialDetector()) {
 
-                                LogUtil.log(LogUtil.INFO, "Time to queue a heavy worker..."
-                                    + w.getTitle());
-                                addHeavyWorkerRecording(wr);
+                                WorkerRecording wr = new WorkerRecording();
+                                wr.setWorker(w);
+                                wr.setRecording(r);
+                                if (w.isHeavy()) {
 
-                            } else {
+                                    LogUtil.log(LogUtil.INFO, "Time to queue a heavy worker..."
+                                        + w.getTitle());
+                                    addHeavyWorkerRecording(wr);
 
-                                LogUtil.log(LogUtil.INFO, "Time to queue a light worker..."
-                                    + w.getTitle());
-                                addLightWorkerRecording(wr);
+                                } else {
+
+                                    LogUtil.log(LogUtil.INFO, "Time to queue a light worker..."
+                                        + w.getTitle());
+                                    addLightWorkerRecording(wr);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Now just do commercial skipping
+                for (int i = 0; i < array.length; i++) {
+
+                    if (array[i].isRun()) {
+
+                        Worker w = getWorkerByTitle(array[i].getTitle());
+                        if (w != null) {
+
+                            if (w.isCommercialDetector()) {
+
+                                WorkerRecording wr = new WorkerRecording();
+                                wr.setWorker(w);
+                                wr.setRecording(r);
+                                if (w.isHeavy()) {
+
+                                    LogUtil.log(LogUtil.INFO, "Time to queue a heavy worker..."
+                                        + w.getTitle());
+                                    addHeavyWorkerRecording(wr);
+
+                                } else {
+
+                                    LogUtil.log(LogUtil.INFO, "Time to queue a light worker..."
+                                        + w.getTitle());
+                                    addLightWorkerRecording(wr);
+                                }
+
+                                // We just have at most one commercial skip per recording.
+                                break;
                             }
                         }
                     }

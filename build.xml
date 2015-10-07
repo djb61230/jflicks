@@ -1095,16 +1095,24 @@
     <target name="test-detect" depends="build">
 
         <input message="path" addproperty="arg1"
-            defaultvalue="/Users/djb/dtest"/>
-        <input message="type:value " addproperty="arg2"
-            defaultvalue="0:10,0:80,1:220,1:175"/>
+            defaultvalue="/Users/djb/dtest/tank"/>
+        <!--
+        <input message="type:red:green:blue:range " addproperty="arg2"
+            defaultvalue="1:14:105:132:70"/>
+        <input message="type:red:green:blue:range " addproperty="arg2"
+            defaultvalue="1:0:0:0:70"/>
+        <input message="type:red:green:blue:range " addproperty="arg2"
+            defaultvalue="0:255:255:255:70"/>
+        -->
+        <input message="type:red:green:blue:range " addproperty="arg2"
+            defaultvalue="0:255:255:255:70,1:0:0:0:70,1:14:105:132:70,0:82:188:56:100,0:220:229:235:70"/>
         <input message="extension: " addproperty="arg3" defaultvalue="jpg"/>
-        <input message="verbose: " addproperty="arg4" defaultvalue="false"/>
+        <input message="verbose: " addproperty="arg4" defaultvalue="true"/>
         <java classname="org.jflicks.util.DetectRatingRectangle" fork="true">
 
             <arg value="-path"/>
             <arg value="${arg1}"/>
-            <arg value="-type:value"/>
+            <arg value="-type:red:green:blue:range"/>
             <arg value="${arg2}"/>
             <arg value="-extension"/>
             <arg value="${arg3}"/>
@@ -1169,6 +1177,19 @@
 
         <java classname="org.jflicks.tv.recorder.hdhr.ParseScanFile" fork="true">
 
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-mp4parser" depends="build">
+
+        <java classname="org.jflicks.util.frommpeg2.MetaDataTool" fork="true">
+
+            <arg value="/Users/djb/test-j4cc/server/videooutput/tv/EP011581290107_2015_09_08_20_00.ts.mp4"/>
             <classpath>
                 <path refid="runtime.classpath"/>
             </classpath>

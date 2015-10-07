@@ -153,12 +153,10 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                 for (int i = 0; i < array.length; i++) {
 
                     String desc = array[i].getDescription();
-                    if ((desc != null)
-                        && (desc.equals(NMSConstants.RECORDING_DEVICE))) {
+                    if ((desc != null) && (desc.equals(NMSConstants.RECORDING_DEVICE))) {
 
                         String tmp = array[i].getValue();
-                        if ((tmp != null)
-                            && (!tmp.equals(NMSConstants.NOT_CONNECTED))) {
+                        if ((tmp != null) && (!tmp.equals(NMSConstants.NOT_CONNECTED))) {
 
                             // Ok found a connected Recorder.  We need to get
                             // the device from the name.  It should be the

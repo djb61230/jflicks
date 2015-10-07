@@ -42,7 +42,7 @@ public final class LogUtil {
 
         } else {
 
-            System.out.println("No LogService: " + message);
+            System.err.println("No LogService: " + message);
         }
     }
 

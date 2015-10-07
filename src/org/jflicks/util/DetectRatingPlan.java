@@ -27,6 +27,10 @@ public class DetectRatingPlan {
 
     private int type;
     private int value;
+    private int red;
+    private int green;
+    private int blue;
+    private int range;
 
     /**
      * Default empty constructor.
@@ -75,6 +79,38 @@ public class DetectRatingPlan {
      */
     public void setValue(int i) {
         value = i;
+    }
+
+    public int getRange() {
+        return (range);
+    }
+
+    public void setRange(int i) {
+        range = i;
+    }
+
+    public int getRed() {
+        return (red);
+    }
+
+    public void setRed(int i) {
+        red = i;
+    }
+
+    public int getGreen() {
+        return (green);
+    }
+
+    public void setGreen(int i) {
+        green = i;
+    }
+
+    public int getBlue() {
+        return (blue);
+    }
+
+    public void setBlue(int i) {
+        blue = i;
     }
 
 }

@@ -107,8 +107,8 @@ public class Client {
             File sdjson = new File("sdjson.debug");
             if ((sdjson.exists()) && (sdjson.isFile())) {
 
-                System.out.println(s);
-                System.out.println("---------------------------------------------------");
+                System.err.println(s);
+                System.err.println("---------------------------------------------------");
             }
         }
     }
@@ -130,18 +130,18 @@ public class Client {
                         Map.Entry<String, String> me = iter.next();
                         String key = me.getKey();
                         String val = me.getValue();
-                        System.out.println("dumpHeader: <" + key + "> <" + val + ">");
+                        System.err.println("dumpHeader: <" + key + "> <" + val + ">");
                     }
                 }
 
             } else {
 
-                System.out.println("dumpHeader: no ClientInfo!");
+                System.err.println("dumpHeader: no ClientInfo!");
             }
 
         } else {
 
-            System.out.println("dumpHeader: no ClientResource!");
+            System.err.println("dumpHeader: no ClientResource!");
         }
     }
 
@@ -201,7 +201,7 @@ public class Client {
 
         String result = null;
 
-        System.out.println("fred: " + name);
+        System.err.println("fred: " + name);
         if (name != null) {
 
             UserLineup ul = getUserLineup();
@@ -212,7 +212,7 @@ public class Client {
 
                     for (int j = 0; j < lups.length; j++) {
 
-                        System.out.println("bob: " + lups[j].getName());
+                        System.err.println("bob: " + lups[j].getName());
                         if (name.equals(lups[j].getName())) {
 
                             result = lups[j].getUri();
@@ -242,8 +242,8 @@ public class Client {
 
                         for (int j = 0; j < lups.length; j++) {
 
-                            System.out.println("Bob: " +lups[j].toString());
-                            System.out.println("harry: " + array[i].getLocation());
+                            System.err.println("Bob: " +lups[j].toString());
+                            System.err.println("harry: " + array[i].getLocation());
                             if ((name.equals(lups[j].toString())) && (location.equals(array[i].getLocation()))) {
 
                                 result = lups[j].getUri();
@@ -367,8 +367,8 @@ public class Client {
 
         boolean result = false;
 
-        System.out.println("FRED: " + name);
-        System.out.println("FRED: " + location);
+        System.err.println("FRED: " + name);
+        System.err.println("FRED: " + location);
         if ((name != null) && (location != null)) {
 
             String uri = getUriFromLineupNameAndLocation(name, location);
@@ -395,7 +395,7 @@ public class Client {
                     }
 
                 } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
+                    System.err.println(ex.getMessage());
                 }
             }
         }
@@ -407,19 +407,19 @@ public class Client {
 
         boolean result = false;
 
-        System.out.println("FRED <" + name + ">");
-        System.out.println("FRED <" + location + ">");
+        System.err.println("FRED <" + name + ">");
+        System.err.println("FRED <" + location + ">");
         if ((name != null) && (location != null)) {
 
             String uri = getUriFromLineupNameAndLocation(name, location);
-            System.out.println("FRED <" + uri + ">");
+            System.err.println("FRED <" + uri + ">");
             if (uri != null) {
 
                 try {
 
                     setLineupResponse(null);
                     uri = getBaseUri() + uri;
-                    System.out.println("FRED <" + uri + ">");
+                    System.err.println("FRED <" + uri + ">");
                     ClientResource cr = new ClientResource(uri);
                     putTokenInHeader(cr);
                     putUserAgentInHeader(cr);
@@ -437,7 +437,7 @@ public class Client {
                     }
 
                 } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
+                    System.err.println(ex.getMessage());
                 }
             }
         }
@@ -455,7 +455,7 @@ public class Client {
             try {
 
                 String uri = getBaseUri() + "/" + getApiVersion() + "/lineups";
-                System.out.println("uri <" + uri + ">");
+                System.err.println("uri <" + uri + ">");
                 ClientResource cr = new ClientResource(uri);
                 putTokenInHeader(cr);
                 putUserAgentInHeader(cr);
@@ -469,7 +469,7 @@ public class Client {
             } catch (Exception ex) {
 
                 ex.printStackTrace();
-                System.out.println("getUserLineup: " + ex.getMessage());
+                System.err.println("getUserLineup: " + ex.getMessage());
             }
         }
 
@@ -610,7 +610,7 @@ public class Client {
 
             if (json != null) {
 
-                System.out.println(json);
+                System.err.println(json);
             }
 
         } catch (Exception ex) {

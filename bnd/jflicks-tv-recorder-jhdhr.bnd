@@ -23,4 +23,4 @@ Import-Package:\
 Export-Package:\
  com.silicondust.libhdhomerun;version="1.0.0",\
  com.silicondust.libhdhomerun_config;version="1.0.0",\
- ${module}
+ org.jflicks.tv.recorder.jhdhr;version="1.0.0"

@@ -52,7 +52,7 @@ public class Manage {
 
                 if (c.doStatus()) {
 
-                    System.out.println("status ok\n");
+                    System.err.println("status ok\n");
                     result = c;
                 }
             }
@@ -277,7 +277,7 @@ public class Manage {
 
                 if (c.doStatus()) {
 
-                    System.out.println("status ok\n");
+                    System.err.println("status ok\n");
 
                     // Now perform the desired action.
                     switch (action) {
@@ -295,8 +295,8 @@ public class Manage {
 
                                         for (int j = 0; j < lups.length; j++) {
 
-                                            System.out.println("Transport: " + lups[j].getTransport());
-                                            System.out.println(lups[j].getLineup() + " location=" + array[i].getLocation());
+                                            System.err.println("Transport: " + lups[j].getTransport());
+                                            System.err.println(lups[j].getLineup() + " location=" + array[i].getLocation());
                                         }
                                     }
                                 }
@@ -304,7 +304,7 @@ public class Manage {
 
                         } else {
 
-                            System.out.println("No headends found!");
+                            System.err.println("No headends found!");
                         }
 
                         break;
@@ -319,14 +319,14 @@ public class Manage {
 
                                 for (int i = 0; i < lups.length; i++) {
 
-                                    System.out.println("Transport: " + lups[i].getTransport());
-                                    System.out.println(lups[i].getLineup() + " name=" + lups[i].getName() + " transport=" + lups[i].getTransport() + " location=" + lups[i].getLocation());
+                                    System.err.println("Transport: " + lups[i].getTransport());
+                                    System.err.println(lups[i].getLineup() + " name=" + lups[i].getName() + " transport=" + lups[i].getTransport() + " location=" + lups[i].getLocation());
                                 }
                             }
 
                         } else {
 
-                            System.out.println("No user lineups configured.");
+                            System.err.println("No user lineups configured.");
                         }
 
                         break;
@@ -340,17 +340,17 @@ public class Manage {
                                 LineupResponse lr = c.getLineupResponse();
                                 if (lr != null) {
 
-                                    System.out.println(lr.getMessage());
+                                    System.err.println(lr.getMessage());
                                 }
 
                             } else {
 
-                                System.out.println("Failed to add lineup.");
+                                System.err.println("Failed to add lineup.");
                             }
 
                         } else {
 
-                            System.out.println("Failed check country or zip");
+                            System.err.println("Failed check country or zip");
                         }
 
                         break;
@@ -364,17 +364,17 @@ public class Manage {
                                 LineupResponse lr = c.getLineupResponse();
                                 if (lr != null) {
 
-                                    System.out.println(lr.getMessage());
+                                    System.err.println(lr.getMessage());
                                 }
 
                             } else {
 
-                                System.out.println("Failed to delete lineup.");
+                                System.err.println("Failed to delete lineup.");
                             }
 
                         } else {
 
-                            System.out.println("Failed check country or zip");
+                            System.err.println("Failed check country or zip");
                         }
 
                         break;
@@ -408,23 +408,23 @@ public class Manage {
                                             sb.append(chan);
                                             sb.append("|");
                                             sb.append(sarray[i].getName());
-                                            System.out.println(sb.toString());
+                                            System.err.println(sb.toString());
                                         }
                                     }
 
                                 } else {
 
-                                    System.out.println("Failed to get stations.");
+                                    System.err.println("Failed to get stations.");
                                 }
 
                             } else {
 
-                                System.out.println("Failed to get station mapping.");
+                                System.err.println("Failed to get station mapping.");
                             }
 
                         } else {
 
-                            System.out.println("Failed check country or zip");
+                            System.err.println("Failed check country or zip");
                         }
 
                         break;
@@ -438,7 +438,7 @@ public class Manage {
 
                         } else {
 
-                            System.out.println("Need Station IDs to get guide.");
+                            System.err.println("Need Station IDs to get guide.");
                         }
 
                         break;
@@ -447,14 +447,14 @@ public class Manage {
 
                         if (plist.size() > 0) {
 
-                            System.out.println(c.getToken());
+                            System.err.println(c.getToken());
                             String[] parray = plist.toArray(new String[plist.size()]);
                             Program[] progs = c.getPrograms(parray);
-                            System.out.println(progs);
+                            System.err.println(progs);
 
                         } else {
 
-                            System.out.println("Need Program IDs to get them.");
+                            System.err.println("Need Program IDs to get them.");
                         }
 
                         break;
@@ -462,17 +462,17 @@ public class Manage {
 
                 } else {
 
-                    System.out.println("SD server OFFLINE, try later.");
+                    System.err.println("SD server OFFLINE, try later.");
                 }
 
             } else {
 
-                System.out.println("Failed to get token check user/password");
+                System.err.println("Failed to get token check user/password");
             }
 
         } else {
 
-            System.out.println("user or password null.");
+            System.err.println("user or password null.");
         }
     }
 

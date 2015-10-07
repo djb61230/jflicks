@@ -65,10 +65,12 @@ public class Activator extends BaseActivator {
                 for (int i = 0; i < count; i++) {
 
                     plans[i] = new DetectRatingPlan();
-                    plans[i].setType(
-                        Util.str2int(p.getProperty("type_" + i), 0));
-                    plans[i].setValue(
-                        Util.str2int(p.getProperty("value_" + i), 0));
+                    plans[i].setType(Util.str2int(p.getProperty("type_" + i), 0));
+                    plans[i].setValue(Util.str2int(p.getProperty("value_" + i), 0));
+                    plans[i].setRed(Util.str2int(p.getProperty("red_" + i), 0));
+                    plans[i].setGreen(Util.str2int(p.getProperty("green_" + i), 0));
+                    plans[i].setBlue(Util.str2int(p.getProperty("blue_" + i), 0));
+                    plans[i].setRange(Util.str2int(p.getProperty("range_" + i), 0));
                 }
 
                 cw.setDetectRatingPlans(plans);

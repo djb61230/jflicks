@@ -30,6 +30,7 @@ public class HDHRDevice {
     private String model;
     private int plan;
     private String planDescription;
+    private boolean transcodeToMp4;
     private boolean wantToUse;
 
     /**
@@ -46,6 +47,7 @@ public class HDHRDevice {
         setTuner(tuner);
         setIp(ip);
         setModel(model);
+        setTranscodeToMp4(!isHDTC());
         setWantToUse(true);
     }
 
@@ -54,6 +56,7 @@ public class HDHRDevice {
      */
     public HDHRDevice() {
 
+        setTranscodeToMp4(true);
         setWantToUse(true);
     }
 
@@ -99,6 +102,14 @@ public class HDHRDevice {
                 setPlan(1);
             }
         }
+    }
+
+    public boolean isTranscodeToMp4() {
+        return (transcodeToMp4);
+    }
+
+    public void setTranscodeToMp4(boolean b) {
+        transcodeToMp4 = b;
     }
 
     public boolean isWantToUse() {

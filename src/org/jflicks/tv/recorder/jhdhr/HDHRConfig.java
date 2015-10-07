@@ -538,8 +538,9 @@ public class HDHRConfig {
             for (int i = 0; i < array.length; i++) {
 
                 System.out.println(array[i].getId() + " " + array[i].getIp() + " " + array[i].getModel());
-                if (i == 0) {
+                if ((array[i].getId().equals("1032ECBE")) && (array[i].getTuner() == 0)) {
 
+                    config.channelMap(array[i].getId(), 0, "us-bcast");
                     config.scan(array[i].getId(), array[i].getTuner(), null);
 /*
                     config.applyFrequency(array[i].getId(), array[i].getTuner(), array[i].getModel(), "us-bcast", "19");

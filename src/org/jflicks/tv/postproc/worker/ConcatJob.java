@@ -119,15 +119,15 @@ public class ConcatJob extends AbstractJob implements JobListener {
                 StringBuilder sb = new StringBuilder();
                 if (Util.isWindows()) {
 
-                    sb.append("ffmpeg -i concat:\"");
+                    sb.append("copy /b ");
                     for (int i = 0; i < array.length; i++) {
 
                         if (i > 0) {
-                            sb.append("|");
+                            sb.append(" + ");
                         }
                         sb.append(array[i].getName());
                     }
-                    sb.append("\" -c copy " + pref + ".ts");
+                    sb.append(" " + pref + ".ts");
 
                 } else {
 

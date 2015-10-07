@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 /**
@@ -210,8 +211,7 @@ public final class SystemJob extends AbstractJob implements JobListener {
      */
     public void start() {
 
-        ProcessBuilder pb = new ProcessBuilder(getShell(), getShellSwitch(),
-            getCommand());
+        ProcessBuilder pb = new ProcessBuilder(getShell(), getShellSwitch(), getCommand());
         if (pb != null) {
 
             try {
@@ -219,8 +219,10 @@ public final class SystemJob extends AbstractJob implements JobListener {
                 // We want to set the PATH variable in case a System
                 // property is set.
                 String jflicksPath = System.getProperty("jflicks.path");
+                LogUtil.log(LogUtil.DEBUG, "jflicks.path: <" + jflicksPath + ">");
                 if (jflicksPath != null) {
 
+                    jflicksPath = jflicksPath.replaceAll("\\\\", "/");
                     String pathsep = System.getProperty("path.separator");
                     Map<String, String> env = pb.environment();
                     String oldpath = env.get("PATH");

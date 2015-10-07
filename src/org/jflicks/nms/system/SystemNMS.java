@@ -25,6 +25,8 @@ import java.util.Comparator;
 import org.jflicks.autoart.AutoArt;
 import org.jflicks.configure.BaseConfiguration;
 import org.jflicks.configure.Configuration;
+import org.jflicks.configure.J4ccConfiguration;
+import org.jflicks.configure.J4ccRecorder;
 import org.jflicks.configure.NameValue;
 import org.jflicks.nms.BaseNMS;
 import org.jflicks.nms.NMSConstants;
@@ -159,6 +161,154 @@ public class SystemNMS extends BaseNMS {
                 }
             }
 
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public J4ccConfiguration getJ4ccConfiguration() {
+
+        J4ccConfiguration result = new J4ccConfiguration();
+
+        Scheduler s = getScheduler();
+        if (s != null) {
+
+            String[] paths = s.getConfiguredRecordingDirectories();
+            String[] listings = s.getConfiguredListingNames();
+            result.setListings(listings);
+            result.setPaths(paths);
+
+            Configuration c = getConfigurationBySource("Schedules Direct");
+            if (c != null) {
+
+                NameValue nv = c.findNameValueByName(NMSConstants.USER_NAME);
+                if (nv != null) {
+                    result.setUserName(nv.getValue());
+                }
+                nv = c.findNameValueByName(NMSConstants.PASSWORD);
+                if (nv != null) {
+                    result.setPassword(nv.getValue());
+                }
+                nv = c.findNameValueByName(NMSConstants.ZIP_CODE);
+                if (nv != null) {
+                    result.setZipCode(nv.getValue());
+                }
+            }
+
+            Configuration[] hdhrs = findHdHrConfigurations(getConfigurations());
+            if ((hdhrs != null) && (hdhrs.length > 0)) {
+
+                J4ccRecorder[] rarray = new J4ccRecorder[hdhrs.length];
+                for (int i = 0; i < rarray.length; i++) {
+
+                    rarray[i] = new J4ccRecorder();
+                    String source = hdhrs[i].getSource();
+                    rarray[i].setName(source);
+                    String device = source.substring(10);
+                    Recorder r = getRecorderByDevice(device);
+                    String listing = s.getListingNameByRecorder(r);
+                    rarray[i].setListing(listing);
+
+                    NameValue nv = hdhrs[i].findNameValueByName(NMSConstants.HLS_MODE);
+                    if (nv != null) {
+
+                        rarray[i].setHDTC(Util.str2boolean(nv.getValue(), false));
+                        if (rarray[i].isHDTC()) {
+                            rarray[i].setTranscode(false);
+                        } else {
+
+                            nv = hdhrs[i].findNameValueByName(NMSConstants.RECORDING_INDEXER_NAME);
+                            if (nv != null) {
+
+                                String indexer = nv.getValue();
+                                if (indexer != null) {
+
+                                    if (indexer.equals("ToMp4EncodeWorker")) {
+                                        rarray[i].setTranscode(true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                result.setJ4ccRecorders(rarray);
+            }
+
+            /*
+            ProgramData[] pds = getProgramData();
+            if ((pds != null) && (pds.length > 0)) {
+
+                ProgramData pd = pds[0];
+            }
+
+            Recorder[] recs = getRecorders();
+            if (recs != null) {
+
+                ArrayList<J4ccRecorder> l = new ArrayList<J4ccRecorder>();
+                for (int i = 0; i < recs.length; i++) {
+
+                    if (recs[i] instanceof HDHRRecorder) {
+
+                        HDHRRecorder hdhrrec = (HDHRRecorder) recs[i];
+                        J4ccRecorder r = new J4ccRecorder();
+                        String lname = s.getListingNameByRecorder(recs[i]);
+                        String rname = r.getName();
+                        String model = hdhrrec.getModel();
+
+                        if (model != null) {
+
+                            model = model.toLowerCase();
+                            r.setHDTC(model.indexOf("hdtc") != -1);
+                        }
+
+                        r.setListing(lname);
+                        r.setName(rname);
+
+                        l.add(r);
+                    }
+                }
+            }
+            */
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setJ4ccConfiguration(J4ccConfiguration c) {
+
+        if (c != null) {
+        }
+    }
+
+    private Configuration[] findHdHrConfigurations(Configuration[] array) {
+
+        Configuration[] result = null;
+
+        if (array != null) {
+
+            ArrayList<Configuration> l = new ArrayList<Configuration>();
+            for (int i = 0; i < array.length; i++) {
+
+                if (NMSConstants.RECORDER_NAME.equals(array[i].getName())) {
+
+                    String source = array[i].getSource();
+                    if ((source != null) && (source.startsWith("HDHomerun"))) {
+                        l.add(array[i]);
+                    }
+                }
+            }
+
+            if (l.size() > 0) {
+
+                result = l.toArray(new Configuration[l.size()]);
+            }
         }
 
         return (result);

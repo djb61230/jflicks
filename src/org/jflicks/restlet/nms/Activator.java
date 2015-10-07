@@ -59,7 +59,8 @@ public class Activator extends BaseActivator {
         // Setup DNS for discovery.
         try {
 
-            String restPort = System.getProperty("org.jflicks.restlet.servercomponent.system.SystemServerComponent");
+            String restPort = System.getProperty("org.jflicks.restlet.servercomponent.system.port");
+            LogUtil.log(LogUtil.DEBUG, "NMS restlet activator: restPort <" + restPort + ">");
             int defaultPort = Util.str2int(restPort, 8182);
 
             jmdns = JmDNS.create("localhost");

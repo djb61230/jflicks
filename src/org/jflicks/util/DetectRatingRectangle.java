@@ -34,13 +34,13 @@ import javax.imageio.ImageIO;
 public final class DetectRatingRectangle {
 
     /**
-     * The rating logo can be basically black in color.  This is a "hint"
+     * The rating logo TEXT can be basically black in color.  This is a "hint"
      * that our code needs.
      */
     public static final int BLACK_TYPE = 0;
 
     /**
-     * The rating logo can be basically white in color.  This is a "hint"
+     * The rating logo TEXT can be basically white in color.  This is a "hint"
      * that our code needs.
      */
     public static final int WHITE_TYPE = 1;
@@ -106,12 +106,12 @@ public final class DetectRatingRectangle {
      *
      * @param f A File representing an image.
      * @param type Black or white symbol is expected.
-     * @param fudge Wiggle room from full black or full white.
      * @param verbose Print out messages if true.
      * @return True if it is a "rating frame".
      * @throws IOException on an error.
      */
-    public boolean examine(File f, int type, int fudge, boolean verbose) throws IOException {
+    public boolean examine(File f, int type, int red, int green, int blue, int range, boolean verbose,
+        int planIndex) throws IOException {
 
         boolean result = false;
 
@@ -125,16 +125,16 @@ public final class DetectRatingRectangle {
 
         bi.getRGB(x, y, w, h, data, 0, w);
 
+        double drange = range;
         String fname = f.getName();
         BufferedImage crop = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         crop.setRGB(0, 0, w, h, data, 0, w);
 
         if (verbose) {
 
-            ImageIO.write(crop, "png", new File(fname + "-crop.png"));
+            ImageIO.write(crop, "png", new File(fname + "-" + planIndex + "-crop.png"));
         }
 
-        // Not lets turn non-grayscale pixels to white.
         for (int i = 0; i < data.length; i++) {
 
             int r = data[i] & 0x00ff0000;
@@ -143,11 +143,11 @@ public final class DetectRatingRectangle {
             g = g >> 8;
             int b = data[i] & 0x000000ff;
 
+            double distance = Math.sqrt(Math.pow(red - r, 2) + Math.pow(green - g, 2) + Math.pow(blue - b, 2));
+            double percentage = distance / Math.sqrt(Math.pow(255, 2) + Math.pow(255, 2) + Math.pow(255, 2));
             if (type == BLACK_TYPE) {
 
-                // If we are "near black" then turn it black, otherwise
-                // turn it white.
-                if ((Math.min(r, fudge) == r) && (Math.min(g, fudge) == g) && (Math.min(b, fudge) == b)) {
+                if (distance < drange) {
 
                     data[i] = 0x00000000;
 
@@ -158,10 +158,7 @@ public final class DetectRatingRectangle {
 
             } else if (type == WHITE_TYPE) {
 
-                // If we are "near white" then turn it black, otherwise
-                // turn it white.  This makes the rest of the code in this
-                // class work when the rating box is black.
-                if ((Math.max(r, fudge) == r) && (Math.max(g, fudge) == g) && (Math.max(b, fudge) == b)) {
+                if (distance < drange) {
 
                     data[i] = 0x00000000;
 
@@ -177,7 +174,8 @@ public final class DetectRatingRectangle {
 
         if (verbose) {
 
-            ImageIO.write(white, "png", new File(fname + "-white.png"));
+            ImageIO.write(white, "png", new File(fname + "-" + planIndex + "-white.png"));
+            //ImageIO.write(tryit, "png", new File(fname + "-white.png"));
         }
 
         // Ok here we add new code....
@@ -200,22 +198,25 @@ public final class DetectRatingRectangle {
                 if (linelength >= MINIMUM_WIDTH) {
 
                     int vertical = findVerticalLength(data, w, h, line);
+                    //System.out.println("minwidth " + linelength + " minheight " + vertical);
                     if (vertical >= MINIMUM_HEIGHT) {
 
                         // Ok we have three sides of a rectangle.
                         // Now find the bottom Y to really see.
                         int bottomY = findBottomLineY(data, w, h, x1, x2, y1, vertical + y1 - 1);
-                        int realheight = bottomY - y1;
+                        int realheight = bottomY - y1 + 1;
+                        //System.out.println("bottomY " + bottomY + " y1 " + y1 + " realheight " + realheight);
                         if (realheight >= MINIMUM_HEIGHT) {
 
                             // We found one that fits the minimum sizes.  But we also
-                            // know that these are always in "portrait mode" where they
-                            // are taller than their width.
-                            if (linelength < realheight) {
+                            // know that these are generally in "portrait mode" where they
+                            // are taller than their width.  But we have to handle squareish ones too.
+                            if ((linelength <= realheight) || (Math.abs(linelength - realheight) < 10)) {
 
                                 // Ok right shape of rectangle.  We have one more check,
-                                // the line above our original line should be blank.
-                                Line2D.Double aboveline = findLargestLine(data, w, h, y1 - 1);
+                                // the line above our original line should be blank.  How ever
+                                // often this line is broken up so lets go up 2.
+                                Line2D.Double aboveline = findLargestLine(data, w, h, y1 - 2);
                                 if (aboveline != null) {
 
                                     // There is a line.  We make it on the same row and check
@@ -227,6 +228,12 @@ public final class DetectRatingRectangle {
                                         done = true;
                                         result = true;
                                         System.out.println("Yes!");
+
+                                    } else {
+
+                                        //System.out.println("tossed because line intersect");
+                                        //System.out.println(aboveline);
+                                        //System.out.println(line);
                                     }
 
                                 } else {
@@ -235,6 +242,10 @@ public final class DetectRatingRectangle {
                                     result = true;
                                     System.out.println("Yes!");
                                 }
+
+                            } else {
+
+                                //System.out.println("tossed because not portrait");
                             }
                         }
                     }
@@ -317,6 +328,7 @@ public final class DetectRatingRectangle {
             int linewidth = x2 - x1;
             if (linewidth <= width) {
 
+                int maxMissing = 10;
                 while (y < height) {
 
                     //System.out.println("y " + y + " x2 " + x2);
@@ -331,15 +343,37 @@ public final class DetectRatingRectangle {
                     if ((x2 + 1) < width) {
                         rightOneMore = data[y * width + x2 + 1];
                     }
-                    if ((left == 0x00000000) && (right == 0x00000000)
-                        && (leftOneLess == 0x00ffffff) && (rightOneMore == 0x00ffffff)) {
+                    int passes = 0;
+                    if (left == 0x00000000) {
+                        passes++;
+                    }
+                    if (right == 0x00000000) {
+                        passes++;
+                    }
+                    if (leftOneLess == 0x00ffffff) {
+                        passes++;
+                    }
+                    if (rightOneMore == 0x00ffffff) {
+                        passes++;
+                    }
+
+                    if (passes == 4) {
 
                         result++;
                         y++;
 
                     } else {
 
-                        y = height;
+                        if ((passes == 3) && (maxMissing > 0)) {
+
+                            maxMissing--;
+                            result++;
+                            y++;
+
+                        } else {
+
+                            y = height;
+                        }
                     }
                 }
             }
@@ -448,6 +482,10 @@ public final class DetectRatingRectangle {
             int start = name.indexOf("-") + 1;
             int end = name.lastIndexOf(".");
             result = Util.str2int(name.substring(start, end), result);
+
+            // The first frame bogus.  Plus we start the count at 1
+            // instead of 0.  So we take off 2 from the frame.
+            result -= 2;
             result *= getSpan();
             result -= getBackup();
             if (result < 0) {
@@ -456,63 +494,6 @@ public final class DetectRatingRectangle {
         }
 
         return (result);
-    }
-
-    /**
-     * This is our main worker method as it checks out all the images in
-     * a given directory to determine if any are "rating frames".
-     *
-     * @param dir The directory to look.
-     * @param ext Look for files with this extension.
-     * @param type Do we look for black or white rating symbol.
-     * @param fudge This gives us some wiggle room to handle not quite
-     * black or white - shades of gray if you will.
-     * @param verbose Print out messages if true.
-     * @return An array of ints that have "seconds" pointing to time a
-     * rating frame happened.
-     * @throws IOException on an error.
-     */
-    public int[] processDirectory(File dir, String ext, int type, int fudge, boolean verbose) throws IOException {
-
-        int[] result = null;
-
-        if ((dir != null) && (ext != null)) {
-
-            String[] array = new String[1];
-            array[0] = ext;
-            ExtensionsFilter ef = new ExtensionsFilter(array);
-            File[] all = dir.listFiles(ef);
-            if ((all != null) && (all.length > 0)) {
-
-                ArrayList<Integer> timelist = new ArrayList<Integer>();
-                Arrays.sort(all);
-                for (int i = 0; i < all.length; i++) {
-
-                    if (examine(all[i], type, fudge, verbose)) {
-
-                        int time = frameToSeconds(all[i]);
-                        timelist.add(Integer.valueOf(time));
-                        System.out.println(all[i] + " is a rating frame <" + time + ">");
-
-                        // Since we just found one, lets assume the next
-                        // 360 seconds or so we don't need to check.
-                        int fcount = (int) (360 / getSpan());
-                        i += fcount;
-                    }
-                }
-
-                if (timelist.size() > 0) {
-
-                    result = new int[timelist.size()];
-                    for (int i = 0; i < result.length; i++) {
-
-                        result[i] = timelist.get(i).intValue();
-                    }
-                }
-            }
-        }
-
-        return result;
     }
 
     /**
@@ -556,16 +537,19 @@ public final class DetectRatingRectangle {
                         if (!skipPlan[j]) {
 
                             int type = plans[j].getType();
-                            int fudge = plans[j].getValue();
-                            if (examine(all[i], type, fudge, verbose)) {
+                            int red = plans[j].getRed();
+                            int green = plans[j].getGreen();
+                            int blue = plans[j].getBlue();
+                            int range = plans[j].getRange();
+                            if (examine(all[i], type, red, green, blue, range, verbose, j)) {
 
                                 int time = frameToSeconds(all[i]);
                                 timelist.add(Integer.valueOf(time));
                                 System.out.println(all[i] + " is a rating frame <" + time + ">");
 
                                 // Since we just found one, lets assume the next
-                                // 360 seconds or so we don't need to check.
-                                int fcount = (int) (360 / getSpan());
+                                // 30 seconds or so we don't need to check.
+                                int fcount = (int) (30 / getSpan());
                                 i += fcount;
 
                                 if (!zappedPlans) {
@@ -619,21 +603,22 @@ public final class DetectRatingRectangle {
 
             if (args[i].equalsIgnoreCase("-path")) {
                 path = args[i + 1];
-            } else if (args[i].equalsIgnoreCase("-type:value")) {
+            } else if (args[i].equalsIgnoreCase("-type:red:green:blue:range")) {
 
                 String[] splans = args[i + 1].split(",");
                 if ((splans != null) && (splans.length > 0)) {
 
                     for (int j = 0; j < splans.length; j++) {
 
-                        int index = splans[j].indexOf(":");
-                        if (index != -1) {
+                        String[] breakup = splans[j].split(":");
+                        if ((breakup != null) && (breakup.length == 5)) {
 
-                            String front = splans[j].substring(0, index);
-                            String back = splans[j].substring(index + 1);
                             DetectRatingPlan drp = new DetectRatingPlan();
-                            drp.setType(Util.str2int(front, 0));
-                            drp.setValue(Util.str2int(back, 10));
+                            drp.setType(Util.str2int(breakup[0], 0));
+                            drp.setRed(Util.str2int(breakup[1], 0));
+                            drp.setGreen(Util.str2int(breakup[2], 0));
+                            drp.setBlue(Util.str2int(breakup[3], 0));
+                            drp.setRange(Util.str2int(breakup[4], 0));
                             drpList.add(drp);
                         }
                     }
@@ -660,10 +645,6 @@ public final class DetectRatingRectangle {
             if (file.isDirectory()) {
 
                 int[] array = drr.processDirectory(file, extension, plans, verbose);
-
-            } else {
-
-                //drr.examine(file, type, fudge, verbose);
             }
         }
     }

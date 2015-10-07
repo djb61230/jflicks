@@ -73,12 +73,24 @@ public class SchedulesDirectProgramDataJob extends AbstractJob {
 
                     pd.setUpdatingNow(true);
                     SchedulesDirect sd = SchedulesDirect.getInstance();
-                    Xtvd xtvd = sd.getXtvd(pd.getConfiguredUserName(), pd.getConfiguredPassword(),
-                        pd.getConfiguredCountry(), pd.getConfiguredZipCode());
-                    if (xtvd != null) {
-                        pd.process(xtvd);
+
+                    String user = pd.getConfiguredUserName();
+                    String pass = pd.getConfiguredPassword();
+                    String country = pd.getConfiguredCountry();
+                    String zip = pd.getConfiguredZipCode();
+                    if ((user != null) && (pass != null) && (country != null) && (zip != null)) {
+
+                        Xtvd xtvd = sd.getXtvd(user, pass, country, zip);
+                        if (xtvd != null) {
+
+                            pd.process(xtvd);
+                        }
+                        pd.setUpdatingNow(false);
+
+                    } else {
+
+                        JobManager.sleep(getSleepTime());
                     }
-                    pd.setUpdatingNow(false);
                 }
             }
 

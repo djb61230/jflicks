@@ -234,19 +234,30 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                 Recording r = getRecording();
                 if (!r.isCurrentlyRecording()) {
 
-                    // We are ready to start ffmpeg.
-                    JobContainer jc = getJobContainer();
-                    if (jc != null) {
+                    File indexed = new File(r.getPath() + ".mp4");
+                    if (indexed.exists()) {
 
-                        jc.start();
-                        frameStarted = true;
-                        LogUtil.log(LogUtil.INFO, "Actually kicked off ffmpeg");
+                        LogUtil.log(LogUtil.INFO, "indexer done for " + r.getTitle() + " kick off frame grab");
+
+                        // We are ready to start ffmpeg.
+                        JobContainer jc = getJobContainer();
+                        if (jc != null) {
+
+                            jc.start();
+                            frameStarted = true;
+                            LogUtil.log(LogUtil.INFO, "Actually kicked off ffmpeg " + r.getTitle());
+                        }
+
+                    } else {
+
+                        LogUtil.log(LogUtil.INFO, "We don't start until after indexing. " + r.getTitle());
+                        LogUtil.log(LogUtil.INFO, "Don't find <" + indexed.getPath() + ">");
                     }
 
                 } else {
 
                     LogUtil.log(LogUtil.INFO, "Recording still seems to be on. "
-                        + "Waiting until finished to grab frames.");
+                        + "Waiting until finished to grab frames. " + r.getTitle());
                 }
             }
         }
@@ -338,11 +349,15 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                                     LogUtil.log(LogUtil.INFO, "Couldn't do chapters");
                                 }
                             }
+
+                        } else {
+
+                            LogUtil.log(LogUtil.INFO, "not an mp4 file to write chapters! " + r.getTitle());
                         }
 
                     } else {
 
-                        LogUtil.log(LogUtil.INFO, "Didn't find any rating frames!");
+                        LogUtil.log(LogUtil.INFO, "Didn't find any rating frames! " + r.getTitle());
                     }
 
                     // Now need to delete frames....

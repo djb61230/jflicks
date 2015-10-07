@@ -16,6 +16,7 @@
 */
 package org.jflicks.nms.system;
 
+import java.io.File;
 import java.util.Hashtable;
 
 import org.jflicks.discovery.ServiceDescription;
@@ -61,6 +62,8 @@ public class Activator extends BaseActivator {
      * {@inheritDoc}
      */
     public void start(BundleContext bc) {
+
+        setupJflicksPath();
 
         setBundleContext(bc);
         SystemNMS s = new SystemNMS();
@@ -327,6 +330,34 @@ public class Activator extends BaseActivator {
 
     private void setSystemNMS(SystemNMS s) {
         systemNMS = s;
+    }
+
+    private void setupJflicksPath() {
+
+        File dot = new File(".");
+        File parent = dot.getParentFile();
+        File platform = new File(parent, "platform");
+        if ((platform.exists()) && (platform.isDirectory())) {
+
+            String pname = null;
+            if (Util.isLinux()) {
+                pname = "linux";
+            } else if (Util.isMac()) {
+                pname = "mac";
+            } else if (Util.isWindows()) {
+                pname = "win";
+            }
+
+            File os = new File(platform, pname);
+            if ((os.exists()) && (os.isDirectory())) {
+
+                File bin = new File(os, "bin");
+                if ((bin.exists()) && (bin.isDirectory())) {
+
+                    System.setProperty("jflicks.path", bin.getAbsolutePath());
+                }
+            }
+        }
     }
 
     class ShutDownListener implements Runnable {
