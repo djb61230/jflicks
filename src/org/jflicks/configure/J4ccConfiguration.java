@@ -28,6 +28,8 @@ import java.io.Serializable;
  */
 public class J4ccConfiguration implements Serializable {
 
+    private String host;
+    private int port;
     private String userName;
     private String password;
     private String zipCode;
@@ -39,6 +41,22 @@ public class J4ccConfiguration implements Serializable {
      * Simple empty constructor.
      */
     public J4ccConfiguration() {
+    }
+
+    public String getHost() {
+        return (host);
+    }
+
+    public void setHost(String s) {
+        host = s;
+    }
+
+    public int getPort() {
+        return (port);
+    }
+
+    public void setPort(int i) {
+        port = i;
     }
 
     public String getUserName() {

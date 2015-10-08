@@ -70,6 +70,7 @@ public abstract class BaseServerResource extends WadlServerResource {
     private String liveTVId;
     private String term;
     private String title;
+    private String host;
     private boolean unique;
 
     /**
@@ -164,6 +165,14 @@ public abstract class BaseServerResource extends WadlServerResource {
         term = s;
     }
 
+    public String getHost() {
+        return (host);
+    }
+
+    public void setHost(String s) {
+        host = s;
+    }
+
     public String getTitle() {
         return (title);
     }
@@ -214,16 +223,14 @@ public abstract class BaseServerResource extends WadlServerResource {
             setFormat(decode((String) map.get("format")));
 
             setRecordingId(decode((String) map.get("recordingId")));
-            setAllowRerecord(
-                Util.str2boolean(decode((String) map.get("allowRerecord")),
-                    false));
+            setAllowRerecord(Util.str2boolean(decode((String) map.get("allowRerecord")), false));
             setRuleId(decode((String) map.get("ruleId")));
             setChannelId(decode((String) map.get("channelId")));
             setShowId(decode((String) map.get("showId")));
             setTerm(decode((String) map.get("term")));
+            setHost(decode((String) map.get("host")));
             setTitle(decode((String) map.get("title")));
-            setUnique(Util.str2boolean(decode((String) map.get("unique")),
-                false));
+            setUnique(Util.str2boolean(decode((String) map.get("unique")), false));
             setLiveTVId(decode((String) map.get("liveTVId")));
         }
     }

@@ -30,6 +30,7 @@ import java.util.Arrays;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
 import org.jflicks.job.JobEvent;
@@ -125,7 +126,7 @@ public class SchedulerPanel extends AbstractPanel {
         gbc.weighty = 0.0;
         gbc.gridwidth = 1;
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -137,7 +138,7 @@ public class SchedulerPanel extends AbstractPanel {
         gbc.weighty = 0.0;
         gbc.gridwidth = 1;
         gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -149,7 +150,7 @@ public class SchedulerPanel extends AbstractPanel {
         gbc.weighty = 0.0;
         gbc.gridwidth = 1;
         gbc.gridx = 2;
-        gbc.gridy = 0;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -161,7 +162,7 @@ public class SchedulerPanel extends AbstractPanel {
         gbc.weighty = 0.0;
         gbc.gridwidth = 1;
         gbc.gridx = 3;
-        gbc.gridy = 0;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -173,7 +174,7 @@ public class SchedulerPanel extends AbstractPanel {
         gbc.weighty = 1.0;
         gbc.gridwidth = 4;
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -185,7 +186,7 @@ public class SchedulerPanel extends AbstractPanel {
         gbc.weighty = 0.0;
         gbc.gridwidth = 4;
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(4, 4, 4, 4);
@@ -498,8 +499,7 @@ public class SchedulerPanel extends AbstractPanel {
                         JXFrame f = getUpcomingFrame();
                         if (f == null) {
 
-                            DisplayUpcomingPanel dup =
-                                new DisplayUpcomingPanel();
+                            DisplayUpcomingPanel dup = new DisplayUpcomingPanel();
                             dup.setUpcomings(array);
                             setDisplayUpcomingPanel(dup);
                             f = new JXFrame();
@@ -517,8 +517,7 @@ public class SchedulerPanel extends AbstractPanel {
 
                         } else {
 
-                            DisplayUpcomingPanel dup =
-                                getDisplayUpcomingPanel();
+                            DisplayUpcomingPanel dup = getDisplayUpcomingPanel();
                             if (dup != null) {
                                 dup.setUpcomings(array);
                             }
@@ -527,6 +526,11 @@ public class SchedulerPanel extends AbstractPanel {
                             }
                         }
                     }
+
+                } else {
+
+                    JOptionPane.showMessageDialog(Util.findFrame(SchedulerPanel.this),
+                        "No upcoming recordings scheduled.", "alert", JOptionPane.ERROR_MESSAGE);
                 }
             }
 

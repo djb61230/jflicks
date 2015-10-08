@@ -173,6 +173,8 @@ public class SystemNMS extends BaseNMS {
 
         J4ccConfiguration result = new J4ccConfiguration();
 
+        result.setHost(getHost());
+        result.setPort(getPort());
         Scheduler s = getScheduler();
         if (s != null) {
 
@@ -237,42 +239,6 @@ public class SystemNMS extends BaseNMS {
 
                 result.setJ4ccRecorders(rarray);
             }
-
-            /*
-            ProgramData[] pds = getProgramData();
-            if ((pds != null) && (pds.length > 0)) {
-
-                ProgramData pd = pds[0];
-            }
-
-            Recorder[] recs = getRecorders();
-            if (recs != null) {
-
-                ArrayList<J4ccRecorder> l = new ArrayList<J4ccRecorder>();
-                for (int i = 0; i < recs.length; i++) {
-
-                    if (recs[i] instanceof HDHRRecorder) {
-
-                        HDHRRecorder hdhrrec = (HDHRRecorder) recs[i];
-                        J4ccRecorder r = new J4ccRecorder();
-                        String lname = s.getListingNameByRecorder(recs[i]);
-                        String rname = r.getName();
-                        String model = hdhrrec.getModel();
-
-                        if (model != null) {
-
-                            model = model.toLowerCase();
-                            r.setHDTC(model.indexOf("hdtc") != -1);
-                        }
-
-                        r.setListing(lname);
-                        r.setName(rname);
-
-                        l.add(r);
-                    }
-                }
-            }
-            */
         }
 
         return (result);

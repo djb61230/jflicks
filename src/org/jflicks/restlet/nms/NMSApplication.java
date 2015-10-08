@@ -48,43 +48,30 @@ public class NMSApplication extends BaseApplication {
         Router router = new Router(getContext());
 
         router.attach("/", RootResource.class);
-        router.attach("/{version}/recordings.{format}",
-            RecordingResource.class);
-        router.attach("/{version}/recordings/{title}.{format}",
-            RecordingByTitleResource.class);
-        router.attach("/{version}/recording/titles.{format}",
-            RecordingTitleResource.class);
+        router.attach("/{version}/recordings.{format}", RecordingResource.class);
+        router.attach("/{version}/recordings/{title}.{format}", RecordingByTitleResource.class);
+        router.attach("/{version}/recording/titles.{format}", RecordingTitleResource.class);
         router.attach("/{version}/recording/{recordingId}/"
             + "{allowRerecord}", DeleteRecordingResource.class);
-        router.attach("/{version}/recordingstop/{recordingId}",
-            StopRecordingResource.class);
-        router.attach("/{version}/recordingrules.{format}",
-            RecordingRuleResource.class);
-        router.attach("/{version}/recordingrule/{ruleId}",
-            RecordingRuleResource.class);
+        router.attach("/{version}/recordingstop/{recordingId}", StopRecordingResource.class);
+        router.attach("/{version}/recordingrules.{format}", RecordingRuleResource.class);
+        router.attach("/{version}/recordingrule/{ruleId}", RecordingRuleResource.class);
         router.attach("/{version}/state.{format}", StateResource.class);
-        router.attach("/{version}/search/{term}.{format}",
-            SearchResource.class);
+        router.attach("/{version}/search/{term}.{format}", SearchResource.class);
         router.attach("/{version}/searchtitlestartswith/{unique}/{term}.{format}",
             SearchTitleStartsWithResource.class);
-        router.attach("/{version}/channels.{format}",
-            ChannelResource.class);
+        router.attach("/{version}/channels.{format}", ChannelResource.class);
         router.attach("/{version}/schedule", ScheduleResource.class);
         router.attach("/{version}/tasks.{format}", TaskResource.class);
-        router.attach("/{version}/upcomings.{format}",
-            UpcomingResource.class);
+        router.attach("/{version}/upcomings.{format}", UpcomingResource.class);
         router.attach("/{version}/upcoming", UpcomingResource.class);
         router.attach("/{version}/videos.{format}", VideoResource.class);
-        router.attach("/{version}/guide/{channelId}.{format}",
-            GuideChannelResource.class);
-        router.attach("/{version}/guide/{term}/{channelId}.{format}",
-            GuideTitleChannelResource.class);
-        router.attach("/{version}/livetv/items.{format}",
-            LiveTVItemResource.class);
-        router.attach("/{version}/livetv/open/{channelId}.{format}",
-            LiveTVOpenCloseResource.class);
-        router.attach("/{version}/livetv/close/{liveTVId}.{format}",
-            LiveTVOpenCloseResource.class);
+        router.attach("/{version}/guide/{channelId}.{format}", GuideChannelResource.class);
+        router.attach("/{version}/guide/{term}/{channelId}.{format}", GuideTitleChannelResource.class);
+        router.attach("/{version}/livetv/items.{format}", LiveTVItemResource.class);
+        router.attach("/{version}/livetv/open/{channelId}.{format}", LiveTVOpenCloseResource.class);
+        router.attach("/{version}/livetv/close/{liveTVId}.{format}", LiveTVOpenCloseResource.class);
+        router.attach("/{version}/j4cc/{host}/configuration.{format}", J4ccConfigurationResource.class);
 
         return (router);
     }

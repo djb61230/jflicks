@@ -9,6 +9,7 @@ Export-Package:\
  org.jflicks.restlet.nms;version="1.0.0"
 
 Import-Package:\
+ org.jflicks.configure;version="1.0.0",\
  org.jflicks.nms;version="1.0.0",\
  org.jflicks.restlet;version="1.0.0",\
  org.jflicks.restlet.servercomponent;version="1.0.0",\

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.jflicks.configure.Configuration;
+import org.jflicks.configure.J4ccConfiguration;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.NMSUtil;
@@ -617,6 +618,26 @@ public final class NMSSupport extends BaseSupport {
         if (n != null) {
 
             result = n.getTasks();
+        }
+
+        return (result);
+    }
+
+    public J4ccConfiguration getJ4ccConfiguration(String host) {
+
+        J4ccConfiguration result = null;
+
+        NMS[] array = getNMS();
+        if ((array != null) && (array.length > 0) && (host != null)) {
+
+            for (int i = 0; i < array.length; i++) {
+
+                if (host.equals(array[i].getHost())) {
+
+                    result = array[i].getJ4ccConfiguration();
+                    break;
+                }
+            }
         }
 
         return (result);
