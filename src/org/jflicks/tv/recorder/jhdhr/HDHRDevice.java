@@ -16,13 +16,15 @@
 */
 package org.jflicks.tv.recorder.jhdhr;
 
+import java.io.Serializable;
+
 /**
  * A class to interact with your HDHR devices on the network.
  *
  * @author Doug Barnum
  * @version 1.0
  */
-public class HDHRDevice {
+public class HDHRDevice implements Serializable {
 
     private String id;
     private int tuner;

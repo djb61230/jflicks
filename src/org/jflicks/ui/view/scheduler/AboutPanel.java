@@ -47,8 +47,7 @@ public class AboutPanel extends JLayeredPane {
         p.setBounds(0, 0, 400, 267);
         try {
 
-            BufferedImage bi =
-                ImageIO.read(getClass().getResource("aboutbg.png"));
+            BufferedImage bi = ImageIO.read(getClass().getResource("j4ccabout.png"));
             ImagePainter painter = new ImagePainter(bi);
             p.setBackgroundPainter(painter);
             p.setAlpha(0.4f);
@@ -88,7 +87,7 @@ public class AboutPanel extends JLayeredPane {
         version.setBounds(0, 130, 400, 30);
 
         JXLabel copy = new JXLabel();
-        String textcopy = "Copyright 2010 Doug Barnum";
+        String textcopy = "Copyright 2015 Doug Barnum";
         copy.setText(textcopy);
         copy.setForeground(Color.BLACK);
         tpainter =

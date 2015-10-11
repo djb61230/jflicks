@@ -12,6 +12,7 @@ Include-Resource:\
  org/jflicks/ui/view/scheduler/delete32.png=../resources/delete32.png,\
  org/jflicks/ui/view/scheduler/exit16.png=../resources/exit16.png,\
  org/jflicks/ui/view/scheduler/exit32.png=../resources/exit32.png,\
+ org/jflicks/ui/view/scheduler/green.png=../resources/green.png,\
  org/jflicks/ui/view/scheduler/help16.png=../resources/help16.png,\
  org/jflicks/ui/view/scheduler/help32.png=../resources/help32.png,\
  org/jflicks/ui/view/scheduler/info16.png=../resources/info16.png,\
@@ -20,11 +21,12 @@ Include-Resource:\
  org/jflicks/ui/view/scheduler/movie32.png=../resources/movie32.png,\
  org/jflicks/ui/view/scheduler/record16.png=../resources/record16.png,\
  org/jflicks/ui/view/scheduler/record32.png=../resources/record32.png,\
+ org/jflicks/ui/view/scheduler/red.png=../resources/red.png,\
  org/jflicks/ui/view/scheduler/save16.png=../resources/save16.png,\
  org/jflicks/ui/view/scheduler/save32.png=../resources/save32.png,\
  org/jflicks/ui/view/scheduler/stop16.png=../resources/stop16.png,\
  org/jflicks/ui/view/scheduler/stop32.png=../resources/stop32.png,\
- org/jflicks/ui/view/scheduler/aboutbg.png=../resources/aboutbg.png,\
+ org/jflicks/ui/view/scheduler/j4ccabout.png=../resources/j4ccabout.png,\
  org/jflicks/ui/view/scheduler/icon.png=../resources/scheduler_icon.png
 
 Export-Package:\
@@ -39,6 +41,7 @@ Import-Package:\
  org.jflicks.ui.view.scheduler;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\
  org.jflicks.tv;version="1.0.0",\
+ org.jflicks.tv.recorder;version="1.0.0",\
  org.osgi.framework;version="[1.3,2.0)",\
  org.osgi.service.event;version="[1.0,2.0)",\
  org.osgi.service.log;version="[1.0,4.0)",\

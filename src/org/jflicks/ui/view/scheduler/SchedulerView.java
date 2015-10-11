@@ -80,6 +80,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
     private static final String UPCOMING_FRAME = "upcoming";
     private static final String RULE_FRAME = "rule";
     private static final String MAIN_FRAME = "main";
+    private static final String STATUS_FRAME = "status";
 
     private NMS[] nms;
     private JXFrame frame;
@@ -98,6 +99,9 @@ public class SchedulerView extends JFlicksView implements ActionListener {
     private JXFrame ruleFrame;
     private EditRecordingRulePanel editRecordingRulePanel;
     private RuleAction ruleAction;
+    private JXFrame statusFrame;
+    private StatusPanel statusPanel;
+    private StatusAction statusAction;
 
     /**
      * Default constructor.
@@ -160,7 +164,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
 
         if (frame == null) {
 
-            frame = new JXFrame("jflicks media system - Scheduler");
+            frame = new JXFrame("jflicks for cord cutters - Scheduler");
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {
@@ -245,6 +249,8 @@ public class SchedulerView extends JFlicksView implements ActionListener {
 
             frame.add(sap, gbc);
 
+            boolean onMac = Util.isMac();
+
             // Build our menubar.
             JMenuBar mb = new JMenuBar();
             JMenu fileMenu = new JMenu("File");
@@ -254,9 +260,16 @@ public class SchedulerView extends JFlicksView implements ActionListener {
             JMenu helpMenu = new JMenu("Help");
             helpMenu.setMnemonic(Integer.valueOf(KeyEvent.VK_H));
 
-            ExitAction exitAction = new ExitAction();
-            fileMenu.addSeparator();
-            fileMenu.add(exitAction);
+            if (!onMac) {
+
+                ExitAction exitAction = new ExitAction();
+                fileMenu.addSeparator();
+                fileMenu.add(exitAction);
+            }
+
+            StatusAction statAction = new StatusAction();
+            viewMenu.add(statAction);
+            setStatusAction(statAction);
 
             RuleAction rrAction = new RuleAction();
             viewMenu.add(rrAction);
@@ -272,12 +285,16 @@ public class SchedulerView extends JFlicksView implements ActionListener {
 
             HelpAction helpAction = new HelpAction();
             helpMenu.add(helpAction);
-            AboutAction aboutAction = new AboutAction();
-            helpMenu.add(aboutAction);
 
-            mb.add(fileMenu);
+            if (!onMac) {
+
+                AboutAction aboutAction = new AboutAction();
+                helpMenu.add(aboutAction);
+                mb.add(fileMenu);
+            }
+
             mb.add(viewMenu);
-            mb.add(helpMenu);
+            //mb.add(helpMenu);
             frame.setJMenuBar(mb);
 
             try {
@@ -413,6 +430,30 @@ public class SchedulerView extends JFlicksView implements ActionListener {
         ruleAction = a;
     }
 
+    private JXFrame getStatusFrame() {
+        return (statusFrame);
+    }
+
+    private void setStatusFrame(JXFrame f) {
+        statusFrame = f;
+    }
+
+    private StatusPanel getStatusPanel() {
+        return (statusPanel);
+    }
+
+    private void setStatusPanel(StatusPanel p) {
+        statusPanel = p;
+    }
+
+    private StatusAction getStatusAction() {
+        return (statusAction);
+    }
+
+    private void setStatusAction(StatusAction a) {
+        statusAction = a;
+    }
+
     private NMS getSelectedNMS() {
 
         NMS result = null;
@@ -469,6 +510,11 @@ public class SchedulerView extends JFlicksView implements ActionListener {
             setBounds(RULE_FRAME, f.getBounds());
         }
 
+        f = getStatusFrame();
+        if (f != null) {
+            setBounds(STATUS_FRAME, f.getBounds());
+        }
+
         JFrame mf = getFrame();
         if (mf != null) {
             setBounds(MAIN_FRAME, mf.getBounds());
@@ -519,6 +565,13 @@ public class SchedulerView extends JFlicksView implements ActionListener {
 
                     a.update();
                 }
+            }
+
+            // Update the status panel on all messages.
+            StatusPanel sp = getStatusPanel();
+            StatusAction a = getStatusAction();
+            if ((sp != null) && (a != null)) {
+                a.update();
             }
         }
     }
@@ -772,8 +825,7 @@ public class SchedulerView extends JFlicksView implements ActionListener {
                         JXFrame f = getRuleFrame();
                         if (f == null) {
 
-                            EditRecordingRulePanel errp =
-                                new EditRecordingRulePanel(getSelectedNMS());
+                            EditRecordingRulePanel errp = new EditRecordingRulePanel(getSelectedNMS());
                             errp.setRecordingRules(array);
                             setEditRecordingRulePanel(errp);
                             f = new JXFrame();
@@ -1005,6 +1057,78 @@ public class SchedulerView extends JFlicksView implements ActionListener {
                     new ProgressBar(getTabbedPane(), "Recordings...", rj);
                 pbar.addJobListener(this);
                 pbar.execute();
+            }
+        }
+    }
+
+    class StatusAction extends AbstractAction {
+
+        private boolean showIt;
+
+        public StatusAction() {
+
+            ImageIcon sm = new ImageIcon(getClass().getResource("info16.png"));
+            ImageIcon lge = new ImageIcon(getClass().getResource("info32.png"));
+            putValue(NAME, "Status");
+            putValue(SHORT_DESCRIPTION, "Status");
+            putValue(SMALL_ICON, sm);
+            putValue(LARGE_ICON_KEY, lge);
+            putValue(MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_S));
+            setShowIt(true);
+        }
+
+        private boolean isShowIt() {
+            return (showIt);
+        }
+
+        private void setShowIt(boolean b) {
+            showIt = b;
+        }
+
+        public void update() {
+
+            setShowIt(false);
+            actionPerformed(null);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            NMS n = getSelectedNMS();
+            if (n != null) {
+
+                JXFrame f = getStatusFrame();
+                if (f == null) {
+
+                    StatusPanel sp = new StatusPanel();
+                    sp.setNMS(n);
+                    sp.populate();
+                    setStatusPanel(sp);
+                    f = new JXFrame();
+                    f.setTitle("Status");
+                    f.add(sp);
+                    f.pack();
+                    setStatusFrame(f);
+                    Rectangle r = getBounds(STATUS_FRAME);
+                    if (r != null) {
+                        f.setBounds(r);
+                    }
+
+                    if (isShowIt()) {
+                        f.setVisible(true);
+                    }
+
+                } else {
+
+                    StatusPanel sp = getStatusPanel();
+                    if (sp != null) {
+
+                        sp.setNMS(n);
+                        sp.populate();
+                    }
+                    if (isShowIt()) {
+                        f.setVisible(true);
+                    }
+                }
             }
         }
     }

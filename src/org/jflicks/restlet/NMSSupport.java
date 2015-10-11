@@ -201,7 +201,7 @@ public final class NMSSupport extends BaseSupport {
             if (tlist.size() > 0) {
 
                 result = tlist.toArray(new String[tlist.size()]);
-                Arrays.sort(result);
+                Arrays.sort(result, new RecordingSortByTitle());
             }
         }
 
@@ -807,6 +807,17 @@ public final class NMSSupport extends BaseSupport {
 
             String title0 = Util.toSortableTitle(sa0.getShow().getTitle());
             String title1 = Util.toSortableTitle(sa1.getShow().getTitle());
+
+            return (title0.compareTo(title1));
+        }
+    }
+
+    static class RecordingSortByTitle implements Comparator<String>, Serializable {
+
+        public int compare(String s0, String s1) {
+
+            String title0 = Util.toSortableTitle(s0);
+            String title1 = Util.toSortableTitle(s1);
 
             return (title0.compareTo(title1));
         }

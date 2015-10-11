@@ -107,6 +107,9 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
     private int beginPadding;
     private int endPadding;
     private String hostPort;
+    private String bannerURL;
+    private String posterURL;
+    private String fanartURL;
 
     /**
      * Simple empty constructor.
@@ -160,6 +163,9 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
         setBeginPadding(rr.getBeginPadding());
         setEndPadding(rr.getEndPadding());
         setHostPort(rr.getHostPort());
+        setBannerURL(rr.getBannerURL());
+        setPosterURL(rr.getPosterURL());
+        setFanartURL(rr.getFanartURL());
 
         Task[] array = rr.getTasks();
         if (array != null) {
@@ -522,6 +528,60 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
      */
     public void setHostPort(String s) {
         hostPort = s;
+    }
+
+    /**
+     * URL as a String where a banner image can be found if it exists.
+     *
+     * @return A String instance.
+     */
+    public String getBannerURL() {
+        return (bannerURL);
+    }
+
+    /**
+     * URL as a String where a banner image can be found if it exists.
+     *
+     * @param s A String instance.
+     */
+    public void setBannerURL(String s) {
+        bannerURL = s;
+    }
+
+    /**
+     * URL as a String where a poster image can be found if it exists.
+     *
+     * @return A String instance.
+     */
+    public String getPosterURL() {
+        return (posterURL);
+    }
+
+    /**
+     * URL as a String where a poster image can be found if it exists.
+     *
+     * @param s A String instance.
+     */
+    public void setPosterURL(String s) {
+        posterURL = s;
+    }
+
+    /**
+     * URL as a String where a fanart image can be found if it exists.
+     *
+     * @return A String instance.
+     */
+    public String getFanartURL() {
+        return (fanartURL);
+    }
+
+    /**
+     * URL as a String where a fanart image can be found if it exists.
+     *
+     * @param s A String instance.
+     */
+    public void setFanartURL(String s) {
+        fanartURL = s;
     }
 
     /**

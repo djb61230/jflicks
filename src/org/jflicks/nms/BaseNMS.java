@@ -1456,10 +1456,21 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             result = s.getRecordingRules();
             if ((result != null) && (result.length > 0)) {
 
-                String hp = getHost() + ":" + getPort();
+                String h = getHost();
+                int p = getHttpPort();
+                String hp = h + ":" + getPort();
                 for (int i = 0; i < result.length; i++) {
 
                     result[i].setHostPort(hp);
+
+                    String top = "http://" + h + ":" + p + "/" + NMSConstants.HTTP_IMAGES_NAME + "/";
+                    String sid = result[i].getSeriesId();
+                    if (sid != null) {
+
+                            result[i].setBannerURL(top + sid + "_banner.jpg");
+                            result[i].setPosterURL(top + sid + "_poster.jpg");
+                            result[i].setFanartURL(top + sid + "_fanart.jpg");
+                    }
 
                     // We should sync up the PostProc Workers with the
                     // lightweight task instances here so the user gets
@@ -1530,8 +1541,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 if (h != null) {
 
                     String hp = h + ":" + port;
-                    String top = "http://" + h + ":" + p + "/"
-                        + NMSConstants.HTTP_IMAGES_NAME + "/";
+                    String top = "http://" + h + ":" + p + "/" + NMSConstants.HTTP_IMAGES_NAME + "/";
                     for (int i = 0; i < result.length; i++) {
 
                         String sid = result[i].getSeriesId();

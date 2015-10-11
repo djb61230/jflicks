@@ -1873,8 +1873,7 @@ public class RecordingScreen extends PlayerScreen implements RecordingProperty,
         }
     }
 
-    static class RecordingSortByTitle implements Comparator<Recording>,
-        Serializable {
+    static class RecordingSortByTitle implements Comparator<Recording>, Serializable {
 
         public int compare(Recording r0, Recording r1) {
 
