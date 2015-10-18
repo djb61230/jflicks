@@ -36,6 +36,7 @@ public class Channel implements Serializable, Comparable<Channel> {
     private String callSign;
     private String listingId;
     private String referenceNumber;
+    private String logoURL;
 
     /**
      * Simple empty constructor.
@@ -60,6 +61,7 @@ public class Channel implements Serializable, Comparable<Channel> {
             setAffiliate(c.getAffiliate());
             setCallSign(c.getCallSign());
             setListingId(c.getListingId());
+            setLogoURL(c.getLogoURL());
         }
     }
 
@@ -227,6 +229,14 @@ public class Channel implements Serializable, Comparable<Channel> {
      */
     public void setCallSign(String s) {
         callSign = s;
+    }
+
+    public String getLogoURL() {
+        return (logoURL);
+    }
+
+    public void setLogoURL(String s) {
+        logoURL = s;
     }
 
     /**

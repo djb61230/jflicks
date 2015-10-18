@@ -42,10 +42,13 @@ import net.sf.xtvdclient.xtvd.parser.ParserFactory;
 
 import org.apache.commons.codec.binary.Hex;
 
+import org.jflicks.tv.ChannelLogo;
 import org.jflicks.tv.programdata.sd.json.Client;
 import org.jflicks.tv.programdata.sd.json.GuideRequest;
+import org.jflicks.tv.programdata.sd.json.Logo;
 import org.jflicks.tv.programdata.sd.json.Mapping;
 import org.jflicks.tv.programdata.sd.json.Program;
+import org.jflicks.tv.programdata.sd.json.Station;
 import org.jflicks.tv.programdata.sd.json.StationID;
 import org.jflicks.tv.programdata.sd.json.StationSchedule;
 import org.jflicks.tv.programdata.sd.json.UserLineup;
@@ -61,6 +64,7 @@ import org.jflicks.util.Util;
 public class SchedulesDirect {
 
     private File workingFile;
+    private ArrayList<ChannelLogo> channelLogoList;
     private static HashMap<String, Program> programMap;
     private static SchedulesDirect instance;
 
@@ -68,6 +72,7 @@ public class SchedulesDirect {
 
         System.setProperty("propertiesDirectory", "conf");
         instance = new SchedulesDirect();
+        instance.setChannelLogoList(new ArrayList<ChannelLogo>());
         if (!instance.readCache()) {
 
             instance.programMap = new HashMap<String, Program>();
@@ -79,6 +84,44 @@ public class SchedulesDirect {
 
     public static SchedulesDirect getInstance() {
         return (instance);
+    }
+
+    private ArrayList<ChannelLogo> getChannelLogoList()  {
+        return (channelLogoList);
+    }
+
+    private void setChannelLogoList(ArrayList<ChannelLogo> l)  {
+        channelLogoList = l;
+    }
+
+    private void clearChannelLogoList() {
+
+        if (channelLogoList != null) {
+            channelLogoList.clear();
+        }
+    }
+
+    private void addChannelLogo(ChannelLogo cl) {
+
+        if ((channelLogoList != null) && (cl != null)) {
+
+            if (!channelLogoList.contains(cl)) {
+
+                channelLogoList.add(cl);
+            }
+        }
+    }
+
+    public ChannelLogo[] getChannelLogos() {
+
+        ChannelLogo[] result = null;
+
+        if ((channelLogoList != null) && (channelLogoList.size() > 0)) {
+
+            result = channelLogoList.toArray(new ChannelLogo[channelLogoList.size()]);
+        }
+
+        return (result);
     }
 
     private boolean readCache() {
@@ -468,6 +511,9 @@ public class SchedulesDirect {
         // instance.  Then very little other code needs to change.
         result = new Xtvd();
 
+        // Clear our ChannelLogo list.
+        clearChannelLogoList();
+
         Client c = getClient(user, password, country, zipcode);
         if (c != null) {
 
@@ -653,6 +699,9 @@ public class SchedulesDirect {
 
                     ArrayList<net.sf.xtvdclient.xtvd.datatypes.Map> mlist = handleStationMap(jmap, array[i]);
                     l.setMaps(mlist);
+
+                    // We build ChannelLogo instances from a jmap.
+                    channelLogosFromMapping(jmap);
                 }
                 hm.put(array[i].toString(), l);
 
@@ -857,6 +906,43 @@ public class SchedulesDirect {
         }
 
         return (result);
+    }
+
+    private void channelLogosFromMapping(Mapping m) {
+
+        if (m != null) {
+
+            Station[] array = m.getStations();
+            if ((array != null) && (array.length > 0)) {
+
+                for (int i = 0; i < array.length; i++) {
+
+                    String stationID = array[i].getStationID();
+                    Logo l = array[i].getLogo();
+                    if ((l != null) && (stationID != null)) {
+
+                        // Turn id string to an int.
+                        int cid = Util.str2int(stationID, -1);
+                        if (cid != -1) {
+
+                            ChannelLogo cl = new ChannelLogo();
+                            cl.setChannelId(cid);
+                            cl.setUrl(l.getUrl());
+                            cl.setWidth(l.getWidth());
+                            cl.setHeight(l.getHeight());
+                            cl.setMd5(l.getMd5());
+                            addChannelLogo(cl);
+
+                            LogUtil.log(LogUtil.DEBUG, "channelId: " + cl.getChannelId());
+                            LogUtil.log(LogUtil.DEBUG, "url: " + cl.getUrl());
+                            LogUtil.log(LogUtil.DEBUG, "width: " + cl.getWidth());
+                            LogUtil.log(LogUtil.DEBUG, "height: " + cl.getHeight());
+                            LogUtil.log(LogUtil.DEBUG, "md5: " + cl.getMd5());
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

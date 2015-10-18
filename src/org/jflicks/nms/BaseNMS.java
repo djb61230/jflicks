@@ -42,6 +42,7 @@ import org.jflicks.photomanager.Tag;
 import org.jflicks.trailer.Trailer;
 import org.jflicks.tv.Airing;
 import org.jflicks.tv.Channel;
+import org.jflicks.tv.ChannelLogo;
 import org.jflicks.tv.Listing;
 import org.jflicks.tv.LiveTV;
 import org.jflicks.tv.Recording;
@@ -1108,6 +1109,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if ((all != null) && (all.length > 0)) {
 
             result = all[0].getChannels();
+            updateChannelLogoURL(result);
         }
 
         return (result);
@@ -1124,6 +1126,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         if (s != null) {
 
             result = s.getRecordableChannels();
+            updateChannelLogoURL(result);
         }
 
         return (result);
@@ -1307,6 +1310,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                     result = array[i].getChannelsByListing(listing);
                     if (result != null) {
 
+                        updateChannelLogoURL(result);
                         break;
                     }
                 }
@@ -1331,6 +1335,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 result = array[i].getChannelById(id, lid);
                 if (result != null) {
 
+                    updateChannelLogoURL(result);
                     break;
                 }
             }
@@ -2261,6 +2266,57 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 }
             }
         }
+
+        // Also a good time to cache the channel logos.
+        ProgramData[] pds = getProgramData();
+        if ((pds != null) && (pds.length > 0)) {
+
+            String imageHome = getConfiguredImageHome();
+            if (imageHome == null) {
+                imageHome = ".";
+            }
+            File imageHomeFile = new File(imageHome);
+            for (int i = 0; i < pds.length; i++) {
+
+                ChannelLogo[] clogos = pds[i].getChannelLogos();
+                if ((clogos != null) && (clogos.length > 0)) {
+
+                    for (int j = 0; j < clogos.length; j++) {
+
+                        int cid = clogos[j].getChannelId();
+                        String url = clogos[j].getUrl();
+                        String md5 = clogos[j].getMd5();
+                        if ((url != null) && (md5 != null)) {
+
+                            int index = url.lastIndexOf(".");
+                            if (index != -1) {
+
+                                String ext = url.substring(index + 1);
+                                File logo = new File(imageHomeFile, "logo_" + cid + "_" + md5 + "." + ext);
+                                if (!logo.exists()) {
+
+                                    // Need to fetch it.
+                                    try {
+
+                                        URL iurl = new URL(url);
+                                        BufferedImage bi = ImageIO.read(iurl);
+                                        ImageIO.write(bi, ext, logo);
+                                        File logoCopy = new File(imageHomeFile, "logo_" + cid + "." + ext);
+                                        ImageIO.write(bi, ext, logoCopy);
+                                        LogUtil.log(LogUtil.DEBUG, "wrote logo: " + logo.getPath());
+                                        LogUtil.log(LogUtil.DEBUG, "wrote logoCopy: " + logoCopy.getPath());
+
+                                    } catch (Exception ex) {
+
+                                        LogUtil.log(LogUtil.WARNING, "Unable to save logo: " + ex.getMessage());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -2728,6 +2784,48 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         }
 
         return (result);
+    }
+
+    private void updateChannelLogoURL(Channel[] array) {
+
+        if ((array != null) && (array.length > 0)) {
+
+            for (int i = 0; i < array.length; i++) {
+                updateChannelLogoURL(array[i]);
+            }
+        }
+    }
+
+    private void updateChannelLogoURL(Channel c) {
+
+        if (c != null) {
+
+            int cid = c.getId();
+            String h = getHost();
+            int p = getHttpPort();
+            String ihome = getConfiguredImageHome();
+            if (ihome == null) {
+                ihome = "";
+            }
+            if (h != null) {
+
+                String hp = h + ":" + port;
+                String top = "http://" + h + ":" + p + "/" + NMSConstants.HTTP_IMAGES_NAME + "/";
+                String[] exts = {
+                    "png",
+                    "jpg"
+                };
+                for (int i = 0; i < exts.length; i++) {
+
+                    File logo = new File(ihome + "/logo_" + cid + "." + exts[i]);
+                    if (logo.exists()) {
+
+                        c.setLogoURL(top + "logo_" + cid + "." + exts[i]);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**

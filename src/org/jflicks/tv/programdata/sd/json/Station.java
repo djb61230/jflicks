@@ -98,6 +98,16 @@ public class Station implements Serializable {
         stationID = s;
     }
 
+    public Logo getLogo() {
+        return (logo);
+    }
+
+    public void setLogo(Logo l) {
+
+        System.out.println("in set logo: " + l);
+        logo = l;
+    }
+
     public String toString() {
 
         return getStationID() + ":" + getName();

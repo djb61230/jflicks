@@ -494,6 +494,14 @@ public class Client {
                 String json = RestUtil.get(cr);
                 dumpJson(json);
 
+                // We are hacking here because gson does not parse the URL for
+                // the logo.  It does not like the tag to be URL, but works if
+                // it is url.  We also fix the escape of the forward slash in the
+                // actual url.  Seems like it's escaped unnecessarily.
+                json = json.replaceAll("\\\\/", "/");
+                json = json.replaceAll("\"URL\"", "\"url\"");
+                dumpJson(json);
+
                 Gson gson = new Gson();
                 result = gson.fromJson(json, Mapping.class);
             }

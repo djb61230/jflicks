@@ -33,8 +33,7 @@ import org.jflicks.util.Util;
 public abstract class BaseProgramData extends BaseConfig
     implements ProgramData {
 
-    private ArrayList<DataUpdateListener> dataUpdateList =
-        new ArrayList<DataUpdateListener>();
+    private ArrayList<DataUpdateListener> dataUpdateList = new ArrayList<DataUpdateListener>();
 
     private String title;
 

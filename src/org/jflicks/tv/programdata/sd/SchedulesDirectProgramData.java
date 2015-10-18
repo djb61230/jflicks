@@ -31,6 +31,7 @@ import org.jflicks.db.DbWorker;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.tv.Airing;
 import org.jflicks.tv.Channel;
+import org.jflicks.tv.ChannelLogo;
 import org.jflicks.tv.Listing;
 import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
@@ -64,8 +65,7 @@ import org.jdom.output.XMLOutputter;
  * @author Doug Barnum
  * @version 1.0
  */
-public class SchedulesDirectProgramData extends BaseProgramData
-    implements DbWorker {
+public class SchedulesDirectProgramData extends BaseProgramData implements DbWorker {
 
     private ObjectContainer objectContainer;
     private Db4oService db4oService;
@@ -196,6 +196,26 @@ public class SchedulesDirectProgramData extends BaseProgramData
             if (os != null) {
 
                 result = os.toArray(new Channel[os.size()]);
+            }
+        }
+
+        return (result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ChannelLogo[] getChannelLogos() {
+
+        ChannelLogo[] result = null;
+
+        ObjectContainer oc = getObjectContainer();
+        if (oc != null) {
+
+            ObjectSet<ChannelLogo> os = oc.queryByExample(ChannelLogo.class);
+            if (os != null) {
+
+                result = os.toArray(new ChannelLogo[os.size()]);
             }
         }
 
@@ -570,8 +590,9 @@ public class SchedulesDirectProgramData extends BaseProgramData
      * guide data.
      *
      * @param xtvd The object instance containing the Schedules Direct data.
+     * @param logos An array of ChannelLogo instances.
      */
-    public void process(Xtvd xtvd) {
+    public void process(Xtvd xtvd, ChannelLogo[] logos) {
 
         LogUtil.log(LogUtil.DEBUG, "process xtvd null? <" + (xtvd == null) + ">");
         ObjectContainer oc = getObjectContainer();
@@ -653,6 +674,16 @@ public class SchedulesDirectProgramData extends BaseProgramData
                 oc.store(tmp);
             }
             oc.commit();
+
+            // Just put in our given ChannelLogo instances.
+            if (logos != null) {
+
+                purge(oc, ChannelLogo.class);
+                for (int i = 0; i < logos.length; i++) {
+
+                    oc.store(logos[i]);
+                }
+            }
 
             // Process the Programs and put new Show instances into the
             // database.

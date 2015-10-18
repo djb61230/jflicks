@@ -83,7 +83,7 @@ public class SchedulesDirectProgramDataJob extends AbstractJob {
                         Xtvd xtvd = sd.getXtvd(user, pass, country, zip);
                         if (xtvd != null) {
 
-                            pd.process(xtvd);
+                            pd.process(xtvd, sd.getChannelLogos());
                         }
                         pd.setUpdatingNow(false);
 

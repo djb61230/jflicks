@@ -122,7 +122,7 @@
             </fileset>
 
             <zipfileset src="${lib}/commons-codec-1.9.jar"/>
-            <zipfileset src="${lib}/gson-2.2.4.jar"/>
+            <zipfileset src="${lib}/gson-2.4.jar"/>
             <zipfileset src="${lib}/org.restlet.jar"/>
             <zipfileset src="${lib}/org.restlet.ext.json.jar"/>
             <zipfileset src="${lib}/org.json.jar"/>
@@ -852,7 +852,6 @@
         <delete>
             <fileset dir="${felix.j4cc.server.home}/bundle" includes="jflicks-*" />
             <fileset dir="${felix.j4cc.client.home}/bundle" includes="jflicks-*" />
-            <fileset dir="${felix.j4cc.fe.home}/bundle" includes="jflicks-*" />
         </delete>
 
         <!-- First do server side. -->
@@ -863,11 +862,6 @@
         <!-- Next do client side. -->
         <copy todir="${felix.j4cc.client.home}/bundle">
             <fileset dir="${bundle}" includes="${j4cc.client.deploy}"/>
-        </copy>
-
-        <!-- Next do fe side. -->
-        <copy todir="${felix.j4cc.fe.home}/bundle">
-            <fileset dir="${bundle}" includes="${j4cc.fe.deploy}"/>
         </copy>
 
     </target>

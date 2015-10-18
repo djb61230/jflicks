@@ -19,6 +19,7 @@ package org.jflicks.tv.programdata;
 import org.jflicks.configure.Config;
 import org.jflicks.tv.Airing;
 import org.jflicks.tv.Channel;
+import org.jflicks.tv.ChannelLogo;
 import org.jflicks.tv.Listing;
 import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
@@ -69,6 +70,13 @@ public interface ProgramData extends Config, DataUpdateable {
      * @return An array of Channel objects.
      */
     Channel[] getChannels();
+
+    /**
+     * An array of ChannelLogo instances that define a logo for a channel.
+     *
+     * @return An array of ChannelLogo objects.
+     */
+    ChannelLogo[] getChannelLogos();
 
     /**
      * Sometimes one just wants the channels for a particular listing.  Usually
