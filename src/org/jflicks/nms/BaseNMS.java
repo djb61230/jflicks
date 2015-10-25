@@ -2062,8 +2062,6 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
             case NMSConstants.FANART_IMAGE_TYPE:
                 name = imageHome + "/" + id + "_fanart.jpg";
-                //rokuhdname = imageHome + "/" + id + "_fanart_roku_hd.jpg";
-                //rokusdname = imageHome + "/" + id + "_fanart_roku_sd.jpg";
                 break;
 
             case NMSConstants.POSTER_IMAGE_TYPE:
@@ -2126,8 +2124,6 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
             case NMSConstants.FANART_IMAGE_TYPE:
                 name = imageHome + "/" + id + "_fanart.jpg";
-                //rokuhdname = imageHome + "/" + id + "_fanart_roku_hd.jpg";
-                //rokusdname = imageHome + "/" + id + "_fanart_roku_sd.jpg";
                 break;
 
             case NMSConstants.POSTER_IMAGE_TYPE:

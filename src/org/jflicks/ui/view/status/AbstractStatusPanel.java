@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.ui.view.scheduler;
+package org.jflicks.ui.view.status;
 
 import javax.swing.JPanel;
 

@@ -58,6 +58,7 @@ import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Upcoming;
 import org.jflicks.ui.view.JFlicksView;
+import org.jflicks.ui.view.status.StatusPanel;
 import org.jflicks.util.ProgressBar;
 import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;

@@ -203,33 +203,6 @@ public class FFmpegScreenshotJob extends BaseWorkerJob implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            // Let's make some roku images.
-            Recording r = getRecording();
-            if (r != null) {
-
-                String rpath = r.getPath();
-                if (rpath != null) {
-
-                    String path = rpath + ".png";
-                    try {
-
-                        BufferedImage bi = ImageIO.read(new File(path));
-                        BufferedImage hd = Util.scale(bi, 388);
-                        hd = hd.getSubimage(49, 0, 290, 218);
-                        ImageIO.write(hd, "PNG",
-                            new File(rpath + ".roku_hd.png"));
-
-                        BufferedImage sd = Util.scale(bi, 256);
-                        sd = sd.getSubimage(21, 0, 214, 144);
-                        ImageIO.write(sd, "PNG",
-                            new File(rpath + ".roku_sd.png"));
-
-                    } catch (Exception ex) {
-                        LogUtil.log(LogUtil.INFO, ex.getMessage());
-                    }
-                }
-            }
-
             // Nothing to do since we don't change any properties of the
             // Recording.  Clients should still get notified and be able
             // to update their screenshot.
