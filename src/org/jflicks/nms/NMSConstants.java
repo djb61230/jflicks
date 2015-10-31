@@ -656,6 +656,16 @@ public final class NMSConstants {
      */
     public static final String CABLE = "Cable";
 
+    /**
+     * A constant for defining a tag for the Cleaner property timeBetweenCleanings.
+     */
+    public static final String CLEANER_TIME_BETWEEN_CLEANINGS = "Time between cleanings";
+
+    /**
+     * A constant for defining a tag for the Cleaner property recordingMinimumAge.
+     */
+    public static final String CLEANER_RECORDING_MINIMUM_AGE = "Recording minimum age";
+
     private NMSConstants() {
     }
 

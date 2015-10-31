@@ -80,7 +80,7 @@ public class SystemNMS extends BaseNMS {
                 }
             }
 
-            simpleWebServer = new SimpleWebServer(null, port, rootDirs, false);
+            simpleWebServer = new SimpleWebServer(null, port, rootDirs, true);
             try {
 
                 simpleWebServer.start();

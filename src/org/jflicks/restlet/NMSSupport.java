@@ -358,6 +358,26 @@ public final class NMSSupport extends BaseSupport {
         return (result);
     }
 
+    public Recording getRecordingById(String s) {
+
+        Recording result = null;
+
+        Recording[] recs = getRecordings();
+        if ((s != null) && (recs != null)) {
+
+            for (int i = 0; i < recs.length; i++) {
+
+                if (s.equals(recs[i].getId())) {
+
+                    result = recs[i];
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
     public void schedule(RecordingRule rr) {
 
         if (rr != null) {

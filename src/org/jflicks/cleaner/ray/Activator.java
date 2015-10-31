@@ -14,29 +14,25 @@
     You should have received a copy of the GNU General Public License
     along with JFLICKS.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.jflicks.tv.programdata.sd;
+package org.jflicks.cleaner.ray;
 
 import java.util.Hashtable;
 
-import org.jflicks.db.Db4oServiceTracker;
+import org.jflicks.cleaner.Cleaner;
 import org.jflicks.job.JobContainer;
 import org.jflicks.job.JobManager;
-import org.jflicks.tv.programdata.ProgramData;
 import org.jflicks.util.BaseActivator;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Simple activator for the Schedules Direct Program Data service.
+ * Simple activator for the cleaner ray.
  *
  * @author Doug Barnum
  * @version 1.0
  */
 public class Activator extends BaseActivator {
-
-    private Db4oServiceTracker db4oServiceTracker;
-    private SchedulesDirectProgramData schedulesDirectProgramData;
 
     /**
      * {@inheritDoc}
@@ -44,23 +40,17 @@ public class Activator extends BaseActivator {
     public void start(BundleContext bc) {
 
         setBundleContext(bc);
+        RayCleaner rc = new RayCleaner();
 
-        SchedulesDirectProgramData pd = new SchedulesDirectProgramData();
-        setSchedulesDirectProgramData(pd);
-
-        Db4oServiceTracker t = new Db4oServiceTracker(bc, pd);
-        setDb4oServiceTracker(t);
-        t.open();
-
-        SchedulesDirectProgramDataJob job = new SchedulesDirectProgramDataJob(pd);
+        RayCleanerJob job = new RayCleanerJob(rc);
         JobContainer jc = JobManager.getJobContainer(job);
         setJobContainer(jc);
         jc.start();
 
         Hashtable<String, String> dict = new Hashtable<String, String>();
-        dict.put(ProgramData.TITLE_PROPERTY, pd.getTitle());
+        dict.put(Cleaner.TITLE_PROPERTY, rc.getTitle());
 
-        bc.registerService(ProgramData.class.getName(), pd, dict);
+        bc.registerService(Cleaner.class.getName(), rc, dict);
     }
 
     /**
@@ -68,36 +58,10 @@ public class Activator extends BaseActivator {
      */
     public void stop(BundleContext context) {
 
-        SchedulesDirectProgramData pd = getSchedulesDirectProgramData();
-        if (pd != null) {
-            pd.close();
-        }
-
-        Db4oServiceTracker t = getDb4oServiceTracker();
-        if (t != null) {
-            t.close();
-        }
-
         JobContainer jc = getJobContainer();
         if (jc != null) {
             jc.stop();
         }
-    }
-
-    private SchedulesDirectProgramData getSchedulesDirectProgramData() {
-        return (schedulesDirectProgramData);
-    }
-
-    private void setSchedulesDirectProgramData(SchedulesDirectProgramData pd) {
-        schedulesDirectProgramData = pd;
-    }
-
-    private Db4oServiceTracker getDb4oServiceTracker() {
-        return (db4oServiceTracker);
-    }
-
-    private void setDb4oServiceTracker(Db4oServiceTracker t) {
-        db4oServiceTracker = t;
     }
 
 }

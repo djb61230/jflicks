@@ -115,8 +115,7 @@ public class RecordingRuleResource extends BaseServerResource {
                 if (rr != null) {
 
                     NMSSupport nsup = NMSSupport.getInstance();
-                    RecordingRule oldrr =
-                        nsup.getRecordingRuleById(getRuleId());
+                    RecordingRule oldrr = nsup.getRecordingRuleById(getRuleId());
                     if (oldrr != null) {
 
                         // We really only care about 4 fields.

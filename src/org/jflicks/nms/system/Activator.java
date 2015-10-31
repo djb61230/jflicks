@@ -47,6 +47,7 @@ public class Activator extends BaseActivator {
     private RecorderTracker recorderTracker;
     private SchedulerTracker schedulerTracker;
     private LiveTracker liveTracker;
+    private CleanerTracker cleanerTracker;
     private PhotoManagerTracker photoManagerTracker;
     private VideoManagerTracker videoManagerTracker;
     private AutoArtTracker autoArtTracker;
@@ -86,6 +87,10 @@ public class Activator extends BaseActivator {
         LiveTracker livetracker = new LiveTracker(bc, s);
         setLiveTracker(livetracker);
         livetracker.open();
+
+        CleanerTracker cleanertracker = new CleanerTracker(bc, s);
+        setCleanerTracker(cleanertracker);
+        cleanertracker.open();
 
         PhotoManagerTracker phototracker = new PhotoManagerTracker(bc, s);
         setPhotoManagerTracker(phototracker);
@@ -182,6 +187,11 @@ public class Activator extends BaseActivator {
             livetracker.close();
         }
 
+        CleanerTracker cleanertracker = getCleanerTracker();
+        if (cleanertracker != null) {
+            cleanertracker.close();
+        }
+
         PhotoManagerTracker phototracker = getPhotoManagerTracker();
         if (phototracker != null) {
             phototracker.close();
@@ -258,6 +268,14 @@ public class Activator extends BaseActivator {
 
     private void setLiveTracker(LiveTracker t) {
         liveTracker = t;
+    }
+
+    private CleanerTracker getCleanerTracker() {
+        return (cleanerTracker);
+    }
+
+    private void setCleanerTracker(CleanerTracker t) {
+        cleanerTracker = t;
     }
 
     private PhotoManagerTracker getPhotoManagerTracker() {

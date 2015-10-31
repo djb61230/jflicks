@@ -30,8 +30,11 @@ import org.jflicks.tv.postproc.worker.BaseWorker;
 import org.jflicks.tv.postproc.worker.BaseWorkerJob;
 import org.jflicks.util.DetectRatingPlan;
 import org.jflicks.util.DetectRatingRectangle;
+import org.jflicks.util.DetectResult;
 import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * This job starts a system job that runs comskip.
@@ -298,9 +301,11 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                     drr.setBackup(getBackup());
                     drr.setSpan(getSpan());
                     LogUtil.log(LogUtil.INFO, "Start processing of frames...");
-                    int[] array = drr.processDirectory(dir, "jpg", getDetectRatingPlans(), isVerbose());
+                    DetectResult[] array = drr.processDirectory(dir, "jpg", getDetectRatingPlans(), isVerbose());
                     LogUtil.log(LogUtil.INFO, "Finished processing of frames...");
                     if ((array != null) && (array.length > 0)) {
+
+                        String origPath = r.getPath();
 
                         LogUtil.log(LogUtil.INFO, "Found " + array.length
                             + " rating frames...setting commercials");
@@ -309,12 +314,20 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
 
                             coms[i] = new Commercial();
 
-                            int start = array[i] - 60;
+                            int start = array[i].getTime() - 60;
                             if (start < 0) {
                                 start = 0;
                             }
                             coms[i].setStart(start);
-                            coms[i].setEnd(array[i]);
+                            coms[i].setEnd(array[i].getTime());
+
+                            // Copy frame over.
+                            String framePath = origPath + ".cframe" + (i + 1) + ".jpg";
+                            try {
+                                FileUtils.copyFile(array[i].getFile(), new File(framePath));
+                            } catch (Exception ex) {
+                                LogUtil.log(LogUtil.WARNING, "copy frame failed: " + ex.getMessage());
+                            }
                         }
 
                         r.setCommercials(coms);
@@ -334,7 +347,6 @@ public class ComratJob extends BaseWorkerJob implements JobListener {
                                     sb.append(fmt + ".000 Chapter " + (i + 2) + "\n");
                                 }
 
-                                String origPath = r.getPath();
                                 File file = new File(origPath + ".chapters.txt");
                                 try {
 

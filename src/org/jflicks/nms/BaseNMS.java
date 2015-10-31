@@ -33,6 +33,7 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 import org.jflicks.autoart.AutoArt;
+import org.jflicks.cleaner.Cleaner;
 import org.jflicks.configure.BaseConfig;
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.NameValue;
@@ -87,6 +88,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     private Scheduler scheduler;
     private PostProc postProc;
     private Live live;
+    private Cleaner cleaner;
     private PhotoManager photoManager;
     private VideoManager videoManager;
     private AutoArt autoArt;
@@ -156,6 +158,30 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             Configuration def = l.getDefaultConfiguration();
             save(def, false);
             l.setConfiguration(getConfigurationBySource(def.getSource()));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Cleaner getCleaner() {
+        return (cleaner);
+    }
+
+    /**
+     * Convenience method to set the Cleaner property.
+     *
+     * @param c A given Cleaner instance.
+     */
+    public void setCleaner(Cleaner c) {
+
+        cleaner = c;
+        if (c != null) {
+
+            c.setNMS(this);
+            Configuration def = c.getDefaultConfiguration();
+            save(def, false);
+            c.setConfiguration(getConfigurationBySource(def.getSource()));
         }
     }
 

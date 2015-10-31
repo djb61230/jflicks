@@ -18,6 +18,7 @@ Include-Resource:\
 
 Export-Package:\
  org.jflicks.autoart;version="1.0.0",\
+ org.jflicks.cleaner;version="1.0.0",\
  org.jflicks.db;version="1.0.0",\
  org.jflicks.configure;version="1.0.0",\
  org.jflicks.discovery;version="1.0.0",\
@@ -48,6 +49,7 @@ Export-Package:\
 Import-Package:\
  org.jflicks.autoart;version="1.0.0",\
  org.jflicks.db;version="1.0.0",\
+ org.jflicks.cleaner;version="1.0.0",\
  org.jflicks.configure;version="1.0.0",\
  org.jflicks.discovery;version="1.0.0",\
  org.jflicks.imagecache;version="1.0.0",\

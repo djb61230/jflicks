@@ -1,4 +1,4 @@
-module=org.jflicks.tv.postproc.worker.comrat
+module=org.jflicks.tv.postproc.worker.comsilentblack
 custom=true
 
 Bundle-Version: 1.0.0

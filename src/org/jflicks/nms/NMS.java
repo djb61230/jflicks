@@ -17,6 +17,7 @@
 package org.jflicks.nms;
 
 import org.jflicks.autoart.AutoArt;
+import org.jflicks.cleaner.Cleaner;
 import org.jflicks.configure.Config;
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.J4ccConfiguration;
@@ -163,6 +164,14 @@ public interface NMS extends Config {
      * @return A Live instance.
      */
     Live getLive();
+
+    /**
+     * We have one and only one Cleaner.  We track them normally so we
+     * will use the latest one we find.
+     *
+     * @return A Cleaner instance.
+     */
+    Cleaner getCleaner();
 
     /**
      * We have one and only one PhotoManager.  We track them normally so we

@@ -504,11 +504,12 @@ public final class DetectRatingRectangle {
      * @param plans The palns to use.
      * @param verbose More debugging when true.
      * @throws IOException on an error.
-     * @return An array of int values.
+     * @return An array of DetectResult instances.
      */
-    public int[] processDirectory(File dir, String ext, DetectRatingPlan[] plans, boolean verbose) throws IOException {
+    public DetectResult[] processDirectory(File dir, String ext, DetectRatingPlan[] plans, boolean verbose)
+        throws IOException {
 
-        int[] result = null;
+        DetectResult[] result = null;
 
         if ((plans != null) && (plans.length > 0) && (dir != null)
             && (ext != null)) {
@@ -519,7 +520,7 @@ public final class DetectRatingRectangle {
             File[] all = dir.listFiles(ef);
             if ((all != null) && (all.length > 0)) {
 
-                ArrayList<Integer> timelist = new ArrayList<Integer>();
+                ArrayList<DetectResult> drlist = new ArrayList<DetectResult>();
                 Arrays.sort(all);
 
                 // We are going to process each plan until we find one
@@ -544,7 +545,10 @@ public final class DetectRatingRectangle {
                             if (examine(all[i], type, red, green, blue, range, verbose, j)) {
 
                                 int time = frameToSeconds(all[i]);
-                                timelist.add(Integer.valueOf(time));
+                                DetectResult dr = new DetectResult();
+                                dr.setTime(time);
+                                dr.setFile(all[i]);
+                                drlist.add(dr);
                                 System.out.println(all[i] + " is a rating frame <" + time + ">");
 
                                 // Since we just found one, lets assume the next
@@ -570,13 +574,9 @@ public final class DetectRatingRectangle {
                     }
                 }
 
-                if (timelist.size() > 0) {
+                if (drlist.size() > 0) {
 
-                    result = new int[timelist.size()];
-                    for (int i = 0; i < result.length; i++) {
-
-                        result[i] = timelist.get(i).intValue();
-                    }
+                    result = drlist.toArray(new DetectResult[drlist.size()]);
                 }
             }
         }
@@ -644,7 +644,7 @@ public final class DetectRatingRectangle {
             File file = new File(path);
             if (file.isDirectory()) {
 
-                int[] array = drr.processDirectory(file, extension, plans, verbose);
+                DetectResult[] array = drr.processDirectory(file, extension, plans, verbose);
             }
         }
     }
