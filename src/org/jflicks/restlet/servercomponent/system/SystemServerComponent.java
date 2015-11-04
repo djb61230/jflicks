@@ -70,7 +70,7 @@ public class SystemServerComponent extends BaseServerComponent {
     }
 
     /**
-     * {@inheritDoc}
+     * Start things up.
      */
     public void start() {
 
@@ -97,7 +97,7 @@ public class SystemServerComponent extends BaseServerComponent {
     }
 
     /**
-     * {@inheritDoc}
+     * Stop things and clean up.
      */
     public void stop() {
 

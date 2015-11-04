@@ -57,8 +57,8 @@ public class FontEvaluator implements Evaluator<Font> {
      * We need to return the proper Font for this moment in time for the
      * animation.
      *
-     * @param one The smallest font.
-     * @param two The largest font.
+     * @param f0 The smallest font.
+     * @param f1 The largest font.
      * @param fraction The place in the animation.
      * @return The determined Font.
      */

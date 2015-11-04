@@ -57,8 +57,6 @@ public interface Update {
      * UpdateState instance is populated to allow the user some information
      * and the chance to either continue with the update or not.
      *
-     * @param dir A String pointing to a bundle directory.
-     * @param sourceURL A URL that contains the latest bundles.
      * @return An UpdateState instance.
      */
     UpdateState open();

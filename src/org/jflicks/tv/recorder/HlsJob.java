@@ -44,9 +44,12 @@ public class HlsJob extends AbstractJob implements JobListener {
     private long duration;
 
     /**
-     * Simple one argument constructor.
+     * Simple four argument constructor.
      *
-     * @param f A given File.
+     * @param input An input String.
+     * @param output An output String.
+     * @param directory A given File.
+     * @param duration A given time in seconds.
      */
     public HlsJob(String input, String output, File directory, long duration) {
 

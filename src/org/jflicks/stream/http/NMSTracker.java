@@ -39,7 +39,7 @@ public class NMSTracker extends BaseTracker {
      * Contructor with BundleContext and feed.
      *
      * @param bc A given BundleContext needed to communicate with OSGi.
-     * @param m Our feed.
+     * @param f Our feed.
      */
     public NMSTracker(BundleContext bc, BaseFeed f) {
 

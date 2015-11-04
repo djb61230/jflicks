@@ -132,7 +132,7 @@ public class EZIndexer implements Serializable, Comparable<EZIndexer> {
     /**
      * The comparable interface.
      *
-     * @param r The given EZRecorder instance to compare.
+     * @param i The given EZIndexer instance to compare.
      * @throws ClassCastException on the input argument.
      * @return An int representing their "equality".
      */

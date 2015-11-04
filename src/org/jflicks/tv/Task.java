@@ -180,7 +180,7 @@ public class Task implements Serializable {
     /**
      * Can this Task detect commercials?
      *
-     * @paran b True if this Task detects commercials.
+     * @param b True if this Task detects commercials.
      */
     public void setCommercialDetector(boolean b) {
         commercialDetector = b;

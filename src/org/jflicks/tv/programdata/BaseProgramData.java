@@ -95,9 +95,6 @@ public abstract class BaseProgramData extends BaseConfig
         return (result);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public int getConfiguredUpdateHour() {
 
         int result = 4;

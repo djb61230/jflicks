@@ -124,7 +124,7 @@ public class UpcomingResource extends BaseServerResource {
                     if (u != null) {
 
                         nsup.overrideUpcoming(u);
-                        setStatus(Status.SUCCESS_ACCEPTED);
+                        setStatus(Status.SUCCESS_OK);
                     }
                 }
 

@@ -41,9 +41,10 @@ public class DeviceJob extends AbstractJob implements JobListener {
     private String audioCodec;
 
     /**
-     * Simple one argument constructor.
+     * Simple two argument constructor.
      *
-     * @param f A given File.
+     * @param input A given input as a String.
+     * @param output A given output as a String.
      */
     public DeviceJob(String input, String output) {
 

@@ -44,7 +44,8 @@ public class ConcatJob extends AbstractJob implements JobListener {
     /**
      * Simple one argument constructor.
      *
-     * @param f A given File.
+     * @param prefix A given prefix as a String instance..
+     * @param directory A given File.
      */
     public ConcatJob(String prefix, File directory) {
 

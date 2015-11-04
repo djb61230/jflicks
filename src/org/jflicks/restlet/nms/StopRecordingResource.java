@@ -55,7 +55,7 @@ public class StopRecordingResource extends BaseServerResource {
 
             NMSSupport nsup = NMSSupport.getInstance();
             nsup.stopRecording(rid);
-            setStatus(Status.SUCCESS_ACCEPTED);
+            setStatus(Status.SUCCESS_OK);
         }
     }
 

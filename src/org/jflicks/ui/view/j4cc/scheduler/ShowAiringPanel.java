@@ -58,7 +58,7 @@ public class ShowAiringPanel extends JPanel implements PropertyChangeListener {
     /**
      * Constructor with one argument.
      *
-     * @param v Our View instance.
+     * @param p Our parent panel instance.
      */
     public ShowAiringPanel(SchedulerPanel p) {
 

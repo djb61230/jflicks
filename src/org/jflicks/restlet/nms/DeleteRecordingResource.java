@@ -54,7 +54,7 @@ public class DeleteRecordingResource extends BaseServerResource {
 
             NMSSupport nsup = NMSSupport.getInstance();
             nsup.processDelete(rid, isAllowRerecord());
-            setStatus(Status.SUCCESS_ACCEPTED);
+            setStatus(Status.SUCCESS_OK);
         }
     }
 

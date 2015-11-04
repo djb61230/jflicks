@@ -44,8 +44,8 @@ public class RectangleEvaluator implements Evaluator<Rectangle> {
      * We need to return the proper Rectangle for this moment in time for the
      * animation.
      *
-     * @param one The smallest font.
-     * @param two The largest font.
+     * @param r0 The smallest Rectangle.
+     * @param r1 The largest Rectangle.
      * @param fraction The place in the animation.
      * @return The determined Rectangle.
      */
