@@ -88,7 +88,7 @@ public class RecordJob extends BaseHDHRJob {
         File f = getFile();
         if (f != null) {
 
-            result = f.getPath();
+            result = "\"" + f.getPath() + "\"";
         }
 
         return (result);

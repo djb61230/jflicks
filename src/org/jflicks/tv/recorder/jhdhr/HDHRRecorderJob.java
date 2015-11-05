@@ -45,7 +45,11 @@ import org.jflicks.util.Util;
 public class HDHRRecorderJob extends AbstractJob implements JobListener {
 
     private HDHRRecorder hdhrRecorder;
+    private FrequencyJob frequencyJob;
+    private StreamInfoJob streamInfoJob;
+    private ProgramJob programJob;
     private RecordJob recordJob;
+    private FrequencyJob noneFrequencyJob;
     private JobContainer jobContainer;
 
     /**
@@ -64,6 +68,38 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
 
     private void setRecordJob(RecordJob j) {
         recordJob = j;
+    }
+
+    private FrequencyJob getFrequencyJob() {
+        return (frequencyJob);
+    }
+
+    private void setFrequencyJob(FrequencyJob j) {
+        frequencyJob = j;
+    }
+
+    private StreamInfoJob getStreamInfoJob() {
+        return (streamInfoJob);
+    }
+
+    private void setStreamInfoJob(StreamInfoJob j) {
+        streamInfoJob = j;
+    }
+
+    private ProgramJob getProgramJob() {
+        return (programJob);
+    }
+
+    private void setProgramJob(ProgramJob j) {
+        programJob = j;
+    }
+
+    private FrequencyJob getNoneFrequencyJob() {
+        return (noneFrequencyJob);
+    }
+
+    private void setNoneFrequencyJob(FrequencyJob j) {
+        noneFrequencyJob = j;
     }
 
     private JobContainer getJobContainer() {
@@ -205,6 +241,29 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
 
         setTerminate(false);
 
+        FrequencyJob fj = new FrequencyJob();
+        setFrequencyJob(fj);
+        fj.addJobListener(this);
+        fj.setId(getId());
+        fj.setTuner(getTuner());
+        fj.setFrequency(getFrequency());
+        fj.setType(getFrequencyType());
+        fj.setModel(getModel());
+
+        StreamInfoJob sij = new StreamInfoJob();
+        setStreamInfoJob(sij);
+        sij.addJobListener(this);
+        sij.setId(getId());
+        sij.setTuner(getTuner());
+        sij.setProgram(getProgram());
+
+        ProgramJob pj = new ProgramJob();
+        setProgramJob(pj);
+        pj.addJobListener(this);
+        pj.setId(getId());
+        pj.setTuner(getTuner());
+        //pj.setProgram(getProgramId());
+
         RecordJob rj = new RecordJob();
         setRecordJob(rj);
         rj.addJobListener(this);
@@ -213,24 +272,15 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
         rj.setFile(getFile());
         rj.setDuration(getDuration());
 
-        // Set the frequency.
-        HDHRConfig config = new HDHRConfig();
-        config.applyFrequency(getHDHRRecorder(), "" + getFrequency());
+        FrequencyJob nfj = new FrequencyJob();
+        setNoneFrequencyJob(nfj);
+        nfj.addJobListener(this);
+        nfj.setId(getId());
+        nfj.setTuner(getTuner());
+        nfj.setFrequency(-1);
+        fj.setModel(getModel());
 
-        // We have to sleep a bit before we set the program.
-        try {
-
-            Thread.sleep(1000);
-
-        } catch (Exception ex) {
-        }
-
-        StreamInfo sinfo = new StreamInfo();
-        sinfo.setProgram(getProgram());
-
-        config.program(getHDHRRecorder(), sinfo.getProgramId(getHDHRRecorder()));
-
-        JobContainer jc = JobManager.getJobContainer(rj);
+        JobContainer jc = JobManager.getJobContainer(fj);
         setJobContainer(jc);
         jc.start();
     }
@@ -271,12 +321,39 @@ public class HDHRRecorderJob extends AbstractJob implements JobListener {
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            if (event.getSource() == getRecordJob()) {
+            if (event.getSource() == getFrequencyJob()) {
 
-                HDHRConfig config = new HDHRConfig();
-                config.applyFrequency(getHDHRRecorder(), "none");
+                JobContainer jc =
+                    JobManager.getJobContainer(getStreamInfoJob());
+                setJobContainer(jc);
+                jc.start();
 
-                LogUtil.log(LogUtil.INFO, "recording done at " + new Date(System.currentTimeMillis()));
+            } else if (event.getSource() == getStreamInfoJob()) {
+
+                StreamInfoJob sij = (StreamInfoJob) event.getSource();
+                ProgramJob pj = getProgramJob();
+                pj.setProgram(sij.getProgramId());
+                JobContainer jc = JobManager.getJobContainer(pj);
+                setJobContainer(jc);
+                jc.start();
+
+            } else if (event.getSource() == getProgramJob()) {
+
+                JobContainer jc = JobManager.getJobContainer(getRecordJob());
+                setJobContainer(jc);
+                jc.start();
+
+            } else if (event.getSource() == getRecordJob()) {
+
+                JobContainer jc =
+                    JobManager.getJobContainer(getNoneFrequencyJob());
+                setJobContainer(jc);
+                jc.start();
+
+            } else if (event.getSource() == getNoneFrequencyJob()) {
+
+                LogUtil.log(LogUtil.INFO, "recording done at "
+                    + new Date(System.currentTimeMillis()));
                 stop();
             }
 
