@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.jflicks.configure.NameValue;
 import org.jflicks.db.DbWorker;
@@ -739,7 +740,7 @@ public class SchedulesDirectProgramData extends BaseProgramData implements DbWor
                             airing.setShowId(s.getProgram());
                             airing.setChannelId(array[i].getId());
                             airing.setListingId(array[i].getListingId());
-                            airing.setAirDate(s.getTime().getLocalDate());
+                            airing.setAirDateUTC(s.getTime().getDate());
                             Duration dur = s.getDuration();
                             if (dur != null) {
 

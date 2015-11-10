@@ -18,6 +18,7 @@ package org.jflicks.tv;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * This class contains all the properties representing a Airing.  An Airing can
@@ -30,7 +31,7 @@ import java.util.Date;
 public class Airing implements Serializable {
 
     private long duration;
-    private Date airDate;
+    private Date airDateUTC;
     private String showId;
     private int channelId;
     private String listingId;
@@ -59,18 +60,31 @@ public class Airing implements Serializable {
         duration = l;
     }
 
+    public Date getAirDate() {
+
+        Date result = null;
+
+        if (airDateUTC != null) {
+
+            Date localTime = new Date();
+            result = new Date(airDateUTC.getTime() + TimeZone.getDefault().getOffset(localTime.getTime()));
+        }
+
+        return (result);
+    }
+
     /**
      * The time this Airing will be shown.
      *
      * @return The show air date.
      */
-    public Date getAirDate() {
+    public Date getAirDateUTC() {
 
         Date result = null;
 
-        if (airDate != null) {
+        if (airDateUTC != null) {
 
-            result = new Date(airDate.getTime());
+            result = new Date(airDateUTC.getTime());
         }
 
         return (result);
@@ -81,12 +95,12 @@ public class Airing implements Serializable {
      *
      * @param d The show air date.
      */
-    public void setAirDate(Date d) {
+    public void setAirDateUTC(Date d) {
 
         if (d != null) {
-            airDate = new Date(d.getTime());
+            airDateUTC = new Date(d.getTime());
         } else {
-            airDate = null;
+            airDateUTC = null;
         }
     }
 
@@ -154,8 +168,8 @@ public class Airing implements Serializable {
         int result = 17;
         result = 37 * result + channelId;
         result = 37 * result + (int) (duration ^ (duration >>> 32));
-        if (airDate != null) {
-            result = 37 * result + airDate.hashCode();
+        if (airDateUTC != null) {
+            result = 37 * result + airDateUTC.hashCode();
         } else {
             result = 37 * result + 1;
         }
