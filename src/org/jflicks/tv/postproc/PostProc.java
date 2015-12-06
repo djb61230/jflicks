@@ -74,8 +74,9 @@ public interface PostProc extends Config {
      *
      * @param rr A given RecordingRule.
      * @param r A given Recording.
+     * @param commercialDetect When true only add Commercial Detection.  When false do all others.
      */
-    void addProcessing(RecordingRule rr, Recording r);
+    void addProcessing(RecordingRule rr, Recording r, boolean commercialDetect);
 
     /**
      * Add the post processing work to be done by submitting a Worker

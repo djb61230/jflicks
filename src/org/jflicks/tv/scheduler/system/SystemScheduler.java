@@ -581,13 +581,21 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
 
         if ((s != null) && (r != null)) {
 
+            RecordingRule rr = getRecordingRuleById(r.getRecordingRuleId());
             NMS n = getNMS();
-            if (n != null) {
+            if ((n != null) && (rr != null)) {
 
                 PostProc pp = n.getPostProc();
                 if (pp != null) {
 
                     pp.addProcessing(s, r);
+                    pp.addProcessing(rr, r, true);
+
+                    // Now that we have finished kill the rule if it was a once.
+                    if (rr.isOnceType()) {
+
+                        removeRecordingRule(rr);
+                    }
                 }
             }
         }
@@ -614,7 +622,7 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                 PostProc pp = n.getPostProc();
                 if (pp != null) {
 
-                    pp.addProcessing(rr, r);
+                    pp.addProcessing(rr, r, false);
                 }
             }
         }

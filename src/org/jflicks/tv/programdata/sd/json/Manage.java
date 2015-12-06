@@ -16,11 +16,14 @@
 */
 package org.jflicks.tv.programdata.sd.json;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Manage your settings at Schedules Direct JSON server..
@@ -204,6 +207,7 @@ public class Manage {
         final String LIST_STATIONS = "listStations";
         final String GUIDE = "guide";
         final String PROGRAM = "program";
+        final String AUTOMAP = "automap";
 
         String user = null;
         String password = null;
@@ -218,6 +222,7 @@ public class Manage {
         String zip = "12095";
         String lineup = null;
         String location = null;
+        String automapJson = null;
         ArrayList<GuideRequest> glist = new ArrayList<GuideRequest>();
         ArrayList<String> plist = new ArrayList<String>();
 
@@ -250,6 +255,19 @@ public class Manage {
             } else if (args[i].equalsIgnoreCase("-lineup")) {
 
                 lineup = args[i + 1];
+
+            } else if (args[i].equalsIgnoreCase("-automapFile")) {
+
+                File jsonData = new File(args[i + 1]);
+                if ((jsonData.exists()) && (jsonData.isFile())) {
+
+                    try {
+
+                        automapJson = FileUtils.readFileToString(jsonData);
+
+                    } catch (IOException ex) {
+                    }
+                }
 
             } else if (args[i].equalsIgnoreCase("-sid")) {
 
@@ -295,11 +313,15 @@ public class Manage {
 
                                         for (int j = 0; j < lups.length; j++) {
 
-                                            System.err.println("Transport: " + lups[j].getTransport());
-                                            System.err.println(lups[j].getLineup() + " location=" + array[i].getLocation());
+                                            String lupname = lups[j].getName();
+                                            lupname = lupname.replaceAll(" ", "-");
+                                            System.err.println("lineup=" + lups[j].getLineup() + " name=" + lupname + " location=" + array[i].getLocation());
                                         }
                                     }
                                 }
+
+                                System.err.println("\nUse the name and location to add the lineup.");
+                                System.err.println("Plus use the name and location to remove it later if you want.");
                             }
 
                         } else {
@@ -319,8 +341,9 @@ public class Manage {
 
                                 for (int i = 0; i < lups.length; i++) {
 
-                                    System.err.println("Transport: " + lups[i].getTransport());
-                                    System.err.println(lups[i].getLineup() + " name=" + lups[i].getName() + " transport=" + lups[i].getTransport() + " location=" + lups[i].getLocation());
+                                    String lupname = lups[i].getName();
+                                    lupname = lupname.replaceAll(" ", "-");
+                                    System.err.println(lups[i].getLineup() + " name=" + lupname + " transport=" + lups[i].getTransport() + " location=" + lups[i].getLocation());
                                 }
                             }
 
@@ -455,6 +478,14 @@ public class Manage {
                         } else {
 
                             System.err.println("Need Program IDs to get them.");
+                        }
+
+                        break;
+
+                    case AUTOMAP:
+
+                        if (automapJson != null) {
+                            System.out.println(c.doAutomap(automapJson));
                         }
 
                         break;

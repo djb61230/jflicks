@@ -38,6 +38,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
@@ -48,6 +49,8 @@ import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
 import org.jdesktop.swingx.JXFrame;
+
+import com.install4j.api.launcher.ApplicationLauncher;
 
 /**
  * A implements a View so a user can control the scheduling of
@@ -158,13 +161,16 @@ public class ServerView extends JFlicksView {
             RefreshAction raction = new RefreshAction();
             JButton ref = new JButton(raction);
 
+            CheckAction caction = new CheckAction();
+            JButton check = new JButton(caction);
+
             ExitAction action = new ExitAction();
             JButton shut = new JButton(action);
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.weightx = 1.0;
             gbc.weighty = 1.0;
-            gbc.gridwidth = 2;
+            gbc.gridwidth = 3;
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.anchor = GridBagConstraints.WEST;
@@ -174,7 +180,7 @@ public class ServerView extends JFlicksView {
             frame.add(sp, gbc);
 
             gbc = new GridBagConstraints();
-            gbc.weightx = 0.5;
+            gbc.weightx = 0.33;
             gbc.weighty = 0.0;
             gbc.gridwidth = 1;
             gbc.gridx = 0;
@@ -186,10 +192,22 @@ public class ServerView extends JFlicksView {
             frame.add(ref, gbc);
 
             gbc = new GridBagConstraints();
-            gbc.weightx = 0.5;
+            gbc.weightx = 0.33;
             gbc.weighty = 0.0;
             gbc.gridwidth = 1;
             gbc.gridx = 1;
+            gbc.gridy = 1;
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.insets = new Insets(4, 4, 4, 4);
+
+            frame.add(check, gbc);
+
+            gbc = new GridBagConstraints();
+            gbc.weightx = 0.33;
+            gbc.weighty = 0.0;
+            gbc.gridwidth = 1;
+            gbc.gridx = 2;
             gbc.gridy = 1;
             gbc.anchor = GridBagConstraints.EAST;
             gbc.fill = GridBagConstraints.NONE;
@@ -256,6 +274,47 @@ public class ServerView extends JFlicksView {
 
             sp.populate();
         }
+    }
+
+    class CheckAction extends AbstractAction {
+
+        private boolean prepare = false;
+
+        public CheckAction() {
+
+            ImageIcon sm = new ImageIcon(getClass().getResource("check16.png"));
+            ImageIcon lge = new ImageIcon(getClass().getResource("check32.png"));
+            putValue(NAME, "Check for update");
+            putValue(SHORT_DESCRIPTION, "Check for update");
+            putValue(SMALL_ICON, sm);
+            putValue(LARGE_ICON_KEY, lge);
+            putValue(MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_C));
+        }
+
+        public void actionPerformed(ActionEvent event) {
+
+            // This will return immediately if you call it from the EDT,
+            // otherwise it will block until the installer application exits
+            ApplicationLauncher.launchApplicationInProcess("939", null, new ApplicationLauncher.Callback() {
+                public void exited(int exitValue) {
+
+                    if (!prepare) {
+
+                        if (exitValue == 1) {
+
+                            // I think this means no update.
+                            JOptionPane.showMessageDialog(getFrame(), "You have the latest version.", "Result",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                }
+        
+                public void prepareShutdown() {
+                    prepare = true;
+                }
+            }, ApplicationLauncher.WindowMode.FRAME, null);
+        }
+
     }
 
     class RefreshAction extends AbstractAction {

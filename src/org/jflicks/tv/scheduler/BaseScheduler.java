@@ -420,11 +420,14 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                             addRecording(rec);
                         }
 
+                        /*
+                         * Note we will remove this rule when indexer is called.
                         RecordingRule rr = pr.getRecordingRule();
                         if ((rr != null) && (rr.isOnceType())) {
 
                             removeRecordingRule(rr);
                         }
+                        */
                     }
 
                 }

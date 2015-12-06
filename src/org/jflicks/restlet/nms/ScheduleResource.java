@@ -84,6 +84,13 @@ public class ScheduleResource extends BaseServerResource {
                         myrr.setEndPadding(rr.getEndPadding());
                         myrr.setTasks(rr.getTasks());
 
+                        // Make sure they have a non-null task list.
+                        Task[] tasks = myrr.getTasks();
+                        if (tasks == null) {
+
+                            myrr.setTasks(nsup.getTasks());
+                        }
+
                     } else {
 
                         // Should be a new rule unless they have mucked
@@ -102,6 +109,13 @@ public class ScheduleResource extends BaseServerResource {
                         myrr.setBeginPadding(rr.getBeginPadding());
                         myrr.setEndPadding(rr.getEndPadding());
                         myrr.setTasks(rr.getTasks());
+
+                        // Make sure they have a non-null task list.
+                        Task[] tasks = myrr.getTasks();
+                        if (tasks == null) {
+
+                            myrr.setTasks(nsup.getTasks());
+                        }
                     }
 
                     LogUtil.log(LogUtil.DEBUG, "new rule: " + myrr);

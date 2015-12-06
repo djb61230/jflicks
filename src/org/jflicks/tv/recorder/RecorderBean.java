@@ -28,6 +28,7 @@ import org.jflicks.tv.Channel;
 public class RecorderBean extends BaseRecorder {
 
     private boolean scan;
+    private boolean hlsMode;
 
     /**
      * Simple default constructor.
@@ -49,6 +50,7 @@ public class RecorderBean extends BaseRecorder {
             setRecordingLiveTV(r.isRecordingLiveTV());
             setTitle(r.getTitle());
             setSupportsScan(r.supportsScan());
+            setHlsMode(r.isHlsMode());
         }
     }
 
@@ -95,8 +97,21 @@ public class RecorderBean extends BaseRecorder {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean supportsScan() {
         return (scan);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isHlsMode() {
+        return (hlsMode);
+    }
+
+    public void setHlsMode(boolean b) {
+        hlsMode = b;
     }
 
 }

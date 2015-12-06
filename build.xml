@@ -1016,7 +1016,7 @@
             <arg value="-zipcode"/>
             <arg value="${sdzip}"/>
             <arg value="-action"/>
-            <arg value="listAddedLineups"/>
+            <arg value="listAllLineups"/>
             <!--
             <arg value="listAddedLineups"/>
             <arg value="listStations"/>
@@ -1025,9 +1025,12 @@
             <arg value="addLineup"/>
             <arg value="deleteLineup"/>
             <arg value="guide"/>
+            <arg value="automap"/>
             -->
             <arg value="-lineup"/>
-            <arg value="Local Over the Air Broadcast"/>
+            <arg value="Time-Warner-Cable---Digital"/>
+            <arg value="-automapFile"/>
+            <arg value="automapJson.txt"/>
             <!--
             <arg value="USA-OTA-13492"/>
             <arg value="DIRECTV Albany"/>

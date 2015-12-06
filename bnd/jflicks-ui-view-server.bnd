@@ -6,6 +6,8 @@ Bundle-Version: 1.0.0
 Bundle-Activator: ${module}.Activator
 
 Include-Resource:\
+ org/jflicks/ui/view/server/check16.png=../resources/check16.png,\
+ org/jflicks/ui/view/server/check32.png=../resources/check32.png,\
  org/jflicks/ui/view/server/exit16.png=../resources/exit16.png,\
  org/jflicks/ui/view/server/exit32.png=../resources/exit32.png,\
  org/jflicks/ui/view/server/refresh16.png=../resources/refresh16.png,\
@@ -38,4 +40,5 @@ Import-Package:\
  javax.swing.border,\
  javax.swing.event,\
  javax.swing.text,\
- javax.imageio
+ javax.imageio,\
+ com.install4j.api.launcher;resolution:=optional

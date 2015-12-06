@@ -242,8 +242,6 @@ public class Client {
 
                         for (int j = 0; j < lups.length; j++) {
 
-                            System.err.println("Bob: " +lups[j].toString());
-                            System.err.println("harry: " + array[i].getLocation());
                             if ((name.equals(lups[j].toString())) && (location.equals(array[i].getLocation()))) {
 
                                 result = lups[j].getUri();
@@ -363,12 +361,38 @@ public class Client {
         return (result);
     }
 
+    public String doAutomap(String json) {
+
+        String result = null;
+
+        if (json != null) {
+
+            try {
+
+                String uri = getBaseUri() + "/" + getApiVersion() + "/map/lineup";
+                System.err.println("uri <" + uri + ">");
+                ClientResource cr = new ClientResource(uri);
+                putTokenInHeader(cr);
+                putUserAgentInHeader(cr);
+                dumpHeader(cr);
+
+                result = RestUtil.post(cr, json);
+                dumpJson(result);
+
+            } catch (Exception ex) {
+
+                ex.printStackTrace();
+                System.err.println("doAutomap: " + ex.getMessage());
+            }
+        }
+
+        return (result);
+    }
+
     public boolean doAddLineup(String name, String location) {
 
         boolean result = false;
 
-        System.err.println("FRED: " + name);
-        System.err.println("FRED: " + location);
         if ((name != null) && (location != null)) {
 
             String uri = getUriFromLineupNameAndLocation(name, location);
@@ -407,19 +431,15 @@ public class Client {
 
         boolean result = false;
 
-        System.err.println("FRED <" + name + ">");
-        System.err.println("FRED <" + location + ">");
         if ((name != null) && (location != null)) {
 
             String uri = getUriFromLineupNameAndLocation(name, location);
-            System.err.println("FRED <" + uri + ">");
             if (uri != null) {
 
                 try {
 
                     setLineupResponse(null);
                     uri = getBaseUri() + uri;
-                    System.err.println("FRED <" + uri + ">");
                     ClientResource cr = new ClientResource(uri);
                     putTokenInHeader(cr);
                     putUserAgentInHeader(cr);
