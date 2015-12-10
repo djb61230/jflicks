@@ -16,6 +16,7 @@
 */
 package org.jflicks.tv.recorder.jhdhr;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.jflicks.tv.recorder.Recorder;
@@ -61,11 +62,39 @@ public class Activator extends BaseActivator {
 
         if ((bc != null) && (id != null)) {
 
-            LogUtil.log(LogUtil.INFO, "register id <" + id + "> tuner <" + tuner + "> ip <" + ip + "> model <" + model + ">");
+            LogUtil.log(LogUtil.INFO, "jhdhr register id <" + id + "> tuner <" + tuner + "> ip <" + ip + "> model <" + model + ">");
             HDHRRecorder r = new HDHRRecorder();
             r.setDevice(id + "-" + tuner);
             r.setIpAddress(ip);
             r.setModel(model);
+
+            // We want to set the directUrlPrefix property if we are an HDTC.
+            LogUtil.log(LogUtil.DEBUG, "setModel : " + model);
+            if (model != null) {
+
+                String lmodel = model.toLowerCase();
+                LogUtil.log(LogUtil.DEBUG, "setModel : " + lmodel);
+                if (lmodel.startsWith("hdhomeruntc")) {
+
+                    String url = "http://"
+                        + ip
+                        + ":5004/tuner"
+                        + tuner
+                        + "/v";
+                    r.setDirectUrlPrefix(url);
+                    r.setDirectUrlSuffix("?transcode=none");
+                    r.setPreferred(true);
+                    LogUtil.log(LogUtil.DEBUG, "setModel DirectUrlPrefix: " + r.getDirectUrlPrefix());
+                    LogUtil.log(LogUtil.DEBUG, "setModel DirectUrlSuffix: " + r.getDirectUrlSuffix());
+
+                } else {
+
+                    // Maybe we can cook up something for the older ones here...
+                    r.setPreferred(false);
+                    r.setDirectUrlPrefix(r.getIpAddress() + ":" + id + ":" + tuner + ":");
+                }
+            }
+
             r.updateDefault();
 
             Hashtable<String, String> dict = new Hashtable<String, String>();

@@ -49,8 +49,11 @@ public class RecorderBean extends BaseRecorder {
             setRecording(r.isRecording());
             setRecordingLiveTV(r.isRecordingLiveTV());
             setTitle(r.getTitle());
+            setDirectUrlPrefix(r.getDirectUrlPrefix());
+            setDirectUrlSuffix(r.getDirectUrlSuffix());
             setSupportsScan(r.supportsScan());
             setHlsMode(r.isHlsMode());
+            setPreferred(r.isPreferred());
         }
     }
 

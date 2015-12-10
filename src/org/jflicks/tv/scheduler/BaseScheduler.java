@@ -111,12 +111,10 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                 for (int i = 0; i < array.length; i++) {
 
                     String desc = array[i].getDescription();
-                    if ((desc != null)
-                        && (desc.equals(NMSConstants.RECORDING_DEVICE))) {
+                    if ((desc != null) && (desc.equals(NMSConstants.RECORDING_DEVICE))) {
 
                         String tmp = array[i].getValue();
-                        if ((tmp != null)
-                            && (!tmp.equals(NMSConstants.NOT_CONNECTED))) {
+                        if ((tmp != null) && (!tmp.equals(NMSConstants.NOT_CONNECTED))) {
 
                             if (!l.contains(tmp)) {
                                 l.add(tmp);
@@ -178,7 +176,27 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                 if (l.size() > 0) {
 
-                    result = l.toArray(new Recorder[l.size()]);
+                    // Before we go back we want to put our "preferred" recorders first.
+                    ArrayList<Recorder> plist = new ArrayList<Recorder>();
+                    for (int i = 0; i < l.size(); i++) {
+
+                        Recorder r = l.get(i);
+                        if (r.isPreferred()) {
+
+                            plist.add(r);
+                        }
+                    }
+
+                    for (int i = 0; i < l.size(); i++) {
+
+                        Recorder r = l.get(i);
+                        if (!r.isPreferred()) {
+
+                            plist.add(r);
+                        }
+                    }
+
+                    result = plist.toArray(new Recorder[plist.size()]);
                 }
             }
         }
@@ -644,8 +662,7 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                     // Right now we just have ONCE or SERIES recording types.
                     // Perhaps more in the future but for now...first see
                     // what channel we are talking about...
-                    Channel chan = n.getChannelById(rules[i].getChannelId(),
-                        rules[i].getListingId());
+                    Channel chan = n.getChannelById(rules[i].getChannelId(), rules[i].getListingId());
 
                     LogUtil.log(LogUtil.DEBUG, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
                     LogUtil.log(LogUtil.DEBUG, "chan: " + chan);
@@ -705,29 +722,20 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
 
                                             // This hasn't happended yet so
                                             // put er in.
-                                            PendingRecord pr =
-                                                new PendingRecord();
+                                            PendingRecord pr = new PendingRecord();
                                             pr.setRecordingRule(rules[i]);
                                             pr.setName(show.getTitle());
                                             pr.setShowId(show.getId());
                                             pr.setChannel(chan);
-                                            pr.setDuration(
-                                                air.getDuration() - 10
-                                                + rules[i].getEndPadding());
-                                            pr.setStart(date.getTime()
-                                                + (rules[i].getBeginPadding()
-                                                * 1000));
+                                            pr.setDuration(air.getDuration() - 10 + rules[i].getEndPadding());
+                                            pr.setStart(date.getTime() + (rules[i].getBeginPadding() * 1000));
 
-                                            Recording rec =
-                                                new Recording(sas[j]);
+                                            Recording rec = new Recording(sas[j]);
                                             pr.setRecording(rec);
-                                            rec.setRecordingRuleId(
-                                                pr.getRecordingRule()
-                                                    .getId());
+                                            rec.setRecordingRuleId(pr.getRecordingRule().getId());
                                             workList.add(pr);
 
-                                        } else if (now < (date.getTime()
-                                            + slen)) {
+                                        } else if (now < (date.getTime() + slen)) {
 
                                             // This could be just requested
                                             // to record.  We only put it
@@ -735,25 +743,16 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                                             // recorded now.
                                             if (!isRecordingNow(sas[j])) {
 
-                                                PendingRecord pr =
-                                                    new PendingRecord();
+                                                PendingRecord pr = new PendingRecord();
                                                 pr.setRecordingRule(rules[i]);
                                                 pr.setName(show.getTitle());
                                                 pr.setShowId(show.getId());
                                                 pr.setChannel(chan);
-                                                pr.setDuration(
-                                                    air.getDuration() - 10
-                                                    + rules[i].getEndPadding());
-                                                pr.setStart(date.getTime()
-                                                    + (rules[i].
-                                                        getBeginPadding()
-                                                        * 1000));
+                                                pr.setDuration(air.getDuration() - 10 + rules[i].getEndPadding());
+                                                pr.setStart(date.getTime() + (rules[i].getBeginPadding() * 1000));
 
-                                                Recording rec =
-                                                    new Recording(sas[j]);
-                                                rec.setRecordingRuleId(
-                                                    pr.getRecordingRule()
-                                                        .getId());
+                                                Recording rec = new Recording(sas[j]);
+                                                rec.setRecordingRuleId(pr.getRecordingRule().getId());
                                                 pr.setRecording(rec);
                                                 workList.add(pr);
                                             }

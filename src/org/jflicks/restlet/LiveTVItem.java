@@ -30,6 +30,7 @@ import org.jflicks.util.Util;
 public class LiveTVItem {
 
     private String hostPort;
+    private String directUrl;
     private Channel channel;
     private ShowAiring showAiring;
 
@@ -55,6 +56,14 @@ public class LiveTVItem {
      */
     public void setHostPort(String s) {
         hostPort = s;
+    }
+
+    public String getDirectUrl() {
+        return (directUrl);
+    }
+
+    public void setDirectUrl(String s) {
+        directUrl = s;
     }
 
     /**

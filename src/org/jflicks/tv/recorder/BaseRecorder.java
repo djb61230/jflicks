@@ -44,9 +44,12 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder, Seria
 
     private String title;
     private String device;
+    private String directUrlPrefix;
+    private String directUrlSuffix;
     private boolean recording;
     private boolean quickTunable;
     private boolean recordingLiveTV;
+    private boolean preferred;
     private Channel channel;
     private long startedAt;
     private long duration;
@@ -163,6 +166,38 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder, Seria
      */
     public void setTitle(String s) {
         title = s;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getDirectUrlPrefix() {
+        return (directUrlPrefix);
+    }
+
+    /**
+     * Convenience method to set this property.
+     *
+     * @param s The given direct url prefix value.
+     */
+    public void setDirectUrlPrefix(String s) {
+        directUrlPrefix = s;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getDirectUrlSuffix() {
+        return (directUrlSuffix);
+    }
+
+    /**
+     * Convenience method to set this property.
+     *
+     * @param s The given direct url prefix value.
+     */
+    public void setDirectUrlSuffix(String s) {
+        directUrlSuffix = s;
     }
 
     /**
@@ -528,6 +563,17 @@ public abstract class BaseRecorder extends BaseConfig implements Recorder, Seria
         boolean old = recordingLiveTV;
         recordingLiveTV = b;
         firePropertyChange("RecordingLiveTV", old, recordingLiveTV);
+    }
+
+    public boolean isPreferred() {
+        return (preferred);
+    }
+
+    public void setPreferred(boolean b) {
+
+        boolean old = preferred;
+        preferred = b;
+        firePropertyChange("Preferred", old, preferred);
     }
 
     /**

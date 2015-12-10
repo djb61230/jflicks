@@ -212,11 +212,9 @@ public final class LiveTVSupport extends BaseSupport {
                         if (!clist.contains(value[i])) {
 
                             LiveTVItem item = new LiveTVItem();
-                            item.setHostPort(key.getHost() + ":"
-                                + key.getPort());
+                            item.setHostPort(key.getHost() + ":" + key.getPort());
                             item.setChannel(value[i]);
-                            ShowAiring[] sas =
-                                key.getShowAiringsByChannel(value[i]);
+                            ShowAiring[] sas = key.getShowAiringsByChannel(value[i]);
                             if ((sas != null) && (sas.length > 0)) {
 
                                 item.setShowAiring(sas[0]);
@@ -230,13 +228,19 @@ public final class LiveTVSupport extends BaseSupport {
                 if (llist.size() > 0) {
 
                     result = llist.toArray(new LiveTVItem[llist.size()]);
+
+                    // We want to set the directUrl property if it exists.
+                    for (int i = 0; i < result.length; i++) {
+
+                        applyDirectUrl(result[i]);
+                    }
                 }
             }
         }
 
         if (result == null) {
 
-            // We will resturn an empty array.
+            // We will return an empty array.
             result = new LiveTVItem[0];
         }
 
@@ -252,22 +256,64 @@ public final class LiveTVSupport extends BaseSupport {
             Live l = n.getLive();
             if (l != null) {
 
-                Recorder[] array = n.getRecorders();
+                Recorder[] array = n.getConfiguredRecorders();
                 if ((array != null) && (array.length > 0)) {
 
-                    for (int i = 0; i < array.length; i++) {
-
-                        if (array[i].isHlsMode()) {
-
-                            result = true;
-                            break;
-                        }
-                    }
+                    result = true;
                 }
             }
         }
 
         return (result);
+    }
+
+    private void applyDirectUrl(LiveTVItem item) {
+
+        NMS[] narray = getNMS();
+        if ((narray != null) && (item != null)) {
+
+            Channel c = item.getChannel();
+            LogUtil.log(LogUtil.DEBUG, "applyDirectUrl: c " + c);
+            if (c != null) {
+
+                // Ok we have at least one NMS and a LiveTVItem.
+                for (int i = 0; i < narray.length; i++) {
+
+                    // The Recorders in this moment of time ready to record.
+                    Recorder[] recs = getRecorders(narray[i]);
+                    LogUtil.log(LogUtil.DEBUG, "applyDirectUrl: recs " + recs);
+                    if ((recs != null) && (recs.length > 0)) {
+
+                        for (int j = 0; j < recs.length; j++) {
+
+                            LogUtil.log(LogUtil.DEBUG, "applyDirectUrl: before supports ");
+                            if (supportsChannel(narray[i], c, recs[j])) {
+
+                                LogUtil.log(LogUtil.DEBUG, "applyDirectUrl: after supports ");
+
+                                // Ok lets get the directUrlPrefix
+                                String directUrlPrefix = recs[j].getDirectUrlPrefix();
+                                LogUtil.log(LogUtil.DEBUG, "applyDirectUrl: directUrlPrefix " + directUrlPrefix);
+                                if (directUrlPrefix != null) {
+
+                                    StringBuilder sb = new StringBuilder(directUrlPrefix);
+                                    sb.append(c.getNumber());
+                                    String directUrlSuffix = recs[j].getDirectUrlSuffix();
+                                    if (directUrlSuffix != null) {
+
+                                        sb.append(directUrlSuffix);
+                                    }
+
+                                    item.setDirectUrl(sb.toString());
+
+                                    // We continue on because we want to use the last recorder.
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private Channel[] getAvailableChannels(NMS n) {
@@ -289,8 +335,7 @@ public final class LiveTVSupport extends BaseSupport {
                         String listId = all[i].getListingId();
                         for (int j = 0; j < recs.length; j++) {
 
-                            if ((!recs[j].isRecording())
-                                && (recs[j].isHlsMode())) {
+                            if (!recs[j].isRecording()) {
 
                                 // A free recorder.  Can it do this channel?
                                 if (supportsChannel(n, all[i], recs[j])) {
@@ -391,6 +436,54 @@ public final class LiveTVSupport extends BaseSupport {
         }
 
         LogUtil.log(LogUtil.DEBUG, "LiveTVItem to use null = " + (result == null));
+
+        return (result);
+    }
+
+    private Recorder[] getRecorders(NMS n) {
+
+        Recorder[] result = null;
+
+        if (n != null) {
+
+            Scheduler s = n.getScheduler();
+            if (s != null) {
+
+                Recorder[] array = s.getConfiguredRecorders();
+                if ((array != null) && (array.length > 0)) {
+
+                    ArrayList<Recorder> rlist = new ArrayList<Recorder>();
+                    for (int i = 0; i < array.length; i++) {
+
+                        if (!array[i].isRecording()) {
+
+                            rlist.add(array[i]);
+                        }
+                    }
+
+                    if (rlist.size() > 0) {
+
+                        result = rlist.toArray(new Recorder[rlist.size()]);
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private String[] getListingNames(NMS n) {
+
+        String[] result = null;
+
+        if (n != null) {
+
+            Scheduler s = n.getScheduler();
+            if (s != null) {
+
+                result = s.getConfiguredListingNames();
+            }
+        }
 
         return (result);
     }

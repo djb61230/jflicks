@@ -270,6 +270,33 @@ public interface Recorder extends Config {
     boolean supportsScan();
 
     /**
+     * Some Recorder instance may support a direct URL value to get
+     * video from them.  If so this property will have a String that
+     * makes up the prefix for the URL.
+     *
+     * @return A String if it exists, null otherwise.
+     */
+    String getDirectUrlPrefix();
+
+    /**
+     * Some Recorder instance may support a direct URL value to get
+     * video from them.  If so this property will have a String that
+     * makes up the suffix for the URL.
+     *
+     * @return A String if it exists, null otherwise.
+     */
+    String getDirectUrlSuffix();
+
+    /**
+     * A Recorder can be a preferred Recorder meaning if given a choice, use this
+     * one over another that is not preferred as long as they can record the same
+     * show.
+     *
+     * @return True when this Recorder is a preferred one.
+     */
+    boolean isPreferred();
+
+    /**
      * Add a listener.
      *
      * @param l A given listener.
