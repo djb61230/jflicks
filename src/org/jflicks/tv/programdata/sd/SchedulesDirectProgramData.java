@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TimeZone;
 
 import org.jflicks.configure.NameValue;
@@ -161,6 +163,7 @@ public class SchedulesDirectProgramData extends BaseProgramData implements DbWor
 
         Listing result = null;
 
+        LogUtil.log(LogUtil.DEBUG, "getListingByName");
         ObjectContainer oc = getObjectContainer();
         if ((oc != null) && (name != null)) {
 
@@ -250,25 +253,34 @@ public class SchedulesDirectProgramData extends BaseProgramData implements DbWor
 
         Channel[] result = null;
 
+LogUtil.log(LogUtil.DEBUG, "0");
         ObjectContainer oc = getObjectContainer();
+LogUtil.log(LogUtil.DEBUG, "1");
         if ((oc != null) && (l != null)) {
+LogUtil.log(LogUtil.DEBUG, "2");
 
             final String id = l.getId();
+LogUtil.log(LogUtil.DEBUG, "3");
             if (id != null) {
+LogUtil.log(LogUtil.DEBUG, "4");
 
                 List<Channel> channels = oc.query(new Predicate<Channel>() {
                     public boolean match(Channel c) {
                         return (id.equals(c.getListingId()));
                     }
                 });
+LogUtil.log(LogUtil.DEBUG, "5");
 
                 if ((channels != null) && (channels.size() > 0)) {
 
+LogUtil.log(LogUtil.DEBUG, "6");
                     result = channels.toArray(new Channel[channels.size()]);
+LogUtil.log(LogUtil.DEBUG, "7");
                 }
             }
         }
 
+LogUtil.log(LogUtil.DEBUG, "8");
         return (result);
     }
 
@@ -689,7 +701,7 @@ public class SchedulesDirectProgramData extends BaseProgramData implements DbWor
             // Process the Programs and put new Show instances into the
             // database.
             Map<String, Program> pmap = xtvd.getPrograms();
-            LogUtil.log(LogUtil.DEBUG, "Program map <" + pmap + ">");
+            LogUtil.log(LogUtil.DEBUG, "Program map null? " + (pmap == null));
             if (pmap != null) {
 
                 LogUtil.log(LogUtil.DEBUG, "Program map count <" + pmap.size() + ">");
@@ -761,8 +773,14 @@ public class SchedulesDirectProgramData extends BaseProgramData implements DbWor
             LogUtil.log(LogUtil.INFO, "Schedules Direct data process complete!");
 
             // Let others know...
-            fireDataUpdateEvent();
+            notify(true);
         }
+    }
+
+    public void notify(boolean freshData) {
+
+        Timer timer = new Timer();
+        timer.schedule(new NotifyTask(freshData), 2000);
     }
 
     private int processReferenceChannels(Lineup l, ArrayList<Channel> list) {
@@ -892,19 +910,13 @@ public class SchedulesDirectProgramData extends BaseProgramData implements DbWor
             if (s != null) {
 
                 Configuration config = s.newConfiguration();
-                config.objectClass(
-                    Airing.class).objectField("id").indexed(true);
-                config.objectClass(
-                    Airing.class).objectField("channelId").indexed(true);
-                config.objectClass(
-                    Channel.class).objectField("id").indexed(true);
-                config.objectClass(
-                    Channel.class).objectField("listingId").indexed(true);
+                config.objectClass(Airing.class).objectField("id").indexed(true);
+                config.objectClass(Airing.class).objectField("channelId").indexed(true);
+                config.objectClass(Channel.class).objectField("id").indexed(true);
+                config.objectClass(Channel.class).objectField("listingId").indexed(true);
                 config.objectClass(Show.class).objectField("id").indexed(true);
-                config.objectClass(
-                    Show.class).objectField("title").indexed(true);
-                config.objectClass(
-                    Show.class).objectField("description").indexed(true);
+                config.objectClass(Show.class).objectField("title").indexed(true);
+                config.objectClass(Show.class).objectField("description").indexed(true);
                 objectContainer = s.openFile(config, "db/sd.dat");
             }
         }
@@ -1064,6 +1076,22 @@ public class SchedulesDirectProgramData extends BaseProgramData implements DbWor
                 oc.store(status);
                 oc.commit();
             }
+        }
+    }
+
+    class NotifyTask extends TimerTask {
+
+        private boolean freshData;
+
+        public NotifyTask(boolean b) {
+            freshData = b;
+        }
+
+        public void run() {
+
+            LogUtil.log(LogUtil.INFO, "To notify DataUpdate listeners.");
+            fireDataUpdateEvent(freshData);
+            LogUtil.log(LogUtil.INFO, "DataUpdate listeners notified.");
         }
     }
 

@@ -41,13 +41,20 @@ import org.jflicks.util.Util;
  */
 public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
 
+    public enum IdType {
+        SERIES, SHOW
+    }
+
     private String title;
     private NMS nms;
+    private IdType idTypeForSearch;
 
     /**
      * Simple empty constructor.
      */
     public BaseAutoArt() {
+
+        setIdTypeForSearch(IdType.SERIES);
     }
 
     /**
@@ -80,6 +87,14 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
         nms = n;
     }
 
+    public IdType getIdTypeForSearch() {
+        return (idTypeForSearch);
+    }
+
+    public void setIdTypeForSearch(IdType i) {
+        idTypeForSearch = i;
+    }
+
     /**
      * The AutoArt service needs to know hoe often it should run and
      * try to check for more art to find for it's Recordings, Rules and
@@ -94,8 +109,7 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
         Configuration c = getConfiguration();
         if (c != null) {
 
-            NameValue nv =
-                c.findNameValueByName(NMSConstants.UPDATE_TIME_IN_MINUTES);
+            NameValue nv = c.findNameValueByName(NMSConstants.UPDATE_TIME_IN_MINUTES);
             if (nv != null) {
 
                 result = Util.str2int(nv.getValue(), result);
@@ -153,7 +167,11 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
 
         if (rr != null) {
 
-            result = rr.getSeriesId();
+            if (getIdTypeForSearch() == IdType.SERIES) {
+                result = rr.getSeriesId();
+            } else {
+                result = rr.getShowId();
+            }
             if (result == null) {
 
                 ShowAiring sa = rr.getShowAiring();
@@ -162,7 +180,11 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
                     Show s = sa.getShow();
                     if (s != null) {
 
-                        result = s.getSeriesId();
+                        if (getIdTypeForSearch() == IdType.SERIES) {
+                            result = s.getSeriesId();
+                        } else {
+                            result = s.getId();
+                        }
                     }
                 }
             }
@@ -310,8 +332,7 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
 
                     // We look for a complete set, otherwise we add it
                     // to our list.
-                    if ((!hasBannerArt(array[i])) || (!hasPosterArt(array[i]))
-                        || (!hasFanArt(array[i]))) {
+                    if ((!hasBannerArt(array[i])) || (!hasPosterArt(array[i])) || (!hasFanArt(array[i]))) {
 
                         l.add(array[i]);
                     }
@@ -342,8 +363,7 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
 
                     // We look for a complete set, otherwise we add it
                     // to our list.
-                    if ((!hasBannerArt(array[i])) || (!hasPosterArt(array[i]))
-                        || (!hasFanArt(array[i]))) {
+                    if ((!hasBannerArt(array[i])) || (!hasPosterArt(array[i])) || (!hasFanArt(array[i]))) {
 
                         l.add(array[i]);
                     }
@@ -376,9 +396,7 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
 
                         // We look for a complete set, otherwise we add it
                         // to our list.
-                        if ((!hasPosterArt(array[i]))
-                            || (!hasFanArt(array[i]))
-                            || (!hasMetadata(array[i]))) {
+                        if ((!hasPosterArt(array[i])) || (!hasFanArt(array[i])) || (!hasMetadata(array[i]))) {
 
                             l.add(array[i]);
                         }
@@ -407,8 +425,17 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
             for (int i = 0; i < recs.length; i++) {
 
                 SearchItem si = new SearchItem();
-                si.setId(recs[i].getSeriesId());
-                si.setFileId(recs[i].getSeriesId());
+                if (getIdTypeForSearch() == IdType.SERIES) {
+
+                    si.setId(recs[i].getSeriesId());
+                    si.setFileId(recs[i].getSeriesId());
+
+                } else {
+
+                    si.setId(recs[i].getShowId());
+                    si.setFileId(recs[i].getShowId());
+                }
+
                 si.setTitle(recs[i].getTitle());
                 si.setNeedBanner(!hasBannerArt(recs[i]));
                 si.setNeedPoster(!hasPosterArt(recs[i]));
@@ -531,8 +558,7 @@ public abstract class BaseAutoArt extends BaseConfig implements AutoArt {
                         if (!video.isTV()) {
 
                             String subcat = video.getSubcategory();
-                            if ((subcat == null)
-                               || (subcat.equals(NMSConstants.UNKNOWN_GENRE))) {
+                            if ((subcat == null) || (subcat.equals(NMSConstants.UNKNOWN_GENRE))) {
 
                                 subcat = si.getGenre();
                                 if (subcat != null) {

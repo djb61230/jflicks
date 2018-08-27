@@ -1,0 +1,15 @@
+Visit https://www.fcc.gov/media/television/tv-query
+
+Select Service = All records
+Select Record Types = All records
+Select Text file pipe delimited
+
+Hit results to this page.
+
+Save file off.
+
+Run this command:
+
+cut -d "|" -f 2,5 tvqall.txt | cut -c 1-4,13-15 | tr "|" "=" | sort | grep -v '^-'| grep -v '^A' | grep -v '^C' | grep -v '^D' | grep -v '^N' | grep -v '^V' | grep -v '^X' | grep -v '^H' | grep -v '^ ' | uniq -u > callsign2frequency.properties
+
+Hand edit it to add missing stations (like the PBS24 on smith hill).

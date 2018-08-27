@@ -19,6 +19,7 @@ Import-Package:\
  org.jflicks.nms;version="1.0.0",\
  org.jflicks.player;version="1.0.0",\
  org.jflicks.rc;version="1.0.0",\
+ org.jflicks.ui.view;version="1.0.0",\
  org.jflicks.ui.view.fe;version="1.0.0",\
  org.jflicks.ui.view.fe.screen;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\

@@ -31,6 +31,7 @@ public class LiveTVItem {
 
     private String hostPort;
     private String directUrl;
+    private String recorderId;
     private Channel channel;
     private ShowAiring showAiring;
 
@@ -64,6 +65,14 @@ public class LiveTVItem {
 
     public void setDirectUrl(String s) {
         directUrl = s;
+    }
+
+    public String getRecorderId() {
+        return (recorderId);
+    }
+
+    public void setRecorderId(String s) {
+        recorderId = s;
     }
 
     /**

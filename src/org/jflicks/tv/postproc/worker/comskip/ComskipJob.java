@@ -52,6 +52,29 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
         setSleepTime(60000);
     }
 
+    private String getPreferredPath(Recording r) {
+
+        String result = null;
+
+        if (r != null) {
+
+            String path = r.getPath();
+            String wpath = path + "." + r.getIndexedExtension();
+            File wfile = new File(wpath);
+            if (wfile.exists()) {
+                result = wpath;
+            } else {
+                result = path;
+            }
+
+        } else {
+
+            LogUtil.log(LogUtil.WARNING, "Recording is null");
+        }
+
+        return (result);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -62,15 +85,16 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
 
             SystemJob job = null;
 
+            String ppath = r.getPath();
             if (Util.isLinux() || Util.isMac()) {
 
-                job = SystemJob.getInstance("wine bin/comskip "
-                    + "--ini=conf/comskip.ini " + "\"" + r.getPath() + "\"");
+                job = SystemJob.getInstance("comskip "
+                    + "--ini=conf/comskip.ini " + "\"" + ppath + "\"");
 
             } else {
 
                 job = SystemJob.getInstance("bin\\comskip "
-                    + "--ini=conf/comskip.ini " + "\"" + r.getPath() + "\"");
+                    + "--ini=conf/comskip.ini " + "\"" + ppath + "\"");
             }
 
             job.addJobListener(this);
@@ -205,7 +229,15 @@ public class ComskipJob extends BaseWorkerJob implements JobListener {
 
                                 LogUtil.log(LogUtil.INFO, "Couldn't do chapters");
                             }
+
+                        } else {
+
+                            LogUtil.log(LogUtil.INFO, "Whoa no commercials to set via mp4chaps");
                         }
+
+                    } else {
+
+                        LogUtil.log(LogUtil.INFO, "Whoa extension " + ext);
                     }
                 }
             }

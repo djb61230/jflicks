@@ -30,6 +30,7 @@ public class LiveTVBean {
     private String id;
     private String streamURL;
     private String message;
+    private boolean ready;
 
     /**
      * Simple empty constructor.
@@ -73,6 +74,14 @@ public class LiveTVBean {
 
     public void setMessage(String s) {
         message = s;
+    }
+
+    public boolean isReady() {
+        return (ready);
+    }
+
+    public void setReady(boolean b) {
+        ready = b;
     }
 
 }

@@ -50,6 +50,7 @@ public class HDHRRecorderTranscodeHlsJob extends AbstractJob
     public HDHRRecorderTranscodeHlsJob(HDHRRecorder r) {
 
         setHDHRRecorder(r);
+        setSleepTime(2000);
     }
 
     private HlsJob getHlsJob() {
@@ -215,6 +216,7 @@ public class HDHRRecorderTranscodeHlsJob extends AbstractJob
             JobManager.sleep(getSleepTime());
         }
 
+        LogUtil.log(LogUtil.DEBUG, "The HLS recording Thread is done!");
     }
 
     /**
@@ -242,8 +244,7 @@ public class HDHRRecorderTranscodeHlsJob extends AbstractJob
 
         if (event.getType() == JobEvent.COMPLETE) {
 
-            LogUtil.log(LogUtil.INFO, "recording done at "
-                + new Date(System.currentTimeMillis()));
+            LogUtil.log(LogUtil.INFO, "recording done at " + new Date(System.currentTimeMillis()));
             stop();
 
         } else if (event.getType() == JobEvent.UPDATE) {

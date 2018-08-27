@@ -64,6 +64,8 @@ public class SchedulesDirectProgramDataJob extends AbstractJob {
      */
     public void run() {
 
+        boolean firstTime = true;
+
         while (!isTerminate()) {
 
             SchedulesDirectProgramData pd = getSchedulesDirectProgramData();
@@ -91,12 +93,20 @@ public class SchedulesDirectProgramDataJob extends AbstractJob {
 
                         JobManager.sleep(getSleepTime());
                     }
+
+                } else {
+
+                    if (firstTime) {
+
+                        pd.notify(false);
+                    }
                 }
+
+                firstTime = false;
             }
 
             JobManager.sleep(getSleepTime());
         }
-
     }
 
     /**

@@ -91,9 +91,10 @@ public class RayCleanerJob extends AbstractJob {
 
                             for (int i = 0; i < recs.length; i++) {
 
-                                if (isReadyToClean(recs[i], rc.getRecordingMinimumAge())) {
+                                if (isReadyToClean(recs[i], nms)) {
 
-                                    clean(recs[i]);
+                                    boolean alsoDoTS = isReadyToCleanByTime(recs[i], rc.getRecordingMinimumAge());
+                                    clean(recs[i], alsoDoTS);
                                 }
                             }
 
@@ -144,13 +145,58 @@ public class RayCleanerJob extends AbstractJob {
         return (result);
     }
 
-    private boolean isReadyToClean(Recording r, int seconds) {
+    private boolean isReadyToClean(Recording r, NMS n) {
+
+        boolean result = false;
+
+        if ((r != null) && (n != null)) {
+
+            // Double check is isnt recording.
+            if (!r.isCurrentlyRecording()) {
+
+                // Now see if the indexer has finished.
+                String path = r.getPath();
+                String ext = r.getIndexedExtension();
+                if ((path != null) && (ext != null)) {
+
+                    File f = new File(path + "." + ext);
+                    if ((f.exists()) && (f.isFile())) {
+
+                        if (!n.isInUse(r.getId(), false)) {
+
+                            result = true;
+
+                        } else {
+
+                            LogUtil.log(LogUtil.DEBUG, "Cleaner someone watching: " + r);
+                        }
+
+                    } else {
+
+                        LogUtil.log(LogUtil.DEBUG, "Cleaner no not indexed: " + r);
+                    }
+
+                } else {
+
+                    LogUtil.log(LogUtil.DEBUG, "Cleaner no not indexed: " + r);
+                }
+
+            } else {
+
+                LogUtil.log(LogUtil.DEBUG, "Cleaner no it's still recording: " + r);
+            }
+        }
+
+        return (result);
+    }
+
+    private boolean isReadyToCleanByTime(Recording r, int seconds) {
 
         boolean result = false;
 
         if (r != null) {
 
-            // Double check is isnt recording.
+            // Double check it isnt recording.
             if (!r.isCurrentlyRecording()) {
 
                 // Now see if the indexer has finished.
@@ -202,7 +248,7 @@ public class RayCleanerJob extends AbstractJob {
         return (result);
     }
 
-    private void clean(Recording r) {
+    private void clean(Recording r, boolean includeTsFile) {
 
         if (r != null) {
 
@@ -218,8 +264,20 @@ public class RayCleanerJob extends AbstractJob {
 
                     try {
 
-                        FileUtils.forceDelete(files[i]);
-                        LogUtil.log(LogUtil.DEBUG, "Cleaner got: " + files[i].getPath());
+                        if (includeTsFile) {
+
+                            FileUtils.forceDelete(files[i]);
+                            LogUtil.log(LogUtil.DEBUG, "Cleaner got: " + files[i].getPath());
+
+                        } else {
+
+                            if (!fpath.equals(files[i])) {
+
+                                FileUtils.forceDelete(files[i]);
+                                LogUtil.log(LogUtil.DEBUG, "Cleaner got: " + files[i].getPath());
+                            }
+                        }
+
 
                     } catch (IOException ex) {
 

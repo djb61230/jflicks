@@ -323,12 +323,10 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                 for (int i = 0; i < array.length; i++) {
 
                     String desc = array[i].getDescription();
-                    if ((desc != null)
-                        && (desc.equals(NMSConstants.RECORDING_DEVICE))) {
+                    if ((desc != null) && (desc.equals(NMSConstants.RECORDING_DEVICE))) {
 
                         String tmp = array[i].getValue();
-                        if ((tmp != null)
-                            && (!tmp.equals(NMSConstants.NOT_CONNECTED))) {
+                        if ((tmp != null) && (!tmp.equals(NMSConstants.NOT_CONNECTED))) {
 
                             // Ok found a connected Recorder.  We need to get
                             // the device from the name.  It should be the
@@ -341,7 +339,9 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                                 if (dev.equals(r.getDevice())) {
 
                                     // Ok found the recorder.
+                                    LogUtil.log(LogUtil.DEBUG, "4GN listing name <" + tmp + ">");
                                     result = n.getChannelsByListingName(tmp);
+                                    LogUtil.log(LogUtil.DEBUG, "After n.getChannelsByListingName(tmp)");
 
                                     // The result is all the channels that
                                     // are defined by the listing.  However
@@ -519,6 +519,12 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                 }
                 sb.insert(0, pr.getShowId() + "_");
 
+                String cleanName = processName(pr.getRecording());
+                if (cleanName != null) {
+
+                    sb.insert(0, cleanName + "_");
+                }
+
                 result = new File(dir, sb.toString());
 
             } else {
@@ -607,15 +613,17 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
     /**
      * {@inheritDoc}
      */
-    public void requestRescheduling() {
+    public synchronized void requestRescheduling() {
 
         // For now we just do it.  Perhaps in the future we might need
         // to take care in case we have different users asking at the
         // same time.
+        LogUtil.log(LogUtil.INFO, "requestRescheduling updatePendingRecords");
         updatePendingRecords();
+        LogUtil.log(LogUtil.INFO, "requestRescheduling updatePendingRecords done");
     }
 
-    protected synchronized void updatePendingRecords() {
+    protected void updatePendingRecords() {
 
         LogUtil.log(LogUtil.INFO, "Running updatePendingRecords");
 
@@ -878,6 +886,47 @@ public abstract class BaseScheduler extends BaseConfig implements Scheduler {
                 n.sendMessage(NMSConstants.MESSAGE_SCHEDULE_UPDATE);
             }
         }
+    }
+
+    private String processName(Recording r) {
+
+        String result = null;
+
+        if (r != null) {
+
+            String title = r.getTitle();
+            if (title != null) {
+
+                // Try the subtitle too.
+                String sub = r.getSubtitle();
+                if (sub != null) {
+
+                    title = title + " " + sub;
+                }
+
+                // Only alphas and spaces.
+                title = title.replaceAll("[^a-zA-Z\\s]", "");
+
+                // Trim the ends of spaces.
+                title = title.trim();
+
+                // At most one space at a time.
+                title = title.replaceAll(" +", " ");
+
+                // Turn spaces to underscores.
+                result = title.replaceAll(" ", "_");
+
+            } else {
+
+                LogUtil.log(LogUtil.DEBUG, "processName Recording title null!");
+            }
+
+        } else {
+
+            LogUtil.log(LogUtil.DEBUG, "processName Recording null!");
+        }
+
+        return (result);
     }
 
     private boolean isRecordingNow(ShowAiring sa) {

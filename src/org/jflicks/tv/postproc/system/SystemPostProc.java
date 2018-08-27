@@ -311,5 +311,48 @@ public class SystemPostProc extends BasePostProc {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isWorkPending(Recording r) {
+
+        boolean result = false;
+
+        if (r != null) {
+
+            result = isWorkPending(r, getHeavyWorkerRecordingList());
+            if (!result) {
+
+                result = isWorkPending(r, getLightWorkerRecordingList());
+            }
+
+        } else {
+
+            LogUtil.log(LogUtil.INFO, "isWorkPending given a null recording");
+        }
+
+        return (result);
+    }
+
+    private boolean isWorkPending(Recording r, ArrayList<WorkerRecording> l) {
+
+        boolean result = false;
+
+        if ((r != null) && (l != null) && (l.size() > 0)) {
+
+            WorkerRecording[] array = l.toArray(new WorkerRecording[l.size()]);
+            for (WorkerRecording wr : array) {
+
+                if (r.equals(wr.getRecording())) {
+
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
 }
 

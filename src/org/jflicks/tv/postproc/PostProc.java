@@ -94,5 +94,13 @@ public interface PostProc extends Config {
      * @return The maximum jobs that can be run at oonce.
      */
     int getConfiguredMaximumJobs();
+
+    /**
+     * Be able to see if a Recording has some post processing work being done to it.
+     *
+     * @param r A given Recording.
+     * @return True if work is scheduled for the Recording.
+     */
+    boolean isWorkPending(Recording r);
 }
 

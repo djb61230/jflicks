@@ -61,9 +61,10 @@ public class SystemAutoArtJob extends AbstractJob {
      */
     public void run() {
 
-        long defaultSleeptime = 20 * 60 * 1000;
+        long defaultSleeptime = 2 * 60 * 1000;
 
         long wait = defaultSleeptime;
+        JobManager.sleep(wait);
         while (!isTerminate()) {
 
             SystemAutoArt saa = getSystemAutoArt();
@@ -72,6 +73,7 @@ public class SystemAutoArtJob extends AbstractJob {
 
                 LogUtil.log(LogUtil.INFO, "Calling performUpdate...");
                 saa.performUpdate();
+                LogUtil.log(LogUtil.INFO, "Returned performUpdate. next getConfiguredUpdateTimeInMinutes");
                 wait = saa.getConfiguredUpdateTimeInMinutes() * 60 * 1000;
                 LogUtil.log(LogUtil.INFO, "Returned now sleeping " + wait);
             }

@@ -370,11 +370,14 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
     public void performUpdate() {
 
         // First thing to do is a video scan...
+        LogUtil.log(LogUtil.DEBUG, "before video scan.");
         NMS n = getNMS();
+        LogUtil.log(LogUtil.DEBUG, "before video scan. " + n);
         if (n != null) {
 
             n.videoScan();
         }
+        LogUtil.log(LogUtil.DEBUG, "before getSearchItems");
 
         SearchItem[] array = getSearchItems();
         if ((array != null) && (array.length > 0)) {
@@ -400,8 +403,7 @@ public class SystemAutoArt extends BaseAutoArt implements DbWorker {
                 }
             }
 
-            LogUtil.log(LogUtil.INFO, "We are going to search for " + l.size()
-                + " items at this time.");
+            LogUtil.log(LogUtil.INFO, "We are going to search for " + l.size() + " items at this time.");
 
             for (int i = 0; i < l.size(); i++) {
 

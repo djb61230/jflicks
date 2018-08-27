@@ -90,22 +90,35 @@ public class InputStreamJob extends AbstractJob {
                     boolean done = false;
                     while (!done) {
 
-                        int count = is.read(data);
-                        if (count > 0) {
+                        int avail = is.available();
+                        if (avail > 0) {
 
-                            String tmp = new String(data, 0, count);
-                            tmp = tmp.trim();
-                            fireJobEvent(JobEvent.UPDATE, tmp);
-                            if (stringBuffer.length() > MAX_SIZE) {
+                            byte[] buf = new byte[avail];
+                            int count = is.read(buf);
+                            if (count > 0) {
 
-                                stringBuffer.setLength(0);
+                                String tmp = new String(buf, 0, count);
+                                //tmp = tmp.trim();
+                                fireJobEvent(JobEvent.UPDATE, tmp);
+                                if (stringBuffer.length() > MAX_SIZE) {
+
+                                    stringBuffer.setLength(0);
+                                }
+                                stringBuffer.append(tmp);
+                                //stringBuffer.append("\n");
+
+                            } else {
+
+                                done = true;
                             }
-                            stringBuffer.append(tmp);
-                            stringBuffer.append("\n");
 
                         } else {
 
-                            done = true;
+                            Thread.sleep(getSleepTime());
+                        }
+
+                        if (isTerminate()) {
+                            break;
                         }
                     }
                 }

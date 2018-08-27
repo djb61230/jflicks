@@ -64,6 +64,7 @@ public abstract class BaseServerResource extends WadlServerResource {
     private XStream xstream;
     private String recordingId;
     private boolean allowRerecord;
+    private String recorderId;
     private String ruleId;
     private String channelId;
     private String showId;
@@ -72,6 +73,7 @@ public abstract class BaseServerResource extends WadlServerResource {
     private String title;
     private String host;
     private boolean unique;
+    private String hostPort;
 
     /**
      * Simple empty constructor.
@@ -107,6 +109,14 @@ public abstract class BaseServerResource extends WadlServerResource {
 
     public void setFormat(String s) {
         format = s;
+    }
+
+    public String getRecorderId() {
+        return (recorderId);
+    }
+
+    public void setRecorderId(String s) {
+        recorderId = s;
     }
 
     public String getRecordingId() {
@@ -189,6 +199,14 @@ public abstract class BaseServerResource extends WadlServerResource {
         unique = b;
     }
 
+    public String getHostPort() {
+        return (hostPort);
+    }
+
+    public void setHostPort(String s) {
+        hostPort = s;
+    }
+
     public Gson getGson() {
         return (gson);
     }
@@ -224,6 +242,7 @@ public abstract class BaseServerResource extends WadlServerResource {
 
             setRecordingId(decode((String) map.get("recordingId")));
             setAllowRerecord(Util.str2boolean(decode((String) map.get("allowRerecord")), false));
+            setRecorderId(decode((String) map.get("recorderId")));
             setRuleId(decode((String) map.get("ruleId")));
             setChannelId(decode((String) map.get("channelId")));
             setShowId(decode((String) map.get("showId")));
@@ -232,6 +251,7 @@ public abstract class BaseServerResource extends WadlServerResource {
             setTitle(decode((String) map.get("title")));
             setUnique(Util.str2boolean(decode((String) map.get("unique")), false));
             setLiveTVId(decode((String) map.get("liveTVId")));
+            setHostPort(decode((String) map.get("hostPort")));
         }
     }
 

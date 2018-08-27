@@ -532,9 +532,11 @@ public class SchedulesDirect {
                         String[] sids = getStationsByLineupName(lineupNames[i]);
                         if ((sids != null) && (sids.length > 0)) {
 
+                            LogUtil.log(LogUtil.DEBUG, "Building GuideRequests for sid count " + sids.length);
                             GuideRequest[] grs = new GuideRequest[sids.length];
                             for (int j = 0; j < grs.length; j++) {
 
+                                LogUtil.log(LogUtil.DEBUG, "GuideRequest for sid " + sids[j]);
                                 grs[j] = new GuideRequest(sids[j]);
                             }
 

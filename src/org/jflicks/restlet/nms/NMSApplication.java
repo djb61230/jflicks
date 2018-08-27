@@ -70,9 +70,15 @@ public class NMSApplication extends BaseApplication {
         router.attach("/{version}/guide/{channelId}.{format}", GuideChannelResource.class);
         router.attach("/{version}/guide/{term}/{channelId}.{format}", GuideTitleChannelResource.class);
         router.attach("/{version}/livetv/items.{format}", LiveTVItemResource.class);
+        router.attach("/{version}/livetv/itemrefresh/{channelId}.{format}", LiveTVItemRefreshResource.class);
+        router.attach("/{version}/livetv/opendirect/{recorderId}.{format}", LiveTVOpenDirectResource.class);
+        router.attach("/{version}/livetv/closedirect/{recorderId}.{format}", LiveTVCloseDirectResource.class);
         router.attach("/{version}/livetv/open/{channelId}.{format}", LiveTVOpenCloseResource.class);
         router.attach("/{version}/livetv/close/{liveTVId}.{format}", LiveTVOpenCloseResource.class);
         router.attach("/{version}/j4cc/{host}/configuration.{format}", J4ccConfigurationResource.class);
+        router.attach("/{version}/inuse/{recordingId}/{hostPort}/yes", InUseYesResource.class);
+        router.attach("/{version}/inuse/{recordingId}/{hostPort}/no", InUseNoResource.class);
+        router.attach("/{version}/inuse/free", InUseFreeResource.class);
 
         return (router);
     }

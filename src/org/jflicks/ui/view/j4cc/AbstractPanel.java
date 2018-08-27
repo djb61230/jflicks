@@ -112,7 +112,7 @@ public abstract class AbstractPanel extends JXPanel {
 
             if ((component.isVisible()) && (isAutoTimer())) {
 
-                populate();
+                //populate();
             }
         }
     }

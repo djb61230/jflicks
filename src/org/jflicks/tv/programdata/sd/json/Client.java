@@ -100,7 +100,7 @@ public class Client {
         headendObjects = array;
     }
 
-    private void dumpJson(String s) {
+    private void dumpJson(String s, String id) {
 
         if (s != null) {
 
@@ -108,7 +108,7 @@ public class Client {
             if ((sdjson.exists()) && (sdjson.isFile())) {
 
                 System.err.println(s);
-                System.err.println("---------------------------------------------------");
+                System.err.println("--------------------------------------------------- " + id);
             }
         }
     }
@@ -242,6 +242,8 @@ public class Client {
 
                         for (int j = 0; j < lups.length; j++) {
 
+                            System.out.println(lups[j].toString());
+                            System.out.println(array[i].getLocation());
                             if ((name.equals(lups[j].toString())) && (location.equals(array[i].getLocation()))) {
 
                                 result = lups[j].getUri();
@@ -257,6 +259,7 @@ public class Client {
             }
         }
 
+        System.out.println("URI <" + result + ">");
         return (result);
     }
 
@@ -296,7 +299,7 @@ public class Client {
         dumpHeader(cr);
 
         String json = RestUtil.get(cr);
-        dumpJson(json);
+        dumpJson(json, "doStatus");
 
         Gson gson = new Gson();
         Status status = gson.fromJson(json, Status.class);
@@ -331,7 +334,7 @@ public class Client {
             dumpHeader(cr);
 
             String json = RestUtil.get(cr);
-            dumpJson(json);
+            dumpJson(json, "doHeadend");
             Gson gson = new Gson();
             HeadendObject[] heads = gson.fromJson(json, HeadendObject[].class);
             setHeadendObjects(heads);
@@ -377,7 +380,7 @@ public class Client {
                 dumpHeader(cr);
 
                 result = RestUtil.post(cr, json);
-                dumpJson(result);
+                dumpJson(result, "doAutomap");
 
             } catch (Exception ex) {
 
@@ -408,7 +411,7 @@ public class Client {
                     dumpHeader(cr);
 
                     String json = RestUtil.put(cr, null);
-                    dumpJson(json);
+                    dumpJson(json, "doAddLineup");
 
                     Gson gson = new Gson();
                     LineupResponse lr = gson.fromJson(json, LineupResponse.class);
@@ -446,7 +449,7 @@ public class Client {
                     dumpHeader(cr);
 
                     String json = RestUtil.delete(cr);
-                    dumpJson(json);
+                    dumpJson(json, "doDeleteLineup");
 
                     Gson gson = new Gson();
                     LineupResponse lr = gson.fromJson(json, LineupResponse.class);
@@ -482,7 +485,7 @@ public class Client {
                 dumpHeader(cr);
 
                 String json = RestUtil.get(cr);
-                dumpJson(json);
+                dumpJson(json, "getUserLineup");
                 Gson gson = new Gson();
                 result = gson.fromJson(json, UserLineup.class);
 
@@ -512,7 +515,7 @@ public class Client {
                 dumpHeader(cr);
 
                 String json = RestUtil.get(cr);
-                dumpJson(json);
+                dumpJson(json, "getMapping");
 
                 // We are hacking here because gson does not parse the URL for
                 // the logo.  It does not like the tag to be URL, but works if
@@ -520,7 +523,7 @@ public class Client {
                 // actual url.  Seems like it's escaped unnecessarily.
                 json = json.replaceAll("\\\\/", "/");
                 json = json.replaceAll("\"URL\"", "\"url\"");
-                dumpJson(json);
+                dumpJson(json, "getMapping2");
 
                 Gson gson = new Gson();
                 result = gson.fromJson(json, Mapping.class);
@@ -549,9 +552,9 @@ public class Client {
 
                     Gson gson = new Gson();
                     String rjson = gson.toJson(array);
-                    dumpJson(rjson);
+                    dumpJson(rjson, "getGuide");
                     String json = RestUtil.post(cr, rjson);
-                    dumpJson(json);
+                    dumpJson(json, "getGuide2");
                     result = gson.fromJson(json, StationSchedule[].class);
 
                     /*
@@ -597,9 +600,9 @@ public class Client {
 
                     Gson gson = new Gson();
                     String rjson = gson.toJson(array);
-                    dumpJson(rjson);
+                    dumpJson(rjson, "getPrograms");
                     String json = RestUtil.post(cr, rjson);
-                    dumpJson(json);
+                    dumpJson(json, "getPrograms2");
                     result = gson.fromJson(json, Program[].class);
 
                     /*

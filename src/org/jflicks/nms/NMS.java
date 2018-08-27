@@ -734,5 +734,29 @@ public interface NMS extends Config {
      * @return True if Live TV is supported.
      */
     boolean supportsOnDemand(String name);
+
+    /**
+     * Add the given InUse object.  An InUse object is unique by it's clientIpAddress property
+     * and we will keep only one instance.
+     *
+     * @param iu An InUse instance.
+     */
+    void addInUse(InUse iu);
+
+    /**
+     * Remove the given InUse object.  An InUse object is unique by it's clientIpAddress property
+     * and we will remove all instances.
+     *
+     * @param iu An InUse instance.
+     */
+    void removeInUse(InUse iu);
+
+    /**
+     * Given a RecordingId see if it is in use at this moment in time.
+     *
+     * @param rid A given recording Id.
+     * @return True if a client is using that recording Id.
+     */
+    boolean isInUse(String rid, boolean ignoreProcessing);
 }
 

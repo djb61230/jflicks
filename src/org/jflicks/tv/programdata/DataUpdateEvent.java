@@ -27,14 +27,37 @@ import java.awt.AWTEvent;
  */
 public class DataUpdateEvent extends AWTEvent {
 
+    private boolean freshData;
+
     /**
-     * Constructor to make just a status event.
+     * Constructor to take the source.
      *
      * @param source The source of the event.
      */
     public DataUpdateEvent(DataUpdateable source) {
 
         super(source, -1);
+        setFreshData(true);
+    }
+
+    /**
+     * Constructor to supply source and freshness flag.
+     *
+     * @param source The source of the event.
+     * @param freshData True when the data is all fresh.
+     */
+    public DataUpdateEvent(DataUpdateable source, boolean freshData) {
+
+        super(source, -1);
+        setFreshData(freshData);
+    }
+
+    public boolean isFreshData() {
+        return (freshData);
+    }
+
+    private void setFreshData(boolean b) {
+        freshData = b;
     }
 
 }

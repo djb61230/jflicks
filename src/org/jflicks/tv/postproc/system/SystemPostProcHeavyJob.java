@@ -81,12 +81,14 @@ public class SystemPostProcHeavyJob extends SystemPostProcJob {
                             if (path != null) {
 
                                 // We also need to check an HLS path too.
-                                String hlspath =
-                                    path.substring(0, path.lastIndexOf("."));
+                                String hlspath = path.substring(0, path.lastIndexOf("."));
                                 hlspath = hlspath + ".000000.ts";
 
                                 File hlsfile = new File(hlspath);
                                 File file = new File(path);
+                                LogUtil.log(LogUtil.INFO, "One of these paths must exist:");
+                                LogUtil.log(LogUtil.INFO, "\t" + file + " " + file.exists());
+                                LogUtil.log(LogUtil.INFO, "\t" + hlsfile + " " + hlsfile.exists());
                                 if (file.exists() || hlsfile.exists()) {
 
                                     LogUtil.log(LogUtil.INFO, "We have work!!");
@@ -100,6 +102,7 @@ public class SystemPostProcHeavyJob extends SystemPostProcJob {
                                     // recording  started.  Let's push
                                     // and get it next time.
                                     //spp.pushHeavyWorkerRecording(wr);
+                                    LogUtil.log(LogUtil.INFO, "Something not correct now for " + r);
                                     if (getLastWorkerRecording() == null) {
 
                                         setRetryCount(1);

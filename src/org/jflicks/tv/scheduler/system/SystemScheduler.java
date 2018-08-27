@@ -38,6 +38,7 @@ import org.jflicks.tv.postproc.worker.Worker;
 import org.jflicks.tv.scheduler.BaseScheduler;
 import org.jflicks.tv.scheduler.RecordedShow;
 import org.jflicks.util.LogUtil;
+import org.jflicks.util.Util;
 
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
@@ -132,8 +133,7 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
             if (s != null) {
 
                 com.db4o.config.Configuration config = s.newConfiguration();
-                config.objectClass(
-                    RecordedShow.class).objectField("showId").indexed(true);
+                config.objectClass(RecordedShow.class).objectField("showId").indexed(true);
                 recordedObjectContainer = s.openFile(config, "db/recorded.dat");
             }
         }
@@ -222,8 +222,7 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
         ObjectContainer oc = getObjectContainer();
         if (oc != null) {
 
-            ObjectSet<RecordingRule> os =
-                oc.queryByExample(RecordingRule.class);
+            ObjectSet<RecordingRule> os = oc.queryByExample(RecordingRule.class);
             if (os != null) {
 
                 result = os.toArray(new RecordingRule[os.size()]);
@@ -409,8 +408,7 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                             Arrays.sort(tasks, new TaskByDescription());
                         }
 
-                        LogUtil.log(LogUtil.INFO, "We need to update the RecordingRule since "
-                            + "the tasks have changed.");
+                        LogUtil.log(LogUtil.INFO, "We need to update the RecordingRule since the tasks have changed.");
                         rr.setTasks(tasks);
                         addRecordingRule(rr);
                     }
@@ -453,6 +451,22 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
 
             // First remove this rule if it already exists.
             removeRecordingRule(rr);
+
+            ShowAiring sa = rr.getShowAiring();
+            if (sa != null) {
+
+                oc.store(sa);
+
+                Show s = sa.getShow();
+                if (s != null) {
+                    oc.store(s);
+                }
+
+                Airing a = sa.getAiring();
+                if (a != null) {
+                    oc.store(a);
+                }
+            }
             oc.store(new RecordingRule(rr));
             oc.commit();
             addCacheFromRecordingRule(rr);
@@ -559,16 +573,22 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
                 String path = r.getPath();
                 String hlspath = path.substring(0, path.lastIndexOf("."));
                 hlspath = hlspath + ".m3u8";
+                String extpath = path + "." + r.getIndexedExtension();
                 File hlsdisk = new File(hlspath);
                 File ondisk = new File(path);
-                if ((ondisk.exists()) || (hlsdisk.exists())) {
+                File extdisk = new File(extpath);
+                if ((ondisk.exists()) || (hlsdisk.exists()) || (extdisk.exists())) {
 
                     oc.store(new Recording(r));
                     oc.commit();
 
                     // Tell clients via the NMS.
-                    n.sendMessage(NMSConstants.MESSAGE_RECORDING_UPDATE
-                        + " : " + r.getId());
+                    n.sendMessage(NMSConstants.MESSAGE_RECORDING_UPDATE + " : " + r.getId());
+
+                } else {
+
+                    LogUtil.log(LogUtil.WARNING, "UPDATE_RECORDING:" + r.getTitle()
+                        + " has no file on disk so the DB is not updated and no longer valid!");
                 }
             }
         }
@@ -691,9 +711,42 @@ public class SystemScheduler extends BaseScheduler implements DbWorker {
         if ((rs != null) && (oc != null)) {
 
             removeRecordedShow(rs);
-            oc.store(rs);
-            oc.commit();
+            //oc.store(rs);
+            //oc.commit();
+
+            // Now the last 4 digits of the showId are the episode
+            // number.  It looks like local programming often does
+            // not set this to a value other than 0.  So we are not
+            // going to store it because it will prevent subsequent
+            // "episodes" from recording.  But lets make sure the showId
+            // starts with "SH" also.
+            if (isEpisode(rs.getShowId())) {
+
+                oc.store(rs);
+                oc.commit();
+            }
         }
+    }
+
+    private boolean isEpisode(String showId) {
+
+        boolean result = true;
+
+        if (showId != null) {
+
+            if (showId.length() > 4) {
+
+                int index = showId.length() - 4;
+                String end = showId.substring(index);
+                int epnum = Util.str2int(end, -1);
+
+                result = !((showId.startsWith("SH")) && (epnum == 0));
+            }
+        }
+
+        LogUtil.log(LogUtil.INFO, "ShowId <" + showId + "> is an episode <" + result + ">");
+
+        return (result);
     }
 
     /**

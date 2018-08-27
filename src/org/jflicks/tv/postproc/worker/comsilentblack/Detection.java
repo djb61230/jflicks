@@ -118,17 +118,21 @@ public class Detection implements Serializable, Comparable<Detection> {
                                 if (index != -1) {
 
                                     String endstr = line1.substring(index + 1);
-                                    endstr = endstr.substring(0, endstr.indexOf("|"));
-                                    endstr = endstr.trim();
+                                    int eindex = endstr.indexOf("|");
+                                    if (eindex != -1) {
 
-                                    Detection d = new Detection();
-                                    d.setStart(Util.str2Double(startstr, 0));
-                                    d.setEnd(Util.str2Double(endstr, 0));
-                                    d.setDuration(d.getEnd() - d.getStart());
+                                        endstr = endstr.substring(0, eindex);
+                                        endstr = endstr.trim();
 
-                                    LogUtil.log(LogUtil.DEBUG, "Silence Detection: " + d);
+                                        Detection d = new Detection();
+                                        d.setStart(Util.str2Double(startstr, 0));
+                                        d.setEnd(Util.str2Double(endstr, 0));
+                                        d.setDuration(d.getEnd() - d.getStart());
 
-                                    list.add(d);
+                                        LogUtil.log(LogUtil.DEBUG, "Silence Detection: " + d);
+
+                                        list.add(d);
+                                    }
                                 }
                             }
                         }

@@ -165,6 +165,15 @@
             eclipse="false"
             failok="false"
             exceptions="true"
+            files="${bnd}/playfuljack-jflicks-tv-programdata-gn.bnd"
+            output="${bundle}"
+        />
+
+        <bnd
+            classpath="${build}"
+            eclipse="false"
+            failok="false"
+            exceptions="true"
             files="${bnd}/jflicks-tv-recorder-hdhr.bnd"
             output="${bundle}"
         />
@@ -990,6 +999,42 @@
 
     </target>
 
+    <target name="recdb" depends="build">
+
+        <java classname="org.jflicks.util.recdb.RecDb" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-gn" depends="build">
+
+        <java classname="com.playfuljack.jflicks.tv.programdata.gn.TV" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-gn-aa" depends="build">
+
+        <java classname="com.playfuljack.jflicks.autoart.gn.TVArtwork" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
     <target name="test-sdjson-client" depends="build">
 
         <java classname="org.jflicks.tv.programdata.sd.json.Client" fork="true">
@@ -1012,11 +1057,14 @@
             <arg value="-p"/>
             <arg value="${sdpass}"/>
             <arg value="-l"/>
+            <arg value="National"/>
+            <!--
             <arg value="${sdlocation}"/>
+            -->
             <arg value="-zipcode"/>
             <arg value="${sdzip}"/>
             <arg value="-action"/>
-            <arg value="listAllLineups"/>
+            <arg value="listStations"/>
             <!--
             <arg value="listAddedLineups"/>
             <arg value="listStations"/>
@@ -1028,22 +1076,29 @@
             <arg value="automap"/>
             -->
             <arg value="-lineup"/>
-            <arg value="Time-Warner-Cable---Digital"/>
+            <arg value="HDHomeRun Premium TV - East"/>
+            <!--
+            <arg value="HDHomeRun-Premium-TV- - -West"/>
+            <arg value="HDHomeRun-Premium-TV- - -East"/>
+            <arg value="-lineup"/>
+            <arg value="Local Over the Air Broadcast"/>
             <arg value="-automapFile"/>
             <arg value="automapJson.txt"/>
+            -->
             <!--
             <arg value="USA-OTA-13492"/>
             <arg value="DIRECTV Albany"/>
-            <arg value="Antenna"/>
             <arg value="Local"/>
             <arg value="Local Over the Air Broadcast"/>
             -->
+            <!--
             <arg value="-sid"/>
             <arg value="53158"/>
             <arg value="-sid"/>
             <arg value="34968"/>
             <arg value="-pid"/>
             <arg value="EP008298780289"/>
+            -->
 
             <classpath>
                 <path refid="runtime.classpath"/>
@@ -1246,6 +1301,30 @@
 
     </target>
 
+    <target name="test-prompt" depends="build">
+
+        <java classname="org.jflicks.util.frommpeg2.TestPrompt" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
+    <target name="test-prompt2" depends="build">
+
+        <java classname="org.jflicks.util.frommpeg2.TestPrompt2" fork="true">
+
+            <classpath>
+                <path refid="runtime.classpath"/>
+            </classpath>
+
+        </java>
+
+    </target>
+
     <target name="test-wadl" depends="build">
 
         <java classname="org.jflicks.restlet.nms.NMSApplication" fork="true">
@@ -1300,7 +1379,7 @@
     <target name="javadoc" depends="build"
         description="Only thing better is the source!">
 
-        <javadoc packagenames="org.*"
+        <javadoc packagenames="org.*,com.*"
             destdir="${docs}"
             author="true"
             version="true"

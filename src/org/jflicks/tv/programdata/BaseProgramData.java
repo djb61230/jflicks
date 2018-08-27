@@ -164,10 +164,19 @@ public abstract class BaseProgramData extends BaseConfig
     }
 
     /**
-     * Convenience method to fire an event with a certain type and state.
+     * Convenience method to fire an event with a default event.
      */
     public void fireDataUpdateEvent() {
         processDataUpdateEvent(new DataUpdateEvent(this));
+    }
+
+    /**
+     * Convenience method to fire an event with a certain freshData property.
+     *
+     * @param freshData A given data state.
+     */
+    public void fireDataUpdateEvent(boolean freshData) {
+        processDataUpdateEvent(new DataUpdateEvent(this, freshData));
     }
 
     /**

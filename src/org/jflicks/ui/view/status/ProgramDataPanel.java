@@ -149,8 +149,7 @@ public class ProgramDataPanel extends AbstractStatusPanel {
                     if ((chans != null) && (chans.length > 0)) {
 
                         Arrays.sort(chans);
-                        csl.setText("Total Number of Channel(s) "
-                            + chans.length);
+                        csl.setText("Total Number of Channel(s) " + chans.length);
                         csl.setWarning(false);
 
                         Airing[] airs = n.getAiringsByChannel(chans[0]);
@@ -158,15 +157,17 @@ public class ProgramDataPanel extends AbstractStatusPanel {
 
                             Airing last = airs[airs.length - 1];
                             Date date = last.getAirDate();
-                            Date today = new Date();
-                            long ldate = date.getTime();
-                            long ltoday = today.getTime();
-                            long diff = ldate - ltoday;
-                            long diffDays = diff / (24 * 60 * 60 * 1000);
+                            if (date != null) {
 
-                            lsl.setText("At least " + (diffDays + 1)
-                                + " days of guide data");
-                            lsl.setWarning(false);
+                                Date today = new Date();
+                                long ldate = date.getTime();
+                                long ltoday = today.getTime();
+                                long diff = ldate - ltoday;
+                                long diffDays = diff / (24 * 60 * 60 * 1000);
+
+                                lsl.setText("At least " + (diffDays + 1) + " days of guide data");
+                                lsl.setWarning(false);
+                            }
 
                         } else {
 

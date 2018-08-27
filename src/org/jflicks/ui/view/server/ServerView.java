@@ -74,7 +74,7 @@ public class ServerView extends JFlicksView {
 
         Timer timer = new Timer("autoRefresh");
         RefreshTimerTask rtt = new RefreshTimerTask();
-        timer.scheduleAtFixedRate(rtt, 30000, 180000);
+        timer.scheduleAtFixedRate(rtt, 90000, 180000);
     }
 
     private NMS[] getNMS() {

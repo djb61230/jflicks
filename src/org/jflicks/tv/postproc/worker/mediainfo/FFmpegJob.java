@@ -147,11 +147,21 @@ public class FFmpegJob extends BaseWorkerJob implements JobListener {
                     String audioLine = null;
 
                     int vindex = output.indexOf("Video:");
+                    if (vindex >= 0) {
+                        videoLine = output.substring(vindex);
+                        String[] lines = videoLine.split("\n");
+                        if (lines.length > 0) {
+                            videoLine = lines[0];
+                        }
+                    }
                     int aindex = output.indexOf("Audio:");
-                    if ((vindex >= 0) && (aindex >= 0)) {
+                    if (aindex >= 0) {
 
-                        videoLine = output.substring(vindex, aindex);
                         audioLine = output.substring(aindex);
+                        String[] lines = audioLine.split("\n");
+                        if (lines.length > 0) {
+                            audioLine = lines[0];
+                        }
                     }
 
                     LogUtil.log(LogUtil.INFO, "videoLine: " + videoLine);

@@ -106,6 +106,86 @@ public final class LiveTVSupport extends BaseSupport {
         return (result);
     }
 
+    public LiveTVBean openDirect(String recorderId) {
+
+        LiveTVBean result = new LiveTVBean();
+
+        NMS[] narray = getNMS();
+        LogUtil.log(LogUtil.DEBUG, "recorderId: <" + recorderId + ">");
+        if ((narray != null) && (narray.length > 0) && (recorderId != null)) {
+
+            boolean found = false;
+            for (int i = 0; i < narray.length; i++) {
+
+                Scheduler s = narray[i].getScheduler();
+                if (s != null) {
+
+                    Recorder[] recs = s.getConfiguredRecorders();
+                    if ((recs != null) && (recs.length > 0)) {
+
+                        for (int j = 0; j < recs.length; j++) {
+
+                            LogUtil.log(LogUtil.DEBUG, "recorderId to check: <" + recs[j].getDevice() + ">");
+                            if (recorderId.equals(recs[j].getDevice())) {
+
+                                recs[j].setRecordingLiveTV(true);
+                                found = true;
+                                result.setReady(true);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (found) {
+
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    public LiveTVBean closeDirect(String recorderId) {
+
+        LiveTVBean result = new LiveTVBean();
+
+        NMS[] narray = getNMS();
+        if ((narray != null) && (narray.length > 0) && (recorderId != null)) {
+
+            boolean found = false;
+            for (int i = 0; i < narray.length; i++) {
+
+                Scheduler s = narray[i].getScheduler();
+                if (s != null) {
+
+                    Recorder[] recs = s.getConfiguredRecorders();
+                    if ((recs != null) && (recs.length > 0)) {
+
+                        for (int j = 0; j < recs.length; j++) {
+
+                            if (recorderId.equals(recs[j].getDevice())) {
+
+                                recs[j].setRecordingLiveTV(false);
+                                found = true;
+                                result.setReady(true);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (found) {
+
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
     public LiveTVBean openSession(String channelId) {
 
         LiveTVBean result = null;
@@ -305,6 +385,7 @@ public final class LiveTVSupport extends BaseSupport {
                                     }
 
                                     item.setDirectUrl(sb.toString());
+                                    item.setRecorderId(recs[j].getDevice());
 
                                     // We continue on because we want to use the last recorder.
                                 }
@@ -335,7 +416,7 @@ public final class LiveTVSupport extends BaseSupport {
                         String listId = all[i].getListingId();
                         for (int j = 0; j < recs.length; j++) {
 
-                            if (!recs[j].isRecording()) {
+                            if ((!recs[j].isRecording()) && (!recs[j].isRecordingLiveTV())) {
 
                                 // A free recorder.  Can it do this channel?
                                 if (supportsChannel(n, all[i], recs[j])) {
@@ -386,8 +467,43 @@ public final class LiveTVSupport extends BaseSupport {
 
                                 if (lid.equals(listing.getId())) {
 
-                                    result = true;
-                                    break;
+                                    LogUtil.log(LogUtil.DEBUG, "SC: lid matches");
+                                    String[] channelNameList = r.getChannelNameList();
+                                    LogUtil.log(LogUtil.DEBUG, "SC: channelNameList " + channelNameList);
+                                    if ((channelNameList != null) && (channelNameList.length > 0)) {
+
+                                        // We have the right listing but we have to check white/black list.
+                                        if (r.isWhiteList()) {
+
+                                            // Only set to true and break if the channel is in this list.
+                                            if (isInList(channelNameList, c)) {
+
+                                                result = true;
+                                                break;
+                                            }
+
+                                        } else if (r.isBlackList()) {
+
+                                            // Only set to true and break if the channel is NOT in this list.
+                                            if (!isInList(channelNameList, c)) {
+
+                                                result = true;
+                                                break;
+                                            }
+
+                                        } else {
+
+                                            // They may have configured a list but it's now ignored.
+                                            result = true;
+                                            break;
+                                        }
+
+                                    } else {
+
+                                        // No list at all so we accept.
+                                        result = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -399,7 +515,41 @@ public final class LiveTVSupport extends BaseSupport {
         return (result);
     }
 
-    private LiveTVItem getLiveTVItemByChannelId(String channelId) {
+    private boolean isInList(String[] array, Channel c) {
+
+        boolean result = false;
+
+        if ((array != null) && (array.length > 0) && (c != null)) {
+
+            for (String name : array) {
+
+                if (isChannelNameOrNumber(c, name)) {
+
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private boolean isChannelNameOrNumber(Channel c, String s) {
+
+        boolean result = false;
+
+        if ((c != null) && (s != null)) {
+
+            String name = c.getName();
+            String number = c.getNumber();
+
+            result = ((s.equals(name)) || (s.equals(number)));
+        }
+
+        return (result);
+    }
+
+    public LiveTVItem getLiveTVItemByChannelId(String channelId) {
 
         LiveTVItem result = null;
 
@@ -455,7 +605,7 @@ public final class LiveTVSupport extends BaseSupport {
                     ArrayList<Recorder> rlist = new ArrayList<Recorder>();
                     for (int i = 0; i < array.length; i++) {
 
-                        if (!array[i].isRecording()) {
+                        if ((!array[i].isRecording()) && (!array[i].isRecordingLiveTV())) {
 
                             rlist.add(array[i]);
                         }

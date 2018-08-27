@@ -653,7 +653,21 @@ public class RecordingRule implements Serializable, Comparable<RecordingRule> {
                 String s = getName();
                 if (s != null) {
 
-                    result = s.compareTo(rr.getName());
+                    if (s.startsWith("The ")) {
+
+                        s = s.substring(4) + ", The";
+                    }
+
+                    String compName = rr.getName();
+                    if (compName != null) {
+
+                        if (compName.startsWith("The ")) {
+
+                            compName = compName.substring(4) + ", The";
+                        }
+                    }
+
+                    result = s.compareTo(compName);
                 }
                 break;
 

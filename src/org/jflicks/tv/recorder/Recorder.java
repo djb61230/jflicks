@@ -147,6 +147,14 @@ public interface Recorder extends Config {
     boolean isRecordingLiveTV();
 
     /**
+     * Since live tv may be happening outside the Scheduler we need to
+     * allow others to flag that it is happening.
+     *
+     * @param b True when live TV is happening.
+     */
+    void setRecordingLiveTV(boolean b);
+
+    /**
      * Simple method to find out if the Recorder is currently recording,
      * and is recording the given Recording.
      *

@@ -21,9 +21,14 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,6 +76,8 @@ import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 import org.jflicks.videomanager.VideoManager;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * This class is a base implementation of the NMS interface.
  *
@@ -99,6 +106,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
     private ArrayList<Recording> removeRecordingList;
     private EventSender eventSender;
     private HashMap<Channel, ArrayList<ShowAiring>> showAiringCacheMap;
+    private ArrayList<InUse> inUseList;
 
     /**
      * Simple empty constructor.
@@ -111,6 +119,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
         setTrailerList(new ArrayList<Trailer>());
         setRemoveRecordingList(new ArrayList<Recording>());
         setShowAiringCacheMap(new HashMap<Channel, ArrayList<ShowAiring>>());
+        setInUseList(new ArrayList<InUse>());
     }
 
     /**
@@ -397,6 +406,128 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
     private void setOnDemandList(ArrayList<OnDemand> l) {
         onDemandList = l;
+    }
+
+    private ArrayList<InUse> getInUseList() {
+        return (inUseList);
+    }
+
+    private void setInUseList(ArrayList<InUse> l) {
+        inUseList = l;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addInUse(InUse iu) {
+
+        ArrayList<InUse> l = getInUseList();
+        if ((l != null) && (iu != null)) {
+
+            String newIp = iu.getClientIpAddress();
+            if (newIp != null) {
+
+                if (l.size() > 0) {
+
+                    boolean found = false;
+                    for (int i = 0; i < l.size(); i++) {
+
+                        InUse tmp = l.get(i);
+                        String oldIp = tmp.getClientIpAddress();
+                        if (newIp.equals(oldIp)) {
+
+                            LogUtil.log(LogUtil.DEBUG, "InUse: found old one, updating rid");
+                            found = true;
+                            tmp.setRecordingId(iu.getRecordingId());
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+
+                        LogUtil.log(LogUtil.DEBUG, "InUse: adding client " + iu.getClientIpAddress() + " using "
+                            + iu.getRecordingId());
+                        l.add(iu);
+                    }
+
+                } else {
+
+                    LogUtil.log(LogUtil.DEBUG, "InUse: adding client " + iu.getClientIpAddress() + " using "
+                        + iu.getRecordingId());
+                    l.add(iu);
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void removeInUse(InUse iu) {
+
+        ArrayList<InUse> l = getInUseList();
+        if ((l != null) && (iu != null)) {
+
+            String newIp = iu.getClientIpAddress();
+            if (newIp != null) {
+
+                for (int i = l.size() - 1; i >= 0; i--) {
+
+                    InUse tmp = l.get(i);
+                    String oldIp = tmp.getClientIpAddress();
+                    if (newIp.equals(oldIp)) {
+
+                        LogUtil.log(LogUtil.DEBUG, "InUse: removing client " + iu.getClientIpAddress() + " was "
+                            + iu.getRecordingId());
+                        l.remove(tmp);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isInUse(String s, boolean ignoreProcessing) {
+
+        boolean result = false;
+
+        ArrayList<InUse> l = getInUseList();
+        if ((l != null) && (s != null)) {
+
+            for (int i = 0; i < l.size(); i++) {
+
+                InUse tmp = l.get(i);
+                String rid = tmp.getRecordingId();
+                if (s.equals(rid)) {
+
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        if ((!ignoreProcessing) && (!result)) {
+
+            // At this point no one is "watching" the recording.  But we want
+            // to check if the recording has some sort of post processing scheduled
+            // or in progress.
+            PostProc pp = getPostProc();
+            Recording r = getRecordingById(s);
+            if ((pp != null) && (r != null)) {
+
+                result = pp.isWorkPending(r);
+
+            } else {
+
+                LogUtil.log(LogUtil.DEBUG, "InUse: postProc " + pp + " recording " + r);
+            }
+        }
+
+        LogUtil.log(LogUtil.DEBUG, "InUse: rid " + s + " in use " + result);
+
+        return (result);
     }
 
     /**
@@ -1330,9 +1461,12 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
             for (int i = 0; i < array.length; i++) {
 
+                LogUtil.log(LogUtil.DEBUG, "before getListingByName");
                 Listing listing = array[i].getListingByName(s);
+                LogUtil.log(LogUtil.DEBUG, "after getListingByName");
                 if (listing != null) {
 
+                    LogUtil.log(LogUtil.DEBUG, "listing name <" + listing + ">");
                     result = array[i].getChannelsByListing(listing);
                     if (result != null) {
 
@@ -1879,71 +2013,6 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                     l.add(r);
                 }
             }
-            /*
-            String path = r.getPath();
-            if (path != null) {
-
-                final File file = new File(path);
-                final String iext = r.getIndexedExtension();
-                ActionListener taskPerformer = new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-
-                        // Of course delete the file.
-                        if (!file.delete()) {
-
-                            LogUtil.log(LogUtil.WARNING, file.getPath() + " delete fail");
-                        }
-
-                        // The screenshot is a "filename.png" file.
-                        File pngfile = new File(file.getPath() + ".png");
-                        if (!pngfile.delete()) {
-
-                            LogUtil.log(LogUtil.WARNING, pngfile.getPath() + " del fail");
-                        }
-
-                        // The index file is "filename.iext".
-                        if (iext != null) {
-
-                            File iextfile =
-                                new File(file.getPath() + "." + iext);
-                            if (!iextfile.delete()) {
-
-                                LogUtil.log(LogUtil.WARNING, iextfile.getPath() + " del fail");
-                            }
-                        }
-
-                        // Other recorders or processes might add other files
-                        // with the rule of a different extension.  Let's find
-                        // them and delete them.
-                        File parent = file.getParentFile();
-                        String fname = file.getName();
-                        if ((parent != null) && (fname != null)) {
-
-                            // This really should get everything as it
-                            // includes the show ID and time up to the
-                            // minute.
-                            fname = fname.substring(0, fname.lastIndexOf("_"));
-                            File[] array =
-                                parent.listFiles(new StartsWithFilter(fname));
-                            if (array != null) {
-
-                                for (int i = 0; i < array.length; i++) {
-
-                                    if (!array[i].delete()) {
-
-                                        LogUtil.log(LogUtil.WARNING, array[i].getPath()
-                                            + " del fail");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                };
-                Timer timer = new Timer(1000, taskPerformer);
-                timer.setRepeats(false);
-                timer.start();
-            }
-            */
 
             sendMessage(NMSConstants.MESSAGE_RECORDING_REMOVED);
         }
@@ -2116,7 +2185,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 } else {
 
-                    LogUtil.log(LogUtil.WARNING, "can't load <" + data + ">");
+                    LogUtil.log(LogUtil.WARNING, "can't load byte array <" + data + ">");
                 }
 
             } catch (IOException ex) {
@@ -2159,7 +2228,8 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
             }
             try {
 
-                BufferedImage bi = ImageIO.read(new URL(url));
+                //BufferedImage bi = ImageIO.read(new URL(url));
+                BufferedImage bi = readFromUrl(url);
                 if (bi != null) {
 
                     ImageIO.write(bi, "jpg", new File(name));
@@ -2177,7 +2247,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
 
                 } else {
 
-                    LogUtil.log(LogUtil.WARNING, "can't load <" + url + ">");
+                    LogUtil.log(LogUtil.WARNING, "can't load url <" + url + ">");
                 }
 
             } catch (IOException ex) {
@@ -2185,6 +2255,79 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 LogUtil.log(LogUtil.WARNING, "save image: " + ex.getMessage());
             }
         }
+    }
+
+    private BufferedImage readFromUrl(String url) {
+
+        BufferedImage result = null;
+
+        URLConnection con = null;
+        InputStream in = null;
+        try {
+
+            URL u = new URL(url);
+            con = openUrlConnection(u, 10000, true);
+            LogUtil.log(LogUtil.DEBUG, "orignal url: " + con.getURL());
+            con.connect();
+            LogUtil.log(LogUtil.DEBUG, "connected url: " + con.getURL());
+            in = con.getInputStream();
+            byte[] bytes = IOUtils.toByteArray(in);
+            LogUtil.log(LogUtil.DEBUG, "after IOUtils.toByteArray " + bytes);
+            if (bytes != null) {
+
+                LogUtil.log(LogUtil.DEBUG, "after IOUtils.toByteArray " + bytes.length);
+                ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+                result = ImageIO.read(bais);
+                LogUtil.log(LogUtil.DEBUG, "after ImageIO.read " + result);
+            }
+
+        } catch (IOException ex) {
+
+            LogUtil.log(LogUtil.INFO, ex.getMessage());
+
+        } finally {
+
+            if (in != null) {
+
+                try {
+                     in.close();
+                } catch(IOException ex) {
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private URLConnection openUrlConnection(URL url, int timeout, boolean followRedirects)
+        throws IOException, SocketTimeoutException {
+
+        URLConnection conn = url.openConnection();
+
+        if (conn instanceof HttpURLConnection) {
+
+            if (((HttpURLConnection)conn).getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP
+                || ((HttpURLConnection)conn).getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM) {
+
+                URL resourceUrl, base, next;
+                String location;
+
+                location = conn.getHeaderField("Location");
+                location = URLDecoder.decode(location, "UTF-8");
+                base = new URL(url.toExternalForm());
+                next = new URL(base, location);
+
+                return openUrlConnection(next, timeout, followRedirects);
+            }
+        }
+
+        if (timeout > 0) {
+
+            conn.setReadTimeout(timeout);
+            conn.setConnectTimeout(timeout);
+        }
+
+        return conn;
     }
 
     private BufferedImage createImage(BufferedImage bi, int scalex) {
@@ -2268,16 +2411,38 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
      */
     public void dataUpdate(DataUpdateEvent event) {
 
+        LogUtil.log(LogUtil.DEBUG, "dataUpdate begin");
+
         // Let's clear out our cache of ShowAirings per Channel since
         // we have fresh guide data.
-        clearShowAiringCacheMap();
+        if (event.isFreshData()) {
+
+            clearShowAiringCacheMap();
+            LogUtil.log(LogUtil.DEBUG, "dataUpdate cleared the cache");
+
+        } else {
+
+            LogUtil.log(LogUtil.DEBUG, "dataUpdate no need to clear the cache");
+        }
 
         Scheduler s = getScheduler();
         if (s != null) {
 
-            s.rebuildCache();
+            if (event.isFreshData()) {
+
+                LogUtil.log(LogUtil.DEBUG, "dataUpdate next rebuild the cache");
+                s.rebuildCache();
+
+            } else {
+
+                LogUtil.log(LogUtil.DEBUG, "dataUpdate no need to rebuild the cache");
+            }
+
+            LogUtil.log(LogUtil.DEBUG, "dataUpdate next requestRescheduling.");
             s.requestRescheduling();
 
+            /*
+            // This code looks like it's just logging the shows that are cached.
             Channel[] all = getRecordableChannels();
             if ((all != null) && (all.length > 0)) {
 
@@ -2287,6 +2452,7 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                     LogUtil.log(LogUtil.DEBUG, "Cached ShowAirings for: " + all[i]);
                 }
             }
+            */
         }
 
         // Also a good time to cache the channel logos.
@@ -2303,17 +2469,23 @@ public abstract class BaseNMS extends BaseConfig implements NMS,
                 ChannelLogo[] clogos = pds[i].getChannelLogos();
                 if ((clogos != null) && (clogos.length > 0)) {
 
+                    LogUtil.log(LogUtil.DEBUG, "LOGO CACHE count: " + clogos.length);
                     for (int j = 0; j < clogos.length; j++) {
 
                         int cid = clogos[j].getChannelId();
                         String url = clogos[j].getUrl();
                         String md5 = clogos[j].getMd5();
+                        LogUtil.log(LogUtil.DEBUG, "LOGO CACHE url: " + url);
+                        LogUtil.log(LogUtil.DEBUG, "LOGO CACHE md5: " + md5);
+                        LogUtil.log(LogUtil.DEBUG, "LOGO CACHE cid: " + cid);
                         if ((url != null) && (md5 != null)) {
 
                             int index = url.lastIndexOf(".");
                             if (index != -1) {
 
-                                String ext = url.substring(index + 1);
+                                // We might have GET arguments on the URL so we just get the extension.  This
+                                // will break if the arguments contain a "." though.
+                                String ext = url.substring(index + 1, index + 4);
                                 File logo = new File(imageHomeFile, "logo_" + cid + "_" + md5 + "." + ext);
                                 if (!logo.exists()) {
 

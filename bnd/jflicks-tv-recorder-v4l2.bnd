@@ -8,6 +8,7 @@ Bundle-Activator: ${module}.Activator
 Import-Package:\
  org.jflicks.configure;version="1.0.0",\
  org.jflicks.job;version="1.0.0",\
+ org.jflicks.nms;version="1.0.0",\
  org.jflicks.tv;version="1.0.0",\
  org.jflicks.tv.recorder;version="1.0.0",\
  org.jflicks.util;version="1.0.0",\

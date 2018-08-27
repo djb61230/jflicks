@@ -137,7 +137,7 @@ public class SystemSchedulerJob extends AbstractJob
         JobManager.sleep(getSleepTime());
         SystemScheduler ss = getSystemScheduler();
         if (ss != null) {
-            ss.requestRescheduling();
+            //ss.requestRescheduling();
         }
 
         while (!isTerminate()) {

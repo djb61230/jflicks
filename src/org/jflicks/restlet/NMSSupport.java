@@ -23,6 +23,7 @@ import java.util.Comparator;
 
 import org.jflicks.configure.Configuration;
 import org.jflicks.configure.J4ccConfiguration;
+import org.jflicks.nms.InUse;
 import org.jflicks.nms.NMS;
 import org.jflicks.nms.NMSConstants;
 import org.jflicks.nms.NMSUtil;
@@ -35,6 +36,7 @@ import org.jflicks.tv.Show;
 import org.jflicks.tv.ShowAiring;
 import org.jflicks.tv.Task;
 import org.jflicks.tv.Upcoming;
+import org.jflicks.tv.scheduler.Scheduler;
 import org.jflicks.util.LogUtil;
 import org.jflicks.util.Util;
 
@@ -415,7 +417,7 @@ public final class NMSSupport extends BaseSupport {
 
     public String processDelete(String id, boolean b) {
 
-        String result = "\n";
+        String result = null;
 
         NMS[] array = getNMS();
         if ((id != null) && (array != null) && (array.length > 0)) {
@@ -433,7 +435,12 @@ public final class NMSSupport extends BaseSupport {
             }
 
             if ((n != null) && (r != null)) {
-                n.removeRecording(r, b);
+
+                if (n.isInUse(r.getId(), true)) {
+                    result = "Sorry recording in use, cannot delete.";
+                } else {
+                    n.removeRecording(r, b);
+                }
             }
         }
 
@@ -767,6 +774,36 @@ public final class NMSSupport extends BaseSupport {
         return (result);
     }
 
+    public void markInUse(InUse iu, boolean add) {
+
+        if (iu != null) {
+
+            NMS n = NMSUtil.select(getNMS(), iu.getHostPort());
+            if (n != null) {
+
+                if (add) {
+                    n.addInUse(iu);
+                } else {
+                    n.removeInUse(iu);
+                }
+            }
+        }
+    }
+
+    public void markInUseFree(InUse iu) {
+
+        if (iu != null) {
+
+            NMS[] array = getNMS();
+            if ((array != null) && (array.length > 0)) {
+
+                for (int i = 0; i < array.length; i++) {
+                    array[i].removeInUse(iu);
+                }
+            }
+        }
+    }
+
     public void overrideUpcoming(Upcoming u) {
 
         if (u != null) {
@@ -774,7 +811,24 @@ public final class NMSSupport extends BaseSupport {
             NMS n = NMSUtil.select(getNMS(), u.getHostPort());
             if (n != null) {
 
-                n.overrideUpcoming(u);
+                // First we want to check if this is coming from a ONCE
+                // RecordingRule.  If so we want to delete the rule instead
+                // of toggling the recorded DB.
+                RecordingRule rr = getOnceRecordingRuleByUpcoming(n, u);
+                if (rr != null) {
+
+                    LogUtil.log(LogUtil.DEBUG, "override a once recording: " + rr);
+                    Scheduler s = n.getScheduler();
+                    if (s != null) {
+
+                        s.removeRecordingRule(rr);
+                        s.requestRescheduling();
+                    }
+
+                } else {
+
+                    n.overrideUpcoming(u);
+                }
             }
         }
     }
@@ -815,6 +869,74 @@ public final class NMSSupport extends BaseSupport {
         if (n != null) {
 
             result = n.getVideos();
+        }
+
+        return (result);
+    }
+
+    private RecordingRule getOnceRecordingRuleByUpcoming(NMS n, Upcoming u) {
+
+        RecordingRule result = null;
+
+        if ((n != null) && (u != null)) {
+
+            Channel c = getChannelByNumber(n, u.getChannelNumber());
+            Scheduler s = n.getScheduler();
+            if ((s != null) && (c != null)) {
+
+                RecordingRule[] rules = s.getRecordingRules();
+                if (rules != null) {
+
+                    for (int i = 0; i < rules.length; i++) {
+
+                        if (rules[i].isOnceType()) {
+
+                            LogUtil.log(LogUtil.DEBUG, "found a once recording rule possibility: " + rules[i]);
+                            if (rules[i].getChannelId() == c.getId()) {
+
+                                LogUtil.log(LogUtil.DEBUG, "channelId match: " + c.getId());
+                                ShowAiring sa = rules[i].getShowAiring();
+                                if (sa != null) {
+
+                                    Show show = sa.getShow();
+                                    if (show != null) {
+
+                                        if (show.getId() == u.getShowId()) {
+
+                                            LogUtil.log(LogUtil.DEBUG, "showId match: " + show.getId());
+                                            result = rules[i];
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    private Channel getChannelByNumber(NMS n, String number) {
+
+        Channel result = null;
+
+        if ((n != null) && (number != null)) {
+
+            Channel[] chans = n.getRecordableChannels();
+            if (chans != null) {
+
+                for (int i = 0; i < chans.length; i++) {
+
+                    if (number.equals(chans[i].getNumber())) {
+
+                        result = chans[i];
+                        break;
+                    }
+                }
+            }
         }
 
         return (result);
